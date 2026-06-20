@@ -548,6 +548,30 @@
   .pod-transcript-en { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; direction: ltr; text-align: left; color: var(--white); }
   .pod-transcript-ar { font-size: 12px; color: var(--soft); margin-top: 2px; }
 
+  .ws-tap-word {
+    cursor: pointer; border-bottom: 1.5px dashed rgba(245,200,66,.55);
+    transition: background .15s ease; border-radius: 3px; padding: 0 1px;
+  }
+  .ws-tap-word:active { background: rgba(245,200,66,.25); }
+  .ws-tap-hint {
+    font-size: 10.5px; color: var(--muted); text-align: center; margin-top: -4px; margin-bottom: 12px;
+  }
+  .ws-word-popover {
+    position: absolute; z-index: 500; width: 220px; transform: translate(-0%, -100%);
+    background: linear-gradient(150deg, #2A2440, #16131F); border: 1px solid rgba(245,200,66,.4);
+    border-radius: 14px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    animation: wsPopIn .15s ease;
+  }
+  @keyframes wsPopIn { from { opacity:0; transform: translate(-0%,-100%) scale(.92); } to { opacity:1; transform: translate(-0%,-100%) scale(1); } }
+  .ws-pop-en { font-family: 'Space Grotesk', sans-serif; font-size: 14px; font-weight: 700; color: var(--gold); direction: ltr; text-align: left; }
+  .ws-pop-ar { font-size: 13px; color: var(--white); margin-top: 3px; }
+  .ws-pop-add-btn {
+    margin-top: 8px; width: 100%; background: rgba(45,212,191,.15); border: 1px solid rgba(45,212,191,.4);
+    border-radius: 10px; padding: 7px; color: var(--teal); font-family: 'Tajawal', sans-serif;
+    font-size: 12.5px; font-weight: 700; cursor: pointer;
+  }
+  .ws-pop-added { margin-top: 8px; text-align: center; font-size: 12px; color: var(--teal); font-weight: 700; }
+
   .pod-quiz-section { margin-top: 18px; }
   .pod-quiz-card {
     background: var(--panel); border: 1px solid var(--rim);
@@ -1847,7 +1871,7 @@
       <div class="home-tile t-voice" onclick="showTab('voice', null)">
         <div class="home-tile-icon">🎙️</div>
         <div class="home-tile-label">المتحدّث</div>
-        <div class="home-tile-sub">VOICE BUDDY</div>
+        <div class="home-tile-sub">VOICE COACH</div>
       </div>
       <div class="home-tile t-grammar" onclick="showTab('grammar', null)">
         <div class="home-tile-icon">📐</div>
@@ -1859,9 +1883,9 @@
         <div class="home-tile-label">البطاقات</div>
         <div class="home-tile-sub">FLASHCARDS</div>
       </div>
-      <div class="home-tile t-podcast" onclick="showTab('podcast', null)" style="grid-column: span 2;">
+      <div class="home-tile t-podcast" onclick="showTab('podcast', null)">
         <div class="home-tile-icon">🎧</div>
-        <div class="home-tile-label">البودكاست — تدريب الاستماع</div>
+        <div class="home-tile-label">البودكاست</div>
         <div class="home-tile-sub">LISTENING PODCAST</div>
       </div>
     </div>
@@ -5356,6 +5380,66 @@ const vbTopics = {
     ],
     hints: ["I want to be a...", "My goal is to...", "I am learning English because..."],
   },
+  vbJobIntro: {
+    icon:'🤝', nameAr:'مقابلة عمل: عن نفسك', descAr:'تدرّب على التحدّث عن خبرتك وأسباب التقديم',
+    prompts: [
+      { en:"Tell me about yourself.", ar:"حدّثني عن نفسك." },
+      { en:"What is your work experience?", ar:"ما خبرتك العملية؟" },
+      { en:"Why do you want to work here?", ar:"لماذا تريد العمل هنا؟" },
+      { en:"What do you know about our company?", ar:"ماذا تعرف عن شركتنا؟" },
+    ],
+    hints: ["My name is... and I have...", "I have ... years of experience in...", "I want to work here because..."],
+  },
+  vbJobStrengths: {
+    icon:'💪', nameAr:'مقابلة عمل: نقاط القوة والضعف', descAr:'تدرّب على الإجابة بثقة وصدق',
+    prompts: [
+      { en:"What is your greatest strength?", ar:"ما أكبر نقطة قوة لديك؟" },
+      { en:"What is a weakness you are working on?", ar:"ما نقطة ضعف تعمل على تحسينها؟" },
+      { en:"How do you handle pressure at work?", ar:"كيف تتعامل مع ضغط العمل؟" },
+      { en:"Describe a challenge you overcame.", ar:"صف تحدّياً تغلّبت عليه." },
+    ],
+    hints: ["My greatest strength is...", "I am working on...", "When I feel pressure, I..."],
+  },
+  vbJobQuestions: {
+    icon:'❓', nameAr:'مقابلة عمل: اسأل المحاور', descAr:'تدرّب على طرح أسئلة ذكية في نهاية المقابلة',
+    prompts: [
+      { en:"Do you have any questions for me?", ar:"هل لديك أي أسئلة لي؟" },
+      { en:"What does a typical day look like in this role?", ar:"كيف يبدو يوم العمل في هذا المنصب؟" },
+      { en:"Is there room for growth in this position?", ar:"هل هناك مجال للتطور في هذا المنصب؟" },
+      { en:"When can I expect to hear back from you?", ar:"متى يمكن أن أتوقع ردكم؟" },
+    ],
+    hints: ["Yes, I'd like to ask about...", "Could you tell me more about...", "I was wondering if..."],
+  },
+  vbUniversity: {
+    icon:'🎓', nameAr:'مقابلة قبول جامعي', descAr:'تدرّب على التحدّث عن أهدافك الأكاديمية',
+    prompts: [
+      { en:"Why did you choose this university?", ar:"لماذا اخترت هذه الجامعة؟" },
+      { en:"What are your academic goals?", ar:"ما أهدافك الأكاديمية؟" },
+      { en:"What do you want to specialize in?", ar:"في ماذا تريد التخصص؟" },
+      { en:"How do you plan to contribute to campus life?", ar:"كيف تخطط للمساهمة في الحياة الجامعية؟" },
+    ],
+    hints: ["I chose this university because...", "My academic goal is...", "I want to specialize in..."],
+  },
+  vbScholarship: {
+    icon:'🏆', nameAr:'مقابلة منحة دراسية', descAr:'تدرّب على إثبات استحقاقك للمنحة',
+    prompts: [
+      { en:"Why do you deserve this scholarship?", ar:"لماذا تستحق هذه المنحة؟" },
+      { en:"How will this scholarship help you?", ar:"كيف ستساعدك هذه المنحة؟" },
+      { en:"What will you give back to your community?", ar:"ماذا ستقدّم لمجتمعك؟" },
+      { en:"What are your achievements so far?", ar:"ما إنجازاتك حتى الآن؟" },
+    ],
+    hints: ["I deserve this scholarship because...", "This scholarship will help me...", "I plan to give back by..."],
+  },
+  vbSalary: {
+    icon:'💰', nameAr:'التفاوض على الراتب', descAr:'تدرّب على مناقشة الراتب بثقة واحترافية',
+    prompts: [
+      { en:"We are happy to offer you the position. Do you have questions?", ar:"يسعدنا أن نعرض عليك الوظيفة. هل لديك أسئلة؟" },
+      { en:"Is the salary open for discussion?", ar:"هل الراتب قابل للنقاش؟" },
+      { en:"What salary did you have in mind?", ar:"ما الراتب الذي تفكّر فيه؟" },
+      { en:"What benefits matter most to you?", ar:"ما المزايا الأهم بالنسبة لك؟" },
+    ],
+    hints: ["Yes, is the salary negotiable?", "Based on my research, I was hoping for...", "The benefits that matter most to me are..."],
+  },
 };
 
 let vbRecognition = null;
@@ -5423,7 +5507,7 @@ function vbAddMessage(who, en, ar, feedback) {
   const div = document.createElement('div');
   div.className = 'vb-msg ' + who;
   div.innerHTML = `
-    <div class="vb-msg-en">${en}</div>
+    <div class="vb-msg-en">${who === 'bot' ? wsMakeTappable(en) : en}</div>
     ${ar ? `<div class="vb-msg-ar">${ar}</div>` : ''}
     ${feedback ? `<div class="vb-msg-feedback ${feedback.type}">${feedback.text}</div>` : ''}
   `;
@@ -5655,6 +5739,206 @@ function vbHandleUserSpeech(transcript) {
 
 // ══ PODCAST (LISTENING TRAINING) ══
 // All episodes use brand-new topics, distinct from the "Real-Life Conversations" section.
+// ══ TAP-TO-LEARN WORD ENGINE (Podcast + Voice Buddy) ══
+// Stopwords: common function words excluded from tapping (kept minimal, per request)
+const WS_STOPWORDS = new Set("a an the is are was were am be been being do does did have has had will would can could should i you he she it we they me him her us them my your his its our their this that these those there here what why how when where who which to of in on at for with from by about as if then than and or but not no yes very up down out over under again further once it's that's i'm i've we'll we're you'll".split(' '));
+
+// Manual translation dictionary for words used in interview dialogues (podcast + voice buddy)
+const WS_WORD_DICT = {
+  'abroad': 'في الخارج',
+  'academic': 'أكاديمي',
+  'achievements': 'إنجازات',
+  'admire': 'يُعجب بـ',
+  'answer': 'إجابة',
+  'any': 'أي',
+  'application': 'طلب (تقديم)',
+  'back': 'إرجاع / مرة أخرى',
+  'based': 'بناءً على',
+  'benefits': 'مزايا',
+  'bit': 'قليلاً',
+  'calls': 'مكالمات',
+  'campus': 'الحرم الجامعي',
+  'challenge': 'تحدٍّ',
+  'check': 'يتحقّق / يراجع',
+  'choose': 'يختار',
+  'clearer': 'أوضح',
+  'client': 'عميل',
+  'coming': 'قادم / حضور',
+  'community': 'مجتمع',
+  'company': 'شركة',
+  'company\'s': 'خاص بالشركة',
+  'contact': 'يتواصل مع',
+  'contribute': 'يساهم',
+  'day': 'يوم',
+  'deadlines': 'مواعيد نهائية',
+  'definitely': 'بالتأكيد',
+  'describe': 'يصف',
+  'deserve': 'يستحق',
+  'details': 'تفاصيل',
+  'discuss': 'يناقش',
+  'discussion': 'نقاش',
+  'easily': 'بسهولة',
+  'energy': 'طاقة',
+  'engineering': 'هندسة',
+  'excellent': 'ممتاز',
+  'expect': 'يتوقّع',
+  'experience': 'خبرة',
+  'fair': 'عادل / منطقي',
+  'far': 'حتى الآن / بعيد',
+  'focus': 'يركّز',
+  'fully': 'بالكامل',
+  'give': 'يعطي',
+  'goals': 'أهداف',
+  'good': 'جيد',
+  'grades': 'درجات (دراسية)',
+  'great': 'رائع',
+  'greatest': 'الأعظم / الأكبر',
+  'growth': 'نمو',
+  'handle': 'يتعامل مع / يتولّى',
+  'happy': 'سعيد',
+  'hear': 'يسمع',
+  'help': 'يساعد',
+  'honest': 'صادق',
+  'hoping': 'يأمل',
+  'impressive': 'مثير للإعجاب',
+  'know': 'يعرف',
+  'learn': 'يتعلّم',
+  'learning': 'يتعلّم (مستمر)',
+  'let': 'يدع / يسمح',
+  'life': 'حياة',
+  'like': 'مثل / يشبه',
+  'limits': 'حدود',
+  'local': 'محلي',
+  'look': 'يبدو / ينظر',
+  'maintained': 'حافظ على',
+  'marketing': 'تسويق',
+  'matter': 'يهم / مهم',
+  'meet': 'يلتزم بـ / يقابل',
+  'meetings': 'اجتماعات',
+  'mind': 'في البال / يمانع',
+  'more': 'أكثر',
+  'most': 'الأكثر',
+  'much': 'كثيراً',
+  'next': 'القادم / التالي',
+  'offer': 'يعرض / عرض',
+  'often': 'غالباً',
+  'open': 'مفتوح',
+  'organized': 'منظّم',
+  'overcame': 'تغلّب على (ماضي)',
+  'plan': 'يخطط / خطة',
+  'position': 'منصب وظيفي',
+  'pressure': 'ضغط',
+  'program': 'برنامج (دراسي)',
+  'promote': 'يرقّي',
+  'questions': 'أسئلة',
+  'renewable': 'متجدد',
+  'reputation': 'سمعة',
+  'research': 'بحث',
+  'review': 'يراجع',
+  'role': 'دور / منصب',
+  'room': 'مجال / مساحة',
+  'salary': 'راتب',
+  'say': 'يقول',
+  'scholarship': 'منحة دراسية',
+  'set': 'يضع / يحدّد',
+  'small': 'صغير',
+  'so': 'لذلك / حتى الآن',
+  'sometimes': 'أحياناً',
+  'soon': 'قريباً',
+  'sounds': 'يبدو (مسموع)',
+  'specialize': 'يتخصّص',
+  'strength': 'نقطة قوة',
+  'students': 'طلاب',
+  'studies': 'دراسة',
+  'tasks': 'مهام',
+  'teach': 'يُعلّم',
+  'team': 'فريق',
+  'tell': 'يخبر',
+  'thank': 'يشكر',
+  'three': 'ثلاثة',
+  'time': 'وقت',
+  'top': 'الأعلى / الأفضل',
+  'typical': 'نموذجي / معتاد',
+  'university': 'جامعة',
+  'values': 'قيم',
+  'volunteering': 'التطوّع',
+  'want': 'يريد',
+  'weakness': 'نقطة ضعف',
+  'week': 'أسبوع',
+  'weekly': 'أسبوعياً',
+  'welcome': 'أهلاً وسهلاً',
+  'while': 'بينما',
+  'within': 'من الداخل',
+  'work': 'يعمل / عمل',
+  'working': 'يعمل (مستمر)',
+  'years': 'سنوات',
+  'yourself': 'نفسك',
+};
+
+// Turn a plain English sentence into HTML with tappable word spans.
+// Words not in WS_WORD_DICT and stopwords are still rendered but not tappable.
+function wsMakeTappable(text) {
+  return text.split(/(\s+)/).map(token => {
+    if (/^\s+$/.test(token)) return token;
+    const clean = token.replace(/^[^A-Za-z']+|[^A-Za-z']+$/g, '');
+    const lower = clean.toLowerCase();
+    const lead = token.match(/^[^A-Za-z']*/)[0];
+    const trail = token.match(/[^A-Za-z']*$/)[0];
+    if (!clean || WS_STOPWORDS.has(lower)) return token;
+    if (!WS_WORD_DICT[lower]) return token; // not in our dictionary, leave as plain text
+    return `${lead}<span class="ws-tap-word" onclick="wsWordTap(this,'${lower.replace(/'/g, "\\'")}')">${clean}</span>${trail}`;
+  }).join('');
+}
+
+function wsWordTap(el, key) {
+  const meaning = WS_WORD_DICT[key];
+  if (!meaning) return;
+  document.querySelectorAll('.ws-word-popover').forEach(p => p.remove());
+
+  const exists = words.some(w => w.en.toLowerCase().trim() === key);
+  const pop = document.createElement('div');
+  pop.className = 'ws-word-popover';
+  pop.innerHTML = `
+    <div class="ws-pop-en">${key}</div>
+    <div class="ws-pop-ar">${meaning}</div>
+    ${exists
+      ? `<div class="ws-pop-added">✅ موجودة في رصيدك</div>`
+      : `<button class="ws-pop-add-btn" onclick="wsAddWordToBank('${key.replace(/'/g, "\\'")}','${meaning.replace(/'/g, "\\'")}', this)">➕ أضف لرصيدي</button>`
+    }
+  `;
+  document.body.appendChild(pop);
+
+  const rect = el.getBoundingClientRect();
+  const popW = 220;
+  let left = rect.left + rect.width / 2 - popW / 2;
+  left = Math.max(10, Math.min(left, window.innerWidth - popW - 10));
+  pop.style.left = left + 'px';
+  pop.style.top = (rect.top + window.scrollY - 8) + 'px';
+
+  setTimeout(() => {
+    document.addEventListener('click', function closePop(e) {
+      if (!pop.contains(e.target) && e.target !== el) {
+        pop.remove();
+        document.removeEventListener('click', closePop);
+      }
+    });
+  }, 10);
+}
+
+function wsAddWordToBank(en, ar, btn) {
+  const normalizedEn = en.toLowerCase().trim();
+  if (words.some(w => w.en.toLowerCase().trim() === normalizedEn)) {
+    showToast(`⚠️ كلمة "${en}" موجودة لديك مسبقاً!`, '#FB7185');
+    return;
+  }
+  words.unshift({ en, ar, ex: '', exar: '', level: 'medium', date: today, id: Date.now(), source: 'discovered' });
+  save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
+  showToast('✨ أضفت "' + en + '" إلى رصيدك!');
+  if (btn) {
+    btn.outerHTML = `<div class="ws-pop-added">✅ تمت الإضافة</div>`;
+  }
+}
+
 const podcastEpisodes = {
   newjob: {
     icon:'💼', color:'#FFD700', nameAr:'أول يوم في وظيفة جديدة', nameEn:'First Day at a New Job',
@@ -5685,21 +5969,6 @@ const podcastEpisodes = {
       { q:"What might happen tonight?", ar:"ماذا قد يحدث الليلة؟", opts:["Rain","Snow","Wind","Heat"], ans:"Snow" },
       { q:"What will the weather be like tomorrow?", ar:"كيف سيكون الطقس غداً؟", opts:["Cloudy","Rainy","Sunny","Snowy"], ans:"Sunny" },
       { q:"How does speaker A feel about cold weather?", ar:"كيف يشعر المتحدث A تجاه الطقس البارد؟", opts:["Loves it","Doesn't like it much","Doesn't care","Feels excited"], ans:"Doesn't like it much" },
-    ]
-  },
-  movie: {
-    icon:'🎬', color:'#FB7185', nameAr:'مناقشة فيلم', nameEn:'Discussing a Movie',
-    dialogue: [
-      { who:'a', en:"Did you watch that new movie last night?", ar:"هل شاهدت ذلك الفيلم الجديد ليلة أمس؟" },
-      { who:'b', en:"Yes! The story was amazing, but it was too long.", ar:"نعم! القصة كانت رائعة، لكنه كان طويلاً جداً." },
-      { who:'a', en:"How long was it exactly?", ar:"كم كانت مدته بالضبط؟" },
-      { who:'b', en:"Almost three hours. I nearly fell asleep at the end.", ar:"حوالي ثلاث ساعات. كدت أنام في النهاية." },
-      { who:'a', en:"Wow, that is long. I'll watch it this weekend.", ar:"واو، هذا طويل فعلاً. سأشاهده في نهاية الأسبوع." },
-    ],
-    questions: [
-      { q:"How was the story, according to speaker B?", ar:"كيف كانت القصة حسب المتحدث B؟", opts:["Boring","Amazing","Short","Confusing"], ans:"Amazing" },
-      { q:"How long was the movie?", ar:"كم كانت مدة الفيلم؟", opts:["One hour","Two hours","Almost three hours","Four hours"], ans:"Almost three hours" },
-      { q:"When will speaker A watch the movie?", ar:"متى سيشاهد المتحدث A الفيلم؟", opts:["Tonight","Tomorrow","This weekend","Never"], ans:"This weekend" },
     ]
   },
   fitness: {
@@ -5807,6 +6076,158 @@ const podcastEpisodes = {
       { q:"Where will they meet?", ar:"أين سيلتقيان؟", opts:["At home","At the library","At school","At a cafe"], ans:"At the library" },
     ]
   },
+  jobinterview1: {
+    icon:'🤝', color:'#FFD700', nameAr:'مقابلة عمل: عن نفسك', nameEn:'Job Interview: Tell Me About Yourself',
+    dialogue: [
+      { who:'a', en:"Thank you for coming. Tell me about yourself.", ar:"شكراً لحضورك. حدّثني عن نفسك." },
+      { who:'b', en:"I have three years of experience in marketing.", ar:"لدي ثلاث سنوات خبرة في التسويق." },
+      { who:'a', en:"Great. Why do you want to work here?", ar:"رائع. لماذا تريد العمل هنا؟" },
+      { who:'b', en:"I admire your company's values and growth.", ar:"أنا معجب بقيم شركتكم ونموها." },
+      { who:'a', en:"Good answer. We will contact you next week.", ar:"إجابة جيدة. سنتواصل معك الأسبوع القادم." },
+    ],
+    questions: [
+      { q:"How many years of experience does speaker B have?", ar:"كم سنة خبرة لدى المتحدث B؟", opts:["One","Two","Three","Five"], ans:"Three" },
+      { q:"What field does speaker B work in?", ar:"في أي مجال يعمل المتحدث B؟", opts:["Marketing","Finance","Design","Sales"], ans:"Marketing" },
+      { q:"When will the company contact speaker B?", ar:"متى ستتواصل الشركة مع المتحدث B؟", opts:["Tomorrow","Next week","Next month","Today"], ans:"Next week" },
+    ]
+  },
+  jobinterview2: {
+    icon:'💪', color:'#FF6B8A', nameAr:'مقابلة عمل: نقاط القوة والضعف', nameEn:'Job Interview: Strengths and Weaknesses',
+    dialogue: [
+      { who:'a', en:"What would you say is your greatest strength?", ar:"ما الذي تعتبره أكبر نقطة قوة لديك؟" },
+      { who:'b', en:"I'm very organized and I meet deadlines easily.", ar:"أنا منظّم جداً وألتزم بالمواعيد النهائية بسهولة." },
+      { who:'a', en:"Good. And what about a weakness?", ar:"جيد. وماذا عن نقطة ضعف؟" },
+      { who:'b', en:"Sometimes I focus too much on small details.", ar:"أحياناً أركّز كثيراً على التفاصيل الصغيرة." },
+      { who:'a', en:"That's honest. How are you working on that?", ar:"هذا صادق. كيف تعمل على تحسين ذلك؟" },
+      { who:'b', en:"I'm learning to set clearer time limits for tasks.", ar:"أتعلّم وضع حدود زمنية أوضح للمهام." },
+    ],
+    questions: [
+      { q:"What is speaker B's greatest strength?", ar:"ما أكبر نقطة قوة للمتحدث B؟", opts:["Creativity","Being organized","Public speaking","Teamwork"], ans:"Being organized" },
+      { q:"What weakness does speaker B mention?", ar:"ما نقطة الضعف التي ذكرها المتحدث B؟", opts:["Being late","Too much focus on details","Poor communication","Lack of experience"], ans:"Too much focus on details" },
+      { q:"How is speaker B improving this weakness?", ar:"كيف يحسّن المتحدث B هذه النقطة؟", opts:["Ignoring it","Setting clearer time limits","Asking for help","Working overtime"], ans:"Setting clearer time limits" },
+    ]
+  },
+  jobinterview3: {
+    icon:'❓', color:'#39FF14', nameAr:'مقابلة عمل: سؤال للمحاور', nameEn:'Job Interview: Asking the Interviewer',
+    dialogue: [
+      { who:'a', en:"Do you have any questions for me?", ar:"هل لديك أي أسئلة لي؟" },
+      { who:'b', en:"Yes, what does a typical day look like in this role?", ar:"نعم، كيف يبدو يوم عمل عادي في هذا المنصب؟" },
+      { who:'a', en:"You'll handle client calls and team meetings.", ar:"ستتعامل مع مكالمات العملاء واجتماعات الفريق." },
+      { who:'b', en:"That sounds great. Is there room for growth?", ar:"هذا يبدو رائعاً. هل هناك مجال للتطور؟" },
+      { who:'a', en:"Definitely, we promote from within often.", ar:"بالتأكيد، نحن نرقّي من الداخل كثيراً." },
+    ],
+    questions: [
+      { q:"What does speaker B ask about first?", ar:"عمّ يسأل المتحدث B أولاً؟", opts:["Salary","A typical day","Vacation days","Office location"], ans:"A typical day" },
+      { q:"What will the role involve?", ar:"ماذا يتضمّن هذا المنصب؟", opts:["Only paperwork","Client calls and meetings","Traveling abroad","Working alone"], ans:"Client calls and meetings" },
+      { q:"Is there room for growth?", ar:"هل هناك مجال للتطور؟", opts:["No, never","Yes, definitely","Maybe later","Not mentioned"], ans:"Yes, definitely" },
+    ]
+  },
+  university1: {
+    icon:'🎓', color:'#A78BFA', nameAr:'مقابلة قبول جامعي', nameEn:'University Admission Interview',
+    dialogue: [
+      { who:'a', en:"Welcome. Why did you choose this university?", ar:"أهلاً بك. لماذا اخترت هذه الجامعة؟" },
+      { who:'b', en:"Your engineering program has an excellent reputation.", ar:"برنامج الهندسة لديكم له سمعة ممتازة." },
+      { who:'a', en:"What are your academic goals?", ar:"ما أهدافك الأكاديمية؟" },
+      { who:'b', en:"I want to specialize in renewable energy.", ar:"أريد التخصص في الطاقة المتجددة." },
+      { who:'a', en:"Excellent. We'll review your application soon.", ar:"ممتاز. سنراجع طلبك قريباً." },
+    ],
+    questions: [
+      { q:"Why did speaker B choose this university?", ar:"لماذا اختار المتحدث B هذه الجامعة؟", opts:["It's close to home","Excellent reputation","Low cost","A friend recommended it"], ans:"Excellent reputation" },
+      { q:"What does speaker B want to specialize in?", ar:"في ماذا يريد المتحدث B التخصص؟", opts:["Medicine","Renewable energy","Business","Law"], ans:"Renewable energy" },
+      { q:"What will the university do next?", ar:"ماذا ستفعل الجامعة بعد ذلك؟", opts:["Reject the application","Review the application","Call immediately","Ask for more money"], ans:"Review the application" },
+    ]
+  },
+  scholarship: {
+    icon:'🏆', color:'#00D4FF', nameAr:'مقابلة منحة دراسية', nameEn:'Scholarship Interview',
+    dialogue: [
+      { who:'a', en:"Why do you deserve this scholarship?", ar:"لماذا تستحق هذه المنحة؟" },
+      { who:'b', en:"I've maintained top grades while volunteering weekly.", ar:"حافظت على درجات عالية مع التطوع أسبوعياً." },
+      { who:'a', en:"Impressive. How will this scholarship help you?", ar:"مثير للإعجاب. كيف ستساعدك هذه المنحة؟" },
+      { who:'b', en:"It will let me focus fully on my studies abroad.", ar:"ستتيح لي التركيز الكامل على دراستي بالخارج." },
+      { who:'a', en:"What will you give back to your community?", ar:"وماذا ستقدّم لمجتمعك؟" },
+      { who:'b', en:"I plan to teach what I learn to local students.", ar:"أخطط لتعليم ما أتعلّمه لطلاب محليين." },
+    ],
+    questions: [
+      { q:"What has speaker B maintained while volunteering?", ar:"ماذا حافظ عليه المتحدث B أثناء التطوع؟", opts:["A part-time job","Top grades","A sports team","A business"], ans:"Top grades" },
+      { q:"How will the scholarship help speaker B?", ar:"كيف ستساعد المنحة المتحدث B؟", opts:["Pay for travel only","Focus fully on studies","Buy a car","Start a business"], ans:"Focus fully on studies" },
+      { q:"What does speaker B plan to give back?", ar:"ماذا يخطط المتحدث B أن يقدّم؟", opts:["Money","Teaching local students","Nothing","A building"], ans:"Teaching local students" },
+    ]
+  },
+  salarynego: {
+    icon:'💰', color:'#FF9F43', nameAr:'التفاوض على الراتب', nameEn:'Negotiating a Salary Offer',
+    dialogue: [
+      { who:'a', en:"We're happy to offer you the position.", ar:"يسعدنا أن نعرض عليك هذا المنصب." },
+      { who:'b', en:"Thank you! Is the salary open for discussion?", ar:"شكراً لكم! هل الراتب قابل للنقاش؟" },
+      { who:'a', en:"We can discuss it. What did you have in mind?", ar:"يمكننا مناقشته. ما الذي تفكّر فيه؟" },
+      { who:'b', en:"Based on my research, I was hoping for a bit more.", ar:"بناءً على بحثي، كنت آمل في مبلغ أعلى قليلاً." },
+      { who:'a', en:"That's fair. Let me check with the team.", ar:"هذا منطقي. دعني أراجع مع الفريق." },
+    ],
+    questions: [
+      { q:"What does speaker B ask about?", ar:"عمّ يسأل المتحدث B؟", opts:["Vacation days","If salary is negotiable","Work hours","The office address"], ans:"If salary is negotiable" },
+      { q:"Why does speaker B want more money?", ar:"لماذا يريد المتحدث B راتباً أعلى؟", opts:["Just guessing","Based on research","Because he is unhappy","Random number"], ans:"Based on research" },
+      { q:"What will speaker A do next?", ar:"ماذا سيفعل المتحدث A بعد ذلك؟", opts:["Refuse immediately","Check with the team","Cancel the offer","End the interview"], ans:"Check with the team" },
+    ]
+  },
+  healthyhabits: {
+    icon:'🥗', color:'#39FF14', nameAr:'عادات صحية', nameEn:'Building Healthy Habits',
+    dialogue: [
+      { who:'a', en:"I want to start eating healthier this month.", ar:"أريد أن أبدأ بالأكل الصحي هذا الشهر." },
+      { who:'b', en:"That's a great goal. What's your first step?", ar:"هذا هدف رائع. ما خطوتك الأولى؟" },
+      { who:'a', en:"Drinking more water and less soda.", ar:"شرب المزيد من الماء وتقليل المشروبات الغازية." },
+      { who:'b', en:"Smart choice. Are you also sleeping early?", ar:"اختيار ذكي. هل تنام مبكراً أيضاً؟" },
+      { who:'a', en:"Yes, I sleep by ten o'clock now.", ar:"نعم، أنام الساعة العاشرة الآن." },
+    ],
+    questions: [
+      { q:"What does speaker A want to do this month?", ar:"ماذا يريد المتحدث A أن يفعل هذا الشهر؟", opts:["Travel","Eat healthier","Read more","Work harder"], ans:"Eat healthier" },
+      { q:"What is speaker A's first step?", ar:"ما خطوة المتحدث A الأولى؟", opts:["Exercise daily","Drink more water","Stop eating sugar","Walk every day"], ans:"Drink more water" },
+      { q:"What time does speaker A sleep now?", ar:"في أي ساعة ينام المتحدث A الآن؟", opts:["Nine","Ten","Eleven","Midnight"], ans:"Ten" },
+    ]
+  },
+  timemanagement: {
+    icon:'⏰', color:'#A78BFA', nameAr:'إدارة الوقت', nameEn:'Managing Your Time',
+    dialogue: [
+      { who:'a', en:"I never have enough time to finish my tasks.", ar:"لا يكون لدي وقت كافٍ لإنهاء مهامي أبداً." },
+      { who:'b', en:"Have you tried making a daily to-do list?", ar:"هل جرّبت عمل قائمة مهام يومية؟" },
+      { who:'a', en:"Not really. How does that help?", ar:"ليس فعلاً. كيف يساعد ذلك؟" },
+      { who:'b', en:"It helps you focus on what matters most first.", ar:"يساعدك على التركيز على الأهم أولاً." },
+      { who:'a', en:"That sounds useful. I'll try it tomorrow.", ar:"يبدو هذا مفيداً. سأجرّبه غداً." },
+    ],
+    questions: [
+      { q:"What is speaker A's problem?", ar:"ما مشكلة المتحدث A؟", opts:["Too much money","Not enough time","Too many friends","No energy"], ans:"Not enough time" },
+      { q:"What does speaker B suggest?", ar:"ماذا يقترح المتحدث B؟", opts:["Sleeping more","A daily to-do list","Working at night","Skipping tasks"], ans:"A daily to-do list" },
+      { q:"When will speaker A try the suggestion?", ar:"متى سيجرّب المتحدث A الاقتراح؟", opts:["Tonight","Tomorrow","Next week","Never"], ans:"Tomorrow" },
+    ]
+  },
+  helpingneighbor: {
+    icon:'🏡', color:'#FF9F43', nameAr:'مساعدة الجار', nameEn:'Helping a Neighbor',
+    dialogue: [
+      { who:'a', en:"Excuse me, do you need any help with those bags?", ar:"عفواً، هل تحتاج مساعدة في هذه الأكياس؟" },
+      { who:'b', en:"Oh, thank you! That would be very kind.", ar:"آه، شكراً لك! هذا لطف كبير منك." },
+      { who:'a', en:"No problem at all. Where do you live?", ar:"لا مشكلة أبداً. أين تسكن؟" },
+      { who:'b', en:"Just on the second floor, near the stairs.", ar:"في الطابق الثاني فقط، قرب الدرج." },
+      { who:'a', en:"Perfect, let me carry these for you.", ar:"ممتاز، دعني أحمل هذه من أجلك." },
+    ],
+    questions: [
+      { q:"What does speaker A offer to do?", ar:"ماذا يعرض المتحدث A أن يفعل؟", opts:["Drive the car","Help with bags","Clean the house","Cook food"], ans:"Help with bags" },
+      { q:"Where does speaker B live?", ar:"أين يسكن المتحدث B؟", opts:["First floor","Second floor","Third floor","Ground floor"], ans:"Second floor" },
+      { q:"How does speaker B react to the offer?", ar:"كيف يستجيب المتحدث B للعرض؟", opts:["He refuses","He is thankful","He is angry","He is confused"], ans:"He is thankful" },
+    ]
+  },
+  doctorvisit: {
+    icon:'🩺', color:'#2DD4BF', nameAr:'زيارة الطبيب', nameEn:'Visiting the Doctor',
+    dialogue: [
+      { who:'a', en:"Good morning, doctor. I have a headache and a fever.", ar:"صباح الخير يا دكتور. لدي صداع وحمى." },
+      { who:'b', en:"How long have you had these symptoms?", ar:"منذ متى وأنت تعاني من هذه الأعراض؟" },
+      { who:'a', en:"Since yesterday evening.", ar:"منذ مساء أمس." },
+      { who:'b', en:"I'll prescribe some medicine. Drink plenty of water and rest.", ar:"سأصف لك بعض الدواء. اشرب الكثير من الماء واسترح." },
+      { who:'a', en:"Thank you, doctor. I'll follow your advice.", ar:"شكراً يا دكتور. سأتّبع نصيحتك." },
+    ],
+    questions: [
+      { q:"What symptoms does the patient have?", ar:"ما الأعراض التي يعاني منها المريض؟", opts:["Cough and cold","Headache and fever","Stomach pain","Back pain"], ans:"Headache and fever" },
+      { q:"Since when has the patient had symptoms?", ar:"منذ متى والمريض يعاني من الأعراض؟", opts:["This morning","Yesterday evening","Last week","Two days ago"], ans:"Yesterday evening" },
+      { q:"What does the doctor advise?", ar:"بماذا ينصح الطبيب؟", opts:["Exercise more","Rest and drink water","Eat more food","Travel"], ans:"Rest and drink water" },
+    ]
+  },
 };
 
 let currentPodKey = null;
@@ -5904,9 +6325,10 @@ function openPodcast(key) {
       <button onclick="podToggleTranscript()" id="podTranscriptBtn">📜 إظهار النص</button>
     </div>
     <div class="pod-transcript" id="podTranscript">
+      <div class="ws-tap-hint">💡 اضغط على أي كلمة تجدها جديدة لمعرفة معناها وإضافتها لرصيدك</div>
       ${ep.dialogue.map(line => `
         <div class="pod-transcript-line">
-          <div class="pod-transcript-en">${line.who === 'a' ? 'A: ' : 'B: '}${line.en}</div>
+          <div class="pod-transcript-en">${line.who === 'a' ? 'A: ' : 'B: '}${wsMakeTappable(line.en)}</div>
           <div class="pod-transcript-ar">${line.ar}</div>
         </div>`).join('')}
     </div>
