@@ -128,10 +128,11 @@
   .logo { display: flex; align-items: center; gap: 10px; }
   .logo-icon {
     width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--gold), var(--teal));
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 17px; flex-shrink: 0;
+    flex-shrink: 0;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(180,148,255,.25);
   }
   .logo-text { font-size: 16px; font-weight: 700; }
   .logo-sub  { font-size: 10px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
@@ -471,6 +472,105 @@
   }
   .vb-action-btn:active { background: rgba(255,255,255,.08); }
 
+  /* ── PODCAST (LISTENING TRAINING) ── */
+  .pod-card {
+    border-radius: 18px; padding: 16px 16px;
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 12px; cursor: pointer;
+    transition: transform .15s;
+    background: linear-gradient(135deg, rgba(167,139,250,.1), rgba(45,212,191,.06));
+    border: 1px solid rgba(167,139,250,.25);
+    -webkit-user-select: none; user-select: none;
+  }
+  .pod-card:active { transform: scale(.97); }
+  .pod-icon {
+    width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    background: linear-gradient(135deg, rgba(167,139,250,.25), rgba(45,212,191,.2));
+  }
+  .pod-info { flex: 1; }
+  .pod-name { font-size: 14.5px; font-weight: 700; }
+  .pod-name-en { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .pod-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .pod-arrow { font-size: 16px; color: var(--lavender); }
+  .pod-done-badge { font-size: 16px; }
+
+  .pod-hero {
+    background: linear-gradient(135deg, rgba(167,139,250,.12), rgba(45,212,191,.08));
+    border: 1px solid rgba(167,139,250,.3);
+    border-radius: 22px; padding: 24px 18px; text-align: center; margin-bottom: 18px;
+  }
+  .pod-hero-icon { font-size: 38px; margin-bottom: 8px; }
+  .pod-hero-title { font-size: 17px; font-weight: 900; }
+  .pod-hero-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'Space Grotesk', sans-serif; }
+
+  .pod-player {
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    margin: 18px 0;
+  }
+  .pod-play-btn {
+    width: 84px; height: 84px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--lavender), #7C5BE6);
+    border: none; cursor: pointer; font-size: 32px; color: white;
+    box-shadow: 0 8px 24px rgba(167,139,250,.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .15s;
+  }
+  .pod-play-btn:active { transform: scale(.93); }
+  .pod-play-btn.playing { animation: podPulse 1.1s infinite; background: linear-gradient(135deg, var(--teal), #00B4D8); box-shadow: 0 8px 24px rgba(45,212,191,.4); }
+  @keyframes podPulse { 0%,100%{box-shadow:0 8px 24px rgba(45,212,191,.4)} 50%{box-shadow:0 8px 36px rgba(45,212,191,.7)} }
+  .pod-status { font-size: 13px; color: var(--soft); text-align: center; min-height: 18px; }
+  .pod-replay-row { display: flex; gap: 10px; width: 100%; }
+  .pod-replay-btn {
+    flex: 1; background: rgba(255,255,255,.05); border: 1px solid var(--rim);
+    border-radius: 12px; padding: 11px; font-family: 'Tajawal', sans-serif;
+    font-size: 12.5px; font-weight: 700; color: var(--soft); cursor: pointer;
+  }
+  .pod-replay-btn:disabled { opacity: .4; cursor: default; }
+  .pod-replay-count { font-size: 10.5px; color: var(--muted); margin-top: 4px; }
+
+  .pod-transcript-toggle {
+    text-align: center; margin: 16px 0;
+  }
+  .pod-transcript-toggle button {
+    background: rgba(255,215,0,.1); border: 1px solid rgba(255,215,0,.3);
+    border-radius: 20px; padding: 9px 20px; color: var(--gold);
+    font-family: 'Tajawal', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer;
+  }
+  .pod-transcript {
+    display: none; background: var(--panel); border: 1px solid var(--rim);
+    border-radius: 16px; padding: 16px; margin-bottom: 16px;
+  }
+  .pod-transcript.show { display: block; }
+  .pod-transcript-line { margin-bottom: 12px; }
+  .pod-transcript-line:last-child { margin-bottom: 0; }
+  .pod-transcript-en { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; direction: ltr; text-align: left; color: var(--white); }
+  .pod-transcript-ar { font-size: 12px; color: var(--soft); margin-top: 2px; }
+
+  .pod-quiz-section { margin-top: 18px; }
+  .pod-quiz-card {
+    background: var(--panel); border: 1px solid var(--rim);
+    border-radius: 16px; padding: 16px; margin-bottom: 12px;
+  }
+  .pod-quiz-q { font-size: 14px; margin-bottom: 12px; line-height: 1.6; font-weight: 700; }
+  .pod-quiz-opts { display: flex; flex-direction: column; gap: 8px; }
+  .pod-quiz-opt {
+    background: rgba(255,255,255,.04); border: 1px solid var(--rim);
+    border-radius: 10px; padding: 11px 14px; font-family: 'Tajawal', sans-serif;
+    font-size: 13.5px; color: var(--white); cursor: pointer; text-align: right;
+    transition: all .15s;
+  }
+  .pod-quiz-opt:active:not(:disabled) { transform: scale(.98); }
+  .pod-quiz-opt.correct-ans { border-color: var(--teal); background: rgba(45,212,191,.15); color: var(--teal); }
+  .pod-quiz-opt.wrong-ans { border-color: var(--rose); background: rgba(255,107,138,.15); color: var(--rose); }
+  .pod-quiz-opt:disabled { cursor: default; }
+  .pod-result-banner {
+    text-align: center; padding: 26px 18px;
+    background: linear-gradient(135deg, rgba(167,139,250,.12), rgba(45,212,191,.08));
+    border: 1px solid rgba(167,139,250,.3); border-radius: 18px;
+  }
+
   /* ── ADD FORM ── */
   .add-form {
     background: var(--panel);
@@ -546,7 +646,7 @@
     border: 1px solid var(--rim);
     border-radius: var(--radius);
     padding: 14px 14px;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; flex-direction: column; gap: 10px;
     transition: border-color .2s;
     position: relative; overflow: hidden;
   }
@@ -555,26 +655,32 @@
     width: 3px; background: var(--teal); opacity: 0; transition: opacity .2s;
   }
   .word-card:active::after { opacity: 1; }
+  .word-card-top { display: flex; align-items: flex-start; gap: 12px; }
   .word-num {
     width: 34px; height: 34px;
     background: linear-gradient(135deg, rgba(45,212,191,.2), rgba(245,200,66,.2));
     border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700;
-    color: var(--gold); flex-shrink: 0;
+    color: var(--gold); flex-shrink: 0; margin-top: 1px;
   }
   .word-info { flex: 1; min-width: 0; }
   .word-en {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 17px; font-weight: 600; color: var(--white);
-    direction: ltr; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    direction: ltr; text-align: left; word-break: break-word;
   }
   .word-phonetic { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--muted); direction: ltr; text-align: left; margin-top: 1px; }
   .word-ar { font-size: 14px; color: var(--teal); margin-top: 3px; }
-  .word-example { font-size: 11px; color: var(--muted); margin-top: 2px; direction: ltr; text-align: left; font-style: italic; font-family: 'Space Grotesk', sans-serif; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .word-example-ar { font-size: 11px; color: var(--soft); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .word-example { font-size: 11px; color: var(--muted); margin-top: 2px; direction: ltr; text-align: left; font-style: italic; font-family: 'Space Grotesk', sans-serif; word-break: break-word; }
+  .word-example-ar { font-size: 11px; color: var(--soft); margin-top: 2px; word-break: break-word; }
+  .word-card-bottom {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    padding-top: 8px; border-top: 1px solid rgba(255,255,255,.05);
+  }
+  .word-actions { display: flex; align-items: center; gap: 8px; }
   .word-level {
-    font-size: 9px; padding: 3px 7px;
+    font-size: 10px; padding: 4px 10px;
     border-radius: 20px; font-weight: 700; flex-shrink: 0;
   }
   .lvl-beginner { background: rgba(45,212,191,.15); color: var(--teal); }
@@ -622,10 +728,17 @@
   }
   .mastery-badge {
     display: inline-block; font-size: 9.5px; font-weight: 700;
-    padding: 2px 8px; border-radius: 20px; margin-top: 4px;
+    padding: 2px 8px; border-radius: 20px;
   }
   .mastery-badge.high { background: rgba(45,212,191,.15); color: var(--teal); }
   .mastery-badge.mid  { background: rgba(245,200,66,.15); color: var(--gold); }
+  .badges-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .mine-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px;
+    background: rgba(167,139,250,.18); color: var(--lavender);
+    border: 1px solid rgba(167,139,250,.3);
+  }
 
   /* ── MASTERY DASHBOARD ── */
   .mastery-dash {
@@ -729,9 +842,8 @@
   }
   .home-hero-logo {
     width: 64px; height: 64px; margin: 0 auto 12px;
-    background: linear-gradient(135deg, var(--gold), #FF9F43, var(--rose));
-    border-radius: 18px; display: flex; align-items: center; justify-content: center;
-    font-size: 30px; box-shadow: 0 0 28px rgba(255,215,0,.25);
+    border-radius: 18px; overflow: hidden;
+    box-shadow: 0 0 28px rgba(180,148,255,.3), 0 0 28px rgba(45,212,191,.2);
   }
   .home-hero-greeting { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
   .home-hero-name { font-size: 19px; font-weight: 900; color: var(--gold); }
@@ -782,6 +894,7 @@
   .home-tile.t-voice  { background: linear-gradient(150deg, #1E4A5C, #0F242D); }
   .home-tile.t-grammar{ background: linear-gradient(150deg, #2E4A2E, #16241A); }
   .home-tile.t-flash  { background: linear-gradient(150deg, #4A2E5C, #241629); }
+  .home-tile.t-podcast{ background: linear-gradient(150deg, #2A1B5E, #0C3A35); }
 
   .home-footer-link {
     text-align: center; padding: 14px 0 4px;
@@ -874,6 +987,30 @@
   .quiz-opt-btn.correct-ans { border-color: var(--teal); background: rgba(45,212,191,.15); color: var(--teal); }
   .quiz-opt-btn.wrong-ans   { border-color: var(--rose);  background: rgba(251,113,133,.15); color: var(--rose); }
   .quiz-opt-btn:disabled { cursor: default; }
+
+  /* ── TYPE-THE-TRANSLATION QUIZ ── */
+  .type-answer-wrap { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+  .type-answer-input {
+    width: 100%; background: var(--panel); border: 2px solid var(--rim);
+    border-radius: 14px; padding: 16px; font-family: 'Tajawal', sans-serif;
+    font-size: 18px; color: var(--white); text-align: center; outline: none;
+    transition: border-color .2s;
+  }
+  .type-answer-input:focus { border-color: var(--lavender); }
+  .type-answer-input:disabled { opacity: .7; }
+  .btn-check-typed {
+    width: 100%; background: linear-gradient(135deg, var(--lavender), #7C5BE6);
+    color: white; border: none; border-radius: 12px; padding: 14px;
+    font-family: 'Tajawal', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: opacity .2s;
+  }
+  .btn-check-typed:active { transform: scale(.98); }
+  .btn-check-typed:disabled { opacity: .5; cursor: default; }
+  .type-answer-feedback {
+    border-radius: 12px; padding: 12px 16px; font-size: 14px; font-weight: 700; text-align: center;
+  }
+  .type-answer-feedback.ok { background: rgba(45,212,191,.12); color: var(--teal); border: 1px solid rgba(45,212,191,.3); }
+  .type-answer-feedback.no { background: rgba(251,113,133,.12); color: var(--rose); border: 1px solid rgba(251,113,133,.3); }
 
   .btn-next {
     width: 100%; background: linear-gradient(135deg, var(--teal), #0E9F8A);
@@ -1342,12 +1479,10 @@
   <div style="text-align:center;animation:splashIn .8s ease both">
     <div style="
       width:72px;height:72px;
-      background:linear-gradient(135deg,#FFD700,#FF9F43,#FF6B8A);
       border-radius:20px;margin:0 auto 16px;
-      display:flex;align-items:center;justify-content:center;
-      font-size:34px;
-      box-shadow:0 0 30px rgba(255,215,0,.4);
-    ">⚡</div>
+      overflow:hidden;
+      box-shadow:0 0 30px rgba(180,148,255,.3), 0 0 30px rgba(45,212,191,.2);
+    "><svg width="72" height="72" viewBox="0 0 140 140"><defs><linearGradient id="splashBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient><radialGradient id="splashGlowA" cx="22%" cy="18%" r="55%"><stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/><stop offset="100%" stop-color="#B794FF" stop-opacity="0"/></radialGradient><radialGradient id="splashGlowB" cx="88%" cy="85%" r="60%"><stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/><stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/></radialGradient><linearGradient id="splashWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient><linearGradient id="splashSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient><filter id="splashGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="splashShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.45"/></filter></defs><rect x="0" y="0" width="140" height="140" fill="url(#splashBg)"/><rect x="0" y="0" width="140" height="140" fill="url(#splashGlowA)"/><rect x="0" y="0" width="140" height="140" fill="url(#splashGlowB)"/><g filter="url(#splashShadow)"><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#splashWS)" text-anchor="middle" letter-spacing="-3">WS</text></g><g filter="url(#splashGlow)"><path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#splashSpark)"/></g></svg></div>
     <div style="font-size:26px;font-weight:900;background:linear-gradient(90deg,#FFD700,#00F5D4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;font-family:'Space Grotesk',sans-serif;letter-spacing:1px;">WordSpark</div>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:#5A7090;margin-bottom:30px">English Learning App</div>
     <div style="width:140px;height:3px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin:0 auto 26px">
@@ -1636,7 +1771,7 @@
 
 <header>
   <div class="logo">
-    <div class="logo-icon">⚡</div>
+    <div class="logo-icon"><svg width="36" height="36" viewBox="0 0 140 140"><defs><linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient><radialGradient id="hdrGlowA" cx="22%" cy="18%" r="55%"><stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/><stop offset="100%" stop-color="#B794FF" stop-opacity="0"/></radialGradient><radialGradient id="hdrGlowB" cx="88%" cy="85%" r="60%"><stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/><stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/></radialGradient><linearGradient id="hdrWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient><linearGradient id="hdrSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient></defs><rect x="0" y="0" width="140" height="140" fill="url(#hdrBg)"/><rect x="0" y="0" width="140" height="140" fill="url(#hdrGlowA)"/><rect x="0" y="0" width="140" height="140" fill="url(#hdrGlowB)"/><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#hdrWS)" text-anchor="middle" letter-spacing="-3">WS</text><path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#hdrSpark)"/></svg></div>
     <div>
       <div class="logo-text">WordSpark</div>
       <div class="logo-sub"></div>
@@ -1660,13 +1795,14 @@
   <button class="tab-btn" onclick="showTab('voice',this)">🎙️ المتحدّث</button>
   <button class="tab-btn" onclick="showTab('grammar',this)">📐 القواعد</button>
   <button class="tab-btn" onclick="showTab('flash',this)">🃏 بطاقات</button>
+  <button class="tab-btn" onclick="showTab('podcast',this)">🎧 بودكاست</button>
 </nav>
 
 <main>
   <!-- ══ HOME (Bento Grid) ══ -->
   <div id="tab-home" class="section active">
     <div class="home-hero">
-      <div class="home-hero-logo">⚡</div>
+      <div class="home-hero-logo"><svg width="64" height="64" viewBox="0 0 140 140"><defs><linearGradient id="homeBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient><radialGradient id="homeGlowA" cx="22%" cy="18%" r="55%"><stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/><stop offset="100%" stop-color="#B794FF" stop-opacity="0"/></radialGradient><radialGradient id="homeGlowB" cx="88%" cy="85%" r="60%"><stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/><stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/></radialGradient><linearGradient id="homeWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient><linearGradient id="homeSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient><filter id="homeGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="homeShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.45"/></filter></defs><rect x="0" y="0" width="140" height="140" fill="url(#homeBg)"/><rect x="0" y="0" width="140" height="140" fill="url(#homeGlowA)"/><rect x="0" y="0" width="140" height="140" fill="url(#homeGlowB)"/><g filter="url(#homeShadow)"><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#homeWS)" text-anchor="middle" letter-spacing="-3">WS</text></g><g filter="url(#homeGlow)"><path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#homeSpark)"/></g></svg></div>
       <div class="home-hero-greeting" id="homeGreeting">أهلاً بك في</div>
       <div class="home-hero-name">WordSpark</div>
       <div class="home-stats-row">
@@ -1679,7 +1815,7 @@
       <button class="home-settings-btn" onclick="openTeacherPhoneModal()">
         <span class="home-settings-icon">👨‍🏫</span>
         <span class="home-settings-text">
-          <span class="home-settings-title">بيانات المعلم/المعلمة</span>
+          <span class="home-settings-title">تغيير بيانات المعلم/المعلمة</span>
           <span class="home-settings-sub" id="homeTeacherSub">إرسال النتائج عبر واتساب</span>
         </span>
         <span class="home-settings-arrow">←</span>
@@ -1718,10 +1854,15 @@
         <div class="home-tile-label">القواعد</div>
         <div class="home-tile-sub">GRAMMAR</div>
       </div>
-      <div class="home-tile t-flash" onclick="showTab('flash', null)" style="grid-column: span 2;">
+      <div class="home-tile t-flash" onclick="showTab('flash', null)">
         <div class="home-tile-icon">🃏</div>
-        <div class="home-tile-label">البطاقات التعليمية</div>
+        <div class="home-tile-label">البطاقات</div>
         <div class="home-tile-sub">FLASHCARDS</div>
+      </div>
+      <div class="home-tile t-podcast" onclick="showTab('podcast', null)" style="grid-column: span 2;">
+        <div class="home-tile-icon">🎧</div>
+        <div class="home-tile-label">البودكاست — تدريب الاستماع</div>
+        <div class="home-tile-sub">LISTENING PODCAST</div>
       </div>
     </div>
 
@@ -1801,7 +1942,8 @@
       <div class="words-grid">
         <div class="word-input-group">
           <div class="input-label">الكلمة بالإنجليزية</div>
-          <input class="inp en" id="inp-en" placeholder="e.g. Ambitious" autocomplete="off" autocorrect="off" spellcheck="false">
+          <input class="inp en" id="inp-en" placeholder="e.g. Ambitious" autocomplete="off" autocorrect="off" spellcheck="false" oninput="checkDuplicateWordLive()">
+          <div id="dupWarning" style="display:none;font-size:11px;color:#FB7185;margin-top:4px">⚠️ هذه الكلمة موجودة لديك مسبقاً</div>
         </div>
         <div class="word-input-group">
           <div class="input-label">المعنى بالعربية</div>
@@ -1844,6 +1986,7 @@
         <button class="filter-chip" data-filter="advanced" onclick="setWordFilter('advanced',this)">🔵 متقدم</button>
         <button class="filter-chip" data-filter="mastered" onclick="setWordFilter('mastered',this)">🏆 متقَنة</button>
         <button class="filter-chip" data-filter="learning" onclick="setWordFilter('learning',this)">📖 قيد التعلّم</button>
+        <button class="filter-chip" data-filter="mine" onclick="setWordFilter('mine',this)">✍️ كلماتي</button>
       </div>
       <div class="search-result-count" id="searchResultCount"></div>
     </div>
@@ -2061,6 +2204,29 @@
     <div class="sec-sub">اضغط البطاقة لتقلّبها</div>
     <div id="flashArea"></div>
   </div>
+
+  <!-- ══ PODCAST (Listening Training) ══ -->
+  <div id="tab-podcast" class="section">
+    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
+    <div class="sec-title">🎧 البودكاست</div>
+    <div class="sec-sub">تدريب الاستماع — استمع وافهم</div>
+    <div class="guide-hint" onclick="openHelp('practice')">
+      <span class="gh-icon">📖</span>
+      <span class="gh-text">لا تعرف كيف يعمل البودكاست؟ <b>اضغط هنا</b> لشرح كامل بالعربية</span>
+      <span class="gh-arrow">←</span>
+    </div>
+
+    <div id="podcastSupportWarning" style="display:none" class="vb-warning">
+      ⚠️ متصفحك لا يدعم تشغيل الصوت اللازم للبودكاست. جرّب فتح الملف في <b>Chrome</b> أو <b>Safari</b>.
+    </div>
+
+    <div id="podcastMenu"></div>
+
+    <div id="podcastDetail" style="display:none">
+      <button class="back-btn" onclick="podBackToMenu()">← العودة لقائمة الحلقات</button>
+      <div id="podcastDetailArea"></div>
+    </div>
+  </div>
   <!-- ══ FOOTER SIGNATURE ══ -->
   <div class="sig-footer">
     <div class="sig-label">💡 Developed by</div>
@@ -2181,10 +2347,11 @@
             <li>🎙️ <b>المتحدّث</b> — رفيق محادثة صوتي بالذكاء الاصطناعي</li>
             <li>📐 <b>قواعد</b> — دروس قواعد من الصفر</li>
             <li>🃏 <b>البطاقات التعليمية</b> — مراجعة سريعة بالتقليب</li>
+            <li>🎧 <b>البودكاست</b> — ١٠ حلقات استماع قصيرة لتدريب الفهم السمعي</li>
           </ul>
           <b>🧭 شريط التنقّل السفلي</b> يحتوي على أهم ٤ أقسام للوصول السريع: <b>الرئيسية، الكلمات، اختبار، المتحدّث</b>.
           <br><br>
-          بقية الأقسام (الألعاب، المحادثات، القواعد، البطاقات) تُفتح من الشاشة الرئيسية، وبداخل كل قسم منها يوجد زر <b>"🏠 الرئيسية"</b> أعلى الصفحة للعودة بضغطة واحدة.
+          بقية الأقسام (الألعاب، المحادثات، القواعد، البطاقات، البودكاست) تُفتح من الشاشة الرئيسية، وبداخل كل قسم منها يوجد زر <b>"🏠 الرئيسية"</b> أعلى الصفحة للعودة بضغطة واحدة.
         </div>
       </div>
     </div>
@@ -2303,6 +2470,30 @@
           💡 مفيد جداً بعد إضافة عدة حِزَم كلمات (٣٠٠+ كلمة) لإيجاد كلمة معينة بسرعة بدلاً من التمرير الطويل.
         </div>
       </div>
+      <div class="guide-card open" style="border-color:rgba(167,139,250,.3)">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🎧</span>
+          <span class="guide-card-title">البودكاست — تدريب الاستماع</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          قسم جديد كلياً مخصص لتدريب **مهارة الاستماع** الحقيقية — وليس فقط نطق كلمة مفردة.
+          <br><br>
+          <b>١٠ حلقات قصيرة</b> (مواضيع متنوعة: أول يوم عمل، الطقس، فيلم، رياضة، فقدان الهاتف، الطبخ، خطط نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان).
+          <br><br>
+          <b>كيف تعمل كل حلقة:</b>
+          <ul>
+            <li>🎙️ اضغط ▶️ لتشغيل الحوار كاملاً بصوتين مختلفين (A وB)، <b>بدون رؤية النص إطلاقاً</b> في البداية</li>
+            <li>🔁 يمكنك إعادة الاستماع من البداية حتى مرتين فقط (لمحاكاة اختبارات الاستماع الحقيقية)</li>
+            <li>📜 بعد المحاولة، اضغط "إظهار النص" لمراجعة ما سمعته</li>
+            <li>🧠 أجب عن ٣ أسئلة فهم استماع لكل حلقة</li>
+            <li>🏆 اضغط "أنهيت هذه الحلقة" لتمييزها كمكتملة</li>
+          </ul>
+          <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--lavender)">
+            💡 <b>هذا القسم مختلف تماماً</b> عن "محادثات حياتية" — هناك تقرأ وتسمع معاً، وهنا تستمع فقط أولاً لتتدرّب على الفهم السمعي الحقيقي، تماماً كما في الاختبارات الدولية.
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- 🎯 التدريب (Quiz + Games) -->
@@ -2314,7 +2505,9 @@
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          اضغط "ابدأ الاختبار العشوائي" — يعرض ١٠ أسئلة عشوائية بنوعين: <b>إنجليزي ← عربي</b> و<b>عربي ← إنجليزي</b>. كل إجابة صحيحة = ١٠ نقاط. في النهاية تظهر نسبة دقتك مع تقييم تشجيعي.
+          اضغط "ابدأ الاختبار العشوائي" — يعرض ١٠ أسئلة عشوائية بثلاثة أنواع: <b>إنجليزي ← عربي</b>، <b>عربي ← إنجليزي</b> (اختيار من متعدد)، و<b>✍️ اكتب الترجمة</b> (تكتب المعنى العربي بنفسك من الذاكرة).
+          <br><br>
+          💡 نوع "اكتب الترجمة" يظهر فقط بعد امتلاك ٦ كلمات على الأقل، ويتقبّل اختلافات بسيطة في الكتابة (مثل التشكيل أو الألف بأشكاله المختلفة) حتى لا يُحرَم الطالب من إجابة صحيحة بسبب خطأ إملائي بسيط. كل إجابة صحيحة = ١٠ نقاط. في النهاية تظهر نسبة دقتك مع تقييم تشجيعي.
         </div>
       </div>
       <div class="guide-card">
@@ -2374,7 +2567,7 @@
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          ٥ دروس قواعد أساسية من الصفر (المضارع، الماضي، المستقبل، الضمائر...) مع شرح بالعربية، صيغة القاعدة، أمثلة، وتمرين تفاعلي لكل درس.
+          ١٥ درساً قواعدياً متكاملاً من الصفر — يغطي الأزمنة (المضارع، الماضي، المستقبل، التام)، المقارنة والتفضيل، الأفعال الناقصة، أدوات التعريف، الجموع، حروف الجر، تكوين الأسئلة، أدوات الربط، صفات الملكية، وصيغة الأمر — مع شرح بالعربية، صيغة القاعدة، أمثلة، وتمرين تفاعلي لكل درس.
           <br><br>
           🎨 اضغط <b>"Show Structure"</b> أسفل أي مثال لرؤية تحليل الجملة بالألوان: <b>أخضر = الفاعل</b>، <b>ذهبي = الفعل</b>، <b>بنفسجي = المفعول به</b>، <b>أحمر = ظرف</b>.
         </div>
@@ -3195,18 +3388,38 @@ function setLevel(btn) {
   selectedLevel = btn.dataset.lvl;
 }
 
+function checkDuplicateWordLive() {
+  const en = document.getElementById('inp-en').value.trim().toLowerCase();
+  const warningEl = document.getElementById('dupWarning');
+  if (!warningEl) return;
+  if (!en) { warningEl.style.display = 'none'; return; }
+  const exists = words.some(w => w.en.toLowerCase().trim() === en);
+  warningEl.style.display = exists ? '' : 'none';
+}
+
 function addWord() {
   const en   = document.getElementById('inp-en').value.trim();
   const ar   = document.getElementById('inp-ar').value.trim();
   const ex   = document.getElementById('inp-ex').value.trim();
   const exar = document.getElementById('inp-exar').value.trim();
   if (!en || !ar) { showToast('⚠️ أدخل الكلمة والمعنى', '#FB7185'); return; }
+
+  // Prevent duplicates: check if this English word already exists (case-insensitive)
+  const normalizedEn = en.toLowerCase().trim();
+  const existing = words.find(w => w.en.toLowerCase().trim() === normalizedEn);
+  if (existing) {
+    showToast(`⚠️ كلمة "${en}" موجودة لديك مسبقاً!`, '#FB7185');
+    // Highlight the existing word briefly by flashing it into view
+    document.getElementById('inp-en').focus();
+    return;
+  }
+
   const goal = getDailyGoal();
   if (words.filter(w => w.date === today).length >= goal) {
     showToast(`✅ أضفت ${ARABIC_NUMS[goal]} كلمات اليوم — ممتاز!`, '#F5C842');
     return;
   }
-  words.unshift({ en, ar, ex, exar, level: selectedLevel, date: today, id: Date.now() });
+  words.unshift({ en, ar, ex, exar, level: selectedLevel, date: today, id: Date.now(), source: 'mine' });
   save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
   ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('inp-en').focus();
@@ -3388,20 +3601,29 @@ function renderWordCard(w, i) {
     : score >= 35
       ? `<span class="mastery-badge mid">🟡 قيد التعلّم</span>`
       : '';
+  const mineBadge = w.source === 'mine'
+    ? `<span class="mine-badge">✍️ كلمتي</span>`
+    : '';
   return `
     <div class="word-card" style="border:1.5px solid ${c.border};background:linear-gradient(135deg,${c.bg},var(--panel));box-shadow:0 0 12px ${c.border}22;">
-      <div class="word-num" style="background:${c.num};color:${c.txt}">${i + 1}</div>
-      <div class="word-info">
-        <div class="word-en" style="color:${c.txt}">${w.en}</div>
-        <div class="word-ar">${w.ar}</div>
-        ${w.ex   ? `<div class="word-example">"${w.ex}"</div>` : ''}
-        ${w.exar ? `<div class="word-example-ar">"${w.exar}"</div>` : ''}
-        ${masteryBadge}
+      <div class="word-card-top">
+        <div class="word-num" style="background:${c.num};color:${c.txt}">${i + 1}</div>
+        <div class="word-info">
+          <div class="word-en" style="color:${c.txt}">${w.en}</div>
+          <div class="word-ar">${w.ar}</div>
+          ${w.ex   ? `<div class="word-example">"${w.ex}"</div>` : ''}
+          ${w.exar ? `<div class="word-example-ar">"${w.exar}"</div>` : ''}
+          <div class="badges-row">${mineBadge}${masteryBadge}</div>
+        </div>
       </div>
-      <div class="word-level lvl-${w.level}">${lvlLabel(w.level)}</div>
-      <button class="known-btn ${known ? 'active' : ''}" onclick="toggleManualKnown(${w.id})" title="${known ? 'إلغاء وضع معروفة' : 'أعرف هذه الكلمة'}">${known ? '✓' : '☆'}</button>
-      <button class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
-      <button class="word-delete" onclick="deleteWord(${w.id},event)">✕</button>
+      <div class="word-card-bottom">
+        <div class="word-level lvl-${w.level}">${lvlLabel(w.level)}</div>
+        <div class="word-actions">
+          <button class="known-btn ${known ? 'active' : ''}" onclick="toggleManualKnown(${w.id})" title="${known ? 'إلغاء وضع معروفة' : 'أعرف هذه الكلمة'}">${known ? '✓' : '☆'}</button>
+          <button class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
+          <button class="word-delete" onclick="deleteWord(${w.id},event)">✕</button>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -3472,6 +3694,7 @@ function filterWordsList() {
       const s = getMasteryScore(w.id);
       return s >= 1 && s < 70;
     }
+    if (currentWordFilter === 'mine') return w.source === 'mine';
     return true;
   });
 
@@ -3538,10 +3761,25 @@ function renderQuizQ() {
   document.getElementById('quizProgressFill').style.width = pct + '%';
   document.getElementById('quizProgressText').textContent = `${quizIdx} / ${quizList.length}`;
 
-  const qType = Math.random() > .5 ? 'en2ar' : 'ar2en';
+  // Three question types: en2ar (multiple choice), ar2en (multiple choice),
+  // type2ar (free typing — only used once student has at least 6 words, so
+  // there's enough vocabulary variety for it to feel meaningful)
+  const rand = Math.random();
+  let qType;
+  if (words.length >= 6 && rand < 0.25) qType = 'type2ar';
+  else if (rand < 0.625) qType = 'en2ar';
+  else qType = 'ar2en';
+
   let cardHTML, optsHTML;
 
-  if (qType === 'en2ar') {
+  if (qType === 'type2ar') {
+    cardHTML = `<div class="quiz-type-label">✍️ اكتب الترجمة بالعربية</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
+    optsHTML = `
+      <div class="type-answer-wrap">
+        <input type="text" id="typeAnswerInp" class="type-answer-input" placeholder="اكتب المعنى بالعربية..." autocomplete="off" onkeydown="if(event.key==='Enter')checkTypedAnswer('${esc(w.ar)}')">
+        <button class="btn-check-typed" onclick="checkTypedAnswer('${esc(w.ar)}')">✅ تحقّق</button>
+      </div>`;
+  } else if (qType === 'en2ar') {
     const wrong = shuffle(words.filter(x => x.ar !== w.ar)).slice(0, Math.min(3, words.length-1)).map(x => x.ar);
     const opts  = shuffle([w.ar, ...wrong]);
     cardHTML = `<div class="quiz-type-label">English → Arabic</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
@@ -3555,32 +3793,87 @@ function renderQuizQ() {
 
   document.getElementById('quizArea').innerHTML = `
     <div class="quiz-card-main asking" id="qCard">${cardHTML}</div>
-    <div class="quiz-opts">${optsHTML}</div>
+    <div class="${qType === 'type2ar' ? '' : 'quiz-opts'}">${optsHTML}</div>
     <button class="btn-next" id="btnNext" onclick="nextQ()">التالي ←</button>
   `;
+
+  if (qType === 'type2ar') {
+    setTimeout(() => { const inp = document.getElementById('typeAnswerInp'); if (inp) inp.focus(); }, 100);
+  }
+}
+
+// Normalize Arabic text for forgiving comparison: strips diacritics (tashkeel),
+// normalizes alef variants, removes extra whitespace and tatweel. This lets a
+// student type "طموح" and match "طُموح" or "طموح " without being unfairly marked wrong.
+function normalizeArabic(text) {
+  return text
+    .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '') // diacritics
+    .replace(/[إأآا]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/ـ/g, '') // tatweel
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function checkTypedAnswer(correctAr) {
+  const inp = document.getElementById('typeAnswerInp');
+  if (!inp) return;
+  const typed = inp.value.trim();
+  if (!typed) { showToast('⚠️ اكتب إجابتك أولاً', '#FB7185'); return; }
+
+  inp.disabled = true;
+  document.querySelector('.btn-check-typed').disabled = true;
+
+  // Accept if it matches any of the (possibly multiple, slash-separated) correct meanings
+  const correctOptions = correctAr.split('/').map(s => normalizeArabic(s));
+  const typedNormalized = normalizeArabic(typed);
+  const isRight = correctOptions.some(opt => opt === typedNormalized);
+
+  afterAnswer(null, isRight, correctAr, typed);
 }
 
 function esc(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-function afterAnswer(btn, isRight, correctText) {
+function afterAnswer(btn, isRight, correctText, typedText) {
   document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
   const card = document.getElementById('qCard');
   card.classList.remove('asking');
   const currentWord = quizList[quizIdx];
   if (currentWord) recordAnswer(currentWord.id, isRight);
+
+  if (btn) {
+    // Multiple-choice path
+    if (isRight) {
+      btn.classList.add('correct-ans');
+    } else {
+      btn.classList.add('wrong-ans');
+      document.querySelectorAll('.quiz-opt-btn').forEach(b => {
+        if (b.textContent.trim() === correctText) b.classList.add('correct-ans');
+      });
+    }
+  } else {
+    // Typed-answer path — show feedback inline under the input
+    const wrap = document.querySelector('.type-answer-wrap');
+    if (wrap) {
+      const fb = document.createElement('div');
+      fb.className = 'type-answer-feedback ' + (isRight ? 'ok' : 'no');
+      fb.textContent = isRight
+        ? '✅ إجابة صحيحة!'
+        : `❌ إجابتك: "${typedText}" — الصواب: "${correctText}"`;
+      wrap.appendChild(fb);
+    }
+  }
+
   if (isRight) {
-    btn.classList.add('correct-ans');
     card.classList.add('right');
     quizScore += 10;
     document.getElementById('quizScoreDisplay').textContent = quizScore;
     showToast('✅ صحيح! +10 نقاط');
   } else {
-    btn.classList.add('wrong-ans');
     card.classList.add('wrong');
-    document.querySelectorAll('.quiz-opt-btn').forEach(b => {
-      if (b.textContent.trim() === correctText) b.classList.add('correct-ans');
-    });
-    showToast('❌ الصواب: ' + correctText, '#FB7185');
+    if (btn) showToast('❌ الصواب: ' + correctText, '#FB7185');
   }
   document.getElementById('btnNext').classList.add('show');
   quizIdx++;
@@ -3652,6 +3945,96 @@ const grammarLessons = [
     formulaNote:'مفعول: me / you / him / her / it / us / them',
     examples:[{en:"She is my friend. I love her.",ar:"هي صديقتي. أنا أحبها.",struct:"{S:She} {V:is} {O:my friend}. {S:I} {V:love} {O:her}."},{en:"They are students. We know them.",ar:"هم طلاب. نحن نعرفهم.",struct:"{S:They} {V:are} {O:students}. {S:We} {V:know} {O:them}."},{en:"He called me this morning.",ar:"اتصل بي هذا الصباح.",struct:"{S:He} {V:called} {O:me} {ADV:this morning}."}],
     quiz:{q:'"Ahmad is kind. ___ helps everyone."',opts:['She','He','They','It'],ans:'He',fb:'صحيح! Ahmad مذكر → He ✅',fbW:'Ahmad اسم مذكر → نستخدم He'}
+  },
+  {
+    icon:'✅',color:"#FFD700",bg:'rgba(255,215,0,.12)',
+    title:'زمن المضارع التام',titleEn:'Present Perfect',level:"الدرس السادس · Lesson 6",
+    explanation:'نستخدم المضارع التام لحدث بدأ في الماضي وله أثر أو صلة بالحاضر، أو لتجربة حياتية بدون تحديد الوقت بالضبط.',
+    formula:'Subject + have/has + Past Participle',
+    formulaNote:'I/You/We/They → have | He/She/It → has | eat→eaten, see→seen, go→gone',
+    examples:[{en:"I have visited Paris twice.",ar:"زرت باريس مرتين.",struct:"{S:I} {V:have visited} {O:Paris} {ADV:twice}."},{en:"She has finished her homework.",ar:"أنهت واجبها.",struct:"{S:She} {V:has finished} {O:her homework}."},{en:"They have never tried sushi.",ar:"لم يجربوا السوشي أبداً.",struct:"{S:They} {V:have never tried} {O:sushi}."}],
+    quiz:{q:'"She ___ (finish) her work already."',opts:['finish','finished','has finished','finishing'],ans:'has finished',fb:'ممتاز! She + has + finished ✅',fbW:'مع She نستخدم has + التصريف الثالث للفعل'}
+  },
+  {
+    icon:'⚖️',color:"#FB7185",bg:'rgba(251,113,133,.12)',
+    title:'المقارنة والتفضيل',titleEn:'Comparatives & Superlatives',level:"الدرس السابع · Lesson 7",
+    explanation:'نستخدم صيغة المقارنة (comparative) لمقارنة شيئين، وصيغة التفضيل (superlative) للتعبير عن الأفضل/الأكبر ضمن مجموعة.',
+    formula:'Short: adjective+er / the+adjective+est — Long: more+adj / the most+adj',
+    formulaNote:'tall→taller→the tallest | beautiful→more beautiful→the most beautiful',
+    examples:[{en:"This car is faster than that one.",ar:"هذه السيارة أسرع من تلك.",struct:"{S:This car} {V:is} {O:faster} {ADV:than that one}."},{en:"She is the smartest student in class.",ar:"هي الطالبة الأذكى في الصف.",struct:"{S:She} {V:is} {O:the smartest student} {ADV:in class}."},{en:"This book is more interesting than the movie.",ar:"هذا الكتاب أكثر إثارة من الفيلم.",struct:"{S:This book} {V:is} {O:more interesting} {ADV:than the movie}."}],
+    quiz:{q:'"Today is ___ (hot) than yesterday."',opts:['hot','hoter','hotter','more hot'],ans:'hotter',fb:'صحيح! hot كلمة قصيرة → نضاعف الحرف ونضيف er ✅',fbW:'الكلمات القصيرة مثل hot تأخذ er مع مضاعفة الحرف الأخير → hotter'}
+  },
+  {
+    icon:'🎯',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
+    title:'الأفعال الناقصة',titleEn:'Modal Verbs',level:"الدرس الثامن · Lesson 8",
+    explanation:'الأفعال الناقصة (can, must, should, may) تضيف معنى مثل القدرة، الإلزام، أو النصيحة، ولا تتغيّر مع الفاعل ولا تحتاج to بعدها.',
+    formula:'Subject + Modal + Verb (base form)',
+    formulaNote:'can=قدرة | must=إلزام | should=نصيحة | may=احتمال',
+    examples:[{en:"I can swim very well.",ar:"أستطيع السباحة جيداً جداً.",struct:"{S:I} {V:can swim} {ADV:very well}."},{en:"You must wear a seatbelt.",ar:"يجب أن ترتدي حزام الأمان.",struct:"{S:You} {V:must wear} {O:a seatbelt}."},{en:"She should see a doctor.",ar:"يجب أن تذهب لطبيب (نصيحة).",struct:"{S:She} {V:should see} {O:a doctor}."}],
+    quiz:{q:'"You ___ smoke here — it is forbidden."',opts:['can','must not','should','may'],ans:'must not',fb:'صحيح! must not تعني ممنوع تماماً ✅',fbW:'للتعبير عن المنع القوي نستخدم must not'}
+  },
+  {
+    icon:'📦',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
+    title:'أدوات التعريف والتنكير',titleEn:'Articles: a / an / the',level:"الدرس التاسع · Lesson 9",
+    explanation:'نستخدم a/an للتعبير عن شيء غير محدد (مرة أولى)، و the للشيء المحدد والمعروف لدى المتحدث والسامع.',
+    formula:'a + consonant sound | an + vowel sound | the + specific noun',
+    formulaNote:'a book, an apple (vowel sound) | the sun (شيء واحد معروف)',
+    examples:[{en:"I saw a cat in the garden.",ar:"رأيت قطة في الحديقة.",struct:"{S:I} {V:saw} {O:a cat} {ADV:in the garden}."},{en:"She bought an umbrella yesterday.",ar:"اشترت مظلة أمس.",struct:"{S:She} {V:bought} {O:an umbrella} {ADV:yesterday}."},{en:"The sun rises in the east.",ar:"تشرق الشمس من الشرق.",struct:"{S:The sun} {V:rises} {ADV:in the east}."}],
+    quiz:{q:'"She is ___ honest person."',opts:['a','an','the','—'],ans:'an',fb:'صحيح! honest يبدأ بصوت متحرك (الـ h صامتة) → an ✅',fbW:'كلمة honest يبدأ نطقها بصوت متحرك رغم أنها تبدأ بحرف h'}
+  },
+  {
+    icon:'🔢',color:"#F5C842",bg:'rgba(245,200,66,.12)',
+    title:'جمع الأسماء',titleEn:'Plural Nouns',level:"الدرس العاشر · Lesson 10",
+    explanation:'معظم الأسماء تُجمع بإضافة s، لكن هناك قواعد خاصة لبعض الكلمات، وأسماء أخرى شاذة تماماً ولها جمع مختلف.',
+    formula:'Regular: noun + s/es — Irregular: special forms',
+    formulaNote:'book→books, box→boxes | child→children, man→men, foot→feet',
+    examples:[{en:"I have three books on my desk.",ar:"لدي ثلاثة كتب على مكتبي.",struct:"{S:I} {V:have} {O:three books} {ADV:on my desk}."},{en:"The children are playing outside.",ar:"الأطفال يلعبون بالخارج.",struct:"{S:The children} {V:are playing} {ADV:outside}."},{en:"She has two boxes of chocolates.",ar:"لديها صندوقان من الشوكولاتة.",struct:"{S:She} {V:has} {O:two boxes of chocolates}."}],
+    quiz:{q:'"I saw three ___ in the park." (child)',opts:['childs','childes','children','child'],ans:'children',fb:'صحيح! child جمعها شاذ → children ✅',fbW:'كلمة child من الجموع الشاذة، جمعها children وليس childs'}
+  },
+  {
+    icon:'📍',color:"#34D399",bg:'rgba(52,211,153,.12)',
+    title:'حروف الجر المكانية',titleEn:'Prepositions of Place',level:"الدرس الحادي عشر · Lesson 11",
+    explanation:'حروف الجر مثل in, on, at تحدد مكان الشيء. كل واحد له استخدام مختلف حسب نوع المكان.',
+    formula:'in (داخل/مدينة) | on (على سطح) | at (نقطة محددة)',
+    formulaNote:'in a room, in Riyadh | on the table | at the door, at school',
+    examples:[{en:"The keys are on the table.",ar:"المفاتيح على الطاولة.",struct:"{S:The keys} {V:are} {ADV:on the table}."},{en:"She lives in Jeddah.",ar:"تعيش في جدة.",struct:"{S:She} {V:lives} {ADV:in Jeddah}."},{en:"We will meet at the airport.",ar:"سنلتقي في المطار.",struct:"{S:We} {V:will meet} {ADV:at the airport}."}],
+    quiz:{q:'"I left my phone ___ the car."',opts:['in','on','at','to'],ans:'in',fb:'صحيح! نستخدم in للأماكن المغلقة مثل السيارة ✅',fbW:'السيارة مكان مغلق من الداخل → نستخدم in'}
+  },
+  {
+    icon:'❓',color:"#FB7185",bg:'rgba(251,113,133,.12)',
+    title:'تكوين الأسئلة',titleEn:'Question Formation',level:"الدرس الثاني عشر · Lesson 12",
+    explanation:'نُكوّن الأسئلة بقلب ترتيب الفاعل والفعل المساعد، أو باستخدام أدوات استفهام مثل what, where, when, why, how.',
+    formula:'(Question Word) + Auxiliary + Subject + Verb?',
+    formulaNote:'Do/Does/Did + subject + verb | What/Where/When/Why/How + auxiliary',
+    examples:[{en:"Do you like coffee?",ar:"هل تحب القهوة؟",struct:"{V:Do} {S:you} {V:like} {O:coffee}?"},{en:"Where does she work?",ar:"أين تعمل؟",struct:"{ADV:Where} {V:does} {S:she} {V:work}?"},{en:"Why are you late?",ar:"لماذا أنت متأخر؟",struct:"{ADV:Why} {V:are} {S:you} {O:late}?"}],
+    quiz:{q:'"___ do you usually wake up?"',opts:['What','When','Who','Which'],ans:'When',fb:'صحيح! When تُستخدم للسؤال عن الوقت ✅',fbW:'للسؤال عن الوقت نستخدم When'}
+  },
+  {
+    icon:'🔀',color:"#FFD700",bg:'rgba(255,215,0,.12)',
+    title:'أدوات الربط',titleEn:'Conjunctions',level:"الدرس الثالث عشر · Lesson 13",
+    explanation:'أدوات الربط مثل and, but, or, because تربط بين جملتين أو فكرتين، وتوضّح العلاقة بينهما (إضافة، تضاد، سبب).',
+    formula:'Sentence 1 + and/but/or/because + Sentence 2',
+    formulaNote:'and=إضافة | but=تضاد | or=اختيار | because=سبب',
+    examples:[{en:"I like tea, but I love coffee.",ar:"أحب الشاي، لكنني أعشق القهوة.",struct:"{S:I} {V:like} {O:tea}, {V:but} {S:I} {V:love} {O:coffee}."},{en:"She studied hard because she wanted to succeed.",ar:"درست بجد لأنها أرادت النجاح.",struct:"{S:She} {V:studied} {ADV:hard} {V:because} {S:she} {V:wanted} {O:to succeed}."},{en:"You can have tea or coffee.",ar:"يمكنك أن تأخذ شاياً أو قهوة.",struct:"{S:You} {V:can have} {O:tea or coffee}."}],
+    quiz:{q:'"I stayed home ___ it was raining."',opts:['but','or','because','and'],ans:'because',fb:'صحيح! because تربط السبب بالنتيجة ✅',fbW:'نستخدم because عندما نشرح سبب حدوث الفعل'}
+  },
+  {
+    icon:'👑',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
+    title:'صفات الملكية',titleEn:'Possessive Adjectives',level:"الدرس الرابع عشر · Lesson 14",
+    explanation:'صفات الملكية (my, your, his, her) تأتي قبل الاسم مباشرة للدلالة على ملكيته لشخص معيّن.',
+    formula:'Possessive Adjective + Noun',
+    formulaNote:'I→my | you→your | he→his | she→her | we→our | they→their',
+    examples:[{en:"This is my favorite book.",ar:"هذا كتابي المفضّل.",struct:"{S:This} {V:is} {O:my favorite book}."},{en:"He forgot his keys at home.",ar:"نسي مفاتيحه في المنزل.",struct:"{S:He} {V:forgot} {O:his keys} {ADV:at home}."},{en:"Their house is very big.",ar:"منزلهم كبير جداً.",struct:"{S:Their house} {V:is} {O:very big}."}],
+    quiz:{q:'"Sarah lost ___ phone yesterday."',opts:['she','her','hers','herself'],ans:'her',fb:'صحيح! Sarah مؤنث → her قبل الاسم ✅',fbW:'نستخدم her كصفة ملكية قبل الاسم مباشرة'}
+  },
+  {
+    icon:'📢',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
+    title:'صيغة الأمر',titleEn:'Imperative Sentences',level:"الدرس الخامس عشر · Lesson 15",
+    explanation:'نستخدم صيغة الأمر لإعطاء توجيهات أو أوامر أو نصائح، ونبدأ الجملة بالفعل مباشرة بدون فاعل ظاهر.',
+    formula:'Verb (base form) + Object — Negative: Do not/Don\'t + Verb',
+    formulaNote:'Open the door. | Don\'t touch that. | Please sit down.',
+    examples:[{en:"Close the window, please.",ar:"أغلق النافذة من فضلك.",struct:"{V:Close} {O:the window}, {ADV:please}."},{en:"Don't be late tomorrow.",ar:"لا تتأخر غداً.",struct:"{V:Don't be} {O:late} {ADV:tomorrow}."},{en:"Listen carefully to the instructions.",ar:"استمع جيداً للتعليمات.",struct:"{V:Listen} {ADV:carefully} {ADV:to the instructions}."}],
+    quiz:{q:'"___ noise! The baby is sleeping."',opts:['Not make','Don\'t make','No make','Not making'],ans:'Don\'t make',fb:'صحيح! نفي الأمر يكون بـ Don\'t + الفعل ✅',fbW:'نفي صيغة الأمر يكون دائماً بـ Don\'t + الفعل الأساسي'}
   },
 ];
 
@@ -4290,7 +4673,11 @@ function saveName() {
 }
 
 function renderStudentBanner(name) {
-  document.getElementById('studentNameDisplay').textContent = name;
+  const isTeacher = localStorage.getItem('isTeacher') === '1';
+  const displayName = isTeacher ? `👨‍🏫 ${name} — Teacher` : name;
+  document.getElementById('studentNameDisplay').textContent = displayName;
+  const subEl = document.querySelector('.student-name-sub');
+  if (subEl) subEl.textContent = isTeacher ? 'Teacher · WordSpark' : 'Student · WordSpark';
 }
 
 // Password is never stored in plaintext — only its SHA-256 hash is compared.
@@ -4320,7 +4707,7 @@ async function teacherLogin() {
     localStorage.setItem('studentName', 'ARAFAT ALRAJHI');
     localStorage.setItem('isTeacher', '1');
     document.getElementById('nameScreen').style.display = 'none';
-    renderStudentBanner('👨‍🏫 ARAFAT ALRAJHI — Teacher');
+    renderStudentBanner('ARAFAT ALRAJHI');
     showToast('Welcome, Teacher Arafat! 👨‍🏫', '#FFD700');
   } else {
     showToast('❌ كلمة السر خاطئة', '#FF6B8A');
@@ -4330,6 +4717,7 @@ async function teacherLogin() {
 
 function changeName() {
   localStorage.removeItem('studentName');
+  localStorage.removeItem('isTeacher');
   document.getElementById('studentNameInp').value = '';
   document.getElementById('nameScreen').style.display = 'flex';
   setTimeout(() => document.getElementById('studentNameInp').focus(), 200);
@@ -5265,6 +5653,421 @@ function vbHandleUserSpeech(transcript) {
   }, 500);
 }
 
+// ══ PODCAST (LISTENING TRAINING) ══
+// All episodes use brand-new topics, distinct from the "Real-Life Conversations" section.
+const podcastEpisodes = {
+  newjob: {
+    icon:'💼', color:'#FFD700', nameAr:'أول يوم في وظيفة جديدة', nameEn:'First Day at a New Job',
+    dialogue: [
+      { who:'a', en:"Good morning! You must be the new designer.", ar:"صباح الخير! لا بد أنك المصمم الجديد." },
+      { who:'b', en:"Yes, that's me. I'm a bit nervous, actually.", ar:"نعم، هذا أنا. أنا متوتر قليلاً في الحقيقة." },
+      { who:'a', en:"Don't worry, everyone here is friendly.", ar:"لا تقلق، الجميع هنا ودودون." },
+      { who:'b', en:"That's good to hear. Where's my desk?", ar:"هذا جميل أن أسمعه. أين مكتبي؟" },
+      { who:'a', en:"Right over there, next to the window.", ar:"هناك تماماً، بجانب النافذة." },
+      { who:'b', en:"Perfect, I love natural light.", ar:"ممتاز، أحب الضوء الطبيعي." },
+    ],
+    questions: [
+      { q:"How does the new employee feel?", ar:"كيف يشعر الموظف الجديد؟", opts:["Excited","Nervous","Angry","Bored"], ans:"Nervous" },
+      { q:"What is the new employee's job?", ar:"ما وظيفة الموظف الجديد؟", opts:["Manager","Designer","Driver","Teacher"], ans:"Designer" },
+      { q:"Where is the new desk located?", ar:"أين يقع المكتب الجديد؟", opts:["Near the door","Near the window","In the kitchen","Outside"], ans:"Near the window" },
+    ]
+  },
+  weather: {
+    icon:'🌦️', color:'#00D4FF', nameAr:'حديث عن الطقس', nameEn:'Talking About the Weather',
+    dialogue: [
+      { who:'a', en:"It's so cold today, isn't it?", ar:"الجو بارد جداً اليوم، أليس كذلك؟" },
+      { who:'b', en:"Yes! I heard it might snow tonight.", ar:"نعم! سمعت أنه قد تتساقط الثلوج الليلة." },
+      { who:'a', en:"Really? I should bring a warmer jacket.", ar:"حقاً؟ يجب أن أحضر سترة أكثر دفئاً." },
+      { who:'b', en:"Good idea. Tomorrow should be sunny again.", ar:"فكرة جيدة. الغد سيكون مشمساً مجدداً." },
+      { who:'a', en:"That's a relief. I don't like the cold much.", ar:"هذا مريح. لا أحب البرد كثيراً." },
+    ],
+    questions: [
+      { q:"What might happen tonight?", ar:"ماذا قد يحدث الليلة؟", opts:["Rain","Snow","Wind","Heat"], ans:"Snow" },
+      { q:"What will the weather be like tomorrow?", ar:"كيف سيكون الطقس غداً؟", opts:["Cloudy","Rainy","Sunny","Snowy"], ans:"Sunny" },
+      { q:"How does speaker A feel about cold weather?", ar:"كيف يشعر المتحدث A تجاه الطقس البارد؟", opts:["Loves it","Doesn't like it much","Doesn't care","Feels excited"], ans:"Doesn't like it much" },
+    ]
+  },
+  movie: {
+    icon:'🎬', color:'#FB7185', nameAr:'مناقشة فيلم', nameEn:'Discussing a Movie',
+    dialogue: [
+      { who:'a', en:"Did you watch that new movie last night?", ar:"هل شاهدت ذلك الفيلم الجديد ليلة أمس؟" },
+      { who:'b', en:"Yes! The story was amazing, but it was too long.", ar:"نعم! القصة كانت رائعة، لكنه كان طويلاً جداً." },
+      { who:'a', en:"How long was it exactly?", ar:"كم كانت مدته بالضبط؟" },
+      { who:'b', en:"Almost three hours. I nearly fell asleep at the end.", ar:"حوالي ثلاث ساعات. كدت أنام في النهاية." },
+      { who:'a', en:"Wow, that is long. I'll watch it this weekend.", ar:"واو، هذا طويل فعلاً. سأشاهده في نهاية الأسبوع." },
+    ],
+    questions: [
+      { q:"How was the story, according to speaker B?", ar:"كيف كانت القصة حسب المتحدث B؟", opts:["Boring","Amazing","Short","Confusing"], ans:"Amazing" },
+      { q:"How long was the movie?", ar:"كم كانت مدة الفيلم؟", opts:["One hour","Two hours","Almost three hours","Four hours"], ans:"Almost three hours" },
+      { q:"When will speaker A watch the movie?", ar:"متى سيشاهد المتحدث A الفيلم؟", opts:["Tonight","Tomorrow","This weekend","Never"], ans:"This weekend" },
+    ]
+  },
+  fitness: {
+    icon:'🏃', color:'#39FF14', nameAr:'بدء روتين رياضي', nameEn:'Starting a Fitness Routine',
+    dialogue: [
+      { who:'a', en:"I started going to the gym this week.", ar:"بدأت الذهاب للنادي الرياضي هذا الأسبوع." },
+      { who:'b', en:"That's great! How often do you go?", ar:"هذا رائع! كم مرة تذهب؟" },
+      { who:'a', en:"Three times a week, in the morning.", ar:"ثلاث مرات أسبوعياً، في الصباح." },
+      { who:'b', en:"Do you feel any difference already?", ar:"هل تشعر بأي فرق بالفعل؟" },
+      { who:'a', en:"Yes, I have more energy during the day.", ar:"نعم، لدي طاقة أكبر خلال اليوم." },
+    ],
+    questions: [
+      { q:"When did the speaker start going to the gym?", ar:"متى بدأ المتحدث الذهاب للنادي؟", opts:["Last month","This week","Last year","Yesterday"], ans:"This week" },
+      { q:"How many times a week does he go?", ar:"كم مرة يذهب أسبوعياً؟", opts:["Once","Twice","Three times","Every day"], ans:"Three times" },
+      { q:"What change does he notice?", ar:"ما التغيير الذي لاحظه؟", opts:["More energy","Less sleep","More stress","Nothing"], ans:"More energy" },
+    ]
+  },
+  lostphone: {
+    icon:'📱', color:'#A78BFA', nameAr:'فقدان الهاتف', nameEn:'Losing a Phone',
+    dialogue: [
+      { who:'a', en:"I can't find my phone anywhere!", ar:"لا أستطيع إيجاد هاتفي في أي مكان!" },
+      { who:'b', en:"Did you check your bag?", ar:"هل تحققت من حقيبتك؟" },
+      { who:'a', en:"Yes, twice. It's not there.", ar:"نعم، مرتين. ليس هناك." },
+      { who:'b', en:"Try calling it from my phone.", ar:"جرّب الاتصال به من هاتفي." },
+      { who:'a', en:"Good idea... oh, I hear it! It's under the couch.", ar:"فكرة جيدة... آه، أسمعه! إنه تحت الأريكة." },
+    ],
+    questions: [
+      { q:"What is the speaker looking for?", ar:"عمّ يبحث المتحدث؟", opts:["Keys","Phone","Wallet","Glasses"], ans:"Phone" },
+      { q:"What does speaker B suggest?", ar:"ماذا يقترح المتحدث B؟", opts:["Check the car","Call it","Buy a new one","Ask a friend"], ans:"Call it" },
+      { q:"Where was the phone found?", ar:"أين وُجد الهاتف؟", opts:["In the bag","On the table","Under the couch","In the kitchen"], ans:"Under the couch" },
+    ]
+  },
+  cooking: {
+    icon:'🍳', color:'#FF9F43', nameAr:'تعلّم الطبخ', nameEn:'Learning to Cook',
+    dialogue: [
+      { who:'a', en:"This soup smells delicious! What's in it?", ar:"هذه الشوربة رائحتها لذيذة! ماذا فيها؟" },
+      { who:'b', en:"Just onions, tomatoes, and some spices.", ar:"فقط بصل وطماطم وبعض البهارات." },
+      { who:'a', en:"It looks easy. Can you teach me?", ar:"تبدو سهلة. هل يمكنك تعليمي؟" },
+      { who:'b', en:"Of course! First, chop the onions finely.", ar:"بالطبع! أولاً، قطّع البصل ناعماً." },
+      { who:'a', en:"Okay, I'm ready. Let's start cooking together.", ar:"حسناً، أنا جاهز. لنبدأ الطبخ معاً." },
+    ],
+    questions: [
+      { q:"What are the main ingredients mentioned?", ar:"ما المكوّنات الرئيسية المذكورة؟", opts:["Rice and chicken","Onions, tomatoes, spices","Bread and cheese","Fish and lemon"], ans:"Onions, tomatoes, spices" },
+      { q:"What does speaker A want to learn?", ar:"ماذا يريد المتحدث A أن يتعلّم؟", opts:["Baking","Cooking the soup","Cleaning","Shopping"], ans:"Cooking the soup" },
+      { q:"What is the first cooking step?", ar:"ما الخطوة الأولى في الطبخ؟", opts:["Boil water","Chop onions","Add salt","Wash dishes"], ans:"Chop onions" },
+    ]
+  },
+  weekend: {
+    icon:'🏖️', color:'#2DD4BF', nameAr:'خطط نهاية الأسبوع', nameEn:'Weekend Plans',
+    dialogue: [
+      { who:'a', en:"Any plans for the weekend?", ar:"هل لديك خطط لنهاية الأسبوع؟" },
+      { who:'b', en:"I'm thinking of visiting the beach.", ar:"أفكّر في زيارة الشاطئ." },
+      { who:'a', en:"Sounds relaxing. Can I join you?", ar:"يبدو مريحاً. هل يمكنني الانضمام إليك؟" },
+      { who:'b', en:"Of course! We can leave early Saturday morning.", ar:"بالطبع! يمكننا المغادرة باكراً صباح السبت." },
+      { who:'a', en:"Great, I'll bring some snacks for us.", ar:"رائع، سأحضر بعض الوجبات الخفيفة لنا." },
+    ],
+    questions: [
+      { q:"Where does speaker B want to go?", ar:"إلى أين يريد المتحدث B الذهاب؟", opts:["Mountains","Beach","Mall","Cinema"], ans:"Beach" },
+      { q:"When will they leave?", ar:"متى سيغادرون؟", opts:["Friday night","Saturday morning","Sunday afternoon","Monday"], ans:"Saturday morning" },
+      { q:"What will speaker A bring?", ar:"ماذا سيحضر المتحدث A؟", opts:["Drinks","Snacks","A tent","Music"], ans:"Snacks" },
+    ]
+  },
+  newpet: {
+    icon:'🐶', color:'#FFD700', nameAr:'تبنّي حيوان أليف', nameEn:'Getting a New Pet',
+    dialogue: [
+      { who:'a', en:"Guess what? We got a puppy yesterday!", ar:"خمّن ماذا؟ حصلنا على جرو أمس!" },
+      { who:'b', en:"That's exciting! What breed is it?", ar:"هذا مثير! ما سلالته؟" },
+      { who:'a', en:"A small golden retriever. He's very playful.", ar:"جولدن ريتريفر صغير. إنه مرح جداً." },
+      { who:'b', en:"What did you name him?", ar:"ماذا سمّيته؟" },
+      { who:'a', en:"We named him Max. He loves chasing his tail.", ar:"سمّيناه ماكس. إنه يحب مطاردة ذيله." },
+    ],
+    questions: [
+      { q:"When did they get the puppy?", ar:"متى حصلوا على الجرو؟", opts:["Today","Yesterday","Last week","Last year"], ans:"Yesterday" },
+      { q:"What breed is the puppy?", ar:"ما سلالة الجرو؟", opts:["Poodle","Golden retriever","Bulldog","Husky"], ans:"Golden retriever" },
+      { q:"What is the puppy's name?", ar:"ما اسم الجرو؟", opts:["Rex","Buddy","Max","Charlie"], ans:"Max" },
+    ]
+  },
+  traffic: {
+    icon:'🚗', color:'#FF6B8A', nameAr:'الزحام المروري', nameEn:'Stuck in Traffic',
+    dialogue: [
+      { who:'a', en:"Why are you late? The meeting already started.", ar:"لماذا تأخرت؟ الاجتماع بدأ بالفعل." },
+      { who:'b', en:"I'm so sorry, the traffic was terrible.", ar:"أنا آسف جداً، الزحام كان فظيعاً." },
+      { who:'a', en:"How long were you stuck?", ar:"كم المدة التي علقت فيها؟" },
+      { who:'b', en:"About forty minutes. There was an accident.", ar:"حوالي أربعين دقيقة. كان هناك حادث." },
+      { who:'a', en:"That explains it. Don't worry, take a seat.", ar:"هذا يفسّر الأمر. لا تقلق، اجلس." },
+    ],
+    questions: [
+      { q:"Why was speaker B late?", ar:"لماذا تأخر المتحدث B؟", opts:["He overslept","Traffic was bad","His car broke down","He forgot"], ans:"Traffic was bad" },
+      { q:"How long was he stuck?", ar:"كم المدة التي علق فيها؟", opts:["Ten minutes","Twenty minutes","Forty minutes","Two hours"], ans:"Forty minutes" },
+      { q:"What caused the traffic?", ar:"ما الذي تسبّب في الزحام؟", opts:["Road work","An accident","Rain","A parade"], ans:"An accident" },
+    ]
+  },
+  studying: {
+    icon:'📖', color:'#00D4FF', nameAr:'الاستعداد للامتحان', nameEn:'Preparing for an Exam',
+    dialogue: [
+      { who:'a', en:"Are you ready for tomorrow's exam?", ar:"هل أنت مستعد لامتحان الغد؟" },
+      { who:'b', en:"Not really, I still have two chapters left.", ar:"ليس فعلاً، لا يزال لدي فصلان متبقيان." },
+      { who:'a', en:"You should start now, it's getting late.", ar:"يجب أن تبدأ الآن، الوقت تأخّر." },
+      { who:'b', en:"You're right. Can we study together?", ar:"أنت محق. هل يمكننا الدراسة معاً؟" },
+      { who:'a', en:"Sure, let's meet at the library in ten minutes.", ar:"بالتأكيد، لنلتقِ في المكتبة بعد عشر دقائق." },
+    ],
+    questions: [
+      { q:"How many chapters does speaker B have left?", ar:"كم فصلاً تبقّى للمتحدث B؟", opts:["One","Two","Three","None"], ans:"Two" },
+      { q:"What does speaker B ask for?", ar:"ماذا يطلب المتحدث B؟", opts:["A book","To study together","To skip the exam","Help with homework"], ans:"To study together" },
+      { q:"Where will they meet?", ar:"أين سيلتقيان؟", opts:["At home","At the library","At school","At a cafe"], ans:"At the library" },
+    ]
+  },
+};
+
+let currentPodKey = null;
+let podAudioQueue = [];
+let podCurrentLineIdx = 0;
+let podIsPlaying = false;
+let podReplayCount = 0;
+const POD_MAX_REPLAYS = 2;
+
+function renderPodcastMenu() {
+  const area = document.getElementById('podcastMenu');
+  if (!area) return;
+  area.innerHTML = Object.entries(podcastEpisodes).map(([key, ep]) => {
+    const done = !!localStorage.getItem('pod_done_' + key);
+    return `
+    <div class="pod-card" onclick="openPodcast('${key}')">
+      <div class="pod-icon" style="color:${ep.color}">${ep.icon}</div>
+      <div class="pod-info">
+        <div class="pod-name">${ep.nameAr}</div>
+        <div class="pod-name-en">${ep.nameEn}</div>
+        <div class="pod-meta">${ep.dialogue.length} جمل · ${ep.questions.length} أسئلة فهم</div>
+      </div>
+      ${done ? '<div class="pod-done-badge">🏆</div>' : '<div class="pod-arrow">←</div>'}
+    </div>`;
+  }).join('');
+
+  // Note: we intentionally do NOT proactively check/show a "browser unsupported"
+  // banner here. window.speechSynthesis availability is unreliable to detect
+  // accurately at page-load time on some Android browsers, causing false
+  // positive warnings even when playback works perfectly. The ▶️ button
+  // itself checks live and shows a toast only if a real failure occurs.
+}
+
+// window.speechSynthesis can be unavailable or report zero voices for a
+// noticeable delay right after page load on some Android browsers (notably
+// Honor/EMUI). A short retry window isn't always enough. Since the ▶️ button
+// itself always re-checks getSynth() live when pressed (so it never actually
+// fails to work even if this banner is wrong), we err strongly on the side
+// of NOT showing a scary false-positive warning: we check for a generous
+// 6 seconds before concluding support is truly absent, and we keep
+// rechecking quietly in the background even after that in case it recovers.
+function podCheckSupportWithRetry(attempt) {
+  attempt = attempt || 0;
+  const w = document.getElementById('podcastSupportWarning');
+  if (!w) return;
+
+  const synth = getSynth();
+  if (synth) {
+    w.style.display = 'none';
+    return; // supported — done, no need to keep checking
+  }
+
+  if (attempt < 15) {
+    // 15 attempts x 400ms = 6 seconds of grace before showing any warning at all
+    setTimeout(() => podCheckSupportWithRetry(attempt + 1), 400);
+  } else if (attempt < 40) {
+    // Keep it hidden but keep quietly rechecking every 2s for up to ~1 more minute,
+    // in case the API becomes available later without a page reload.
+    w.style.display = 'none';
+    setTimeout(() => podCheckSupportWithRetry(attempt + 1), 2000);
+  } else {
+    w.style.display = '';
+  }
+}
+
+function openPodcast(key) {
+  currentPodKey = key;
+  const ep = podcastEpisodes[key];
+  podCurrentLineIdx = 0;
+  podIsPlaying = false;
+  podReplayCount = 0;
+
+  document.getElementById('podcastMenu').style.display = 'none';
+  document.getElementById('podcastDetail').style.display = '';
+
+  const done = !!localStorage.getItem('pod_done_' + key);
+
+  document.getElementById('podcastDetailArea').innerHTML = `
+    <div class="pod-hero" style="background:linear-gradient(135deg,${ep.color}22,var(--panel))">
+      <div class="pod-hero-icon">${ep.icon}</div>
+      <div class="pod-hero-title" style="color:${ep.color}">${ep.nameAr}</div>
+      <div class="pod-hero-sub">${ep.nameEn}</div>
+    </div>
+
+    <div class="pod-player">
+      <button class="pod-play-btn" id="podPlayBtn" onclick="podTogglePlay()">▶️</button>
+      <div class="pod-status" id="podStatus">اضغط ▶️ للاستماع للحلقة كاملة (بدون رؤية النص)</div>
+      <div class="pod-replay-row">
+        <button class="pod-replay-btn" id="podReplayBtn" onclick="podReplayFromStart()">🔁 إعادة الاستماع من البداية</button>
+      </div>
+      <div class="pod-replay-count" id="podReplayCount">إعادة الاستماع: ${POD_MAX_REPLAYS} مرات متبقية</div>
+    </div>
+
+    <div class="pod-transcript-toggle">
+      <button onclick="podToggleTranscript()" id="podTranscriptBtn">📜 إظهار النص</button>
+    </div>
+    <div class="pod-transcript" id="podTranscript">
+      ${ep.dialogue.map(line => `
+        <div class="pod-transcript-line">
+          <div class="pod-transcript-en">${line.who === 'a' ? 'A: ' : 'B: '}${line.en}</div>
+          <div class="pod-transcript-ar">${line.ar}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="pod-quiz-section" id="podQuizSection">
+      <div style="text-align:center;color:var(--muted);font-size:12px;padding:10px">
+        ${done ? '🏆 لقد أتقنت هذه الحلقة من قبل! يمكنك الاستماع والإجابة مرة أخرى للمراجعة.' : '🎧 استمع للحلقة كاملة أولاً، ثم أجب عن أسئلة الفهم أدناه.'}
+      </div>
+    </div>
+  `;
+}
+
+function podBackToMenu() {
+  const synth = getSynth();
+  if (synth) synth.cancel();
+  podIsPlaying = false;
+  document.getElementById('podcastDetail').style.display = 'none';
+  document.getElementById('podcastMenu').style.display = '';
+  renderPodcastMenu();
+}
+
+function podToggleTranscript() {
+  const t = document.getElementById('podTranscript');
+  const btn = document.getElementById('podTranscriptBtn');
+  const showing = t.classList.toggle('show');
+  btn.textContent = showing ? '🙈 إخفاء النص' : '📜 إظهار النص';
+}
+
+function podTogglePlay() {
+  if (podIsPlaying) {
+    podPausePlayback();
+  } else {
+    podStartPlayback();
+  }
+}
+
+function podStartPlayback() {
+  const synth = getSynth();
+  if (!synth) { showToast('⚠️ متصفحك لا يدعم تشغيل الصوت', '#FB7185'); return; }
+
+  podIsPlaying = true;
+  const btn = document.getElementById('podPlayBtn');
+  btn.textContent = '⏸️';
+  btn.classList.add('playing');
+  document.getElementById('podStatus').textContent = '🎧 الحلقة قيد التشغيل... استمع جيداً';
+
+  // Strongest possible proof speech works: hide any warning permanently.
+  const warn = document.getElementById('podcastSupportWarning');
+  if (warn) warn.style.display = 'none';
+
+  podSpeakNextLine();
+}
+
+function podPausePlayback() {
+  const synth = getSynth();
+  if (synth) synth.cancel();
+  podIsPlaying = false;
+  const btn = document.getElementById('podPlayBtn');
+  btn.textContent = '▶️';
+  btn.classList.remove('playing');
+  document.getElementById('podStatus').textContent = '⏸️ تم الإيقاف المؤقت — اضغط ▶️ للمتابعة';
+}
+
+function podSpeakNextLine() {
+  const ep = podcastEpisodes[currentPodKey];
+  if (!podIsPlaying) return;
+
+  if (podCurrentLineIdx >= ep.dialogue.length) {
+    podFinishPlayback();
+    return;
+  }
+
+  const synth = getSynth();
+  const line = ep.dialogue[podCurrentLineIdx];
+  const utter = new SpeechSynthesisUtterance(line.en);
+  utter.lang = 'en-US';
+  utter.rate = 0.92;
+  utter.pitch = line.who === 'a' ? 1.05 : 0.92; // slight pitch variation distinguishes the two speakers
+
+  const voices = synth.getVoices();
+  if (voices && voices.length) {
+    const enVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
+    const pick = enVoices.length ? enVoices[podCurrentLineIdx % 2 % enVoices.length] : voices[0];
+    if (pick) utter.voice = pick;
+  }
+
+  utter.onend = () => {
+    podCurrentLineIdx++;
+    setTimeout(() => podSpeakNextLine(), 350); // small natural pause between turns
+  };
+  utter.onerror = () => {
+    podCurrentLineIdx++;
+    setTimeout(() => podSpeakNextLine(), 200);
+  };
+
+  try { synth.speak(utter); } catch(e) { podCurrentLineIdx++; podSpeakNextLine(); }
+}
+
+function podFinishPlayback() {
+  podIsPlaying = false;
+  const btn = document.getElementById('podPlayBtn');
+  btn.textContent = '▶️';
+  btn.classList.remove('playing');
+  document.getElementById('podStatus').textContent = '✅ انتهت الحلقة! أجب عن أسئلة الفهم أدناه';
+  podRenderQuiz();
+}
+
+function podReplayFromStart() {
+  if (podReplayCount >= POD_MAX_REPLAYS) {
+    showToast('⚠️ استنفدت عدد مرات إعادة الاستماع المسموحة', '#FB7185');
+    return;
+  }
+  podReplayCount++;
+  document.getElementById('podReplayCount').textContent =
+    `إعادة الاستماع: ${POD_MAX_REPLAYS - podReplayCount} مرات متبقية`;
+  if (podReplayCount >= POD_MAX_REPLAYS) {
+    document.getElementById('podReplayBtn').disabled = true;
+  }
+
+  const synth = getSynth();
+  if (synth) synth.cancel();
+  podCurrentLineIdx = 0;
+  podStartPlayback();
+}
+
+function podRenderQuiz() {
+  const ep = podcastEpisodes[currentPodKey];
+  const section = document.getElementById('podQuizSection');
+  section.innerHTML = `
+    <div class="pod-quiz-title" style="font-size:14px;font-weight:700;color:var(--gold);margin:14px 0 10px">🧠 أسئلة الفهم</div>
+    ${ep.questions.map((q, i) => `
+      <div class="pod-quiz-card">
+        <div class="pod-quiz-q">${i+1}. ${q.q}<br><span style="font-size:12px;color:var(--muted);font-weight:400">${q.ar}</span></div>
+        <div class="pod-quiz-opts" id="podQOpts${i}">
+          ${q.opts.map(o => `<button class="pod-quiz-opt" onclick="podCheckAnswer(${i},'${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
+        </div>
+      </div>
+    `).join('')}
+    <button class="conv-complete-btn" onclick="podMarkDone()">🏆 أنهيت هذه الحلقة</button>
+  `;
+}
+
+function podCheckAnswer(qIdx, chosen, correct, btnEl) {
+  const opts = document.getElementById('podQOpts' + qIdx).querySelectorAll('.pod-quiz-opt');
+  opts.forEach(b => b.disabled = true);
+  if (chosen === correct) {
+    btnEl.classList.add('correct-ans');
+    showToast('✅ إجابة صحيحة!');
+  } else {
+    btnEl.classList.add('wrong-ans');
+    opts.forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct-ans'); });
+    showToast('❌ الصواب: ' + correct, '#FB7185');
+  }
+}
+
+function podMarkDone() {
+  localStorage.setItem('pod_done_' + currentPodKey, '1');
+  showToast('🏆 أحسنت! أنهيت حلقة الاستماع', '#FFD700');
+  podBackToMenu();
+}
+
 // ══ KEYBOARD (Enter to add) ══
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && document.getElementById('tab-words').classList.contains('active')) addWord();
@@ -5297,6 +6100,7 @@ function applyTheme() {
   renderPackSelector();
   renderConvMenu();
   renderVbTopics();
+  renderPodcastMenu();
   updateHomeStats();
   const storedName = localStorage.getItem('studentName');
   if (storedName) renderStudentBanner(storedName);
