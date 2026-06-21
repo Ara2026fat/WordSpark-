@@ -4706,7 +4706,6 @@ window.addEventListener('load', () => {
 function wsCheckTeacherInviteLink() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('teacher');
-  alert('DEBUG: search="' + window.location.search + '" code="' + code + '"');
   if (!code) return; // No invite param present — nothing to show, ever.
   document.getElementById('teacherInviteOverlay').classList.add('show');
   document.getElementById('teacherInviteCodeShown').value = code;
