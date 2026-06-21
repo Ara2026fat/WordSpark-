@@ -1784,11 +1784,6 @@
     <input class="name-inp" id="studentNameInp" placeholder="اكتب اسمك هنا..." maxlength="40"
       onkeydown="if(event.key==='Enter')saveName()">
     <button class="btn-enter" onclick="saveName()">ابدأ الآن ⚡</button>
-    <div style="margin-top:14px">
-      <input class="name-inp" id="teacherPassInp" placeholder="🔑 كلمة سر المعلم" type="password" maxlength="20" style="font-size:13px;padding:10px 14px;margin-bottom:8px;opacity:.6"
-        onkeydown="if(event.key==='Enter')teacherLogin()">
-      <button onclick="teacherLogin()" style="background:none;border:1px solid rgba(255,215,0,.3);border-radius:10px;padding:8px 20px;color:#FFD700;font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;width:100%">Teacher Login 👨‍🏫</button>
-    </div>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:9px;color:#253545;margin-top:14px;letter-spacing:1px">💡 Developed by ARAFAT ALRAJHI</div>
   </div>
 </div>
@@ -2288,6 +2283,20 @@
     <div class="cb-row">
       <button class="cb-btn cb-cancel" onclick="closeTeacherPhoneModal()">إلغاء</button>
       <button class="cb-btn cb-confirm" onclick="saveTeacherPhone()" style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">💾 حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TEACHER INVITE CONFIRM (only shown when ?teacher=CODE is in the URL) ══ -->
+<div class="confirm-overlay" id="teacherInviteOverlay">
+  <div class="confirm-box">
+    <div class="cb-icon">👨‍🏫</div>
+    <div class="cb-title">دخول المعلم</div>
+    <div class="cb-msg">تم فتح هذا التطبيق برابط دعوة خاص بالمعلم. هل تريد الدخول كمعلم؟</div>
+    <input type="hidden" id="teacherInviteCodeShown">
+    <div class="cb-row">
+      <button class="cb-btn cb-cancel" onclick="wsCancelTeacherInvite()">إلغاء، أنا طالب</button>
+      <button class="cb-btn cb-confirm" onclick="wsConfirmTeacherInvite()" style="background:linear-gradient(135deg,#FFD700,#FFB800);color:var(--ink)">👨‍🏫 دخول كمعلم</button>
     </div>
   </div>
 </div>
@@ -4679,12 +4688,51 @@ window.addEventListener('load', () => {
       if (!name) {
         document.getElementById('nameScreen').style.display = 'flex';
         setTimeout(() => document.getElementById('studentNameInp').focus(), 300);
+        wsCheckTeacherInviteLink();
       } else {
         renderStudentBanner(name);
       }
     }, 650);
   }, 2200);
 });
+
+// Teacher access is granted ONLY via a private invite link (?teacher=CODE in the URL).
+// There is no visible button or field inviting random visitors to try logging in as
+// teacher — the option simply does not exist unless you were given the exact link.
+function wsCheckTeacherInviteLink() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('teacher');
+  if (!code) return; // No invite param present — nothing to show, ever.
+  document.getElementById('teacherInviteOverlay').classList.add('show');
+  document.getElementById('teacherInviteCodeShown').value = code;
+}
+
+async function wsConfirmTeacherInvite() {
+  const params = new URLSearchParams(window.location.search);
+  const code = (params.get('teacher') || '').trim();
+  let hashed;
+  try {
+    hashed = await sha256Hex(code);
+  } catch (e) {
+    showToast('⚠️ متصفحك لا يدعم تسجيل دخول المعلم بأمان', '#FF6B8A');
+    return;
+  }
+  if (hashed === TEACHER_PASS_HASH) {
+    localStorage.setItem('studentName', 'ARAFAT ALRAJHI');
+    localStorage.setItem('isTeacher', '1');
+    document.getElementById('teacherInviteOverlay').classList.remove('show');
+    document.getElementById('nameScreen').style.display = 'none';
+    renderStudentBanner('ARAFAT ALRAJHI');
+    showToast('Welcome, Teacher! 👨‍🏫', '#FFD700');
+  } else {
+    showToast('❌ هذا الرابط غير صالح', '#FF6B8A');
+    document.getElementById('teacherInviteOverlay').classList.remove('show');
+  }
+}
+
+function wsCancelTeacherInvite() {
+  document.getElementById('teacherInviteOverlay').classList.remove('show');
+}
 
 // ══ NAME ══
 function saveName() {
@@ -4706,37 +4754,14 @@ function renderStudentBanner(name) {
 
 // Password is never stored in plaintext — only its SHA-256 hash is compared.
 // This prevents casual discovery via "View Source" / right-click Inspect.
-const TEACHER_PASS_HASH = '5d6ea357397774427e2d4222cc26d551a34f85e9a22681115f9cb12d98724bd0';
+// This code is only ever entered via a private invite link (?teacher=CODE),
+// never typed into a visible field on the public welcome screen.
+const TEACHER_PASS_HASH = 'bd146607c6eda64c4166bf9844ad79b6e2a9bb87d1177887af536ad867621944';
 
 async function sha256Hex(text) {
   const enc = new TextEncoder().encode(text);
   const buf = await crypto.subtle.digest('SHA-256', enc);
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function teacherLogin() {
-  const pass = document.getElementById('teacherPassInp').value.trim();
-  if (!pass) { showToast('❌ أدخل كلمة السر', '#FF6B8A'); return; }
-
-  let hashed;
-  try {
-    hashed = await sha256Hex(pass);
-  } catch (e) {
-    // crypto.subtle unavailable (very old browser or non-HTTPS context) — fail safely
-    showToast('⚠️ متصفحك لا يدعم تسجيل دخول المعلم بأمان', '#FF6B8A');
-    return;
-  }
-
-  if (hashed === TEACHER_PASS_HASH) {
-    localStorage.setItem('studentName', 'ARAFAT ALRAJHI');
-    localStorage.setItem('isTeacher', '1');
-    document.getElementById('nameScreen').style.display = 'none';
-    renderStudentBanner('ARAFAT ALRAJHI');
-    showToast('Welcome, Teacher Arafat! 👨‍🏫', '#FFD700');
-  } else {
-    showToast('❌ كلمة السر خاطئة', '#FF6B8A');
-    document.getElementById('teacherPassInp').value = '';
-  }
 }
 
 function changeName() {
