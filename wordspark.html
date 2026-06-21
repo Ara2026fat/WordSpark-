@@ -1642,6 +1642,7 @@
   padding: 24px;
 }
 .confirm-overlay.show { display: flex; }
+#teacherInviteOverlay { z-index: 1200; }
 .confirm-box {
   background: var(--panel);
   border: 1px solid var(--rim);
@@ -4688,10 +4689,13 @@ window.addEventListener('load', () => {
       if (!name) {
         document.getElementById('nameScreen').style.display = 'flex';
         setTimeout(() => document.getElementById('studentNameInp').focus(), 300);
-        wsCheckTeacherInviteLink();
       } else {
         renderStudentBanner(name);
       }
+      // Always check for a teacher invite link, regardless of saved name —
+      // a teacher opening the link on a device that already has a student
+      // name saved should still be able to switch into teacher mode.
+      wsCheckTeacherInviteLink();
     }, 650);
   }, 2200);
 });
@@ -4702,6 +4706,7 @@ window.addEventListener('load', () => {
 function wsCheckTeacherInviteLink() {
   const params = new URLSearchParams(window.location.search);
   const code = params.get('teacher');
+  alert('DEBUG: search="' + window.location.search + '" code="' + code + '"');
   if (!code) return; // No invite param present — nothing to show, ever.
   document.getElementById('teacherInviteOverlay').classList.add('show');
   document.getElementById('teacherInviteCodeShown').value = code;
