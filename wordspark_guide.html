@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دليل استخدام WordSpark</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:#0D1117; --panel:#1A2332; --card:#1E2D42; --rim:#243550;
+    --gold:#F5C842; --teal:#2DD4BF; --rose:#FB7185; --lavender:#A78BFA;
+    --muted:#64748B; --soft:#94A3B8; --white:#F1F5F9;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    background:var(--ink); color:var(--white);
+    font-family:'Tajawal',sans-serif;
+    line-height:1.8; padding:0;
+  }
+  .hero{
+    background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(167,139,250,.08));
+    border-bottom:1px solid var(--rim);
+    text-align:center; padding:40px 20px 32px;
+  }
+  .hero-icon{
+    width:80px;height:80px;margin:0 auto 16px;
+    border-radius:22px; display:flex;align-items:center;justify-content:center;
+    box-shadow:0 0 32px rgba(45,212,191,.25), 0 0 60px rgba(167,139,250,.15);
+    overflow:hidden;
+  }
+  .hero h1{
+    font-size:28px; font-weight:900;
+    background:linear-gradient(90deg,var(--gold),var(--teal));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .hero p{ color:var(--muted); font-size:14px; margin-top:6px; }
+  .hero .badge{
+    display:inline-block; margin-top:14px;
+    background:rgba(255,255,255,.05); border:1px solid var(--rim);
+    border-radius:20px; padding:6px 16px; font-size:12px; color:var(--soft);
+  }
+
+  .container{ max-width:760px; margin:0 auto; padding:24px 18px 60px; }
+
+  /* Table of Contents — Smart Icon Grid */
+  .toc{
+    margin-bottom:30px;
+  }
+  .toc h2{ font-size:15px; margin-bottom:14px; color:var(--gold); text-align:center; }
+  .toc-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  }
+  .toc-tile{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:6px; aspect-ratio:1/0.95; border-radius:18px;
+    text-decoration:none; cursor:pointer;
+    border:1px solid rgba(255,255,255,.08);
+    transition:transform .15s ease;
+    font-family:'Tajawal',sans-serif; padding:0; outline:none;
+  }
+  .toc-tile:active{ transform:scale(.94); }
+  .toc-tile-icon{ font-size:28px; filter:drop-shadow(0 2px 5px rgba(0,0,0,.25)); }
+  .toc-tile-label{ font-size:11.5px; font-weight:800; color:var(--white); text-align:center; line-height:1.3; }
+  .toc-tile.tc1{ background:linear-gradient(150deg,#5C4A1E,#2D2310); }
+  .toc-tile.tc2{ background:linear-gradient(150deg,#0E3B36,#0A2230); }
+  .toc-tile.tc3{ background:linear-gradient(150deg,#5C2E3E,#2D1620); }
+  .toc-tile.tc4{ background:linear-gradient(150deg,#2E4A2E,#16241A); }
+  .toc-tile.tc5{ background:linear-gradient(150deg,#3B2E5C,#211735); }
+  .toc-tile.tc6{ background:linear-gradient(150deg,#5C4A1E,#2D2310); }
+  .toc-tile.tc7{ background:linear-gradient(150deg,#1E4A5C,#0F242D); }
+  .toc-tile.tc8{ background:linear-gradient(150deg,#4A2E5C,#241629); }
+  .toc-tile.tc9{ background:linear-gradient(150deg,#0E3B36,#0A2230); }
+  @media (max-width:360px){
+    .toc-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+
+  /* Section icon badge (replaces plain number) */
+  .section-title .icon-badge{
+    width:38px;height:38px; border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px; flex-shrink:0;
+  }
+
+  /* Sections */
+  .section{ margin-bottom:36px; display:none; }
+  .section.active{ display:block; animation:secFadeIn .3s ease both; }
+  @keyframes secFadeIn{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+  .back-to-menu{
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,.05); border:1px solid var(--rim);
+    border-radius:12px; padding:9px 16px; margin-bottom:18px;
+    color:var(--soft); font-family:'Tajawal',sans-serif; font-size:13px;
+    cursor:pointer; text-decoration:none;
+  }
+  .back-to-menu:active{ background:rgba(255,255,255,.09); }
+  .section-title{
+    display:flex; align-items:center; gap:10px;
+    font-size:20px; font-weight:900; margin-bottom:14px;
+    padding-bottom:10px; border-bottom:2px solid var(--rim);
+  }
+
+  .card{
+    background:var(--panel); border:1px solid var(--rim);
+    border-radius:14px; padding:16px 18px; margin-bottom:12px;
+    border-right:3px solid var(--teal);
+  }
+  .card.c2{ border-right-color:var(--gold); }
+  .card.c3{ border-right-color:var(--lavender); }
+  .card.c4{ border-right-color:var(--rose); }
+  .card h3{ font-size:15px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+  .card p, .card ul{ font-size:13.5px; color:var(--soft); }
+  .card ul{ padding-right:20px; margin-top:6px; }
+  .card li{ margin-bottom:4px; }
+  .card b{ color:var(--white); }
+
+  .note{
+    background:rgba(255,215,0,.06); border:1px solid rgba(255,215,0,.2);
+    border-radius:12px; padding:12px 14px; font-size:13px; color:var(--gold);
+    margin-top:10px;
+  }
+
+  .step-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; }
+  .step{
+    background:var(--card); border-radius:10px; padding:10px 12px; font-size:12.5px; color:var(--soft);
+  }
+  .step b{ color:var(--teal); display:block; margin-bottom:3px; font-size:11px; }
+
+  .color-legend{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; font-size:12px; }
+  .color-legend span{ display:flex; align-items:center; gap:5px; }
+  .color-legend .dot{ width:10px;height:10px;border-radius:50%; }
+
+  footer{
+    text-align:center; padding:24px; border-top:1px solid var(--rim);
+    margin-top:30px;
+  }
+  footer .sig{
+    font-family:'Space Grotesk',sans-serif; font-size:11px;
+    background:linear-gradient(90deg,var(--gold),#FF9F43);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    letter-spacing:2px; font-weight:700; margin-top:4px;
+  }
+  footer .label{ font-family:'Space Grotesk',sans-serif; font-size:10px; color:#3A5070; letter-spacing:1px; text-transform:uppercase; }
+
+  @media print {
+    body{ background:white; color:#111; }
+    .hero{ background:#f5f5f5; }
+    .card{ border:1px solid #ccc; background:#fafafa; }
+    .toc-tile{ border:1px solid #ccc; background:#fafafa !important; color:#111; }
+    .toc-tile-label{ color:#111; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-icon">
+    <svg width="80" height="80" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="logoBg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#2A1B5E"/>
+          <stop offset="35%" stop-color="#142845"/>
+          <stop offset="70%" stop-color="#0C3A35"/>
+          <stop offset="100%" stop-color="#070B12"/>
+        </linearGradient>
+        <radialGradient id="logoGlowA" cx="22%" cy="18%" r="55%">
+          <stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#B794FF" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="logoGlowB" cx="88%" cy="85%" r="60%">
+          <stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="logoWS" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#FFD700"/>
+          <stop offset="100%" stop-color="#5EEAD4"/>
+        </linearGradient>
+        <linearGradient id="logoSpark" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFE066"/>
+          <stop offset="100%" stop-color="#FFD700"/>
+        </linearGradient>
+        <filter id="logoGlow">
+          <feGaussianBlur stdDeviation="3" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="logoShadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.45"/>
+        </filter>
+      </defs>
+      <rect x="0" y="0" width="140" height="140" fill="url(#logoBg)" rx="28"/>
+      <rect x="0" y="0" width="140" height="140" fill="url(#logoGlowA)" rx="28"/>
+      <rect x="0" y="0" width="140" height="140" fill="url(#logoGlowB)" rx="28"/>
+      <g filter="url(#logoShadow)">
+        <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text>
+        <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#logoWS)" text-anchor="middle" letter-spacing="-3">WS</text>
+      </g>
+      <g filter="url(#logoGlow)">
+        <path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#logoSpark)"/>
+      </g>
+    </svg>
+  </div>
+  <h1>WordSpark</h1>
+  <p>دليل الاستخدام الكامل — منصة تعلّم اللغة الإنجليزية</p>
+  <div class="badge">💡 Developed by ARAFAT ALRAJHI</div>
+</div>
+
+<div class="container">
+
+  <div class="toc" id="tocMenu">
+    <h2>📑 محتويات الدليل</h2>
+    <div class="toc-grid">
+      <button onclick="showSection('start')" class="toc-tile tc1"><span class="toc-tile-icon">🏁</span><span class="toc-tile-label">البداية</span></button>
+      <button onclick="showSection('words')" class="toc-tile tc2"><span class="toc-tile-icon">📚</span><span class="toc-tile-label">الكلمات</span></button>
+      <button onclick="showSection('practice')" class="toc-tile tc3"><span class="toc-tile-icon">🎯</span><span class="toc-tile-label">التدريب والألعاب</span></button>
+      <button onclick="showSection('learn')" class="toc-tile tc4"><span class="toc-tile-icon">📐</span><span class="toc-tile-label">القواعد والبطاقات</span></button>
+      <button onclick="showSection('packs')" class="toc-tile tc5"><span class="toc-tile-icon">📦</span><span class="toc-tile-label">حِزَم الكلمات</span></button>
+      <button onclick="showSection('conv')" class="toc-tile tc6"><span class="toc-tile-icon">💬</span><span class="toc-tile-label">محادثات حياتية</span></button>
+      <button onclick="showSection('settings')" class="toc-tile tc7"><span class="toc-tile-icon">⚙️</span><span class="toc-tile-label">الإعدادات</span></button>
+      <button onclick="showSection('tips')" class="toc-tile tc8"><span class="toc-tile-icon">💡</span><span class="toc-tile-label">نصائح مهمة</span></button>
+      <button onclick="showSection('voice')" class="toc-tile tc8"><span class="toc-tile-icon">🎙️</span><span class="toc-tile-label">المتحدّث الصوتي</span></button>
+      <button onclick="showSection('podcast')" class="toc-tile tc9"><span class="toc-tile-icon">🎧</span><span class="toc-tile-label">البودكاست</span></button>
+      <button onclick="showSection('storage')" class="toc-tile tc1"><span class="toc-tile-icon">💾</span><span class="toc-tile-label">كيف يتم الحفظ؟</span></button>
+    </div>
+  </div>
+
+  <!-- ١. البداية -->
+  <div class="section" id="start">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(255,159,67,.18);color:#FF9F43">🏁</span>البداية</div>
+
+    <div class="card">
+      <h3>⚡ ما هو WordSpark؟</h3>
+      <p>منصة تفاعلية لتعلّم اللغة الإنجليزية مع الترجمة العربية، تجمع بين <b>الكلمات اليومية</b>، <b>الاختبارات</b>، <b>الألعاب</b>، <b>القواعد</b>، و<b>البطاقات التعليمية</b> — كل ذلك في ملف واحد يعمل على أي هاتف بدون إنترنت بعد أول فتح.</p>
+    </div>
+
+    <div class="card c2">
+      <h3>👤 تسجيل الاسم لأول مرة</h3>
+      <p>عند فتح التطبيق لأول مرة، تظهر شاشة ترحيب تطلب كتابة اسمك. هذا الاسم يُستخدم عند إرسال نتائجك للمعلم عبر واتساب. يمكنك تغييره في أي وقت من زر <b>"Change Name"</b> أعلى صفحة الكلمات.</p>
+    </div>
+
+    <div class="card c3">
+      <h3>📲 إضافة WordSpark على الشاشة الرئيسية</h3>
+      <div class="step-grid">
+        <div class="step"><b>📱 آيفون (Safari)</b>افتح الملف ← زر المشاركة ↑ ← "إضافة إلى الشاشة الرئيسية"</div>
+        <div class="step"><b>🤖 أندرويد (Chrome)</b>افتح الملف ← النقاط الثلاث ⋮ ← "إضافة إلى الشاشة الرئيسية"</div>
+      </div>
+      <div class="note">بعد ذلك ستظهر أيقونة WordSpark ⚡ على هاتفك مثل أي تطبيق حقيقي، وتفتح بسرعة كل مرة.</div>
+    </div>
+
+    <div class="card c4">
+      <h3>🏠 الشاشة الرئيسية وطريقة التنقّل</h3>
+      <p>عند فتح WordSpark، تستقبلك <b>الشاشة الرئيسية</b> بشبكة أيقونات كبيرة وواضحة لكل الأقسام:</p>
+      <ul>
+        <li>📚 <b>الكلمات</b> — كلماتك المحفوظة والعداد</li>
+        <li>🎯 <b>اختبار</b> — اختبار عشوائي للكلمات</li>
+        <li>🎮 <b>ألعاب</b> — Hangman، السباق، تحدي اليوم، تحدي التهجئة</li>
+        <li>💬 <b>محادثات</b> — ١٠ مواقف حياتية واقعية للتدرّب على المحادثة</li>
+        <li>🎙️ <b>المتحدّث</b> — رفيق محادثة صوتي بالذكاء الاصطناعي</li>
+        <li>📐 <b>قواعد</b> — ١٥ درساً قواعدياً من الصفر</li>
+        <li>🃏 <b>البطاقات التعليمية</b> — مراجعة سريعة بالتقليب</li>
+        <li>🎧 <b>البودكاست</b> — ١٠ حلقات استماع لتدريب الفهم السمعي</li>
+      </ul>
+      <p style="margin-top:8px"><b>🧭 شريط التنقّل السفلي</b> يحتوي على أهم ٤ أقسام للوصول السريع: الرئيسية، الكلمات، اختبار، المتحدّث.</p>
+      <p style="margin-top:6px">بقية الأقسام تُفتح من الشاشة الرئيسية، وبداخل كل واحد منها زر "🏠 الرئيسية" للعودة بضغطة واحدة.</p>
+    </div>
+  </div>
+
+  <!-- ٢. الكلمات -->
+  <div class="section" id="words">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">📚</span>الكلمات</div>
+
+    <div class="card">
+      <h3>🔢 عداد الكلمات</h3>
+      <p>الرقم الكبير في الأعلى يعرض <b>إجمالي الكلمات المتعلَّمة</b>. أسفله ثلاث بطاقات صغيرة: كلمات <b>اليوم</b>، كلمات <b>الأسبوع</b>، وعدد كلمات المستوى <b>المبتدئ</b>.</p>
+    </div>
+
+    <div class="card c2">
+      <h3>➕ إضافة كلمة جديدة</h3>
+      <p>املأ الحقول: <b>الكلمة بالإنجليزية</b>، <b>المعنى بالعربية</b>، <b>مثال بالإنجليزية</b>، <b>ترجمة المثال</b>، واختر <b>المستوى</b> (مبتدئ / متوسط / متقدم) ثم اضغط "إضافة الكلمة ✨".</p>
+      <div class="note">⚠️ <b>الهدف اليومي قابل للتعديل (٣-٥ كلمات)</b> — يبدأ بـ٣ كلمات (الموصى به للمبتدئين)، ويمكن تغييره بالضغط على الشارة الصفراء أعلى الفورم. هذا مقصود لتشجيع التعلّم التدريجي الثابت بدلاً من الحشو والنسيان.<br><br>🕊️ <b>يوم الجمعة يوم راحة</b> — لا يكسر السلسلة المتواصلة 🔥 إذا لم تفتح التطبيق فيه.</div>
+    </div>
+
+    <div class="card c3">
+      <h3>🎨 بطاقات الكلمات الملوّنة</h3>
+      <p>كل كلمة تظهر في بطاقة بإطار مختلف الألوان (تيفاني، وردي، ذهبي، بنفسجي...) لجعل القائمة أكثر حيوية — لا يرتبط اللون بالمستوى. يمكن حذف أي كلمة بالضغط على ✕ على يمين البطاقة.</p>
+    </div>
+
+    <div class="card" style="border-right-color:var(--teal)">
+      <h3>🔊 الاستماع لنطق الكلمات</h3>
+      <p>بجانب كل كلمة زر <b>🔊</b> — اضغطه لتسمع النطق الصحيح بصوت إنجليزي حقيقي من المتصفح مجاناً.</p>
+      <p style="margin-top:6px">هذا الزر متوفر في: بطاقات الكلمات، البطاقات التعليمية، أمثلة دروس القواعد، أسئلة الاختبار، جمل المحادثات، وتحدي اليوم.</p>
+    </div>
+
+    <div class="card" style="border-right-color:var(--lavender)">
+      <h3>📊 نظام الإتقان الذكي (Mastery)</h3>
+      <p>يتتبّع WordSpark مدى إتقانك لكل كلمة تلقائياً من إجاباتك في الاختبار والسباق وتحدي اليوم.</p>
+      <ul>
+        <li>🟢 <b>متقَنة</b> — أجبت عليها بشكل صحيح عدة مرات</li>
+        <li>🟡 <b>قيد التعلّم</b> — بدأت تتعرّف عليها</li>
+        <li>⚪ <b>جديدة</b> — لم تُختبر بعد</li>
+      </ul>
+      <p style="margin-top:8px"><b>☆ زر "أعرف هذه الكلمة"</b> بجانب كل كلمة يسمح لك بوضعها كمتقَنة يدوياً فوراً.</p>
+      <div class="note">💡 الكلمات المتقَنة لا تختفي أبداً من الاختبارات، فقط يقلّ ظهورها مع إبقاء مراجعة خفيفة دورية حتى لا تُنسى.</div>
+    </div>
+
+    <div class="card" style="border-right-color:var(--orange)">
+      <h3>📈 الرسم البياني الأسبوعي</h3>
+      <p>أسفل لوحة الإتقان، رسم بياني بأعمدة يوضّح عدد الكلمات المضافة في كل يوم من آخر ٧ أيام.</p>
+      <ul>
+        <li>🟠 أعمدة برتقالية: أيام عادية</li>
+        <li>🟢 عمود فيروزي: اليوم الحالي</li>
+        <li>🕊️ يوم الجمعة يظهر برمز الراحة بدلاً من اسمه</li>
+      </ul>
+      <p style="margin-top:6px">يساعدك هذا الرسم (ومعلمك إن شاركته) على رؤية مدى انتظامك في التعلّم بنظرة واحدة.</p>
+    </div>
+
+    <div class="card" style="border-right-color:var(--teal)">
+      <h3>🔍 البحث والتصفية</h3>
+      <p>عند تجاوز كلماتك ٨ كلمات، يظهر زر "🔍 البحث والتصفية في كلماتك" أعلى القائمة.</p>
+      <ul>
+        <li>اكتب أي جزء من كلمة إنجليزية أو عربية للفلترة الفورية</li>
+        <li>فلاتر سريعة: الكل، 🟢 مبتدئ، 🟡 متوسط، 🔵 متقدم، 🏆 متقَنة، 📖 قيد التعلّم</li>
+      </ul>
+      <p style="margin-top:6px">💡 مفيد جداً بعد إضافة عدة حِزَم (٣٠٠+ كلمة) لإيجاد كلمة معينة بسرعة.</p>
+    </div>
+
+    <div class="card" style="border-right-color:var(--lavender)">
+      <h3>🎧 البودكاست — تدريب الاستماع</h3>
+      <p>قسم جديد كلياً لتدريب مهارة الاستماع الحقيقية — ١٠ حلقات قصيرة بمواضيع متنوعة (أول يوم عمل، الطقس، فيلم، رياضة، فقدان الهاتف، الطبخ، نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان).</p>
+      <ul>
+        <li>🎙️ استمع للحوار كاملاً بدون رؤية النص أولاً</li>
+        <li>🔁 إعادة استماع محدودة بمرتين فقط (كاختبارات الاستماع الحقيقية)</li>
+        <li>📜 إظهار النص بعد المحاولة للمراجعة</li>
+        <li>🧠 ٣ أسئلة فهم استماع لكل حلقة</li>
+      </ul>
+      <div class="note">💡 مختلف عن "محادثات حياتية" — هنا تستمع فقط أولاً لتتدرّب على الفهم السمعي الحقيقي.</div>
+    </div>
+  </div>
+
+  <!-- ٣. التدريب والألعاب -->
+  <div class="section" id="practice">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(251,113,133,.18);color:#FB7185">🎯</span>التدريب والألعاب</div>
+
+    <div class="card">
+      <h3>🎯 الاختبار العشوائي</h3>
+      <p>اضغط "ابدأ الاختبار العشوائي" — يعرض ١٠ أسئلة عشوائية بنوعين: <b>إنجليزي ← عربي</b> و<b>عربي ← إنجليزي</b>. كل إجابة صحيحة = ١٠ نقاط. في النهاية تظهر نسبة دقتك مع تقييم تشجيعي.</p>
+    </div>
+
+    <div class="card c2">
+      <h3>🎯 لعبة Hangman (المشنقة)</h3>
+      <p>تظهر كلمة عشوائية من كلماتك مع <b>معناها بالعربية كتلميح</b>. اضغط الحروف لتخمين الكلمة. لديك <b>٦ محاولات خاطئة</b> فقط قبل أن تظهر الرسمة كاملة.</p>
+    </div>
+
+    <div class="card c3">
+      <h3>⚡ سباق ٦٠ ثانية</h3>
+      <p>أجب على أكبر عدد من أسئلة معاني الكلمات في دقيقة واحدة فقط! يظهر عدّاد تنازلي ونقاطك مباشرة. في النهاية تحصل على نسبة الدقة وعدد الإجابات الصحيحة والخاطئة.</p>
+    </div>
+
+    <div class="card c4">
+      <h3>🌟 تحدي اليوم</h3>
+      <p>سؤال واحد <b>يتغيّر كل يوم</b> ويمكن الإجابة عليه مرة واحدة فقط يومياً. النتيجة تُحفظ ويظهر لك "عاد التحدي غداً 🌅" بعد الإجابة.</p>
+    </div>
+
+    <div class="card">
+      <h3>✍️ تحدي التهجئة</h3>
+      <p>يعرض لك <b>المعنى بالعربية</b> ومثالاً، وعليك كتابة <b>الكلمة الإنجليزية</b> بحروفها الصحيحة في الصناديق الفارغة. الحرف الأول يُعرض مجاناً كبداية.</p>
+      <ul>
+        <li>إجابة صحيحة = <b>+10 نقاط</b> وتزيد "المتتالية 🔥"</li>
+        <li>زر <b>"تلميح حرف"</b> يكشف الحرف التالي بمقابل <b>-2 نقاط</b></li>
+        <li>إذا أخطأت، تظهر الكلمة الصحيحة كاملة وتعود "المتتالية" للصفر</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ٤. القواعد والبطاقات -->
+  <div class="section" id="learn">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(74,154,74,.22);color:#7FD67F">📐</span>القواعد والبطاقات</div>
+
+    <div class="card">
+      <h3>📐 دروس القواعد</h3>
+      <p>١٥ درساً قواعدياً متكاملاً من الصفر — يغطي الأزمنة (المضارع، الماضي، المستقبل، التام)، المقارنة والتفضيل، الأفعال الناقصة، أدوات التعريف، الجموع، حروف الجر، تكوين الأسئلة، أدوات الربط، صفات الملكية، وصيغة الأمر — مع شرح بالعربية، صيغة القاعدة، أمثلة، وتمرين تفاعلي لكل درس.</p>
+      <p style="margin-top:8px">🎨 اضغط <b>"Show Structure"</b> أسفل أي مثال لرؤية تحليل الجملة بالألوان:</p>
+      <div class="color-legend">
+        <span><span class="dot" style="background:var(--teal)"></span>الفاعل (Subject)</span>
+        <span><span class="dot" style="background:var(--gold)"></span>الفعل (Verb)</span>
+        <span><span class="dot" style="background:var(--lavender)"></span>المفعول به (Object)</span>
+        <span><span class="dot" style="background:var(--rose)"></span>ظرف (Adverbial)</span>
+      </div>
+    </div>
+
+    <div class="card c2">
+      <h3>🃏 البطاقات التعليمية (Flashcards)</h3>
+      <p>اضغط على البطاقة لتقلبها وترى المعنى والمثال. استخدم الأسهم "السابقة / التالية" للتنقل بين كل كلماتك بسرعة — طريقة سريعة للمراجعة قبل الاختبار.</p>
+    </div>
+  </div>
+
+  <!-- ٥. حزم الكلمات -->
+  <div class="section" id="packs">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(167,139,250,.18);color:#A78BFA">📦</span>حِزَم الكلمات الجاهزة</div>
+
+    <div class="card c3">
+      <p>أسفل قسم إضافة الكلمات تجد <b>٥ حِزَم جاهزة (٥٠ كلمة لكل واحدة)</b> بالإضافة إلى الحزمة الأصلية:</p>
+      <ul>
+        <li>⚡ الحزمة الأصلية (٥٠ كلمة) — مفتوحة من البداية</li>
+        <li>🏠 المنزل والحياة اليومية</li>
+        <li>💼 العمل والمهنة</li>
+        <li>🌍 السفر والأماكن</li>
+        <li>💬 عبارات المحادثة</li>
+        <li>🎓 كلمات أكاديمية</li>
+      </ul>
+      <p style="margin-top:8px">اضغط <b>"+ إضافة الحزمة"</b> لإضافة ٥٠ كلمة فوراً لمكتبتك. يصبح الإجمالي <b>٣٠٠ كلمة</b> عند إضافة الجميع.</p>
+      <div class="note">
+        🔒 <b>نظام الفتح التدريجي:</b> كل حزمة جديدة <b>مقفلة</b> حتى تُكمل الحزمة السابقة. بعد إضافة حزمة والانتهاء من تعلّمها، اضغط <b>"🏁 تمييز كمكتملة"</b> لتفتح الحزمة التالية تلقائياً — هذا يضمن عدم الاستعجال في إضافة الكلمات.
+      </div>
+    </div>
+  </div>
+
+  <!-- ٦. محادثات حياتية -->
+  <div class="section" id="conv">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(245,200,66,.18);color:#F5C842">💬</span>محادثات حياتية</div>
+
+    <div class="card">
+      <h3>💬 ١٠ مواقف حياتية واقعية</h3>
+      <p>قسم كامل للتدرّب على المحادثة في مواقف يومية حقيقية:</p>
+      <ul>
+        <li>🏥 في المستشفى</li>
+        <li>🛒 في السوق</li>
+        <li>🍽️ في المطعم</li>
+        <li>🏫 في المدرسة</li>
+        <li>✈️ في المطار</li>
+        <li>🏦 في البنك</li>
+        <li>🚕 في التاكسي</li>
+        <li>💼 في العمل</li>
+        <li>📞 مكالمة هاتفية</li>
+        <li>🆘 حالة طوارئ</li>
+      </ul>
+    </div>
+
+    <div class="card c2">
+      <h3>📋 ماذا يحتوي كل موقف؟</h3>
+      <ul>
+        <li>💬 <b>محادثة نموذجية</b> بين شخصين (A و B) بالإنجليزية مع الترجمة العربية الكاملة</li>
+        <li>📌 <b>عبارات مفيدة إضافية</b> — اضغط زر "+" بجانب أي عبارة لإضافتها مباشرة إلى بنك كلماتك</li>
+        <li>🧩 <b>تمرين ترتيب الجمل</b> — اسحب وضع أول ٤ جمل من المحادثة بالترتيب الصحيح للتأكد من فهمك</li>
+        <li>🏆 زر <b>"أتقنت هذه المحادثة"</b> — لتمييز الموقف كمكتمل، فيظهر له شارة 🏆 في القائمة الرئيسية</li>
+      </ul>
+      <div class="note">💡 هذا القسم مثالي للطلاب الذين يريدون استخدام اللغة في مواقف حقيقية، وليس فقط حفظ كلمات منفصلة.</div>
+    </div>
+  </div>
+
+  <!-- ٧. الإعدادات -->
+  <div class="section" id="settings">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(0,212,255,.18);color:#00D4FF">⚙️</span>الإعدادات</div>
+
+    <div class="card">
+      <h3>🔥 السلسلة المتواصلة (Streak)</h3>
+      <p>كل يوم تفتح فيه WordSpark، تزيد السلسلة 🔥 بمقدار ١. إذا فوّت يوماً كاملاً بدون فتح التطبيق، تعود السلسلة إلى الصفر.</p>
+    </div>
+
+    <div class="card c2">
+      <h3>💬 إرسال النتائج للمعلم</h3>
+      <p>اضغط الزر الأخضر <b>"Send My Results to [اسم المعلم] via WhatsApp"</b> ليُفتح واتساب برسالة جاهزة تحتوي: اسمك، إجمالي الكلمات، كلمات اليوم والأسبوع، السلسلة المتواصلة، وآخر ٥ كلمات تعلّمتها.</p>
+      <p style="margin-top:8px">🔧 <b>تغيير بيانات المعلم/المعلمة:</b> من 🏠 الشاشة الرئيسية، اضغط بطاقة "👨‍🏫 بيانات المعلم/المعلمة" وأدخل اسم ورقم واتساب معلمك الخاص.</p>
+    </div>
+
+    <div class="card" style="border-right-color:var(--teal)">
+      <h3>🛡️ النسخ الاحتياطي (مهم جداً!)</h3>
+      <p>بياناتك محفوظة في متصفحك فقط، وقد تُفقد عند مسح بيانات المتصفح أو تغيير الجهاز.</p>
+      <ul>
+        <li><b>⬇️ تنزيل نسخة احتياطية:</b> يحمّل ملف JSON يحتوي على جميع كلماتك ونقاطك وتقدّمك</li>
+        <li><b>⬆️ استيراد نسخة:</b> يستعيد جميع بياناتك من ملف نسخة احتياطية سابق</li>
+      </ul>
+      <div class="note">💡 ننصح بعمل نسخة احتياطية أسبوعياً، وخصوصاً قبل أي إعادة ضبط أو عند إكمال إنجاز مهم.</div>
+    </div>
+
+    <div class="card c3">
+      <h3>🔄 إعادة الضبط</h3>
+      <ul>
+        <li><b>📦 إعادة ضبط الحِزم فقط:</b> يحذف كلمات الحِزم الجاهزة فقط، ويحافظ على كلماتك الأصلية وتقدّمك.</li>
+        <li><b>🔄 إعادة الضبط بالكامل:</b> يمسح كل شيء ويعيدك للبداية بـ٥٠ كلمة فقط.</li>
+      </ul>
+      <p style="margin-top:6px">كل إعادة ضبط تطلب تأكيداً قبل التنفيذ — لن يحدث شيء بالخطأ.</p>
+    </div>
+
+    <div class="card c4">
+      <h3>🌗 الوضع الليلي / النهاري</h3>
+      <p>اضغط أيقونة 🌙 / ☀️ في الأعلى للتبديل بين الوضع الداكن والفاتح. يُحفظ اختيارك تلقائياً.</p>
+    </div>
+  </div>
+
+  <!-- ٧. نصائح -->
+  <div class="section" id="tips">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(124,91,230,.2);color:#A78BFA">💡</span>نصائح مهمة</div>
+
+    <div class="card">
+      <h3>🎯 لا تستعجل في إضافة الحِزم</h3>
+      <p>أفضل طريقة هي إضافة حزمة واحدة كل أسبوع أو أسبوعين، مع الاستمرار في تعلّم ٥ كلمات جديدة يومياً. هذا يضمن تعلّماً حقيقياً وثابتاً بدلاً من الحفظ السريع والنسيان.</p>
+    </div>
+
+    <div class="card c2">
+      <h3>🏆 استخدم السلسلة المتواصلة كتحدٍ جماعي</h3>
+      <p>السلسلة 🔥 تُحفّز الطالب على الدخول يومياً. اجعلها جزءاً من الحصة! اسأل أحياناً: "من لديه سلسلة ٧ أيام متواصلة؟" — تحويل ميزة في التطبيق إلى لحظة تفاعل اجتماعي يرفع الحافز كثيراً بين الطلاب.</p>
+    </div>
+  </div>
+
+  <!-- المتحدّث الصوتي -->
+  <div class="section" id="voice">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(167,139,250,.18);color:#A78BFA">🎙️</span>المتحدّث الصوتي</div>
+
+    <div class="card c3">
+      <h3>🤖 ما هو المتحدّث الصوتي؟</h3>
+      <p>رفيق محادثة ذكي (Buddy) مدعوم بالذكاء الاصطناعي يتيح لك التحدّث بالإنجليزية بصوتك الحقيقي والحصول على ردود فورية — مثل محادثة حقيقية مع شخص إنجليزي.</p>
+    </div>
+
+    <div class="card">
+      <h3>🎯 كيف تستخدمه؟</h3>
+      <ul>
+        <li>اضغط <b>🎙️ المتحدّث</b> من الشاشة الرئيسية أو شريط التنقل السفلي</li>
+        <li>اختر <b>موضوعاً للمحادثة</b> (مثل: السفر، الطعام، الدراسة...)</li>
+        <li>اضغط <b>زر الميكروفون</b> وتحدّث بالإنجليزية</li>
+        <li>Buddy يسمع ويرد عليك بالإنجليزية تلقائياً</li>
+      </ul>
+      <div class="note">📱 <b>متطلبات:</b> يعمل بشكل أفضل على <b>Chrome</b> (أندرويد) و<b>Safari</b> (آيفون). تأكد من السماح للمتصفح باستخدام الميكروفون.</div>
+    </div>
+
+    <div class="card c2">
+      <h3>💡 نصائح للاستخدام الأمثل</h3>
+      <ul>
+        <li>تحدّث بوضوح وببطء في البداية حتى يتعرّف عليك المتصفح</li>
+        <li>ابدأ بجمل قصيرة ثم تدرّج إلى جمل أطول</li>
+        <li>إذا لم يتعرّف على صوتك، اضغط الزر مرة أخرى وأعد المحاولة</li>
+        <li>استخدمه يومياً ولو ٥ دقائق — هذا يبني الطلاقة بشكل حقيقي</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- البودكاست -->
+  <div class="section" id="podcast">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">🎧</span>البودكاست التعليمي</div>
+
+    <div class="card">
+      <h3>🎧 ما هو البودكاست؟</h3>
+      <p>قسم مخصص لتدريب <b>مهارة الاستماع الحقيقية</b> — ١٠ حلقات قصيرة بمواضيع متنوعة ومألوفة:</p>
+      <ul>
+        <li>أول يوم عمل، الطقس، الحديث عن فيلم</li>
+        <li>الرياضة، فقدان الهاتف، الطبخ</li>
+        <li>نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان</li>
+      </ul>
+    </div>
+
+    <div class="card c2">
+      <h3>📋 كيف تعمل كل حلقة؟</h3>
+      <ul>
+        <li>🎙️ <b>استمع أولاً</b> بدون رؤية أي نص</li>
+        <li>🔁 <b>إعادة استماع محدودة بمرتين فقط</b> — تماماً كاختبارات الاستماع الرسمية</li>
+        <li>🧠 <b>أجب على ٣ أسئلة فهم</b> بعد الاستماع</li>
+        <li>📜 <b>أظهر النص</b> بعد الإجابة للمراجعة والتعلم</li>
+      </ul>
+      <div class="note">💡 البودكاست مختلف عن "محادثات حياتية" — هنا تستمع <b>أولاً</b> دون رؤية النص، مما يدرّبك على الفهم السمعي الحقيقي كما في الحياة الفعلية.</div>
+    </div>
+  </div>
+
+  <!-- كيف يتم الحفظ -->
+  <div class="section" id="storage">
+    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
+    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">💾</span>كيف يتم حفظ بياناتك؟</div>
+
+    <div class="card c4">
+      <h3>📍 التخزين المحلي (localStorage)</h3>
+      <p>جميع الكلمات والنقاط والسلسلة المتواصلة تُحفظ داخل متصفح هاتفك فقط (وليس على الإنترنت).</p>
+
+      <p style="margin-top:10px"><b>كيف تتم العملية؟</b><br>
+      عند إضافة كلمة أو كسب نقطة، يقوم WordSpark بكتابة البيانات فوراً وتلقائياً داخل ملف صغير في المتصفح — بدون أي زر "حفظ"، يحدث كل ذلك في الخلفية.</p>
+
+      <p style="margin-top:10px"><b>أين تُحفظ؟</b><br>
+      على هذا الجهاز وهذا المتصفح بعينه فقط. فتح الملف من متصفح آخر (مثلاً Chrome بعد Safari) يُظهر تطبيقاً "جديداً" بلا أي تقدّم سابق.</p>
+
+      <p style="margin-top:10px"><b>متى تُفقد البيانات؟</b></p>
+      <ul>
+        <li>مسح بيانات المتصفح / الكاش (Clear Browsing Data)</li>
+        <li>إعادة ضبط الهاتف أو تثبيت متصفح جديد</li>
+        <li>الانتقال من جهاز إلى جهاز آخر</li>
+      </ul>
+
+      <div class="note">✅ <b>النصيحة:</b> استخدم متصفحاً واحداً ثابتاً ولا تمسح بياناته. والأهم: نزّل <b>نسخة احتياطية</b> بانتظام من قسم الكلمات (راجع قسم "٧. الإعدادات") — فهي الحل الأضمن لحماية تقدّمك مهما حدث.</div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="label">💡 Developed by</div>
+  <div class="sig">ARAFAT ALRAJHI</div>
+  <div style="font-size:10px;color:#253545;margin-top:4px;font-family:'Space Grotesk',sans-serif">© 2026 · WordSpark User Guide · v2</div>
+</footer>
+
+<script>
+function showSection(id) {
+  const toc = document.getElementById('tocMenu');
+  const sections = document.querySelectorAll('.section');
+
+  if (!id) {
+    // Back to menu: hide all sections, show the icon grid
+    sections.forEach(s => s.classList.remove('active'));
+    toc.style.display = '';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  toc.style.display = 'none';
+  sections.forEach(s => s.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
