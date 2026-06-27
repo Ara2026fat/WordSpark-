@@ -1633,32 +1633,32 @@
 
 /* ── CONFIRM MODAL ── */
 .confirm-overlay {
-  position: fixed; inset: 0; z-index: 500;
+  position: fixed; top:0; left:0; right:0; bottom:0; z-index: 500;
   background: rgba(0,0,0,.6);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   display: none;
-  align-items: flex-end; justify-content: center;
-  padding: 0;
+  align-items: flex-start; justify-content: center;
+  padding-top: 80px;
 }
 .confirm-overlay.show { display: flex; }
 #teacherInviteOverlay { z-index: 1200; }
 .confirm-box {
   background: var(--panel);
   border: 1px solid var(--rim);
-  border-radius: 20px 20px 0 0;
-  padding: 20px 16px 32px;
-  width: 100%; max-width: 480px;
+  border-radius: 20px;
+  padding: 20px 16px 28px;
+  width: 100%;
   text-align: center;
   animation: slideUp .3s ease both;
-  max-height: 85vh;
+  max-height: 80vh;
   overflow-y: auto;
 }
 @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
-.confirm-box .cb-icon { font-size: 32px; margin-bottom: 6px; }
+.confirm-box .cb-icon { font-size: 30px; margin-bottom: 4px; }
 .confirm-box .cb-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-.confirm-box .cb-msg { font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
-.confirm-box .cb-row { display: flex; gap: 10px; margin-top: 12px; }
+.confirm-box .cb-msg { font-size: 12px; color: var(--muted); margin-bottom: 10px; line-height: 1.5; }
+.confirm-box .cb-row { display: flex; gap: 10px; margin-top: 14px; }
 .confirm-box .cb-btn {
   flex: 1; padding: 11px; border-radius: 12px;
   font-family: 'Tajawal', sans-serif; font-size: 14px; font-weight: 700;
