@@ -1910,6 +1910,12 @@
       <span id="exportBtnLabel">Send My Results to ARAFAT via WhatsApp</span>
     </button>
 
+    <!-- Parent Report Button -->
+    <button class="btn-export" onclick="exportToParent()" style="background:linear-gradient(135deg,#7C3AED,#A78BFA);margin-top:10px">
+      <span style="font-size:28px;line-height:1">👨‍👩‍👦</span>
+      <span>Send My Results to My Father via WhatsApp</span>
+    </button>
+
     <!-- Backup System -->
     <div class="backup-banner">
       <div class="backup-banner-title">🛡️ النسخ الاحتياطي لتقدّمك</div>
@@ -1945,6 +1951,19 @@
         <div class="l">يوم متواصل</div>
       </div>
       <div class="streak-dots" id="streakDots"></div>
+    </div>
+
+    <!-- Time Tracking Widget -->
+    <div class="streak-bar" id="timeTrackWidget" style="margin-top:10px">
+      <div class="streak-flame">⏱️</div>
+      <div class="streak-info">
+        <div class="n" id="todayTimeDisplay">0 د</div>
+        <div class="l">وقت اليوم</div>
+      </div>
+      <div class="streak-info" style="margin-right:16px">
+        <div class="n" id="totalTimeDisplay">0 د</div>
+        <div class="l">إجمالي الوقت</div>
+      </div>
     </div>
 
     <!-- Mastery Dashboard -->
@@ -2270,7 +2289,24 @@
 </div>
 
 <!-- ══ TEACHER PHONE MODAL ══ -->
-<div class="confirm-overlay" id="teacherPhoneOverlay">
+<!-- ══ PARENT PHONE MODAL ══ -->
+<div class="confirm-overlay" id="parentPhoneOverlay">
+  <div class="confirm-box">
+    <div class="cb-icon">👨‍👩‍👦</div>
+    <div class="cb-title">أرسل تقريرك لوالدك</div>
+    <div class="cb-msg">أدخل رقم واتساب والدك حتى يصله تقرير تقدّمك</div>
+    <div style="text-align:right;margin-bottom:10px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">رقم الواتساب (بدون 966 أو 0)</div>
+      <input type="tel" id="parentPhoneInp" placeholder="مثال: 5XXXXXXXX" class="inp en" style="width:100%" autocomplete="off" inputmode="numeric">
+    </div>
+    <div class="cb-row">
+      <button class="cb-btn cb-cancel" onclick="closeParentPhoneModal()">إلغاء</button>
+      <button class="cb-btn cb-confirm" onclick="sendToParent()" style="background:linear-gradient(135deg,#7C3AED,#A78BFA);color:#fff">📤 إرسال</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TEACHER PHONE MODAL ══ -->
   <div class="confirm-box">
     <div class="cb-icon">👨‍🏫</div>
     <div class="cb-title">بيانات المعلم/المعلمة</div>
@@ -4894,6 +4930,122 @@ function confirmImportBackup() {
   setTimeout(() => location.reload(), 1200);
 }
 
+// ══ TIME TRACKING ══
+var _sessionStart = Date.now();
+var _timeInterval = null;
+
+function getTodayKey() {
+  return 'time_' + new Date().toDateString();
+}
+
+function getTodayMinutes() {
+  return parseInt(localStorage.getItem(getTodayKey()) || '0');
+}
+
+function getTotalMinutes() {
+  var total = 0;
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && k.startsWith('time_')) total += parseInt(localStorage.getItem(k) || '0');
+  }
+  return total;
+}
+
+function formatTime(mins) {
+  if (mins < 60) return mins + ' د';
+  var h = Math.floor(mins / 60);
+  var m = mins % 60;
+  return h + ' س ' + (m > 0 ? m + ' د' : '');
+}
+
+function saveSessionTime() {
+  var elapsed = Math.floor((Date.now() - _sessionStart) / 60000);
+  if (elapsed <= 0) return;
+  var key = getTodayKey();
+  var prev = parseInt(localStorage.getItem(key) || '0');
+  localStorage.setItem(key, prev + elapsed);
+  _sessionStart = Date.now();
+}
+
+function updateTimeDisplay() {
+  saveSessionTime();
+  var todayEl = document.getElementById('todayTimeDisplay');
+  var totalEl = document.getElementById('totalTimeDisplay');
+  if (todayEl) todayEl.textContent = formatTime(getTodayMinutes());
+  if (totalEl) totalEl.textContent = formatTime(getTotalMinutes());
+}
+
+// Update every minute
+_timeInterval = setInterval(updateTimeDisplay, 60000);
+updateTimeDisplay();
+
+// Save on page hide/close
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden) saveSessionTime();
+  else _sessionStart = Date.now();
+});
+window.addEventListener('beforeunload', saveSessionTime);
+window.addEventListener('pagehide', saveSessionTime);
+
+// ══ EXPORT TO PARENT ══
+function exportToParent() {
+  const saved = localStorage.getItem('parentPhone') || '';
+  document.getElementById('parentPhoneInp').value = saved.replace(/^966/, '');
+  document.getElementById('parentPhoneOverlay').classList.add('show');
+}
+
+function closeParentPhoneModal() {
+  document.getElementById('parentPhoneOverlay').classList.remove('show');
+}
+
+function sendToParent() {
+  let phone = document.getElementById('parentPhoneInp').value.trim().replace(/[^0-9]/g, '');
+  if (!phone || phone.length < 9) { showToast('⚠️ أدخل رقم صحيح', '#FB7185'); return; }
+  if (!phone.startsWith('966')) phone = '966' + phone;
+  localStorage.setItem('parentPhone', phone);
+  closeParentPhoneModal();
+
+  const name      = localStorage.getItem('studentName') || 'Student';
+  const total     = words.length;
+  const today_w   = words.filter(w => w.date === today).length;
+  const weekAgo   = new Date(Date.now() - 7*86400000);
+  const week_w    = words.filter(w => new Date(w.date) >= weekAgo).length;
+  const str       = localStorage.getItem('streak') || '0';
+  const beg       = words.filter(w => w.level === 'beginner').length;
+  const med       = words.filter(w => w.level === 'medium').length;
+  const adv       = words.filter(w => w.level === 'advanced').length;
+  const lastWords = words.slice(0,5).map(w => `• ${w.en} — ${w.ar}`).join('\n');
+
+  const todayMins  = getTodayMinutes();
+  const totalMins  = getTotalMinutes();
+
+  const msg = `
+👨‍👩‍👦 *WordSpark Progress Report*
+━━━━━━━━━━━━━━━
+👤 Student: *${name}*
+📅 Date: ${new Date().toLocaleDateString('ar-SA')}
+━━━━━━━━━━━━━━━
+📚 Total Words Learned: *${total}*
+🗓️ Words Today: *${today_w}*
+📆 Words This Week: *${week_w}*
+🔥 Streak: *${str} days*
+━━━━━━━━━━━━━━━
+⏱️ Time Today: *${formatTime(todayMins)}*
+🕐 Total Time on Platform: *${formatTime(totalMins)}*
+━━━━━━━━━━━━━━━
+📈 Levels:
+🟢 Beginner: ${beg} | 🟡 Medium: ${med} | 🔵 Advanced: ${adv}
+━━━━━━━━━━━━━━━
+✨ Last 5 Words:
+${lastWords}
+━━━━━━━━━━━━━━━
+💡 WordSpark — Developed by ARAFAT ALRAJHI
+  `.trim();
+
+  const url = 'https://wa.me/' + phone + '?text=' + encodeURIComponent(msg);
+  window.open(url, '_blank');
+}
+
 // ══ EXPORT TO WHATSAPP ══
 function exportResults() {
   const name    = localStorage.getItem('studentName') || 'طالب';
@@ -4919,6 +5071,8 @@ function exportResults() {
 🗓️ كلمات اليوم: *${today_w}*
 📆 كلمات الأسبوع: *${week_w}*
 🔥 أيام متواصلة: *${str}*
+⏱️ وقت اليوم: *${formatTime(getTodayMinutes())}*
+🕐 إجمالي الوقت: *${formatTime(getTotalMinutes())}*
 ━━━━━━━━━━━━━━━
 📈 المستويات:
 🟢 مبتدئ: ${beg} | 🟡 متوسط: ${med} | 🔵 متقدم: ${adv}
