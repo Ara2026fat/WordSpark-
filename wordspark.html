@@ -1779,6 +1779,43 @@
 .btn-change-name { background:none;border:none;color:#5A7090;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;text-decoration:underline;margin-top:2px;display:block; }
 </style>
 
+<!-- ══ PACK QUIZ SCREEN ══ -->
+<div id="packQuizScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
+
+  <div style="text-align:center;margin-bottom:16px">
+    <div style="font-size:32px;margin-bottom:6px">🏆</div>
+    <div id="pqTitle" style="font-size:17px;font-weight:900;color:#A78BFA">اختبار الحزمة</div>
+    <div style="font-size:12px;color:#64748B;margin-top:3px">أثبت أنك تتقن هذه الكلمات!</div>
+  </div>
+
+  <div style="background:#1A2332;border-radius:20px;height:8px;margin-bottom:6px;overflow:hidden">
+    <div id="pqProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#A78BFA,#2DD4BF);border-radius:20px;transition:width .4s ease"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:18px">
+    <span id="pqQNum">سؤال 1 من 10</span>
+    <span id="pqScore">⭐ 0</span>
+  </div>
+
+  <div id="pqCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+    <div id="pqType" style="font-size:11px;color:#A78BFA;margin-bottom:6px;font-weight:700"></div>
+    <div id="pqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
+  </div>
+
+  <div id="pqOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
+  <div id="pqFeedback" style="text-align:center;font-size:14px;font-weight:700;min-height:24px"></div>
+</div>
+
+<!-- ══ PACK QUIZ RESULT ══ -->
+<div id="packQuizResult" style="display:none;position:fixed;inset:0;z-index:301;background:linear-gradient(160deg,#0C0E18,#0A1F2E);align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
+  <div style="text-align:center;max-width:340px;width:100%">
+    <div id="pqrEmoji" style="font-size:72px;margin-bottom:12px"></div>
+    <div id="pqrTitle" style="font-size:20px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
+    <div id="pqrScore" style="font-size:28px;font-weight:900;color:#A78BFA;margin-bottom:8px"></div>
+    <div id="pqrMsg" style="font-size:13px;color:#94A3B8;margin-bottom:24px;line-height:1.7"></div>
+    <button id="pqrBtn" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px 40px;font-size:15px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%"></button>
+  </div>
+</div>
+
 <!-- ══ LEVEL TEST SCREEN ══ -->
 <div id="levelTestScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
 
@@ -3302,9 +3339,126 @@ function addPack(key) {
 function markPackComplete(key) {
   const pack = wordPacks[key];
   if (!pack) return;
-  localStorage.setItem('pack_completed_' + key, '1');
-  renderPackSelector();
-  showToast('🏆 أحسنت! تم فتح الحزمة التالية 🔓', '#A78BFA');
+  // Launch pack quiz before marking complete
+  startPackQuiz(key);
+}
+
+// ══ PACK QUIZ ══
+var pqKey = '', pqQuestions = [], pqCurrent = 0, pqCorrect = 0;
+
+function startPackQuiz(key) {
+  pqKey = key;
+  pqCurrent = 0; pqCorrect = 0;
+  const pack = wordPacks[key];
+
+  // Pick 10 random words from the pack
+  var allWords = pack.words.slice();
+  for (var i = allWords.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = allWords[i]; allWords[i] = allWords[j]; allWords[j] = tmp;
+  }
+  var selected = allWords.slice(0, Math.min(10, allWords.length));
+
+  // Build questions — alternate meaning and fill
+  pqQuestions = selected.map(function(w, idx) {
+    var type = idx % 2 === 0 ? 'meaning' : 'fill';
+    if (type === 'meaning') {
+      // Get 3 wrong answers from pack
+      var wrong = allWords.filter(function(x) { return x.en !== w.en; });
+      for (var i = wrong.length-1; i>0; i--) { var j=Math.floor(Math.random()*(i+1)); var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t; }
+      var opts = wrong.slice(0,3).map(function(x){return x.ar;});
+      var correctIdx = Math.floor(Math.random()*4);
+      opts.splice(correctIdx, 0, w.ar);
+      return { q: w.en, type:'meaning', opts:opts, ans:correctIdx, hint:'اختر المعنى الصحيح' };
+    } else {
+      // Fill in the blank using example sentence
+      var sentence = w.ex.replace(new RegExp('\\b'+w.en+'\\b','i'), '___');
+      var wrong = allWords.filter(function(x){return x.en!==w.en;});
+      for(var i=wrong.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t;}
+      var opts = wrong.slice(0,3).map(function(x){return x.en;});
+      var correctIdx = Math.floor(Math.random()*4);
+      opts.splice(correctIdx,0,w.en);
+      return { q:sentence, type:'fill', opts:opts, ans:correctIdx, hint:'أكمل الجملة بالكلمة الصحيحة' };
+    }
+  });
+
+  document.getElementById('pqTitle').textContent = '🏆 اختبار: ' + pack.nameAr;
+  document.getElementById('packQuizScreen').style.display = 'block';
+  document.getElementById('packQuizResult').style.display = 'none';
+  renderPQQuestion();
+}
+
+function renderPQQuestion() {
+  var q = pqQuestions[pqCurrent];
+  var pct = (pqCurrent / pqQuestions.length) * 100;
+  document.getElementById('pqProgressBar').style.width = pct + '%';
+  document.getElementById('pqQNum').textContent = 'سؤال ' + (pqCurrent+1) + ' من ' + pqQuestions.length;
+  document.getElementById('pqScore').textContent = '⭐ ' + pqCorrect;
+  document.getElementById('pqType').textContent = q.hint;
+  document.getElementById('pqQuestion').textContent = q.q;
+  document.getElementById('pqFeedback').textContent = '';
+
+  var opts = document.getElementById('pqOptions');
+  opts.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.style.cssText = 'background:#1A2332;border:1.5px solid #243550;border-radius:14px;padding:12px 8px;font-size:13px;font-family:Tajawal,sans-serif;color:#F1F5F9;cursor:pointer;transition:all .2s;font-weight:600;';
+    btn.onclick = function() { answerPQ(i, btn); };
+    opts.appendChild(btn);
+  });
+}
+
+function answerPQ(idx, btn) {
+  var q = pqQuestions[pqCurrent];
+  var btns = document.getElementById('pqOptions').querySelectorAll('button');
+  btns.forEach(function(b){b.onclick=null;b.style.opacity='.6';});
+  var fb = document.getElementById('pqFeedback');
+  if (idx === q.ans) {
+    btn.style.background='rgba(167,139,250,.2)';btn.style.borderColor='#A78BFA';btn.style.opacity='1';
+    pqCorrect++;
+    document.getElementById('pqScore').textContent='⭐ '+pqCorrect;
+    fb.style.color='#A78BFA';
+    fb.textContent=['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
+  } else {
+    btn.style.background='rgba(251,113,133,.2)';btn.style.borderColor='#FB7185';btn.style.opacity='1';
+    btns[q.ans].style.background='rgba(167,139,250,.15)';btns[q.ans].style.borderColor='#A78BFA';btns[q.ans].style.opacity='1';
+    fb.style.color='#FB7185';
+    fb.textContent=['لا بأس، واصل! 😊','قريب! استمر 🌟','راجع هذه الكلمة 📚','تعلّمنا شيئاً جديداً! 💪'][Math.floor(Math.random()*4)];
+  }
+  setTimeout(function() {
+    pqCurrent++;
+    if (pqCurrent < pqQuestions.length) {
+      renderPQQuestion();
+    } else { showPQResult(); }
+  }, 900);
+}
+
+function showPQResult() {
+  document.getElementById('packQuizScreen').style.display = 'none';
+  var rs = document.getElementById('packQuizResult');
+  rs.style.display = 'flex';
+  var pct = pqCorrect / pqQuestions.length;
+  var passed = pct >= 0.6;
+  document.getElementById('pqrEmoji').textContent = passed ? '🏆' : '📚';
+  document.getElementById('pqrTitle').textContent = passed ? 'أحسنت! اجتزت الاختبار!' : 'تحتاج مراجعة أكثر';
+  document.getElementById('pqrScore').textContent = pqCorrect + ' / ' + pqQuestions.length;
+  document.getElementById('pqrMsg').textContent = passed
+    ? 'تقدّمك رائع! تم فتح الحزمة التالية. واصل التعلّم! 🚀'
+    : 'لا تقلق! راجع كلمات الحزمة وأعد الاختبار. التكرار هو سر النجاح 💪';
+  var btn = document.getElementById('pqrBtn');
+  if (passed) {
+    btn.textContent = '🔓 فتح الحزمة التالية';
+    btn.onclick = function() {
+      localStorage.setItem('pack_completed_' + pqKey, '1');
+      document.getElementById('packQuizResult').style.display = 'none';
+      renderPackSelector();
+      showToast('🏆 أحسنت! تم فتح الحزمة التالية 🔓', '#A78BFA');
+    };
+  } else {
+    btn.textContent = '🔄 أعد الاختبار';
+    btn.onclick = function() { startPackQuiz(pqKey); };
+  }
 }
 
 // ══ RESET CONTROLS ══
