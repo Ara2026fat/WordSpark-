@@ -1779,6 +1779,50 @@
 .btn-change-name { background:none;border:none;color:#5A7090;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;text-decoration:underline;margin-top:2px;display:block; }
 </style>
 
+<!-- ══ LEVEL TEST SCREEN ══ -->
+<div id="levelTestScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:20px">
+    <div style="font-size:36px;margin-bottom:8px" id="ltEmoji">🎮</div>
+    <div style="font-size:18px;font-weight:900;color:#F5C842">مغامرة الكلمات!</div>
+    <div style="font-size:12px;color:#64748B;margin-top:4px">اختر الإجابة الصحيحة وتقدّم في الرحلة</div>
+  </div>
+
+  <!-- Progress bar -->
+  <div style="background:#1A2332;border-radius:20px;height:8px;margin-bottom:6px;overflow:hidden">
+    <div id="ltProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#FFD700,#2DD4BF);border-radius:20px;transition:width .4s ease"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:20px">
+    <span id="ltQNum">سؤال 1 من 15</span>
+    <span id="ltStars">⭐ 0</span>
+  </div>
+
+  <!-- Question Card -->
+  <div id="ltCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #243550;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .3s ease">
+    <div id="ltQuestion" style="font-size:16px;font-weight:700;color:#F1F5F9;line-height:1.6"></div>
+    <div id="ltSubQuestion" style="font-size:12px;color:#64748B;margin-top:6px"></div>
+  </div>
+
+  <!-- Options -->
+  <div id="ltOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"></div>
+
+  <!-- Feedback -->
+  <div id="ltFeedback" style="text-align:center;font-size:14px;font-weight:700;min-height:28px;transition:all .3s"></div>
+</div>
+
+<!-- ══ LEVEL RESULT SCREEN ══ -->
+<div id="levelResultScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E);display:none;align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
+  <div style="text-align:center;max-width:340px;width:100%">
+    <div id="lrEmoji" style="font-size:72px;margin-bottom:16px;animation:splashIn .6s ease both"></div>
+    <div id="lrTitle" style="font-size:22px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
+    <div id="lrSubtitle" style="font-size:14px;color:#94A3B8;margin-bottom:24px;line-height:1.7"></div>
+    <div id="lrBadge" style="display:inline-block;padding:10px 28px;border-radius:30px;font-size:14px;font-weight:700;margin-bottom:28px"></div>
+    <br>
+    <button onclick="finishLevelTest()" style="background:linear-gradient(135deg,#FFD700,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px 40px;font-size:15px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%">🚀 ابدأ رحلتك!</button>
+  </div>
+</div>
+
 <!-- ══ NAME SCREEN ══ -->
 <div id="nameScreen" style="display:none">
   <div class="name-box">
@@ -1932,6 +1976,9 @@
     </div>
 
     <!-- Reset Controls -->
+    <div class="reset-row">
+      <button class="btn-reset soft" onclick="retakeLevelTest()">🎮 إعادة اختبار المستوى</button>
+    </div>
     <div class="reset-row">
       <button class="btn-reset soft" onclick="confirmAction('packs')">📦 إعادة ضبط الحِزم فقط</button>
       <button class="btn-reset" onclick="confirmAction('all')">🔄 إعادة الضبط بالكامل</button>
@@ -4784,8 +4831,135 @@ function saveName() {
   if (!n) { showToast('✏️ اكتب اسمك أولاً', '#FF6B8A'); return; }
   localStorage.setItem('studentName', n);
   document.getElementById('nameScreen').style.display = 'none';
+
+  // Show level test only on first visit
+  if (!localStorage.getItem('studentLevel')) {
+    startLevelTest();
+  } else {
+    renderStudentBanner(n);
+    showToast('أهلاً ' + n + '! 🎉');
+  }
+}
+
+// ══ LEVEL TEST ══
+var ltQuestions = [
+  { q:'What does "Happy" mean?', type:'meaning', opts:['حزين','سعيد','غاضب','خائف'], ans:1, level:'beginner' },
+  { q:'What does "Book" mean?', type:'meaning', opts:['قلم','كتاب','مدرسة','طاولة'], ans:1, level:'beginner' },
+  { q:'What does "Eat" mean?', type:'meaning', opts:['ينام','يركض','يأكل','يشرب'], ans:2, level:'beginner' },
+  { q:'What does "Beautiful" mean?', type:'meaning', opts:['جميل','قبيح','كبير','صغير'], ans:0, level:'beginner' },
+  { q:'I ___ to school every day.', type:'fill', opts:['goes','go','going','went'], ans:1, level:'beginner' },
+  { q:'She ___ very hard for the exam.', type:'fill', opts:['study','studied','studies','studying'], ans:1, level:'medium' },
+  { q:'What does "Achieve" mean?', type:'meaning', opts:['يفشل','يحقق','يتجاهل','يتأخر'], ans:1, level:'medium' },
+  { q:'They ___ in this city for 5 years.', type:'fill', opts:['live','lived','have lived','living'], ans:2, level:'medium' },
+  { q:'What does "Confident" mean?', type:'meaning', opts:['خجول','واثق','قلق','حزين'], ans:1, level:'medium' },
+  { q:'If it rains, we ___ stay home.', type:'fill', opts:['will','would','can','must'], ans:0, level:'medium' },
+  { q:'What does "Perseverance" mean?', type:'meaning', opts:['المرونة','المثابرة','الفضول','الاندفاع'], ans:1, level:'advanced' },
+  { q:'The project ___ by the team before deadline.', type:'fill', opts:['completed','was completed','has complete','completing'], ans:1, level:'advanced' },
+  { q:'What does "Ambiguous" mean?', type:'meaning', opts:['واضح','غامض','بسيط','معقد'], ans:1, level:'advanced' },
+  { q:'___ he studied, ___ he scored.', type:'fill', opts:['More/higher','The more/the higher','Much/very','So/therefore'], ans:1, level:'advanced' },
+  { q:'What does "Eloquent" mean?', type:'meaning', opts:['فصيح','صامت','مترد','غاضب'], ans:0, level:'advanced' },
+];
+
+var ltCurrent = 0, ltScore = 0, ltStarsCount = 0;
+var ltColors = { beginner:'#2DD4BF', medium:'#F5C842', advanced:'#A78BFA' };
+var ltEmojis = { beginner:'🟢', medium:'🟡', advanced:'🔵' };
+
+function startLevelTest() {
+  ltCurrent = 0; ltScore = 0; ltStarsCount = 0;
+  document.getElementById('levelTestScreen').style.display = 'block';
+  document.getElementById('levelResultScreen').style.display = 'none';
+  renderLTQuestion();
+}
+
+function renderLTQuestion() {
+  var q = ltQuestions[ltCurrent];
+  var pct = (ltCurrent / ltQuestions.length) * 100;
+  document.getElementById('ltProgressBar').style.width = pct + '%';
+  document.getElementById('ltQNum').textContent = 'سؤال ' + (ltCurrent+1) + ' من ' + ltQuestions.length;
+  document.getElementById('ltStars').textContent = '⭐ ' + ltStarsCount;
+  document.getElementById('ltEmoji').textContent = ltEmojis[q.level];
+  document.getElementById('ltFeedback').textContent = '';
+  document.getElementById('ltQuestion').textContent = q.q;
+  document.getElementById('ltSubQuestion').textContent = q.type === 'fill' ? 'اختر الكلمة المناسبة لإكمال الجملة' : 'اختر المعنى الصحيح';
+  document.getElementById('ltCard').style.borderColor = ltColors[q.level] + '44';
+
+  var opts = document.getElementById('ltOptions');
+  opts.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.style.cssText = 'background:#1A2332;border:1.5px solid #243550;border-radius:14px;padding:12px 8px;font-size:13px;font-family:Tajawal,sans-serif;color:#F1F5F9;cursor:pointer;transition:all .2s;font-weight:600;';
+    btn.onclick = function() { answerLT(i, btn); };
+    opts.appendChild(btn);
+  });
+}
+
+function answerLT(idx, btn) {
+  var q = ltQuestions[ltCurrent];
+  var btns = document.getElementById('ltOptions').querySelectorAll('button');
+  btns.forEach(function(b) { b.onclick = null; b.style.opacity = '.6'; });
+
+  var fb = document.getElementById('ltFeedback');
+  if (idx === q.ans) {
+    btn.style.background = 'rgba(45,212,191,.2)'; btn.style.borderColor = '#2DD4BF'; btn.style.opacity = '1';
+    ltScore++; ltStarsCount++;
+    document.getElementById('ltStars').textContent = '⭐ ' + ltStarsCount;
+    fb.style.color = '#2DD4BF';
+    fb.textContent = ['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
+  } else {
+    btn.style.background = 'rgba(251,113,133,.2)'; btn.style.borderColor = '#FB7185'; btn.style.opacity = '1';
+    btns[q.ans].style.background = 'rgba(45,212,191,.15)'; btns[q.ans].style.borderColor = '#2DD4BF'; btns[q.ans].style.opacity = '1';
+    fb.style.color = '#FB7185';
+    fb.textContent = ['حاول مجدداً 💪','لا بأس، واصل! 😊','قريب! استمر 🌟','تعلّمنا شيئاً جديداً! 📚'][Math.floor(Math.random()*4)];
+  }
+
+  setTimeout(function() {
+    ltCurrent++;
+    if (ltCurrent < ltQuestions.length) {
+      document.getElementById('ltCard').style.transform = 'translateX(-10px)';
+      setTimeout(function() { document.getElementById('ltCard').style.transform = 'translateX(0)'; renderLTQuestion(); }, 200);
+    } else { showLevelResult(); }
+  }, 900);
+}
+
+function showLevelResult() {
+  document.getElementById('levelTestScreen').style.display = 'none';
+  var rs = document.getElementById('levelResultScreen');
+  rs.style.display = 'flex';
+  var pct = ltScore / ltQuestions.length;
+  var level, emoji, title, subtitle, badge, badgeColor, borderColor;
+  if (pct >= 0.75) {
+    level='advanced'; emoji='🏆'; title='مستوى متقدم!';
+    subtitle='مفرداتك قوية ومهاراتك رائعة.\nستبدأ مباشرة بالكلمات المتقدمة.';
+    badge='🔵 Advanced'; badgeColor='rgba(167,139,250,.2)'; borderColor='#A78BFA';
+  } else if (pct >= 0.45) {
+    level='medium'; emoji='🌟'; title='مستوى متوسط!';
+    subtitle='عندك قاعدة جيدة في الإنجليزية.\nسنبني عليها ونطورها معاً.';
+    badge='🟡 Intermediate'; badgeColor='rgba(245,200,66,.2)'; borderColor='#F5C842';
+  } else {
+    level='beginner'; emoji='🚀'; title='مبتدئ واعد!';
+    subtitle='كل رحلة تبدأ بخطوة.\nستتعلم بشكل ممتع ومنظّم من الصفر.';
+    badge='🟢 Beginner'; badgeColor='rgba(45,212,191,.2)'; borderColor='#2DD4BF';
+  }
+  localStorage.setItem('studentLevel', level);
+  document.getElementById('lrEmoji').textContent = emoji;
+  document.getElementById('lrTitle').textContent = title;
+  document.getElementById('lrSubtitle').textContent = subtitle;
+  var b = document.getElementById('lrBadge');
+  b.textContent = badge; b.style.background = badgeColor;
+  b.style.color = '#F1F5F9'; b.style.border = '1.5px solid ' + borderColor;
+}
+
+function finishLevelTest() {
+  document.getElementById('levelResultScreen').style.display = 'none';
+  var n = localStorage.getItem('studentName') || '';
   renderStudentBanner(n);
-  showToast('أهلاً ' + n + '! 🎉');
+  showToast('أهلاً ' + n + '! رحلتك تبدأ الآن 🚀');
+}
+
+function retakeLevelTest() {
+  localStorage.removeItem('studentLevel');
+  startLevelTest();
 }
 
 function renderStudentBanner(name) {
