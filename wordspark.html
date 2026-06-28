@@ -6376,7 +6376,52 @@ function showStationCard() {
     reqHtml += '</div></div>';
   }
 
+  var stationImages = {
+    1:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image-Kaaba.jpg/480px-Image-Kaaba.jpg',
+    2:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Al-Masjid_an-Nabawi.jpg/480px-Al-Masjid_an-Nabawi.jpg',
+    3:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Jeddah-AlBalad.jpg/480px-Jeddah-AlBalad.jpg',
+    4:'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Taif_city.jpg/480px-Taif_city.jpg',
+    5:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/AlUla_Old_Town.jpg/480px-AlUla_Old_Town.jpg',
+    6:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Yanbu_al_Bahr.jpg/480px-Yanbu_al_Bahr.jpg',
+    7:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Jazan_region.jpg/480px-Jazan_region.jpg',
+    8:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Farasan_islands.jpg/480px-Farasan_islands.jpg',
+    9:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Abha_city_landscape.jpg/480px-Abha_city_landscape.jpg',
+    10:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Tabuk_Castle.jpg/480px-Tabuk_Castle.jpg',
+    11:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Masmak_fort_Riyadh.jpg/480px-Masmak_fort_Riyadh.jpg',
+    12:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Al_Ahsa_oasis.jpg/480px-Al_Ahsa_oasis.jpg',
+    13:'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Dammam_Corniche.jpg/480px-Dammam_Corniche.jpg',
+    14:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Jubail_Industrial_City.jpg/480px-Jubail_Industrial_City.jpg',
+    15:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Kuwait_Towers.jpg/480px-Kuwait_Towers.jpg',
+    16:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Bahrain_Fort_BW_2.jpg/480px-Bahrain_Fort_BW_2.jpg',
+    17:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Museum_of_Islamic_Art%2C_Doha.jpg/480px-Museum_of_Islamic_Art%2C_Doha.jpg',
+    18:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Sheikh_Zayed_Grand_Mosque_November_2017.jpg/480px-Sheikh_Zayed_Grand_Mosque_November_2017.jpg',
+    19:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Burj_Khalifa.jpg/480px-Burj_Khalifa.jpg',
+    20:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Sultan_Qaboos_Grand_Mosque_-_Panorama.jpg/480px-Sultan_Qaboos_Grand_Mosque_-_Panorama.jpg',
+    21:'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Umayyad_Mosque2.jpg/480px-Umayyad_Mosque2.jpg',
+    22:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Mutanabbi_Street_Baghdad.jpg/480px-Mutanabbi_Street_Baghdad.jpg',
+    23:'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Dome_of_the_rock_jerusalem.jpg/480px-Dome_of_the_rock_jerusalem.jpg',
+    24:'https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Hagia_Sophia_Istanbul_2014.jpg/480px-Hagia_Sophia_Istanbul_2014.jpg',
+    25:'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Konya_Karatay_medrese.jpg/480px-Konya_Karatay_medrese.jpg',
+    26:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Mosque_Cordoba.jpg/480px-Mosque_Cordoba.jpg',
+    27:'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Alhambra_twilight.jpg/480px-Alhambra_twilight.jpg',
+    28:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Samarkand_Registan_exposure_blend_2.jpg/480px-Samarkand_Registan_exposure_blend_2.jpg',
+    29:'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Bukhara_-_Kalyan_minaret_and_mosque.jpg/480px-Bukhara_-_Kalyan_minaret_and_mosque.jpg',
+    30:'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Cairo_from_the_Citadel.jpg/480px-Cairo_from_the_Citadel.jpg',
+    31:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Zitouna_mosque_Tunis.jpg/480px-Zitouna_mosque_Tunis.jpg',
+    32:'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Al_Quaraouiyine_Mosque.jpg/480px-Al_Quaraouiyine_Mosque.jpg',
+    33:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Stone_Town_Zanzibar.jpg/480px-Stone_Town_Zanzibar.jpg',
+    34:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Petronas_Twin_Towers.jpg/480px-Petronas_Twin_Towers.jpg',
+    35:'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Istiqlal_Mosque.jpg/480px-Istiqlal_Mosque.jpg',
+    36:'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Bursa_Green_Dome.jpg/480px-Bursa_Green_Dome.jpg',
+    37:'https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Globe_Atlantic.jpg/480px-Globe_Atlantic.jpg'
+  };
+  var imgUrl = stationImages[s.id] || '';
+
   document.getElementById('stationCardContent').innerHTML =
+    (imgUrl ? '<div style="width:100%;height:180px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:#1A2332;position:relative">' +
+    '<img src="' + imgUrl + '" style="width:100%;height:100%;object-fit:cover;opacity:.85" onerror="this.parentElement.style.display=\'none\'" loading="lazy">' +
+    '<div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,#0F1C2E)"></div>' +
+    '</div>' : '') +
     '<div class="station-flag">' + s.flag + '</div>' +
     '<div class="station-title">' + s.name + '</div>' +
     '<div class="station-subtitle">' + s.nameEn + '</div>' +
