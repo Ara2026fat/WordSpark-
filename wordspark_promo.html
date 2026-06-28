@@ -715,6 +715,7 @@ function replayPromo() {
 
 function onPromoEnd() {
   if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
+  if (bgAudio) { bgAudio.pause(); bgAudio.currentTime = 0; }
   var btn = document.getElementById('replayBtn');
   if (btn) btn.style.display = 'flex';
 }
