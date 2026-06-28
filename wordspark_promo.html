@@ -637,20 +637,22 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // ══ SCENE SYSTEM ══
+// المدة الاحتياطية إذا لم يكن هناك صوت (بالملي ثانية)
 var scenes = [
-  { id:'scene1', duration:6000 },
-  { id:'scene2', duration:8000 },
-  { id:'scene3', duration:9000 },
-  { id:'scene4', duration:9000 },
-  { id:'scene5', duration:8000 },
-  { id:'scene6', duration:8000 },
-  { id:'scene7', duration:12000 }
+  { id:'scene1', duration:10000 },
+  { id:'scene2', duration:12000 },
+  { id:'scene3', duration:12000 },
+  { id:'scene4', duration:12000 },
+  { id:'scene5', duration:11000 },
+  { id:'scene6', duration:11000 },
+  { id:'scene7', duration:14000 }
 ];
 
 var current = 0;
 var timer = null;
 var progressTimer = null;
 var startTime = null;
+var sceneDuration = 0; // المدة الفعلية للمشهد الحالي
 var soundEnabled = true;
 var bgAudio = null;
 var voiceAudio = null;
@@ -661,7 +663,7 @@ function startBgAudio() {
   try {
     bgAudio = new Audio(baseUrl + 'voice-0.m4a');
     bgAudio.loop = true;
-    bgAudio.volume = 0.12;
+    bgAudio.volume = 0.04; // خلفية خفيفة جداً
     bgAudio.play().catch(function(){});
   } catch(e){}
 }
@@ -673,6 +675,23 @@ function speakScene(idx) {
     if (idx < voiceFiles.length) {
       voiceAudio = new Audio(baseUrl + voiceFiles[idx]);
       voiceAudio.volume = 1.0;
+
+      // عند انتهاء الصوت: انتقل للمشهد التالي بعد ثانية واحدة
+      voiceAudio.addEventListener('ended', function() {
+        if (current === idx) {
+          clearInterval(progressTimer);
+          // أكمل شريط التقدم
+          var pb = document.getElementById('progressBar');
+          if (pb) pb.style.width = (((idx + 1) / scenes.length) * 100) + '%';
+          setTimeout(function() { nextScene(); }, 1200);
+        }
+      });
+
+      // عند معرفة المدة الفعلية للصوت: حدّث مدة المشهد
+      voiceAudio.addEventListener('loadedmetadata', function() {
+        sceneDuration = Math.max((voiceAudio.duration * 1000) + 1500, scenes[idx].duration);
+      });
+
       voiceAudio.play().catch(function(){});
     }
   } catch(e){}
@@ -680,11 +699,18 @@ function speakScene(idx) {
 
 function replayPromo() {
   current = 0;
-  if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
+  clearInterval(progressTimer);
+  if (voiceAudio) { voiceAudio.pause(); voiceAudio.currentTime = 0; voiceAudio = null; }
   var replayBtn = document.getElementById('replayBtn');
   if (replayBtn) replayBtn.style.display = 'none';
-  var soundOverlay = document.getElementById('soundOverlay');
-  if (soundOverlay) soundOverlay.style.display = 'flex';
+  var pb = document.getElementById('progressBar');
+  if (pb) pb.style.width = '0%';
+  if (soundEnabled) {
+    if (bgAudio) { try { bgAudio.currentTime = 0; bgAudio.play().catch(function(){}); } catch(e){} }
+    setTimeout(function() { showScene(0); }, 300);
+  } else {
+    showScene(0);
+  }
 }
 
 function onPromoEnd() {
@@ -705,11 +731,14 @@ function startPromoSilent() {
   document.getElementById('soundOverlay').style.display = 'none';
   showScene(0);
 }
+function showScene(idx) {
   if (idx === undefined || idx === null || idx >= scenes.length || idx < 0) return;
   var sceneData = scenes[idx];
   if (!sceneData) return;
 
-  // Hide all
+  current = idx;
+
+  // Hide all — reset animations by cloning nodes
   scenes.forEach(function(s, i) {
     var el = document.getElementById(s.id);
     if (el) el.classList.remove('active');
@@ -725,26 +754,42 @@ function startPromoSilent() {
   if (!el) return;
   el.classList.add('active');
 
-  // Trigger animations
+  // Reset animation items so they replay correctly
+  var animItems = el.querySelectorAll('.feature-card,.rank-row,.station-preview-chip,.problem-card,.solution-card,.wa-bubble,.phone-mockup,.cta-title,.cta-subtitle,.cta-url,.cta-free,.scene-title,.main-title,.logo-ws,.logo-sub,.tagline');
+  animItems.forEach(function(a) {
+    try {
+      a.style.animation = 'none';
+      a.style.opacity = '0';
+      void a.offsetWidth; // reflow
+      a.style.animation = '';
+    } catch(e){}
+  });
+
+  // After a short delay, ensure everything is visible (fallback)
   setTimeout(function() {
     try {
       var items = el.querySelectorAll('.feature-card,.rank-row,.station-preview-chip,.problem-card,.solution-card,.wa-bubble,.phone-mockup,.cta-title,.cta-subtitle,.cta-url,.cta-free,.scene-title,.main-title');
       items.forEach(function(a) { try { a.style.opacity='1'; } catch(e){} });
     } catch(e){}
-  }, 200);
+  }, 2500);
+
+  // ضبط المدة الافتراضية أولاً ثم سيُحدَّث عند تحميل الصوت
+  sceneDuration = scenes[idx].duration;
 
   speakScene(idx);
 
   startTime = Date.now();
   clearInterval(progressTimer);
   progressTimer = setInterval(function() {
-    if (!scenes[idx]) { clearInterval(progressTimer); return; }
+    if (current !== idx) { clearInterval(progressTimer); return; }
     var elapsed = Date.now() - startTime;
-    var pct = (elapsed / scenes[idx].duration) * 100;
+    var dur = sceneDuration; // يتحدث تلقائياً عند تحميل الصوت
+    var pct = Math.min((elapsed / dur) * 100, 99); // لا يكتمل تلقائياً — ينتظر حدث ended
     var totalPct = ((idx + pct/100) / scenes.length) * 100;
     var pb = document.getElementById('progressBar');
     if (pb) pb.style.width = Math.min(totalPct, 100) + '%';
-    if (elapsed >= scenes[idx].duration) {
+    // الانتقال التلقائي فقط إذا لم يكن هناك صوت (وضع صامت)
+    if (!soundEnabled && elapsed >= dur) {
       clearInterval(progressTimer);
       nextScene();
     }
