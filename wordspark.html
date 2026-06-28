@@ -16,7 +16,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --font-scale: 1;
     --ink:    #0D1117;
     --deep:   #111827;
     --panel:  #1A2332;
@@ -39,26 +38,36 @@
 
   /* ── SPEED CONTROL ── */
   .speed-row {
-    display: flex; align-items: center; justify-content: center;
-    gap: 8px; margin: 8px 0 4px;
+    display: flex; align-items: center; gap: 10px;
+    margin: 10px 4px 4px; padding: 10px 14px;
+    background: var(--card); border-radius: 14px;
+    border: 1px solid var(--rim);
   }
-  .speed-label { font-size: 12px; color: var(--muted); }
-  .speed-btn {
-    background: var(--card); border: 1px solid var(--rim);
-    border-radius: 20px; color: var(--soft);
-    font-size: 12px; font-weight: 700;
-    padding: 5px 12px; cursor: pointer; transition: all .2s;
+  .speed-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .speed-val {
+    font-size: 12px; font-weight: 700; color: var(--teal);
+    min-width: 28px; text-align: center;
   }
-  .speed-btn.active {
-    background: var(--teal); color: #000;
-    border-color: var(--teal);
+  .speed-slider {
+    flex: 1; -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 4px;
+    background: linear-gradient(to right, var(--teal) 0%, var(--teal) 50%, var(--rim) 50%);
+    outline: none; cursor: pointer;
   }
-  .speed-btn:active { transform: scale(.93); }
+  .speed-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--teal); cursor: pointer;
+    box-shadow: 0 0 6px rgba(45,212,191,.5);
+  }
+  .speed-slider::-moz-range-thumb {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--teal); cursor: pointer; border: none;
+  }
 
   /* ── FONT SCALE ── */
-  body { font-size: calc(14px * var(--font-scale)); }
-  body.font-lg { --font-scale: 1.25; }
-  body.font-xl { --font-scale: 1.5; }
+  body.font-lg { zoom: 1.2; }
+  body.font-xl { zoom: 1.45; }
 
   .font-toggle {
     background: rgba(255,255,255,.05);
@@ -7535,10 +7544,11 @@ function openConv(key) {
 
     <div class="conv-section-label">💬 محادثة نموذجية</div>
     <div class="speed-row">
-      <span class="speed-label">🐢 سرعة القراءة:</span>
-      <button class="speed-btn active" id="cspd-slow" onclick="setConvSpeed(0.6)">بطيء</button>
-      <button class="speed-btn" id="cspd-norm" onclick="setConvSpeed(0.85)">عادي</button>
-      <button class="speed-btn" id="cspd-fast" onclick="setConvSpeed(1.0)">سريع</button>
+      <span class="speed-label">🐢 السرعة</span>
+      <input type="range" class="speed-slider" id="convSpeedSlider"
+             min="0.3" max="1.2" step="0.05" value="0.5"
+             oninput="setConvSpeed(parseFloat(this.value))">
+      <span class="speed-val" id="convSpeedVal">×0.5</span>
     </div>
     <div class="dialogue-wrap">${dialogueHtml}</div>
 
@@ -8551,7 +8561,7 @@ let podAudioQueue = [];
 let podCurrentLineIdx = 0;
 let podIsPlaying = false;
 let podReplayCount = 0;
-const POD_MAX_REPLAYS = 2;
+const POD_MAX_REPLAYS = 10;
 
 function renderPodcastMenu() {
   const area = document.getElementById('podcastMenu');
@@ -8636,10 +8646,11 @@ function openPodcast(key) {
       </div>
       <div class="pod-replay-count" id="podReplayCount">إعادة الاستماع: ${POD_MAX_REPLAYS} مرات متبقية</div>
       <div class="speed-row">
-        <span class="speed-label">🐢 السرعة:</span>
-        <button class="speed-btn ${podSpeed===0.6?'active':''}" onclick="setPodSpeed(0.6)">بطيء</button>
-        <button class="speed-btn ${podSpeed===0.85?'active':''}" onclick="setPodSpeed(0.85)">عادي</button>
-        <button class="speed-btn ${podSpeed===1.0?'active':''}" onclick="setPodSpeed(1.0)">سريع</button>
+        <span class="speed-label">🐢 السرعة</span>
+        <input type="range" class="speed-slider" id="podSpeedSlider"
+               min="0.3" max="1.2" step="0.05" value="${podSpeed}"
+               oninput="setPodSpeed(parseFloat(this.value))">
+        <span class="speed-val" id="podSpeedVal">×${podSpeed}</span>
       </div>
     </div>
 
@@ -8821,26 +8832,33 @@ document.addEventListener('keydown', e => {
 
 // ══ THEME TOGGLE ══
 // ── SPEECH SPEED ──
-var convSpeed = 0.6;
-var podSpeed  = 0.6;
+var convSpeed = parseFloat(localStorage.getItem('ws_conv_speed') || '0.5');
+var podSpeed  = parseFloat(localStorage.getItem('ws_pod_speed')  || '0.5');
 
 function setConvSpeed(s) {
-  convSpeed = s;
-  ['slow','norm','fast'].forEach(function(id) {
-    var el = document.getElementById('cspd-' + id);
-    if (el) el.classList.remove('active');
-  });
-  var map = {0.6:'slow', 0.85:'norm', 1.0:'fast'};
-  var target = document.getElementById('cspd-' + map[s]);
-  if (target) target.classList.add('active');
+  convSpeed = parseFloat(s);
+  var slider = document.getElementById('convSpeedSlider');
+  var val = document.getElementById('convSpeedVal');
+  if (slider) {
+    slider.value = convSpeed;
+    var pct = ((convSpeed - 0.3) / (1.2 - 0.3)) * 100;
+    slider.style.background = 'linear-gradient(to right, var(--teal) ' + pct + '%, var(--teal) ' + pct + '%, var(--rim) ' + pct + '%)';
+  }
+  if (val) val.textContent = '×' + convSpeed.toFixed(1);
+  localStorage.setItem('ws_conv_speed', convSpeed);
 }
 
 function setPodSpeed(s) {
-  podSpeed = s;
-  document.querySelectorAll('.speed-btn[onclick^="setPodSpeed"]').forEach(function(b) {
-    b.classList.remove('active');
-    if (b.getAttribute('onclick') === 'setPodSpeed(' + s + ')') b.classList.add('active');
-  });
+  podSpeed = parseFloat(s);
+  var slider = document.getElementById('podSpeedSlider');
+  var val = document.getElementById('podSpeedVal');
+  if (slider) {
+    slider.value = podSpeed;
+    var pct = ((podSpeed - 0.3) / (1.2 - 0.3)) * 100;
+    slider.style.background = 'linear-gradient(to right, var(--teal) ' + pct + '%, var(--teal) ' + pct + '%, var(--rim) ' + pct + '%)';
+  }
+  if (val) val.textContent = '×' + podSpeed.toFixed(1);
+  localStorage.setItem('ws_pod_speed', podSpeed);
 }
 
 function cycleFontSize() {
