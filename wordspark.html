@@ -2048,13 +2048,78 @@
 
 <!-- ══ TRAIN JOURNEY MAP ══ -->
 <div class="journey-screen" id="journeyScreen">
+  <!-- Header -->
   <div class="journey-header">
-    <div style="font-size:40px">🚂</div>
+    <div style="font-size:36px">🚂</div>
     <div class="journey-title">رحلة القطار</div>
     <div class="journey-subtitle">من مكة المكرمة إلى العالم الإسلامي</div>
-    <button onclick="closeJourney()" style="margin-top:12px;background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:12px;padding:8px 20px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer;">✕ إغلاق</button>
+
+    <!-- Toggle buttons -->
+    <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
+      <button id="btnMapView" onclick="setJourneyView('map')"
+        style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+        🌍 الخريطة
+      </button>
+      <button id="btnListView" onclick="setJourneyView('list')"
+        style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+        📋 القائمة
+      </button>
+      <button onclick="closeJourney()"
+        style="background:rgba(251,113,133,.1);border:1px solid #FB718544;color:#FB7185;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer">
+        ✕
+      </button>
+    </div>
   </div>
-  <div id="journeyStationsList"></div>
+
+  <!-- MAP VIEW -->
+  <div id="journeyMapView">
+    <div style="position:relative;width:100%;overflow:hidden;border-radius:16px;background:#0A1628;border:1px solid #243550">
+      <!-- SVG Map of Islamic World -->
+      <svg id="journeyMapSVG" viewBox="0 0 800 500" style="width:100%;display:block">
+        <!-- Ocean background -->
+        <rect width="800" height="500" fill="#061018"/>
+        <!-- Land masses (simplified Islamic world) -->
+        <!-- Arabian Peninsula -->
+        <path d="M440,200 L480,190 L510,200 L520,240 L500,280 L470,300 L450,280 L440,250 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- North Africa -->
+        <path d="M200,180 L400,170 L420,190 L420,220 L380,230 L200,230 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- Levant/Iraq -->
+        <path d="M400,160 L450,155 L460,180 L440,200 L420,190 L400,180 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- Turkey -->
+        <path d="M360,140 L460,135 L470,155 L450,160 L360,165 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- Persia/Central Asia -->
+        <path d="M510,140 L620,130 L640,160 L620,180 L510,180 L500,160 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- South/Southeast Asia -->
+        <path d="M620,180 L720,170 L740,200 L720,230 L680,240 L640,220 L620,200 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- Iberian Peninsula -->
+        <path d="M200,130 L260,125 L270,155 L240,165 L200,160 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+        <!-- East Africa -->
+        <path d="M430,280 L460,270 L480,320 L460,370 L440,360 L420,320 Z" fill="#1A2E1A" stroke="#243550" stroke-width="1"/>
+
+        <!-- Grid lines (subtle) -->
+        <line x1="0" y1="250" x2="800" y2="250" stroke="#243550" stroke-width=".5" stroke-dasharray="4,8"/>
+        <line x1="400" y1="0" x2="400" y2="500" stroke="#243550" stroke-width=".5" stroke-dasharray="4,8"/>
+
+        <!-- Station dots will be injected by JS -->
+        <g id="mapStationDots"></g>
+      </svg>
+
+      <!-- Tooltip -->
+      <div id="mapTooltip" style="display:none;position:absolute;background:#1A2332;border:1px solid #A78BFA;border-radius:10px;padding:6px 12px;font-family:Tajawal,sans-serif;font-size:12px;color:#F1F5F9;pointer-events:none;z-index:10;white-space:nowrap"></div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:11px;font-family:Tajawal,sans-serif">
+      <span style="color:#2DD4BF">● مكتملة</span>
+      <span style="color:#A78BFA">● متاحة</span>
+      <span style="color:#374151">● مقفلة</span>
+    </div>
+  </div>
+
+  <!-- LIST VIEW -->
+  <div id="journeyListView" style="display:none">
+    <div id="journeyStationsList"></div>
+  </div>
 </div>
 
 <!-- ══ TRAIN ARRIVAL SCREEN ══ -->
@@ -6281,31 +6346,145 @@ function checkStationRequirements(stationId) {
   };
 }
 
+// ══ JOURNEY VIEW TOGGLE ══
+var currentJourneyView = 'map';
+
+function setJourneyView(view) {
+  currentJourneyView = view;
+  document.getElementById('journeyMapView').style.display = view === 'map' ? 'block' : 'none';
+  document.getElementById('journeyListView').style.display = view === 'list' ? 'block' : 'none';
+  document.getElementById('btnMapView').style.background = view === 'map' ? 'linear-gradient(135deg,#A78BFA,#2DD4BF)' : 'rgba(167,139,250,.1)';
+  document.getElementById('btnMapView').style.color = view === 'map' ? '#0C0E18' : '#A78BFA';
+  document.getElementById('btnListView').style.background = view === 'list' ? 'linear-gradient(135deg,#A78BFA,#2DD4BF)' : 'rgba(167,139,250,.1)';
+  document.getElementById('btnListView').style.color = view === 'list' ? '#0C0E18' : '#A78BFA';
+  if (view === 'map') renderMapDots();
+  if (view === 'list') renderJourneyList();
+}
+
+// Station coordinates on the SVG map (x, y out of 800x500)
+var STATION_COORDS = {
+  1:{x:475,y:255}, // مكة
+  2:{x:460,y:235}, // المدينة
+  3:{x:450,y:210}, // جدة
+  4:{x:468,y:222}, // الطائف
+  5:{x:455,y:200}, // العلا
+  6:{x:445,y:215}, // ينبع
+  7:{x:460,y:275}, // جازان
+  8:{x:455,y:285}, // فرسان
+  9:{x:468,y:265}, // أبها
+  10:{x:448,y:195}, // تبوك
+  11:{x:490,y:235}, // الرياض
+  12:{x:510,y:240}, // الأحساء
+  13:{x:515,y:235}, // الدمام
+  14:{x:518,y:228}, // الجبيل
+  15:{x:525,y:220}, // الكويت
+  16:{x:525,y:230}, // المنامة
+  17:{x:530,y:240}, // الدوحة
+  18:{x:545,y:235}, // أبوظبي
+  19:{x:548,y:230}, // دبي
+  20:{x:560,y:250}, // مسقط
+  21:{x:420,y:175}, // دمشق
+  22:{x:435,y:180}, // بغداد
+  23:{x:415,y:190}, // القدس
+  24:{x:385,y:145}, // إسطنبول
+  25:{x:395,y:155}, // قونيا
+  26:{x:220,y:148}, // قرطبة
+  27:{x:225,y:155}, // غرناطة
+  28:{x:610,y:148}, // سمرقند
+  29:{x:595,y:155}, // بخارى
+  30:{x:405,y:215}, // القاهرة
+  31:{x:360,y:195}, // تونس
+  32:{x:310,y:190}, // فاس
+  33:{x:450,y:345}, // زنجبار
+  34:{x:695,y:270}, // كوالالمبور
+  35:{x:710,y:285}, // جاكرتا
+  36:{x:375,y:138}, // بورصة
+  37:{x:400,y:250}  // المحطة السرية
+};
+
+function renderMapDots() {
+  var svg = document.getElementById('mapStationDots');
+  if (!svg) return;
+  var p = getTrainProgress();
+  var html = '';
+
+  TRAIN_STATIONS.forEach(function(s) {
+    var coords = STATION_COORDS[s.id];
+    if (!coords) return;
+    var status = getStationStatus(s.id);
+    var color = status === 'completed' ? '#2DD4BF' : status === 'unlocked' ? '#A78BFA' : '#374151';
+    var glowColor = status === 'completed' ? '#2DD4BF' : status === 'unlocked' ? '#A78BFA' : 'none';
+    var r = status === 'unlocked' ? 8 : 6;
+    var pulse = status === 'unlocked' ? '<circle cx="' + coords.x + '" cy="' + coords.y + '" r="12" fill="' + glowColor + '" opacity=".2"><animate attributeName="r" values="8;14;8" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values=".3;0;.3" dur="2s" repeatCount="indefinite"/></circle>' : '';
+
+    html += pulse;
+    html += '<circle cx="' + coords.x + '" cy="' + coords.y + '" r="' + r + '" fill="' + color + '" stroke="#0A1628" stroke-width="2" style="cursor:pointer" onclick="onMapDotClick(' + s.id + ')" onmouseover="showMapTooltip(event,' + s.id + ')" onmouseout="hideMapTooltip()"/>';
+
+    if (status !== 'locked') {
+      html += '<text x="' + coords.x + '" y="' + (coords.y - 10) + '" text-anchor="middle" font-size="8" fill="' + color + '" font-family="Tajawal" pointer-events="none">' + s.name.split(' ')[0] + '</text>';
+    }
+  });
+
+  svg.innerHTML = html;
+}
+
+function onMapDotClick(stationId) {
+  var status = getStationStatus(stationId);
+  if (status === 'locked') {
+    showToast('🔒 أكمل المحطات السابقة أولاً', '#FB7185');
+    return;
+  }
+  launchTrain(stationId);
+}
+
+function showMapTooltip(event, stationId) {
+  var s = TRAIN_STATIONS[stationId - 1];
+  var status = getStationStatus(stationId);
+  var statusText = status === 'completed' ? '✅ مكتملة' : status === 'unlocked' ? '🚂 متاحة' : '🔒 مقفلة';
+  var tooltip = document.getElementById('mapTooltip');
+  tooltip.textContent = s.flag + ' ' + s.name + ' · ' + statusText;
+  tooltip.style.display = 'block';
+  var svg = document.getElementById('journeyMapSVG');
+  var rect = svg.getBoundingClientRect();
+  var svgEl = event.target;
+  var cx = parseFloat(svgEl.getAttribute('cx'));
+  var cy = parseFloat(svgEl.getAttribute('cy'));
+  var scaleX = rect.width / 800;
+  var scaleY = rect.height / 500;
+  tooltip.style.left = (cx * scaleX - 60) + 'px';
+  tooltip.style.top = (cy * scaleY - 40) + 'px';
+}
+
+function hideMapTooltip() {
+  var t = document.getElementById('mapTooltip');
+  if (t) t.style.display = 'none';
+}
+
 // ══ JOURNEY MAP ══
 function openTrainJourney() {
-  renderJourneyMap();
   document.getElementById('journeyScreen').style.display = 'block';
+  setJourneyView('map');
 }
+
 function closeJourney() {
   document.getElementById('journeyScreen').style.display = 'none';
 }
 
-function renderJourneyMap() {
+function renderJourneyList() {
   var list = document.getElementById('journeyStationsList');
   var p = getTrainProgress();
   var html = '';
 
-  TRAIN_STATIONS.forEach(function(s, i) {
+  TRAIN_STATIONS.forEach(function(s) {
     var status = getStationStatus(s.id);
     var numClass = status === 'completed' ? 'num-completed' : status === 'unlocked' ? 'num-unlocked' : 'num-locked';
     var rowClass = status;
     var icon = status === 'completed' ? '✅' : status === 'unlocked' ? '🚂' : '🔒';
     var statusText = status === 'completed' ? 'مكتملة ✅' : status === 'unlocked' ? 'جاهزة للرحلة 🚂' : 'مقفلة 🔒';
     var tierColors = ['','#2DD4BF','#F5C842','#A78BFA','#F5C842'];
-    var tierNum = s.tier;
 
     html += '<div class="journey-station-row ' + rowClass + '" onclick="' + (status !== 'locked' ? 'launchTrain(' + s.id + ')' : '') + '">';
-    html += '<div class="journey-station-num ' + numClass + '" style="border:1px solid ' + tierColors[tierNum] + '44">' + s.id + '</div>';
+    html += '<div class="journey-station-num ' + numClass + '" style="border:1px solid ' + tierColors[s.tier] + '44">' + s.id + '</div>';
     html += '<div class="journey-station-info">';
     html += '<div class="journey-station-name">' + s.flag + ' ' + s.name + '</div>';
     html += '<div class="journey-station-status">' + statusText + ' · ' + s.nameEn + '</div>';
