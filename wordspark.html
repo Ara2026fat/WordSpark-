@@ -66,8 +66,10 @@
   }
 
   /* ── FONT SCALE ── */
-  body.font-lg { zoom: 1.2; }
-  body.font-xl { zoom: 1.45; }
+  body.font-lg main,
+  body.font-lg nav.nav-tabs { zoom: 1.2; }
+  body.font-xl main,
+  body.font-xl nav.nav-tabs { zoom: 1.45; }
 
   .font-toggle {
     background: rgba(255,255,255,.05);
@@ -1152,13 +1154,14 @@
     border: 1px solid rgba(255,255,255,.08);
     transition: transform .15s ease;
     -webkit-user-select: none; user-select: none;
+    padding: 6px;
   }
   .home-tile:active { transform: scale(.94); }
   .home-tile-icon {
-    font-size: 36px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+    font-size: clamp(24px, 5vw, 36px); filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
   }
-  .home-tile-label { font-size: 13.5px; font-weight: 800; color: var(--white); }
-  .home-tile-sub { font-size: 9.5px; color: rgba(255,255,255,.55); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; }
+  .home-tile-label { font-size: 13.5px; font-weight: 800; color: var(--white); word-break: break-word; text-align: center; line-height: 1.2; overflow-wrap: break-word; max-width: 100%; }
+  .home-tile-sub { font-size: 9.5px; color: rgba(255,255,255,.55); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; word-break: break-all; max-width: 100%; text-align: center; }
   .home-tile-badge {
     position: absolute; top: 10px; left: 10px;
     background: rgba(0,0,0,.35); backdrop-filter: blur(4px);
