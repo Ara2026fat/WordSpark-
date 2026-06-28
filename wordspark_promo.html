@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WordSpark — رحلة نحو إتقان الإنجليزية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background:#0C0E18;
+    font-family:'Tajawal',sans-serif;
+    overflow:hidden;
+    width:100vw; height:100vh;
+  }
+
+  /* ══ SCENE BASE ══ */
+  .scene {
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    opacity:0;
+    transition:opacity .6s ease;
+    pointer-events:none;
+  }
+  .scene.active {
+    opacity:1;
+    pointer-events:all;
+  }
+
+  /* ══ PROGRESS BAR ══ */
+  #progressBar {
+    position:fixed;
+    bottom:0; left:0;
+    height:4px;
+    background:linear-gradient(90deg,#A78BFA,#2DD4BF,#F5C842);
+    transition:width .3s linear;
+    z-index:100;
+  }
+
+  #sceneIndicator {
+    position:fixed;
+    top:16px; left:50%;
+    transform:translateX(-50%);
+    display:flex; gap:6px;
+    z-index:100;
+  }
+  .dot {
+    width:6px; height:6px;
+    border-radius:50%;
+    background:#243550;
+    transition:all .3s;
+  }
+  .dot.active { background:#A78BFA; width:20px; border-radius:3px; }
+  .dot.done { background:#2DD4BF; }
+
+  /* ══ SKIP BUTTON ══ */
+  #skipBtn {
+    position:fixed;
+    top:16px; left:16px;
+    background:rgba(167,139,250,.15);
+    border:1px solid #A78BFA44;
+    color:#A78BFA;
+    border-radius:10px;
+    padding:6px 14px;
+    font-family:Tajawal,sans-serif;
+    font-size:12px;
+    cursor:pointer;
+    z-index:100;
+  }
+
+  /* ══ SCENE 1 — INTRO ══ */
+  #scene1 { background:radial-gradient(ellipse at center, #0F1C2E 0%, #0C0E18 70%); }
+
+  .stars-container {
+    position:absolute; inset:0; overflow:hidden;
+  }
+  .star {
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    animation:twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle {
+    from{opacity:.1;} to{opacity:.9;}
+  }
+
+  .logo-ws {
+    font-family:'Space Grotesk',sans-serif;
+    font-size:72px;
+    font-weight:900;
+    background:linear-gradient(135deg,#F5C842,#A78BFA,#2DD4BF);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+    animation:logoPop .8s cubic-bezier(.175,.885,.32,1.275) both;
+    animation-delay:.3s;
+    opacity:0;
+  }
+  @keyframes logoPop {
+    from{opacity:0;transform:scale(.5);}
+    to{opacity:1;transform:scale(1);}
+  }
+
+  .logo-sub {
+    font-size:16px;
+    color:#64748B;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    margin-top:8px;
+    animation:fadeUp .6s ease both;
+    animation-delay:.8s;
+    opacity:0;
+  }
+
+  .tagline {
+    font-size:22px;
+    font-weight:700;
+    color:#F1F5F9;
+    margin-top:24px;
+    text-align:center;
+    line-height:1.6;
+    animation:fadeUp .6s ease both;
+    animation-delay:1.2s;
+    opacity:0;
+  }
+
+  .tagline span {
+    background:linear-gradient(135deg,#F5C842,#2DD4BF);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+
+  @keyframes fadeUp {
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  /* ══ SCENE 2 — PROBLEM ══ */
+  #scene2 { background:linear-gradient(160deg,#0C0E18,#120A1E); }
+
+  .problem-card {
+    background:linear-gradient(135deg,#1A2332,#0F1C2E);
+    border:1px solid #FB718544;
+    border-radius:24px;
+    padding:28px 24px;
+    text-align:center;
+    max-width:320px;
+    animation:slideIn .6s ease both;
+  }
+  @keyframes slideIn {
+    from{opacity:0;transform:translateX(40px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+
+  .problem-icon { font-size:52px; margin-bottom:12px; }
+  .problem-title { font-size:20px; font-weight:900; color:#FB7185; margin-bottom:10px; }
+  .problem-text { font-size:14px; color:#94A3B8; line-height:1.8; }
+
+  .solution-arrow {
+    font-size:40px;
+    margin:16px 0;
+    animation:bounce 1s ease infinite alternate;
+  }
+  @keyframes bounce {
+    from{transform:translateY(0);} to{transform:translateY(-8px);}
+  }
+
+  .solution-card {
+    background:linear-gradient(135deg,#0F2A1A,#0F1C2E);
+    border:1px solid #2DD4BF44;
+    border-radius:24px;
+    padding:20px 24px;
+    text-align:center;
+    max-width:320px;
+    animation:slideIn .6s ease both;
+    animation-delay:.3s;
+    opacity:0;
+  }
+  .solution-title { font-size:18px; font-weight:900; color:#2DD4BF; }
+
+  /* ══ SCENE 3 — FEATURES ══ */
+  #scene3 { background:linear-gradient(160deg,#0C0E18,#0A1F2E); }
+
+  .features-grid {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    width:100%;
+    max-width:340px;
+  }
+
+  .feature-card {
+    background:linear-gradient(135deg,#1A2332,#0F1C2E);
+    border-radius:16px;
+    padding:16px 12px;
+    text-align:center;
+    animation:popIn .5s cubic-bezier(.175,.885,.32,1.275) both;
+    opacity:0;
+  }
+  @keyframes popIn {
+    from{opacity:0;transform:scale(.8);}
+    to{opacity:1;transform:scale(1);}
+  }
+
+  .feature-icon { font-size:32px; margin-bottom:6px; }
+  .feature-name { font-size:12px; font-weight:700; color:#F1F5F9; }
+  .feature-desc { font-size:10px; color:#64748B; margin-top:3px; }
+
+  /* ══ SCENE 4 — TRAIN ══ */
+  #scene4 { background:linear-gradient(160deg,#0C0E18,#061A1A); }
+
+  .train-scene {
+    position:relative;
+    width:100%;
+    max-width:340px;
+    text-align:center;
+  }
+
+  .train-track-visual {
+    height:4px;
+    background:linear-gradient(90deg,transparent,#A78BFA,#2DD4BF,transparent);
+    border-radius:2px;
+    margin:16px 0;
+    position:relative;
+  }
+
+  .train-moving {
+    font-size:48px;
+    animation:trainMove 3s ease-in-out infinite alternate;
+    display:block;
+  }
+  @keyframes trainMove {
+    from{transform:translateX(-60px);}
+    to{transform:translateX(60px);}
+  }
+
+  .stations-preview {
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:16px;
+  }
+
+  .station-preview-chip {
+    background:rgba(167,139,250,.15);
+    border:1px solid #A78BFA44;
+    border-radius:20px;
+    padding:5px 10px;
+    font-size:11px;
+    color:#A78BFA;
+    animation:fadeUp .4s ease both;
+    opacity:0;
+  }
+
+  /* ══ SCENE 5 — RANKS ══ */
+  #scene5 { background:linear-gradient(160deg,#0C0E18,#1A0A00); }
+
+  .ranks-showcase {
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    width:100%;
+    max-width:320px;
+  }
+
+  .rank-row {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:linear-gradient(135deg,#1A2332,#0F1C2E);
+    border-radius:14px;
+    padding:10px 14px;
+    animation:slideRight .5s ease both;
+    opacity:0;
+  }
+  @keyframes slideRight {
+    from{opacity:0;transform:translateX(-30px);}
+    to{opacity:1;transform:translateX(0);}
+  }
+
+  .rank-emoji { font-size:24px; }
+  .rank-info { flex:1; }
+  .rank-name { font-size:13px; font-weight:700; color:#F5C842; }
+  .rank-pts { font-size:11px; color:#64748B; }
+  .rank-bar-wrap { width:60px; height:4px; background:#243550; border-radius:2px; }
+  .rank-bar-fill { height:100%; border-radius:2px; background:linear-gradient(90deg,#F5C842,#2DD4BF); }
+
+  /* ══ SCENE 6 — REPORTS ══ */
+  #scene6 { background:linear-gradient(160deg,#0C0E18,#0A1628); }
+
+  .phone-mockup {
+    background:linear-gradient(135deg,#1A2332,#0F1C2E);
+    border:2px solid #A78BFA44;
+    border-radius:24px;
+    padding:20px 16px;
+    max-width:300px;
+    width:100%;
+    animation:fadeUp .6s ease both;
+    opacity:0;
+  }
+
+  .wa-bubble {
+    background:#25D366;
+    border-radius:16px 16px 4px 16px;
+    padding:10px 14px;
+    font-size:12px;
+    color:#fff;
+    margin-bottom:8px;
+    animation:fadeUp .5s ease both;
+    opacity:0;
+  }
+
+  .report-line {
+    display:flex;
+    justify-content:space-between;
+    font-size:11px;
+    padding:3px 0;
+    border-bottom:1px solid #1A2332;
+    color:#94A3B8;
+  }
+  .report-line span { color:#2DD4BF; font-weight:700; }
+
+  /* ══ SCENE 7 — CTA ══ */
+  #scene7 { background:radial-gradient(ellipse at center, #0F1C2E 0%, #0C0E18 70%); }
+
+  .cta-box {
+    text-align:center;
+    max-width:320px;
+  }
+
+  .cta-logo {
+    font-size:52px;
+    margin-bottom:12px;
+  }
+
+  .cta-title {
+    font-size:26px;
+    font-weight:900;
+    color:#F5C842;
+    margin-bottom:8px;
+    animation:fadeUp .6s ease both;
+    opacity:0;
+  }
+
+  .cta-subtitle {
+    font-size:14px;
+    color:#64748B;
+    margin-bottom:20px;
+    line-height:1.7;
+    animation:fadeUp .6s ease both;
+    animation-delay:.2s;
+    opacity:0;
+  }
+
+  .cta-url {
+    background:linear-gradient(135deg,#A78BFA,#2DD4BF);
+    border-radius:16px;
+    padding:14px 20px;
+    font-size:13px;
+    font-weight:700;
+    color:#0C0E18;
+    animation:fadeUp .6s ease both;
+    animation-delay:.4s;
+    opacity:0;
+    word-break:break-all;
+  }
+
+  .cta-free {
+    margin-top:16px;
+    font-size:16px;
+    font-weight:900;
+    color:#2DD4BF;
+    animation:fadeUp .6s ease both;
+    animation-delay:.6s;
+    opacity:0;
+  }
+
+  /* ══ SCENE TITLE ══ */
+  .scene-title {
+    font-size:11px;
+    font-weight:700;
+    color:#A78BFA;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    margin-bottom:16px;
+    animation:fadeUp .5s ease both;
+    opacity:0;
+  }
+
+  .main-title {
+    font-size:24px;
+    font-weight:900;
+    color:#F1F5F9;
+    text-align:center;
+    margin-bottom:20px;
+    line-height:1.4;
+    animation:fadeUp .5s ease both;
+    animation-delay:.1s;
+    opacity:0;
+  }
+
+  .main-title .highlight {
+    background:linear-gradient(135deg,#F5C842,#2DD4BF);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+    background-clip:text;
+  }
+</style>
+</head>
+<body>
+
+<!-- Progress & Navigation -->
+<div id="progressBar" style="width:0%"></div>
+<div id="sceneIndicator">
+  <div class="dot active" id="dot0"></div>
+  <div class="dot" id="dot1"></div>
+  <div class="dot" id="dot2"></div>
+  <div class="dot" id="dot3"></div>
+  <div class="dot" id="dot4"></div>
+  <div class="dot" id="dot5"></div>
+  <div class="dot" id="dot6"></div>
+</div>
+<button id="skipBtn" onclick="skipToEnd()">تخطي ⏭</button>
+
+<!-- Sound Start Overlay -->
+<div id="soundOverlay" style="position:fixed;inset:0;z-index:300;background:rgba(12,14,24,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4)">
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:900">
+      <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+    </div>
+  </div>
+  <div style="font-size:22px;font-weight:900;color:#F5C842;font-family:Tajawal,sans-serif">WordSpark</div>
+  <div style="font-size:14px;color:#94A3B8;font-family:Tajawal,sans-serif;text-align:center;line-height:1.8">
+    رحلة نحو إتقان الإنجليزية<br>من كلمة واحدة
+  </div>
+  <button onclick="startPromo()" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);border:none;border-radius:20px;padding:16px 48px;font-size:18px;font-weight:900;color:#0C0E18;font-family:Tajawal,sans-serif;cursor:pointer;margin-top:8px;box-shadow:0 8px 32px rgba(167,139,250,.4)">
+    🔊 ابدأ مع الصوت
+  </button>
+  <button onclick="startPromoSilent()" style="background:transparent;border:1px solid #A78BFA44;border-radius:14px;padding:10px 28px;font-size:14px;color:#A78BFA;font-family:Tajawal,sans-serif;cursor:pointer">
+    بدون صوت ▶️
+  </button>
+</div>
+<div id="replayBtn" onclick="replayPromo()" style="display:none;position:fixed;inset:0;z-index:200;align-items:center;justify-content:center;background:rgba(12,14,24,.85);flex-direction:column;gap:16px">
+  <div style="font-size:64px">🔄</div>
+  <div style="font-size:20px;font-weight:900;color:#F5C842;font-family:Tajawal,sans-serif">أعد المشاهدة</div>
+  <div style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);border:none;border-radius:20px;padding:14px 40px;font-size:16px;font-weight:900;color:#0C0E18;font-family:Tajawal,sans-serif;cursor:pointer">
+    ▶️ إعادة التشغيل
+  </div>
+</div>
+
+<!-- ══ SCENE 1 — INTRO ══ -->
+<div class="scene active" id="scene1">
+  <div class="stars-container" id="starsContainer"></div>
+  <div style="position:relative;z-index:2;text-align:center">
+    <!-- Original WordSpark Logo -->
+    <div style="width:100px;height:100px;margin:0 auto 16px;border-radius:24px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4);animation:logoPop .8s cubic-bezier(.175,.885,.32,1.275) both;animation-delay:.3s;opacity:0">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:900;line-height:1">
+        <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+      </div>
+    </div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:900;animation:logoPop .8s cubic-bezier(.175,.885,.32,1.275) both;animation-delay:.5s;opacity:0">
+      <span style="color:#F5C842">Word</span><span style="color:#2DD4BF">Spark</span>
+    </div>
+    <div class="logo-sub">English Learning App</div>
+    <div class="tagline">رحلة نحو <span>إتقان الإنجليزية</span><br>من كلمة واحدة</div>
+  </div>
+</div>
+
+<!-- ══ SCENE 2 — PROBLEM/SOLUTION ══ -->
+<div class="scene" id="scene2">
+  <div class="scene-title">لماذا WordSpark؟</div>
+  <div class="problem-card">
+    <div class="problem-icon">😟</div>
+    <div class="problem-title">المشكلة</div>
+    <div class="problem-text">كثير من الطلاب يخافون من الإنجليزية — يرونها كبحر لا يُعبر</div>
+  </div>
+  <div class="solution-arrow">⬇️</div>
+  <div class="solution-card">
+    <div class="solution-title">✨ الحل — قوة اللغة في الكلمة</div>
+    <div class="problem-text" style="margin-top:8px;color:#94A3B8">من يملك رصيداً من الكلمات — يستطيع أن يفهم ويتواصل ويتقدم</div>
+  </div>
+</div>
+
+<!-- ══ SCENE 3 — FEATURES ══ -->
+<div class="scene" id="scene3">
+  <div class="scene-title">ما الذي ستجده؟</div>
+  <div class="main-title">منصة <span class="highlight">متكاملة</span></div>
+  <div class="features-grid" id="featuresGrid">
+    <div class="feature-card" style="animation-delay:.1s;border:1px solid #A78BFA22">
+      <div class="feature-icon">📚</div>
+      <div class="feature-name">كلماتك اليومية</div>
+      <div class="feature-desc">أضف كلماتك بنفسك</div>
+    </div>
+    <div class="feature-card" style="animation-delay:.2s;border:1px solid #2DD4BF22">
+      <div class="feature-icon">🎮</div>
+      <div class="feature-name">ألعاب تعليمية</div>
+      <div class="feature-desc">4 ألعاب مختلفة</div>
+    </div>
+    <div class="feature-card" style="animation-delay:.3s;border:1px solid #F5C84222">
+      <div class="feature-icon">💬</div>
+      <div class="feature-name">محادثات حياتية</div>
+      <div class="feature-desc">مترجمة ومصورة</div>
+    </div>
+    <div class="feature-card" style="animation-delay:.4s;border:1px solid #FB718522">
+      <div class="feature-icon">🎧</div>
+      <div class="feature-name">بودكاست صوتي</div>
+      <div class="feature-desc">لتدريب السمع</div>
+    </div>
+    <div class="feature-card" style="animation-delay:.5s;border:1px solid #A78BFA22">
+      <div class="feature-icon">🎙️</div>
+      <div class="feature-name">دردشة ذكية</div>
+      <div class="feature-desc">بالذكاء الاصطناعي</div>
+    </div>
+    <div class="feature-card" style="animation-delay:.6s;border:1px solid #2DD4BF22">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-name">اختبارات ذكية</div>
+      <div class="feature-desc">تقيس تقدمك فعلاً</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 4 — TRAIN JOURNEY ══ -->
+<div class="scene" id="scene4">
+  <div class="scene-title">الميزة الأبرز</div>
+  <div class="main-title">🚂 <span class="highlight">رحلة القطار</span></div>
+  <div class="train-scene">
+    <div class="train-moving">🚂</div>
+    <div class="train-track-visual"></div>
+    <div style="font-size:13px;color:#94A3B8;text-align:center;margin-bottom:12px">
+      37 محطة في مدن العالم الإسلامي — من مكة إلى جاكرتا
+    </div>
+    <div class="stations-preview" id="stationsPreview">
+      <div class="station-preview-chip" style="animation-delay:.1s">🕌 مكة</div>
+      <div class="station-preview-chip" style="animation-delay:.2s">🌊 جدة</div>
+      <div class="station-preview-chip" style="animation-delay:.3s">🏛️ القدس</div>
+      <div class="station-preview-chip" style="animation-delay:.4s">🌉 إسطنبول</div>
+      <div class="station-preview-chip" style="animation-delay:.5s">🌴 قرطبة</div>
+      <div class="station-preview-chip" style="animation-delay:.6s">🏆 لحظة التتويج</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 5 — RANKS ══ -->
+<div class="scene" id="scene5">
+  <div class="scene-title">نظام التحفيز</div>
+  <div class="main-title">⭐ <span class="highlight">الرتب والنجوم</span></div>
+  <div class="ranks-showcase" id="ranksShowcase">
+    <div class="rank-row" style="animation-delay:.1s">
+      <div class="rank-emoji">🌱</div>
+      <div class="rank-info">
+        <div class="rank-name">وصلت</div>
+        <div class="rank-pts">البداية</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:10%"></div></div>
+    </div>
+    <div class="rank-row" style="animation-delay:.2s">
+      <div class="rank-emoji">🎯</div>
+      <div class="rank-info">
+        <div class="rank-name">متحمس</div>
+        <div class="rank-pts">80 نقطة</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:40%"></div></div>
+    </div>
+    <div class="rank-row" style="animation-delay:.3s">
+      <div class="rank-emoji">🥇</div>
+      <div class="rank-info">
+        <div class="rank-name">محترف</div>
+        <div class="rank-pts">350 نقطة</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:70%"></div></div>
+    </div>
+    <div class="rank-row" style="animation-delay:.4s;border:1px solid #F5C84244">
+      <div class="rank-emoji">👑</div>
+      <div class="rank-info">
+        <div class="rank-name">فارس اللغة</div>
+        <div class="rank-pts">1500 نقطة</div>
+      </div>
+      <div class="rank-bar-wrap"><div class="rank-bar-fill" style="width:95%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 6 — REPORTS ══ -->
+<div class="scene" id="scene6">
+  <div class="scene-title">للمعلم والوالد</div>
+  <div class="main-title">📊 تقرير <span class="highlight">فوري</span> عبر واتساب</div>
+  <div class="phone-mockup" style="animation-delay:.2s">
+    <div class="wa-bubble" style="animation-delay:.3s">
+      📊 تقرير أداء الطالب
+    </div>
+    <div class="report-line">إجمالي الكلمات <span>152 كلمة</span></div>
+    <div class="report-line">كلمات اليوم <span>5 كلمات</span></div>
+    <div class="report-line">الأيام المتواصلة <span>7 أيام 🔥</span></div>
+    <div class="report-line">وقت اليوم <span>18 دقيقة ⏱️</span></div>
+    <div class="report-line">الرتبة الحالية <span>🎯 متحمس</span></div>
+    <div class="wa-bubble" style="animation-delay:.6s;margin-top:10px;background:#128C7E">
+      بضغطة واحدة — يصل التقرير فوراً 📱
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCENE 7 — CTA ══ -->
+<div class="scene" id="scene7">
+  <div class="cta-box">
+    <div style="width:80px;height:80px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4)">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900">
+        <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+      </div>
+    </div>
+    <div class="cta-title">ابدأ رحلتك الآن</div>
+    <div class="cta-subtitle">مجاناً — بدون تنزيل — من أي هاتف<br>صُمِّمت بحب لأبنائنا وطلابنا</div>
+    <div class="cta-url">ara2026fat.github.io/WordSpark-/wordspark.html</div>
+    <div class="cta-free">🎁 مجاني 100% للطلاب</div>
+  </div>
+</div>
+
+<script>
+// ══ STARS ══
+window.addEventListener('DOMContentLoaded', function() {
+  var bg = document.getElementById('starsContainer');
+  if (!bg) return;
+  for (var i = 0; i < 60; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    var size = Math.random() * 2.5 + 0.5;
+    s.style.cssText = 'width:'+size+'px;height:'+size+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;animation-delay:'+Math.random()*3+'s;animation-duration:'+(2+Math.random()*2)+'s';
+    bg.appendChild(s);
+  }
+});
+
+// ══ SCENE SYSTEM ══
+var scenes = [
+  { id:'scene1', duration:6000 },
+  { id:'scene2', duration:8000 },
+  { id:'scene3', duration:9000 },
+  { id:'scene4', duration:9000 },
+  { id:'scene5', duration:8000 },
+  { id:'scene6', duration:8000 },
+  { id:'scene7', duration:12000 }
+];
+
+var current = 0;
+var timer = null;
+var progressTimer = null;
+var startTime = null;
+var soundEnabled = true;
+var bgAudio = null;
+var voiceAudio = null;
+var baseUrl = 'https://raw.githubusercontent.com/Ara2026fat/WordSpark-/main/';
+var voiceFiles = ['Voice-1.m4a','Voice-2.m4a','Voice-3.m4a','Voice-4.m4a','Voice-5.m4a','Voice-6.m4a','Voice-7.m4a'];
+
+function startBgAudio() {
+  try {
+    bgAudio = new Audio(baseUrl + 'voice-0.m4a');
+    bgAudio.loop = true;
+    bgAudio.volume = 0.12;
+    bgAudio.play().catch(function(){});
+  } catch(e){}
+}
+
+function speakScene(idx) {
+  if (!soundEnabled) return;
+  try {
+    if (voiceAudio) { voiceAudio.pause(); voiceAudio.currentTime = 0; voiceAudio = null; }
+    if (idx < voiceFiles.length) {
+      voiceAudio = new Audio(baseUrl + voiceFiles[idx]);
+      voiceAudio.volume = 1.0;
+      voiceAudio.play().catch(function(){});
+    }
+  } catch(e){}
+}
+
+function replayPromo() {
+  current = 0;
+  if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
+  var replayBtn = document.getElementById('replayBtn');
+  if (replayBtn) replayBtn.style.display = 'none';
+  var soundOverlay = document.getElementById('soundOverlay');
+  if (soundOverlay) soundOverlay.style.display = 'flex';
+}
+
+function onPromoEnd() {
+  if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
+  var btn = document.getElementById('replayBtn');
+  if (btn) btn.style.display = 'flex';
+}
+
+function startPromo() {
+  soundEnabled = true;
+  document.getElementById('soundOverlay').style.display = 'none';
+  startBgAudio();
+  setTimeout(function() { showScene(0); }, 300);
+}
+
+function startPromoSilent() {
+  soundEnabled = false;
+  document.getElementById('soundOverlay').style.display = 'none';
+  showScene(0);
+}
+  if (idx === undefined || idx === null || idx >= scenes.length || idx < 0) return;
+  var sceneData = scenes[idx];
+  if (!sceneData) return;
+
+  // Hide all
+  scenes.forEach(function(s, i) {
+    var el = document.getElementById(s.id);
+    if (el) el.classList.remove('active');
+    var dot = document.getElementById('dot' + i);
+    if (!dot) return;
+    if (i < idx) dot.className = 'dot done';
+    else if (i === idx) dot.className = 'dot active';
+    else dot.className = 'dot';
+  });
+
+  // Show current
+  var el = document.getElementById(sceneData.id);
+  if (!el) return;
+  el.classList.add('active');
+
+  // Trigger animations
+  setTimeout(function() {
+    try {
+      var items = el.querySelectorAll('.feature-card,.rank-row,.station-preview-chip,.problem-card,.solution-card,.wa-bubble,.phone-mockup,.cta-title,.cta-subtitle,.cta-url,.cta-free,.scene-title,.main-title');
+      items.forEach(function(a) { try { a.style.opacity='1'; } catch(e){} });
+    } catch(e){}
+  }, 200);
+
+  speakScene(idx);
+
+  startTime = Date.now();
+  clearInterval(progressTimer);
+  progressTimer = setInterval(function() {
+    if (!scenes[idx]) { clearInterval(progressTimer); return; }
+    var elapsed = Date.now() - startTime;
+    var pct = (elapsed / scenes[idx].duration) * 100;
+    var totalPct = ((idx + pct/100) / scenes.length) * 100;
+    var pb = document.getElementById('progressBar');
+    if (pb) pb.style.width = Math.min(totalPct, 100) + '%';
+    if (elapsed >= scenes[idx].duration) {
+      clearInterval(progressTimer);
+      nextScene();
+    }
+  }, 50);
+}
+
+function nextScene() {
+  if (current < scenes.length - 1) {
+    current++;
+    showScene(current);
+  } else {
+    onPromoEnd();
+  }
+}
+
+function skipToEnd() {
+  current = scenes.length - 1;
+  showScene(current);
+}
+
+// Click to advance
+document.body.addEventListener('click', function(e) {
+  if (e.target.id === 'skipBtn') return;
+  if (current < scenes.length - 1) {
+    clearInterval(progressTimer);
+    current++;
+    showScene(current);
+  }
+});
+
+// ══ START ══
+// Don't auto-start — wait for user interaction
+
+// Start
+// Don't auto-start — wait for user interaction
+</script>
+</body>
+</html>
