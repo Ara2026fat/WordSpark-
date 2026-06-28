@@ -2427,6 +2427,19 @@
 </div>
 
 <!-- ══ TEACHER PHONE MODAL ══ -->
+<!-- ══ PACK DUPLICATE CONFIRM ══ -->
+<div class="confirm-overlay" id="packDupOverlay">
+  <div class="confirm-box">
+    <div class="cb-icon">📦</div>
+    <div class="cb-title">كلمة موجودة في حزمة</div>
+    <div class="cb-msg" id="packDupMsg"></div>
+    <div class="cb-row">
+      <button class="cb-btn cb-cancel" id="packDupCancelBtn">إلغاء</button>
+      <button class="cb-btn cb-confirm" id="packDupConfirmBtn" style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">✅ أضف على أي حال</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ PARENT PHONE MODAL ══ -->
 <div class="confirm-overlay" id="parentPhoneOverlay">
   <div class="confirm-box">
@@ -3742,12 +3755,42 @@ function addWord() {
   const existing = words.find(w => w.en.toLowerCase().trim() === normalizedEn);
   if (existing) {
     showToast(`⚠️ كلمة "${en}" موجودة لديك مسبقاً!`, '#FB7185');
-    // Highlight the existing word briefly by flashing it into view
     document.getElementById('inp-en').focus();
     return;
   }
 
-  const goal = getDailyGoal();
+  // Check if word exists in any pack
+  var foundInPack = null;
+  for (var packKey in wordPacks) {
+    var pack = wordPacks[packKey];
+    var packWord = pack.words.find(function(w) {
+      return w.en.toLowerCase().trim() === normalizedEn;
+    });
+    if (packWord) { foundInPack = pack.nameAr; break; }
+  }
+
+  if (foundInPack) {
+    // Show confirmation overlay
+    var overlay = document.getElementById('packDupOverlay');
+    var msg = document.getElementById('packDupMsg');
+    if (msg) msg.textContent = 'كلمة "' + en + '" موجودة في حزمة ' + foundInPack + '. هل تريد إضافتها أيضاً لكلماتك؟';
+    if (overlay) {
+      overlay.classList.add('show');
+      document.getElementById('packDupConfirmBtn').onclick = function() {
+        overlay.classList.remove('show');
+        doAddWord(en, ar, ex, exar);
+      };
+      document.getElementById('packDupCancelBtn').onclick = function() {
+        overlay.classList.remove('show');
+      };
+    }
+    return;
+  }
+
+  doAddWord(en, ar, ex, exar);
+}
+
+function doAddWord(en, ar, ex, exar) {
   if (words.filter(w => w.date === today).length >= goal) {
     showToast(`✅ أضفت ${ARABIC_NUMS[goal]} كلمات اليوم — ممتاز!`, '#F5C842');
     return;
