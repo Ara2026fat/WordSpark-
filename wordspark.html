@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<head><script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "xdpypzlgde");
-</script>
+<head>
 <meta charset="UTF-8">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -756,6 +750,37 @@
   .known-btn.active {
     background: rgba(45,212,191,.2); border-color: var(--teal); color: var(--teal);
   }
+  /* ══ RANKS & STARS SYSTEM ══ */
+  .rank-widget {
+    background: linear-gradient(135deg,#1A2332,#0F1C2E);
+    border: 1px solid var(--rim); border-radius: 16px;
+    padding: 12px 14px; margin-top: 10px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .rank-badge { font-size: 28px; min-width: 36px; text-align: center; }
+  .rank-info { flex: 1; }
+  .rank-title { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .rank-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .rank-progress-bar { height: 4px; background: var(--rim); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+  .rank-progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,var(--gold),var(--teal)); transition: width .5s ease; }
+  .rank-points { font-size: 12px; font-weight: 700; color: var(--teal); white-space: nowrap; }
+  .rank-popup {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+    z-index: 999; background: linear-gradient(135deg,#1A2332,#0F1C2E);
+    border: 1.5px solid var(--gold); border-radius: 20px;
+    padding: 16px 20px; text-align: center; min-width: 260px;
+    box-shadow: 0 8px 32px rgba(245,200,66,.3);
+    display: none;
+  }
+  .rank-popup.show { display: block; animation: rankPopIn .4s ease both; }
+  @keyframes rankPopIn {
+    from { opacity:0; transform:translateX(-50%) translateY(-20px) scale(.9); }
+    to   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+  }
+  .rank-popup-icon { font-size: 48px; margin-bottom: 6px; }
+  .rank-popup-title { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .rank-popup-name { font-size: 18px; font-weight: 900; color: var(--gold); }
+
   .mastery-badge {
     display: inline-block; font-size: 9.5px; font-weight: 700;
     padding: 2px 8px; border-radius: 20px;
@@ -2057,6 +2082,26 @@
         <div class="n" id="totalTimeDisplay">0 د</div>
         <div class="l">إجمالي الوقت</div>
       </div>
+    </div>
+
+    <!-- Rank Widget -->
+    <div class="rank-widget" id="rankWidget">
+      <div class="rank-badge" id="rankIcon">🌱</div>
+      <div class="rank-info">
+        <div class="rank-title" id="rankTitle">وصلت</div>
+        <div class="rank-sub" id="rankSub">⭐ 0 نقطة</div>
+        <div class="rank-progress-bar">
+          <div class="rank-progress-fill" id="rankProgressFill" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="rank-points" id="rankNextInfo">التالي: 5⭐</div>
+    </div>
+
+    <!-- Rank Unlock Popup -->
+    <div class="rank-popup" id="rankPopup">
+      <div class="rank-popup-icon" id="rankPopupIcon">🌱</div>
+      <div class="rank-popup-title">🎉 رتبة جديدة!</div>
+      <div class="rank-popup-name" id="rankPopupName"></div>
     </div>
 
     <!-- Mastery Dashboard -->
@@ -3460,6 +3505,7 @@ function showPQResult() {
       document.getElementById('packQuizResult').style.display = 'none';
       renderPackSelector();
       showToast('🏆 أحسنت! تم فتح الحزمة التالية 🔓', '#A78BFA');
+      addStarPoints('passQuiz');
     };
   } else {
     btn.textContent = '🔄 أعد الاختبار';
@@ -3611,15 +3657,21 @@ function updateStreak() {
   const yestDate = new Date(Date.now() - oneDay);
   const yesterday = yestDate.toDateString();
   const dayBeforeYesterday = new Date(Date.now() - 2*oneDay).toDateString();
-  const yesterdayWasFriday = yestDate.getDay() === 5; // Friday = rest day
+  const yesterdayWasFriday = yestDate.getDay() === 5;
 
   if      (lastDay === today)     { /* same day */ }
   else if (lastDay === yesterday) { streak++; lastDay = today; save(); }
   else if (yesterdayWasFriday && lastDay === dayBeforeYesterday) {
-    // Friday was a rest day — streak continues uninterrupted
     streak++; lastDay = today; save();
   }
   else { streak = 1; lastDay = today; save(); }
+
+  // Award streak milestone points
+  if (streak === 3)  addStarPoints('streak3', true);
+  if (streak === 7)  addStarPoints('streak7', true);
+  if (streak === 15) addStarPoints('streak15', true);
+  if (streak === 30) addStarPoints('streak30', true);
+
   document.getElementById('streakCount').textContent   = streak;
   document.getElementById('streakDisplay').textContent = streak;
   renderStreakDots();
@@ -3705,6 +3757,7 @@ function addWord() {
   ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('inp-en').focus();
   showToast('✨ تمت إضافة "' + en + '"!');
+  addStarPoints('addWord');
 }
 
 // ══ RENDER WORDS ══
@@ -4724,6 +4777,7 @@ function endRace() {
       </div>
       <button class="btn-start-quiz" style="background:linear-gradient(135deg,#F5C842,#d97706);color:#0D1117" onclick="initRace()">🔄 العب مجدداً</button>
     </div>`;
+  addStarPoints('playGame');
 }
 
 // ── DAILY CHALLENGE ───────────────────────────
@@ -5267,6 +5321,111 @@ function confirmImportBackup() {
   showToast('✅ تم استيراد النسخة الاحتياطية بنجاح! جاري إعادة التحميل...', '#00F5D4');
   setTimeout(() => location.reload(), 1200);
 }
+
+// ══ RANKS & STARS SYSTEM ══
+var RANKS = [
+  { id:'r0',  icon:'🌱', title:'وصلت',         points:0,   color:'#64748B' },
+  { id:'r1',  icon:'⭐', title:'بدأت',          points:5,   color:'#94A3B8' },
+  { id:'r2',  icon:'🌟', title:'نشيط',          points:15,  color:'#F5C842' },
+  { id:'r3',  icon:'💫', title:'مجتهد',         points:30,  color:'#F5C842' },
+  { id:'r4',  icon:'🏅', title:'منتظم',         points:50,  color:'#F5C842' },
+  { id:'r5',  icon:'🎯', title:'متحمس',         points:80,  color:'#2DD4BF' },
+  { id:'r6',  icon:'🥈', title:'متقدم',         points:120, color:'#2DD4BF' },
+  { id:'r7',  icon:'🌊', title:'رحّالة',        points:180, color:'#2DD4BF' },
+  { id:'r8',  icon:'🎧', title:'مستمع',         points:250, color:'#A78BFA' },
+  { id:'r9',  icon:'🥇', title:'محترف',         points:350, color:'#A78BFA' },
+  { id:'r10', icon:'🎙️', title:'متحدث',        points:500, color:'#A78BFA' },
+  { id:'r11', icon:'📚', title:'حافظ',          points:700, color:'#FB7185' },
+  { id:'r12', icon:'👑', title:'أسطورة',        points:1000,color:'#F5C842' },
+  { id:'r13', icon:'💎', title:'فارس اللغة',    points:1500,color:'#F5C842' },
+  { id:'r14', icon:'🏆', title:'الرتبة الذهبية',points:2000,color:'#F5C842' },
+];
+
+var POINTS_CONFIG = {
+  addWord:      2,   // إضافة كلمة
+  playGame:     5,   // لعب لعبة
+  completeConv: 8,   // إكمال محادثة
+  listenPodcast:10,  // استماع بودكاست
+  voiceChat:    10,  // دردشة صوتية
+  passQuiz:     15,  // اجتياز اختبار
+  streak3:      10,  // 3 أيام متواصلة
+  streak7:      25,  // 7 أيام متواصلة
+  streak15:     50,  // 15 يوماً
+  streak30:     100, // 30 يوماً
+};
+
+function getStarPoints() {
+  return parseInt(localStorage.getItem('starPoints') || '0');
+}
+
+function addStarPoints(type, silent) {
+  var pts = POINTS_CONFIG[type] || 0;
+  if (!pts) return;
+  var current = getStarPoints();
+  var newTotal = current + pts;
+  localStorage.setItem('starPoints', newTotal);
+
+  var oldRank = getRankByPoints(current);
+  var newRank = getRankByPoints(newTotal);
+
+  updateRankWidget();
+
+  if (!silent && newRank.id !== oldRank.id) {
+    showRankPopup(newRank);
+  }
+
+  if (!silent) {
+    showToast('+' + pts + ' ⭐ نقاط!', '#F5C842');
+  }
+}
+
+function getRankByPoints(pts) {
+  var rank = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) {
+    if (pts >= RANKS[i].points) rank = RANKS[i];
+  }
+  return rank;
+}
+
+function updateRankWidget() {
+  var pts = getStarPoints();
+  var rank = getRankByPoints(pts);
+  var rankIdx = RANKS.indexOf(rank);
+  var nextRank = RANKS[rankIdx + 1];
+
+  var iconEl = document.getElementById('rankIcon');
+  var titleEl = document.getElementById('rankTitle');
+  var subEl = document.getElementById('rankSub');
+  var fillEl = document.getElementById('rankProgressFill');
+  var nextEl = document.getElementById('rankNextInfo');
+
+  if (iconEl) iconEl.textContent = rank.icon;
+  if (titleEl) titleEl.textContent = rank.title;
+  if (subEl) subEl.textContent = '⭐ ' + pts + ' نقطة';
+
+  if (nextRank) {
+    var progress = ((pts - rank.points) / (nextRank.points - rank.points)) * 100;
+    if (fillEl) fillEl.style.width = Math.min(progress, 100) + '%';
+    if (nextEl) nextEl.textContent = 'التالي: ' + nextRank.points + '⭐';
+  } else {
+    if (fillEl) fillEl.style.width = '100%';
+    if (nextEl) nextEl.textContent = '👑 أعلى رتبة!';
+  }
+}
+
+function showRankPopup(rank) {
+  var popup = document.getElementById('rankPopup');
+  var icon = document.getElementById('rankPopupIcon');
+  var name = document.getElementById('rankPopupName');
+  if (!popup) return;
+  icon.textContent = rank.icon;
+  name.textContent = rank.title;
+  popup.classList.add('show');
+  setTimeout(function() { popup.classList.remove('show'); }, 3500);
+}
+
+// Initialize rank widget on load
+updateRankWidget();
 
 // ══ TIME TRACKING ══
 var _sessionStart = Date.now();
@@ -6954,6 +7113,7 @@ function podFinishPlayback() {
   btn.textContent = '▶️';
   btn.classList.remove('playing');
   document.getElementById('podStatus').textContent = '✅ انتهت الحلقة! أجب عن أسئلة الفهم أدناه';
+  addStarPoints('listenPodcast');
   podRenderQuiz();
 }
 
