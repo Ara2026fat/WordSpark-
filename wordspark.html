@@ -16,6 +16,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
+    --font-scale: 1;
     --ink:    #0D1117;
     --deep:   #111827;
     --panel:  #1A2332;
@@ -34,6 +35,46 @@
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --tap: 48px;
+  }
+
+  /* ── SPEED CONTROL ── */
+  .speed-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px; margin: 8px 0 4px;
+  }
+  .speed-label { font-size: 12px; color: var(--muted); }
+  .speed-btn {
+    background: var(--card); border: 1px solid var(--rim);
+    border-radius: 20px; color: var(--soft);
+    font-size: 12px; font-weight: 700;
+    padding: 5px 12px; cursor: pointer; transition: all .2s;
+  }
+  .speed-btn.active {
+    background: var(--teal); color: #000;
+    border-color: var(--teal);
+  }
+  .speed-btn:active { transform: scale(.93); }
+
+  /* ── FONT SCALE ── */
+  body { font-size: calc(14px * var(--font-scale)); }
+  body.font-lg { --font-scale: 1.25; }
+  body.font-xl { --font-scale: 1.5; }
+
+  .font-toggle {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 15px;
+    padding: 6px 9px;
+    transition: background .2s;
+    display: flex; align-items: center; gap: 3px;
+  }
+  .font-toggle:active { transform: scale(.9); }
+  body.light-theme .font-toggle {
+    background: rgba(0,0,0,.04);
+    border-color: rgba(0,0,0,.1);
   }
 
   /* ── LIGHT THEME ── */
@@ -2381,6 +2422,7 @@
     <div class="stat-chip">🔥 <span id="streakCount">0</span></div>
     <div class="stat-chip">📚 <span id="totalCount">0</span></div>
     <button class="theme-toggle" id="helpBtn" onclick="openHelp()" title="دليل الاستخدام">📖</button>
+    <button class="font-toggle" id="fontToggle" onclick="cycleFontSize()" title="حجم الخط">𝐀</button>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Switch theme">🌙</button>
   </div>
 </header>
@@ -5087,7 +5129,7 @@ function speakWord(text, btnEl, retry) {
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'en-US';
-  utter.rate = 0.85;
+  utter.rate = convSpeed;
   utter.pitch = 1;
   utter.volume = 1;
 
@@ -7492,6 +7534,12 @@ function openConv(key) {
     </div>
 
     <div class="conv-section-label">💬 محادثة نموذجية</div>
+    <div class="speed-row">
+      <span class="speed-label">🐢 سرعة القراءة:</span>
+      <button class="speed-btn active" id="cspd-slow" onclick="setConvSpeed(0.6)">بطيء</button>
+      <button class="speed-btn" id="cspd-norm" onclick="setConvSpeed(0.85)">عادي</button>
+      <button class="speed-btn" id="cspd-fast" onclick="setConvSpeed(1.0)">سريع</button>
+    </div>
     <div class="dialogue-wrap">${dialogueHtml}</div>
 
     <div class="conv-section-label">📌 عبارات مفيدة إضافية</div>
@@ -8587,6 +8635,12 @@ function openPodcast(key) {
         <button class="pod-replay-btn" id="podReplayBtn" onclick="podReplayFromStart()">🔁 إعادة الاستماع من البداية</button>
       </div>
       <div class="pod-replay-count" id="podReplayCount">إعادة الاستماع: ${POD_MAX_REPLAYS} مرات متبقية</div>
+      <div class="speed-row">
+        <span class="speed-label">🐢 السرعة:</span>
+        <button class="speed-btn ${podSpeed===0.6?'active':''}" onclick="setPodSpeed(0.6)">بطيء</button>
+        <button class="speed-btn ${podSpeed===0.85?'active':''}" onclick="setPodSpeed(0.85)">عادي</button>
+        <button class="speed-btn ${podSpeed===1.0?'active':''}" onclick="setPodSpeed(1.0)">سريع</button>
+      </div>
     </div>
 
     <div class="pod-transcript-toggle">
@@ -8673,7 +8727,7 @@ function podSpeakNextLine() {
   const line = ep.dialogue[podCurrentLineIdx];
   const utter = new SpeechSynthesisUtterance(line.en);
   utter.lang = 'en-US';
-  utter.rate = 0.92;
+  utter.rate = podSpeed;
   utter.pitch = line.who === 'a' ? 1.05 : 0.92; // slight pitch variation distinguishes the two speakers
 
   const voices = synth.getVoices();
@@ -8766,6 +8820,60 @@ document.addEventListener('keydown', e => {
 });
 
 // ══ THEME TOGGLE ══
+// ── SPEECH SPEED ──
+var convSpeed = 0.6;
+var podSpeed  = 0.6;
+
+function setConvSpeed(s) {
+  convSpeed = s;
+  ['slow','norm','fast'].forEach(function(id) {
+    var el = document.getElementById('cspd-' + id);
+    if (el) el.classList.remove('active');
+  });
+  var map = {0.6:'slow', 0.85:'norm', 1.0:'fast'};
+  var target = document.getElementById('cspd-' + map[s]);
+  if (target) target.classList.add('active');
+}
+
+function setPodSpeed(s) {
+  podSpeed = s;
+  document.querySelectorAll('.speed-btn[onclick^="setPodSpeed"]').forEach(function(b) {
+    b.classList.remove('active');
+    if (b.getAttribute('onclick') === 'setPodSpeed(' + s + ')') b.classList.add('active');
+  });
+}
+
+function cycleFontSize() {
+  var body = document.body;
+  var btn = document.getElementById('fontToggle');
+  if (!body.classList.contains('font-lg') && !body.classList.contains('font-xl')) {
+    body.classList.add('font-lg');
+    if (btn) btn.textContent = 'A+';
+    localStorage.setItem('ws_font', 'lg');
+  } else if (body.classList.contains('font-lg')) {
+    body.classList.remove('font-lg');
+    body.classList.add('font-xl');
+    if (btn) btn.textContent = 'A++';
+    localStorage.setItem('ws_font', 'xl');
+  } else {
+    body.classList.remove('font-xl');
+    if (btn) btn.textContent = 'A';
+    localStorage.setItem('ws_font', 'normal');
+  }
+}
+
+function loadFontSize() {
+  var saved = localStorage.getItem('ws_font');
+  var btn = document.getElementById('fontToggle');
+  if (saved === 'lg') {
+    document.body.classList.add('font-lg');
+    if (btn) btn.textContent = 'A+';
+  } else if (saved === 'xl') {
+    document.body.classList.add('font-xl');
+    if (btn) btn.textContent = 'A++';
+  }
+}
+
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-theme');
   document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
@@ -8782,6 +8890,7 @@ function applyTheme() {
 // ══ INIT ══
 (function init() {
   applyTheme();
+  loadFontSize();
   updateCounters();
   updateStreak();
   updateDailyGoalBadge();
