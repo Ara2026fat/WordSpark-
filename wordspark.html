@@ -36,139 +36,6 @@
     --tap: 48px;
   }
 
-
-  /* ══ CHAPTER MAP ══ */
-  .chapter-block {
-    border-radius: 18px;
-    margin-bottom: 12px;
-    overflow: hidden;
-    border: 1.5px solid rgba(255,255,255,.08);
-    transition: transform .2s;
-  }
-  .chapter-header {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px;
-    cursor: pointer;
-    position: relative;
-  }
-  .chapter-num {
-    width: 32px; height: 32px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 900; color: #0C0E18;
-    flex-shrink: 0;
-  }
-  .chapter-info { flex: 1; }
-  .chapter-title { font-size: 14px; font-weight: 800; color: #F1F5F9; }
-  .chapter-region { font-size: 11px; color: #94A3B8; margin-top: 2px; }
-  .chapter-progress-wrap {
-    display: flex; align-items: center; gap: 8px; margin-top: 6px;
-  }
-  .chapter-progress-bar {
-    flex: 1; height: 4px; background: rgba(255,255,255,.08);
-    border-radius: 4px; overflow: hidden;
-  }
-  .chapter-progress-fill {
-    height: 100%; border-radius: 4px;
-    transition: width .6s ease;
-  }
-  .chapter-progress-text {
-    font-size: 10px; color: #64748B; white-space: nowrap;
-  }
-  .chapter-arrow {
-    font-size: 12px; color: #64748B;
-    transition: transform .3s;
-  }
-  .chapter-arrow.open { transform: rotate(180deg); }
-  .chapter-stations {
-    display: none;
-    padding: 0 10px 12px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .chapter-stations.collapsed { display: none; }
-  .station-chip {
-    border-radius: 12px;
-    padding: 10px 6px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform .15s, opacity .15s;
-    border: 1.5px solid rgba(255,255,255,.06);
-    position: relative;
-    overflow: hidden;
-  }
-  .station-chip:active { transform: scale(.93); }
-  .station-chip.locked { opacity: .4; cursor: default; }
-  .station-chip.completed { border-color: rgba(45,212,191,.4); }
-  .station-chip.unlocked { border-color: rgba(255,255,255,.25); }
-  .station-chip-num {
-    font-size: 10px; font-weight: 700; margin-bottom: 3px;
-    color: rgba(255,255,255,.5);
-  }
-  .station-chip-flag { font-size: 18px; margin-bottom: 3px; }
-  .station-chip-name {
-    font-size: 9.5px; font-weight: 700; color: #F1F5F9;
-    line-height: 1.3; word-break: break-word;
-  }
-  .station-chip-status { font-size: 11px; margin-top: 4px; }
-  .chapter-locked-msg {
-    padding: 12px; text-align: center;
-    font-size: 12px; color: #64748B;
-    display: none;
-  }
-
-  /* ── SPEED CONTROL ── */
-  .speed-row {
-    display: flex; align-items: center; gap: 10px;
-    margin: 10px 4px 4px; padding: 10px 14px;
-    background: var(--card); border-radius: 14px;
-    border: 1px solid var(--rim);
-  }
-  .speed-label { font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .speed-val {
-    font-size: 12px; font-weight: 700; color: var(--teal);
-    min-width: 28px; text-align: center;
-  }
-  .speed-slider {
-    flex: 1; -webkit-appearance: none; appearance: none;
-    height: 4px; border-radius: 4px;
-    background: linear-gradient(to right, var(--teal) 0%, var(--teal) 50%, var(--rim) 50%);
-    outline: none; cursor: pointer;
-  }
-  .speed-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--teal); cursor: pointer;
-    box-shadow: 0 0 6px rgba(45,212,191,.5);
-  }
-  .speed-slider::-moz-range-thumb {
-    width: 20px; height: 20px; border-radius: 50%;
-    background: var(--teal); cursor: pointer; border: none;
-  }
-
-  /* ── FONT SCALE ── */
-  body.font-lg main,
-  body.font-lg nav.nav-tabs { zoom: 1.2; }
-  body.font-xl main,
-  body.font-xl nav.nav-tabs { zoom: 1.45; }
-
-  .font-toggle {
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(255,255,255,.1);
-    border-radius: 10px;
-    color: var(--white);
-    cursor: pointer;
-    font-size: 15px;
-    padding: 6px 9px;
-    transition: background .2s;
-    display: flex; align-items: center; gap: 3px;
-  }
-  .font-toggle:active { transform: scale(.9); }
-  body.light-theme .font-toggle {
-    background: rgba(0,0,0,.04);
-    border-color: rgba(0,0,0,.1);
-  }
-
   /* ── LIGHT THEME ── */
   body.light-theme {
     --ink:    #F4F6FA;
@@ -925,7 +792,13 @@
   .train-track-wrap{position:absolute;bottom:100px;left:0;right:0;height:50px;}
   .train-track{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#2A1F0E,#8B6914,#2A1F0E);border-radius:3px;}
   .train-ties{position:absolute;bottom:6px;left:0;right:0;height:16px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 18px,#5C3D0A 18px,#5C3D0A 26px);}
-  .train-emoji-wrap{position:absolute;bottom:105px;left:-200px;font-size:56px;line-height:1;animation:trainRide 2.5s cubic-bezier(.25,.46,.45,.94) forwards;filter:drop-shadow(0 4px 16px rgba(255,200,50,.4));}
+  .train-emoji-wrap{position:absolute;bottom:90px;left:-320px;width:300px;height:110px;animation:trainRide 2.5s cubic-bezier(.25,.46,.45,.94) forwards;filter:drop-shadow(0 8px 28px rgba(45,212,191,0.35));}
+  .train-emoji-wrap .wspin{animation:wspin 1s linear infinite;transform-box:fill-box;transform-origin:center;}
+  @keyframes wspin{to{transform:rotate(360deg);}}
+  .train-emoji-wrap .hlight{animation:hpulse 2s ease-in-out infinite;}
+  @keyframes hpulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+  .train-emoji-wrap .pbob{animation:pbob 3.5s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom center;}
+  @keyframes pbob{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
   @keyframes trainRide{0%{left:-200px}60%{left:calc(50% - 36px)}80%{left:calc(50% - 28px)}100%{left:calc(50% - 36px)}}
   .station-arrival{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:16px 16px 140px;text-align:center;opacity:0;animation:fadeInUp .6s ease 2.3s forwards;}
   @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
@@ -1235,14 +1108,13 @@
     border: 1px solid rgba(255,255,255,.08);
     transition: transform .15s ease;
     -webkit-user-select: none; user-select: none;
-    padding: 6px;
   }
   .home-tile:active { transform: scale(.94); }
   .home-tile-icon {
-    font-size: clamp(24px, 5vw, 36px); filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+    font-size: 36px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
   }
-  .home-tile-label { font-size: 13.5px; font-weight: 800; color: var(--white); word-break: break-word; text-align: center; line-height: 1.2; overflow-wrap: break-word; max-width: 100%; }
-  .home-tile-sub { font-size: 9.5px; color: rgba(255,255,255,.55); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; word-break: break-all; max-width: 100%; text-align: center; }
+  .home-tile-label { font-size: 13.5px; font-weight: 800; color: var(--white); }
+  .home-tile-sub { font-size: 9.5px; color: rgba(255,255,255,.55); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; }
   .home-tile-badge {
     position: absolute; top: 10px; left: 10px;
     background: rgba(0,0,0,.35); backdrop-filter: blur(4px);
@@ -2130,7 +2002,55 @@
     <div class="train-ties"></div>
     <div class="train-track"></div>
   </div>
-  <div class="train-emoji-wrap" id="trainEmoji">🚂</div>
+<div class="train-emoji-wrap" id="trainEmoji">
+    <svg width="300" height="110" viewBox="0 0 300 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="tBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="40%" stop-color="#153D57"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
+        <linearGradient id="tRoof" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2A6E90"/><stop offset="100%" stop-color="#1A4D6A"/></linearGradient>
+        <linearGradient id="tNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
+        <linearGradient id="tWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D4F0FF"/><stop offset="100%" stop-color="#38BDF8" stop-opacity="0.4"/></linearGradient>
+        <linearGradient id="tWhl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1E4A6A"/><stop offset="100%" stop-color="#071520"/></linearGradient>
+        <linearGradient id="tGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FF9500"/><stop offset="50%" stop-color="#F5C842"/><stop offset="100%" stop-color="#FF9500"/></linearGradient>
+        <filter id="tGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="tw1"><rect x="53" y="29" width="36" height="20" rx="4"/></clipPath>
+        <clipPath id="tw2"><rect x="103" y="29" width="36" height="20" rx="4"/></clipPath>
+        <clipPath id="tw3"><rect x="191" y="29" width="36" height="20" rx="4"/></clipPath>
+      </defs>
+      <ellipse cx="152" cy="104" rx="130" ry="7" fill="rgba(0,0,0,0.35)"/>
+      <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="url(#tRoof)"/>
+      <rect x="42" y="20" width="228" height="5" rx="2" fill="#2A6E90"/>
+      <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#tBody)"/>
+      <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#tNose)"/>
+      <line x1="268" y1="42" x2="295" y2="42" stroke="white" stroke-width="0.8" opacity="0.3"/>
+      <rect x="40" y="39" width="258" height="6" rx="3" fill="url(#tGold)"/>
+      <rect x="52" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.88"/>
+      <rect x="52" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
+      <rect x="54" y="30" width="10" height="5" rx="2.5" fill="white" opacity="0.3"/>
+      <rect x="102" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.88"/>
+      <rect x="102" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
+      <rect x="104" y="30" width="10" height="5" rx="2.5" fill="white" opacity="0.3"/>
+      <rect x="190" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.85"/>
+      <rect x="190" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
+      <g clip-path="url(#tw1)" class="pbob"><rect x="60" y="40" width="14" height="10" rx="3" fill="#A78BFA" opacity="0.9"/><circle cx="67" cy="37" r="6" fill="#FBBF24"/><path d="M61 35 Q67 30 73 35" fill="#92400E"/><rect x="56" y="43" width="8" height="6" rx="1" fill="#F5C842" opacity="0.9"/></g>
+      <g clip-path="url(#tw2)" class="pbob"><rect x="110" y="40" width="14" height="10" rx="3" fill="#2DD4BF" opacity="0.85"/><circle cx="117" cy="37" r="6" fill="#FCA5A5"/><path d="M111 34 Q117 28 123 34 L124 44 Q117 46 110 44 Z" fill="#7C3AED" opacity="0.8"/><circle cx="114" cy="37" r="1.2" fill="#1E1E2E"/><circle cx="120" cy="37" r="1.2" fill="#1E1E2E"/><path d="M114 40 Q117 42 120 40" stroke="#1E1E2E" stroke-width="0.8" fill="none" stroke-linecap="round"/></g>
+      <g clip-path="url(#tw3)" class="pbob"><rect x="198" y="40" width="14" height="10" rx="3" fill="#F97316" opacity="0.85"/><circle cx="205" cy="37" r="6" fill="#86EFAC"/><path d="M199 33 Q205 28 211 33" fill="#064E3B"/><circle cx="202" cy="37" r="1.5" fill="#1E1E2E"/><circle cx="208" cy="37" r="1.5" fill="#1E1E2E"/><circle cx="205" cy="40" r="1.5" fill="#1E1E2E"/></g>
+      <rect x="152" y="30" width="26" height="46" rx="4" fill="#0D2A3E" stroke="#2DD4BF" stroke-width="0.8" opacity="0.8"/>
+      <circle cx="162" cy="53" r="2.5" fill="#2DD4BF" opacity="0.8"/>
+      <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
+      <rect x="44" y="8" width="12" height="18" rx="4" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.2"/>
+      <ellipse cx="50" cy="8" rx="9" ry="4.5" fill="#2DD4BF" opacity="0.7"/>
+      <rect x="108" y="48" width="42" height="14" rx="3.5" fill="rgba(245,200,66,0.1)" stroke="#F5C84244" stroke-width="1"/>
+      <text x="129" y="58.5" font-family="Arial Black,Arial" font-weight="900" font-size="9.5" fill="#F5C842" text-anchor="middle">&#x26A1;WS</text>
+      <circle class="hlight" cx="293" cy="37" r="6" fill="#FFF176" filter="url(#tGlow)" opacity="0.9"/>
+      <circle class="hlight" cx="293" cy="49" r="4.5" fill="#FFF176" filter="url(#tGlow)" opacity="0.7"/>
+      <line x1="68" y1="88" x2="148" y2="88" stroke="#1E4A6A" stroke-width="4" stroke-linecap="round"/>
+      <line x1="148" y1="88" x2="218" y2="88" stroke="#1E4A6A" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(68,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
+      <g transform="translate(148,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
+      <g transform="translate(218,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
+      <g transform="translate(255,90)"><circle r="9" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="1.5"/><g class="wspin"><line x1="0" y1="-6" x2="0" y2="6" stroke="#2DD4BF" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><line x1="-6" y1="0" x2="6" y2="0" stroke="#2DD4BF" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/></g><circle r="2.5" fill="#2DD4BF"/></g>
+    </svg>
+  </div>
 
   <!-- Station arrival card -->
   <div class="station-arrival" id="stationArrival">
@@ -2184,7 +2104,27 @@
 <div class="journey-screen" id="journeyScreen">
   <!-- Header -->
   <div class="journey-header">
-    <div style="font-size:36px">🚂</div>
+<div style="width:60px;height:50px;margin:0 auto 4px;filter:drop-shadow(0 4px 12px rgba(45,212,191,0.4))">
+      <svg width="60" height="50" viewBox="0 0 300 110" fill="none">
+        <defs>
+          <linearGradient id="hBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
+          <linearGradient id="hNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
+          <linearGradient id="hWhl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1E4A6A"/><stop offset="100%" stop-color="#071520"/></linearGradient>
+        </defs>
+        <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="#2A6E90"/>
+        <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#hBody)"/>
+        <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#hNose)"/>
+        <rect x="40" y="39" width="258" height="6" rx="3" fill="#F5C842" opacity="0.9"/>
+        <rect x="52" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+        <rect x="102" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+        <rect x="190" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+        <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
+        <g transform="translate(68,88)"><circle r="14" fill="url(#hWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+        <g transform="translate(148,88)"><circle r="14" fill="url(#hWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+        <g transform="translate(218,88)"><circle r="14" fill="url(#hWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+        <circle cx="293" cy="42" r="6" fill="#FFF176" opacity="0.85"/>
+      </svg>
+    </div>
     <div class="journey-title">رحلة القطار</div>
     <div class="journey-subtitle">من مكة المكرمة إلى العالم الإسلامي</div>
 
@@ -2207,18 +2147,145 @@
 
   <!-- MAP VIEW -->
   <div id="journeyMapView">
-    <div id="journeyChaptersMap" style="padding:4px 0"></div>
+    <div style="position:relative;width:100%;overflow:hidden;border-radius:20px;background:linear-gradient(160deg,#0A1628,#061018);border:1px solid #243550;padding:8px">
 
-    <!-- Legend -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:10px;font-size:10px;font-family:Tajawal,sans-serif;text-align:center">
+      <!-- F1 Circuit SVG -->
+      <svg id="journeyMapSVG" viewBox="0 0 720 580" style="width:100%;display:block">
+        <!-- Background grid -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1A2332" stroke-width="0.5"/>
+          </pattern>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="glowStrong">
+            <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+            <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <rect width="720" height="580" fill="url(#grid)"/>
+
+        <!-- F1 Track path - main circuit -->
+        <path id="f1Track"
+          d="M 80,480 
+             Q 80,520 120,520 
+             L 280,520 
+             Q 320,520 320,490
+             L 320,460
+             Q 320,430 350,420
+             L 420,420
+             Q 450,420 460,400
+             L 480,340
+             Q 490,310 520,300
+             L 580,290
+             Q 620,285 630,260
+             L 640,220
+             Q 645,190 625,175
+             L 580,160
+             Q 550,150 540,125
+             L 530,90
+             Q 520,60 490,55
+             L 380,50
+             Q 340,48 320,70
+             L 300,95
+             Q 280,120 250,125
+             L 160,130
+             Q 120,133 100,155
+             L 80,190
+             Q 60,215 65,250
+             L 75,350
+             Q 78,400 80,480 Z"
+          fill="none" stroke="#1A2332" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Track surface -->
+        <path
+          d="M 80,480 
+             Q 80,520 120,520 
+             L 280,520 
+             Q 320,520 320,490
+             L 320,460
+             Q 320,430 350,420
+             L 420,420
+             Q 450,420 460,400
+             L 480,340
+             Q 490,310 520,300
+             L 580,290
+             Q 620,285 630,260
+             L 640,220
+             Q 645,190 625,175
+             L 580,160
+             Q 550,150 540,125
+             L 530,90
+             Q 520,60 490,55
+             L 380,50
+             Q 340,48 320,70
+             L 300,95
+             Q 280,120 250,125
+             L 160,130
+             Q 120,133 100,155
+             L 80,190
+             Q 60,215 65,250
+             L 75,350
+             Q 78,400 80,480 Z"
+          fill="none" stroke="#243550" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+
+        <!-- Track center line -->
+        <path
+          d="M 80,480 
+             Q 80,520 120,520 
+             L 280,520 
+             Q 320,520 320,490
+             L 320,460
+             Q 320,430 350,420
+             L 420,420
+             Q 450,420 460,400
+             L 480,340
+             Q 490,310 520,300
+             L 580,290
+             Q 620,285 630,260
+             L 640,220
+             Q 645,190 625,175
+             L 580,160
+             Q 550,150 540,125
+             L 530,90
+             Q 520,60 490,55
+             L 380,50
+             Q 340,48 320,70
+             L 300,95
+             Q 280,120 250,125
+             L 160,130
+             Q 120,133 100,155
+             L 80,190
+             Q 60,215 65,250
+             L 75,350
+             Q 78,400 80,480 Z"
+          fill="none" stroke="#A78BFA" stroke-width="2" stroke-dasharray="12,8"
+          stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+
+        <!-- START/FINISH line -->
+        <rect x="68" y="455" width="26" height="30" fill="#F5C842" rx="2"/>
+        <text x="81" y="444" text-anchor="middle" font-size="8" fill="#F5C842" font-family="Tajawal" font-weight="700">START</text>
+
+        <!-- Station dots injected by JS -->
+        <g id="mapStationDots"></g>
+      </svg>
+
+      <!-- Tooltip -->
+      <div id="mapTooltip" style="display:none;position:absolute;background:linear-gradient(135deg,#1A2332,#0F1C2E);border:1px solid #A78BFA;border-radius:12px;padding:8px 14px;font-family:Tajawal,sans-serif;font-size:13px;color:#F1F5F9;pointer-events:none;z-index:10;white-space:nowrap;box-shadow:0 4px 20px rgba(167,139,250,.3)"></div>
+    </div>
+
+    <!-- Tier legend -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:12px;font-size:10px;font-family:Tajawal,sans-serif;text-align:center">
       <div style="background:rgba(45,212,191,.1);border:1px solid #2DD4BF44;border-radius:8px;padding:6px;color:#2DD4BF">✅ مكتملة</div>
-      <div style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;border-radius:8px;padding:6px;color:#A78BFA">🚂 متاحة</div>
-      <div style="background:rgba(245,200,66,.1);border:1px solid #F5C84244;border-radius:8px;padding:6px;color:#F5C842">🔓 مفتوحة</div>
+      <div style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;border-radius:8px;padding:6px;color:#A78BFA">🚄 متاحة</div>
+      <div style="background:rgba(245,200,66,.1);border:1px solid #F5C84244;border-radius:8px;padding:6px;color:#F5C842">🏆 متقدمة</div>
       <div style="background:rgba(100,116,139,.1);border:1px solid #64748B44;border-radius:8px;padding:6px;color:#64748B">🔒 مقفلة</div>
     </div>
   </div>
 
-    <!-- LIST VIEW -->
+  <!-- LIST VIEW -->
   <div id="journeyListView" style="display:none">
     <div id="journeyStationsList"></div>
   </div>
@@ -2228,7 +2295,39 @@
 <div class="train-overlay" id="trainArrivalScreen" style="display:none">
   <div class="train-stars-bg" id="trainStarsBg"></div>
   <div class="train-track"></div>
-  <div class="train-emoji" id="trainEmoji">🚂</div>
+  <div class="train-emoji" id="trainEmoji" style="position:absolute;bottom:86px;width:220px;height:85px;left:-240px;animation:trainRide 2.5s ease-in-out forwards;filter:drop-shadow(0 8px 24px rgba(45,212,191,0.4))">
+    <svg width="220" height="85" viewBox="0 0 300 110" fill="none">
+      <defs>
+        <linearGradient id="aBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="40%" stop-color="#153D57"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
+        <linearGradient id="aNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
+        <linearGradient id="aWhl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1E4A6A"/><stop offset="100%" stop-color="#071520"/></linearGradient>
+        <filter id="aGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="aw1"><rect x="53" y="29" width="36" height="20" rx="4"/></clipPath>
+        <clipPath id="aw2"><rect x="103" y="29" width="36" height="20" rx="4"/></clipPath>
+        <clipPath id="aw3"><rect x="191" y="29" width="36" height="20" rx="4"/></clipPath>
+      </defs>
+      <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="#2A6E90"/>
+      <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#aBody)"/>
+      <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#aNose)"/>
+      <rect x="40" y="39" width="258" height="6" rx="3" fill="#F5C842" opacity="0.9"/>
+      <rect x="52" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.8"/>
+      <rect x="102" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.8"/>
+      <rect x="190" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.75"/>
+      <g clip-path="url(#aw1)"><rect x="60" y="40" width="14" height="10" rx="3" fill="#A78BFA" opacity="0.9"/><circle cx="67" cy="37" r="6" fill="#FBBF24"/><path d="M61 35 Q67 30 73 35" fill="#92400E"/></g>
+      <g clip-path="url(#aw2)"><rect x="110" y="40" width="14" height="10" rx="3" fill="#2DD4BF" opacity="0.85"/><circle cx="117" cy="37" r="6" fill="#FCA5A5"/><path d="M111 34 Q117 28 123 34 L124 44 Q117 46 110 44 Z" fill="#7C3AED" opacity="0.8"/></g>
+      <g clip-path="url(#aw3)"><rect x="198" y="40" width="14" height="10" rx="3" fill="#F97316" opacity="0.85"/><circle cx="205" cy="37" r="6" fill="#86EFAC"/><path d="M199 33 Q205 28 211 33" fill="#064E3B"/></g>
+      <rect x="152" y="30" width="26" height="46" rx="4" fill="#0D2A3E" stroke="#2DD4BF" stroke-width="0.8" opacity="0.8"/>
+      <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
+      <rect x="44" y="8" width="12" height="18" rx="4" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.2"/>
+      <ellipse cx="50" cy="8" rx="9" ry="4.5" fill="#2DD4BF" opacity="0.7"/>
+      <circle cx="293" cy="37" r="6" fill="#FFF176" filter="url(#aGlow)" opacity="0.9"/>
+      <circle cx="293" cy="49" r="4.5" fill="#FFF176" filter="url(#aGlow)" opacity="0.7"/>
+      <line x1="68" y1="88" x2="218" y2="88" stroke="#1E4A6A" stroke-width="4" stroke-linecap="round"/>
+      <g transform="translate(68,88)"><circle r="14" fill="url(#aWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+      <g transform="translate(148,88)"><circle r="14" fill="url(#aWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+      <g transform="translate(218,88)"><circle r="14" fill="url(#aWhl)" stroke="#2DD4BF" stroke-width="2"/><circle r="2.5" fill="#2DD4BF"/></g>
+    </svg>
+  </div>
   <div style="position:relative;z-index:2;text-align:center;padding:0 24px">
     <div class="train-city-name" id="trainCityName"></div>
     <div class="train-city-sub" id="trainCitySub"></div>
@@ -2388,7 +2487,6 @@
     <div class="stat-chip">🔥 <span id="streakCount">0</span></div>
     <div class="stat-chip">📚 <span id="totalCount">0</span></div>
     <button class="theme-toggle" id="helpBtn" onclick="openHelp()" title="دليل الاستخدام">📖</button>
-    <button class="font-toggle" id="fontToggle" onclick="cycleFontSize()" title="حجم الخط">𝐀</button>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Switch theme">🌙</button>
   </div>
 </header>
@@ -2882,6 +2980,11 @@
     <div class="sig-label">💡 Developed by</div>
     <div class="sig-name">ARAFAT ALRAJHI</div>
     <div class="sig-year">© 2026 · WordSpark</div>
+    <div style="font-size:10px;color:#374151;margin-top:6px;line-height:1.7">
+      جميع الحقوق محفوظة لعرفات الراجحي<br>
+      All Rights Reserved — WordSpark™<br>
+      يُحظر النسخ أو التوزيع بدون إذن مسبق
+    </div>
   </div>
 
 </main>
@@ -3456,7 +3559,26 @@
     <span class="icon">📚</span>الكلمات
   </button>
   <button class="bnav-btn" id="bn-train" onclick="openTrainJourney()">
-    <span class="icon">🚂</span>رحلتي
+    <span class="icon">
+        <svg width="24" height="18" viewBox="0 0 300 110" fill="none" style="display:block">
+          <defs>
+            <linearGradient id="nBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
+            <linearGradient id="nNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
+          </defs>
+          <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="#2A6E90"/>
+          <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#nBody)"/>
+          <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#nNose)"/>
+          <rect x="40" y="39" width="258" height="6" rx="3" fill="#F5C842" opacity="0.9"/>
+          <rect x="52" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+          <rect x="102" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+          <rect x="190" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
+          <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
+          <circle cx="68" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
+          <circle cx="148" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
+          <circle cx="218" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
+          <circle cx="293" cy="42" r="6" fill="#FFF176" opacity="0.85"/>
+        </svg>
+      </span>رحلتي
   </button>
   <button class="bnav-btn" id="bn-quiz" onclick="showTab('quiz',this,'bn')">
     <span class="icon">🎯</span>اختبار
@@ -5095,7 +5217,7 @@ function speakWord(text, btnEl, retry) {
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'en-US';
-  utter.rate = convSpeed;
+  utter.rate = 0.85;
   utter.pitch = 1;
   utter.volume = 1;
 
@@ -5810,7 +5932,7 @@ function showTrainQuizResult() {
   if (passed) {
     setTrainProgress(trainCurrentStation + 1);
     addStarPoints('passQuiz');
-    btn.textContent = '🚂 واصل الرحلة!';
+    btn.textContent = '🚄 واصل الرحلة!';
     btn.onclick = function() {
       rs.classList.remove('show');
     };
@@ -6462,7 +6584,6 @@ function setJourneyView(view) {
   document.getElementById('btnListView').style.color = view === 'list' ? '#0C0E18' : '#A78BFA';
   if (view === 'map') renderMapDots();
   if (view === 'list') renderJourneyList();
-  if (view === 'map') renderChapterMap();
 }
 
 // Station positions on F1 circuit (following the track path)
@@ -6512,103 +6633,6 @@ var STATION_COORDS = {
   36:{x:130,y:150}, // بورصة
   37:{x:82,y:190}   // المحطة السرية
 };
-
-
-// ══ CHAPTER MAP ══
-var CHAPTERS = [
-  { num:1, title:'قلب الجزيرة',       region:'🇸🇦 السعودية',          color:'#2DD4BF', stations:[1,2,3,4,5,6]   },
-  { num:2, title:'سواحل العرب',        region:'🌊 الخليج',              color:'#A78BFA', stations:[7,8,9,10,11,12] },
-  { num:3, title:'الحضارة والعلم',     region:'🏛️ الشام والعراق',      color:'#F5C842', stations:[13,14,15,16,17,18] },
-  { num:4, title:'الفتوحات والجمال',   region:'🌉 تركيا والأندلس',     color:'#FB7185', stations:[19,20,21,22,23,24] },
-  { num:5, title:'طريق الحرير',        region:'🐪 آسيا الوسطى',        color:'#F97316', stations:[25,26,27,28,29,30] },
-  { num:6, title:'امتداد الرسالة',     region:'🌏 جنوب شرق آسيا',     color:'#34D399', stations:[31,32,33,34,35,36] },
-];
-
-var chapterOpen = [true, false, false, false, false, false];
-
-function renderChapterMap() {
-  var container = document.getElementById('journeyChaptersMap');
-  if (!container) return;
-  var p = getTrainProgress();
-  var html = '';
-
-  CHAPTERS.forEach(function(ch, ci) {
-    var color = ch.color;
-    var completedCount = 0;
-    var chapterUnlocked = false;
-
-    ch.stations.forEach(function(sid) {
-      var st = getStationStatus(sid);
-      if (st === 'completed') completedCount++;
-      if (st === 'unlocked' || st === 'completed') chapterUnlocked = true;
-    });
-
-    var pct = Math.round((completedCount / 6) * 100);
-    var chDone = completedCount === 6;
-    var isOpen = chapterOpen[ci];
-
-    // Chapter header background
-    var headerBg = chapterUnlocked
-      ? 'background:linear-gradient(135deg,' + color + '18,' + color + '08)'
-      : 'background:rgba(255,255,255,.02)';
-
-    html += '<div class="chapter-block" id="chapter-block-' + ci + '" style="border-color:' + (chapterUnlocked ? color + '44' : 'rgba(255,255,255,.06)') + '">';
-
-    // Header
-    html += '<div class="chapter-header" style="' + headerBg + '" onclick="toggleChapter(' + ci + ')">';
-    html += '<div class="chapter-num" style="background:' + (chapterUnlocked ? color : '#243550') + '">';
-    html += chDone ? '✅' : (chapterUnlocked ? ci+1 : '🔒');
-    html += '</div>';
-    html += '<div class="chapter-info">';
-    html += '<div class="chapter-title" style="color:' + (chapterUnlocked ? '#F1F5F9' : '#64748B') + '">';
-    html += 'الفصل ' + (ci+1) + ' — ' + ch.title;
-    html += '</div>';
-    html += '<div class="chapter-region">' + ch.region + '</div>';
-    html += '<div class="chapter-progress-wrap">';
-    html += '<div class="chapter-progress-bar"><div class="chapter-progress-fill" style="width:' + pct + '%;background:' + color + '"></div></div>';
-    html += '<div class="chapter-progress-text" style="color:' + color + '">' + completedCount + '/6</div>';
-    html += '</div>';
-    html += '</div>';
-    html += '<div class="chapter-arrow' + (isOpen ? ' open' : '') + '" id="chapter-arrow-' + ci + '">▼</div>';
-    html += '</div>'; // end header
-
-    // Stations grid
-    html += '<div class="chapter-stations' + (isOpen ? '' : ' collapsed') + '" id="chapter-stations-' + ci + '">';
-
-    ch.stations.forEach(function(sid) {
-      var station = TRAIN_STATIONS[sid - 1];
-      if (!station) return;
-      var status = getStationStatus(sid);
-      var statusIcon = status === 'completed' ? '✅' : status === 'unlocked' ? '🚂' : '🔒';
-      var chipBg = status === 'completed'
-        ? 'background:' + color + '22'
-        : status === 'unlocked'
-        ? 'background:rgba(255,255,255,.06)'
-        : 'background:rgba(255,255,255,.02)';
-      var clickable = status !== 'locked' ? 'onclick="launchTrain(' + sid + ')"' : '';
-
-      html += '<div class="station-chip ' + status + '" style="' + chipBg + '" ' + clickable + '>';
-      html += '<div class="station-chip-num" style="color:' + color + '">#' + sid + '</div>';
-      html += '<div class="station-chip-flag">' + station.flag + '</div>';
-      html += '<div class="station-chip-name">' + (station.city || station.name) + '</div>';
-      html += '<div class="station-chip-status">' + statusIcon + '</div>';
-      html += '</div>';
-    });
-
-    html += '</div>'; // end stations
-    html += '</div>'; // end chapter-block
-  });
-
-  container.innerHTML = html;
-}
-
-function toggleChapter(ci) {
-  chapterOpen[ci] = !chapterOpen[ci];
-  var stationsEl = document.getElementById('chapter-stations-' + ci);
-  var arrowEl = document.getElementById('chapter-arrow-' + ci);
-  if (stationsEl) stationsEl.classList.toggle('collapsed', !chapterOpen[ci]);
-  if (arrowEl) arrowEl.classList.toggle('open', chapterOpen[ci]);
-}
 
 function renderMapDots() {
   var svg = document.getElementById('mapStationDots');
@@ -6691,7 +6715,6 @@ function hideMapTooltip() {
 // ══ JOURNEY MAP ══
 function openTrainJourney() {
   document.getElementById('journeyScreen').style.display = 'block';
-  renderChapterMap();
   setJourneyView('map');
 }
 
@@ -6708,8 +6731,8 @@ function renderJourneyList() {
     var status = getStationStatus(s.id);
     var numClass = status === 'completed' ? 'num-completed' : status === 'unlocked' ? 'num-unlocked' : 'num-locked';
     var rowClass = status;
-    var icon = status === 'completed' ? '✅' : status === 'unlocked' ? '🚂' : '🔒';
-    var statusText = status === 'completed' ? 'مكتملة ✅' : status === 'unlocked' ? 'جاهزة للرحلة 🚂' : 'مقفلة 🔒';
+    var icon = status === 'completed' ? '✅' : status === 'unlocked' ? '🚄' : '🔒';
+    var statusText = status === 'completed' ? 'مكتملة ✅' : status === 'unlocked' ? 'جاهزة للرحلة 🚄' : 'مقفلة 🔒';
     var tierColors = ['','#2DD4BF','#F5C842','#A78BFA','#F5C842'];
 
     html += '<div class="journey-station-row ' + rowClass + '" onclick="' + (status !== 'locked' ? 'launchTrain(' + s.id + ')' : '') + '">';
@@ -6743,7 +6766,7 @@ function launchTrain(stationId) {
     bg.appendChild(star);
   }
 
-  document.getElementById('trainCityName').textContent = currentTrainStation.flag + ' ' + (currentTrainStation.city || currentTrainStation.name);
+  document.getElementById('trainCityName').textContent = currentTrainStation.flag + ' ' + currentTrainStation.name;
   document.getElementById('trainCitySub').textContent = currentTrainStation.nameEn;
   document.getElementById('trainArrivalScreen').style.display = 'flex';
 
@@ -6972,12 +6995,12 @@ function showSQResult() {
   document.getElementById('sqrTitle').textContent = passed ? 'أحسنت! اجتزت اختبار ' + station.name + '!' : 'القطار ينتظرك!';
   document.getElementById('sqrScore').textContent = sqCorrect + ' / ' + sqQuestions.length;
   document.getElementById('sqrMsg').textContent = passed
-    ? 'تقدّمك رائع! القطار ينطلق للمحطة التالية! 🚂'
+    ? 'تقدّمك رائع! القطار ينطلق للمحطة التالية! 🚄'
     : 'راجع كلماتك وعُد أقوى — الإصرار هو مفتاح النجاح 💪';
 
   var btn = document.getElementById('sqrBtn');
   if (passed) {
-    btn.textContent = '🚂 انطلق للمحطة التالية!';
+    btn.textContent = '🚄 انطلق للمحطة التالية!';
     btn.onclick = function() {
       var p = getTrainProgress();
       if (p.completed.indexOf(sqStationId) === -1) p.completed.push(sqStationId);
@@ -6985,7 +7008,7 @@ function showSQResult() {
       saveTrainProgress(p);
       rs.style.display = 'none';
       addStarPoints('passQuiz');
-      showToast('🏆 وصلت المحطة ' + station.name + '! القطار ينطلق! 🚂', '#A78BFA');
+      showToast('🏆 وصلت المحطة ' + station.name + '! القطار ينطلق! 🚄', '#A78BFA');
       openTrainJourney();
     };
   } else {
@@ -7599,13 +7622,6 @@ function openConv(key) {
     </div>
 
     <div class="conv-section-label">💬 محادثة نموذجية</div>
-    <div class="speed-row">
-      <span class="speed-label">🐢 السرعة</span>
-      <input type="range" class="speed-slider" id="convSpeedSlider"
-             min="0.3" max="1.2" step="0.05" value="0.5"
-             oninput="setConvSpeed(parseFloat(this.value))">
-      <span class="speed-val" id="convSpeedVal">×0.5</span>
-    </div>
     <div class="dialogue-wrap">${dialogueHtml}</div>
 
     <div class="conv-section-label">📌 عبارات مفيدة إضافية</div>
@@ -8617,7 +8633,7 @@ let podAudioQueue = [];
 let podCurrentLineIdx = 0;
 let podIsPlaying = false;
 let podReplayCount = 0;
-const POD_MAX_REPLAYS = 10;
+const POD_MAX_REPLAYS = 2;
 
 function renderPodcastMenu() {
   const area = document.getElementById('podcastMenu');
@@ -8701,13 +8717,6 @@ function openPodcast(key) {
         <button class="pod-replay-btn" id="podReplayBtn" onclick="podReplayFromStart()">🔁 إعادة الاستماع من البداية</button>
       </div>
       <div class="pod-replay-count" id="podReplayCount">إعادة الاستماع: ${POD_MAX_REPLAYS} مرات متبقية</div>
-      <div class="speed-row">
-        <span class="speed-label">🐢 السرعة</span>
-        <input type="range" class="speed-slider" id="podSpeedSlider"
-               min="0.3" max="1.2" step="0.05" value="${podSpeed}"
-               oninput="setPodSpeed(parseFloat(this.value))">
-        <span class="speed-val" id="podSpeedVal">×${podSpeed}</span>
-      </div>
     </div>
 
     <div class="pod-transcript-toggle">
@@ -8794,7 +8803,7 @@ function podSpeakNextLine() {
   const line = ep.dialogue[podCurrentLineIdx];
   const utter = new SpeechSynthesisUtterance(line.en);
   utter.lang = 'en-US';
-  utter.rate = podSpeed;
+  utter.rate = 0.92;
   utter.pitch = line.who === 'a' ? 1.05 : 0.92; // slight pitch variation distinguishes the two speakers
 
   const voices = synth.getVoices();
@@ -8887,67 +8896,6 @@ document.addEventListener('keydown', e => {
 });
 
 // ══ THEME TOGGLE ══
-// ── SPEECH SPEED ──
-var convSpeed = parseFloat(localStorage.getItem('ws_conv_speed') || '0.5');
-var podSpeed  = parseFloat(localStorage.getItem('ws_pod_speed')  || '0.5');
-
-function setConvSpeed(s) {
-  convSpeed = parseFloat(s);
-  var slider = document.getElementById('convSpeedSlider');
-  var val = document.getElementById('convSpeedVal');
-  if (slider) {
-    slider.value = convSpeed;
-    var pct = ((convSpeed - 0.3) / (1.2 - 0.3)) * 100;
-    slider.style.background = 'linear-gradient(to right, var(--teal) ' + pct + '%, var(--teal) ' + pct + '%, var(--rim) ' + pct + '%)';
-  }
-  if (val) val.textContent = '×' + convSpeed.toFixed(1);
-  localStorage.setItem('ws_conv_speed', convSpeed);
-}
-
-function setPodSpeed(s) {
-  podSpeed = parseFloat(s);
-  var slider = document.getElementById('podSpeedSlider');
-  var val = document.getElementById('podSpeedVal');
-  if (slider) {
-    slider.value = podSpeed;
-    var pct = ((podSpeed - 0.3) / (1.2 - 0.3)) * 100;
-    slider.style.background = 'linear-gradient(to right, var(--teal) ' + pct + '%, var(--teal) ' + pct + '%, var(--rim) ' + pct + '%)';
-  }
-  if (val) val.textContent = '×' + podSpeed.toFixed(1);
-  localStorage.setItem('ws_pod_speed', podSpeed);
-}
-
-function cycleFontSize() {
-  var body = document.body;
-  var btn = document.getElementById('fontToggle');
-  if (!body.classList.contains('font-lg') && !body.classList.contains('font-xl')) {
-    body.classList.add('font-lg');
-    if (btn) btn.textContent = 'A+';
-    localStorage.setItem('ws_font', 'lg');
-  } else if (body.classList.contains('font-lg')) {
-    body.classList.remove('font-lg');
-    body.classList.add('font-xl');
-    if (btn) btn.textContent = 'A++';
-    localStorage.setItem('ws_font', 'xl');
-  } else {
-    body.classList.remove('font-xl');
-    if (btn) btn.textContent = 'A';
-    localStorage.setItem('ws_font', 'normal');
-  }
-}
-
-function loadFontSize() {
-  var saved = localStorage.getItem('ws_font');
-  var btn = document.getElementById('fontToggle');
-  if (saved === 'lg') {
-    document.body.classList.add('font-lg');
-    if (btn) btn.textContent = 'A+';
-  } else if (saved === 'xl') {
-    document.body.classList.add('font-xl');
-    if (btn) btn.textContent = 'A++';
-  }
-}
-
 function toggleTheme() {
   const isLight = document.body.classList.toggle('light-theme');
   document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
@@ -8964,7 +8912,6 @@ function applyTheme() {
 // ══ INIT ══
 (function init() {
   applyTheme();
-  loadFontSize();
   updateCounters();
   updateStreak();
   updateDailyGoalBadge();
