@@ -2339,7 +2339,7 @@
 <!-- ══ NAME SCREEN ══ -->
 <div id="nameScreen" style="display:none">
   <div class="name-box">
-    <div class="nb-icon">👤</div>
+    <div class="nb-icon" onclick="devModeClick()" style="cursor:pointer">👤</div>
     <div class="nb-title">أهلاً بك في WordSpark!</div>
     <div class="nb-sub">اكتب اسمك لتبدأ رحلتك مع اللغة الإنجليزية</div>
     <input class="name-inp" id="studentNameInp" placeholder="اكتب اسمك هنا..." maxlength="40"
@@ -8931,7 +8931,7 @@ function devModeClick() {
   devClickCount++;
   if (devClickTimer) clearTimeout(devClickTimer);
   devClickTimer = setTimeout(function(){ devClickCount = 0; }, 2000);
-  if (devClickCount >= 7) {
+  if (devClickCount >= 5) {
     devClickCount = 0;
     openDevPanel();
   }
