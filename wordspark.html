@@ -8948,20 +8948,46 @@ function closeDevPanel() {
 
 function devOpenJourney() {
   closeDevPanel();
-  // تهيئة تقدم أولي إذا لم يكن موجوداً
+  // حفظ اسم المطور أولاً لتجاوز شاشة الاسم
+  if (!localStorage.getItem('studentName')) {
+    localStorage.setItem('studentName', 'ARAFAT');
+  }
+  // تهيئة تقدم أولي
   var p = getTrainProgress();
   if (!p.current || p.current < 1) {
     p.current = 1;
     saveTrainProgress(p);
   }
-  // فتح شاشة الرحلة
-  if (typeof openJourneyScreen === 'function') {
-    openJourneyScreen();
-  } else if (typeof showJourney === 'function') {
-    showJourney();
-  } else {
-    showTab('journey', document.getElementById('bn-journey'), 'bn');
+  // إخفاء شاشة الاسم وإظهار التطبيق
+  var nameScreen = document.querySelector('.name-screen') || document.querySelector('#nameScreen');
+  if (nameScreen) nameScreen.style.display = 'none';
+  var app = document.querySelector('#app') || document.querySelector('.app-wrapper');
+  if (app) app.style.display = 'block';
+  // تحديث الواجهة
+  if (typeof loadApp === 'function') loadApp();
+  if (typeof initApp === 'function') initApp();
+  // الانتقال لتبويب رحلتي
+  setTimeout(function() {
+    var btn = document.getElementById('bn-journey') || document.getElementById('bn-quiz');
+    var tabName = 'journey';
+    if (document.getElementById('journeyScreen')) {
+      document.getElementById('journeyScreen').style.display = 'block';
+      if (typeof setJourneyView === 'function') setJourneyView('map');
+    } else {
+      location.reload();
+    }
+  }, 300);
+}
+
+function devAutoLogin() {
+  // حفظ الاسم وإعادة التحميل
+  localStorage.setItem('studentName', 'ARAFAT');
+  var p = getTrainProgress();
+  if (!p.current || p.current < 1) {
+    p.current = 1;
+    saveTrainProgress(p);
   }
+  location.reload();
 }
 
 function devUnlockAll() {
@@ -9010,10 +9036,9 @@ function devSkipName() {
     <div style="font-size:11px;color:#64748B;margin-bottom:20px">مرحباً أستاذ عرفات 👋</div>
     
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button onclick="devOpenJourney()" style="background:linear-gradient(135deg,#2DD4BF,#0EA5E9);color:#0C0E18;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🚄 فتح رحلة القطار مباشرة</button>
-      <button onclick="devUnlockAll()" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🔓 فتح جميع المحطات</button>
+      <button onclick="devAutoLogin()" style="background:linear-gradient(135deg,#F5C842,#FF9500);color:#0C0E18;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">⚡ دخول تلقائي كمطور</button>
+      <button onclick="devUnlockAll()" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🔓 فتح أول 6 محطات</button>
       <button onclick="devResetProgress()" style="background:rgba(239,68,68,.15);color:#EF4444;border:1px solid #EF444444;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🗑️ إعادة ضبط التقدم</button>
-      <button onclick="devSkipName()" style="background:rgba(245,200,66,.1);color:#F5C842;border:1px solid #F5C84244;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">⚡ تخطي إدخال الاسم</button>
       <button onclick="closeDevPanel()" style="background:rgba(255,255,255,.05);color:#94A3B8;border:1px solid #1E2D45;border-radius:12px;padding:10px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer">✕ إغلاق</button>
     </div>
   </div>
