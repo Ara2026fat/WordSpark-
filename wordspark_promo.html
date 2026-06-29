@@ -434,7 +434,7 @@
 <div id="soundOverlay" style="position:fixed;inset:0;z-index:300;background:rgba(12,14,24,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
   <div style="width:90px;height:90px;border-radius:22px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4)">
     <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:900">
-      <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+      <span style="color:#F5C842">⚡</span><span style="color:#fff">WS</span>
     </div>
   </div>
   <div style="font-size:22px;font-weight:900;color:#F5C842;font-family:Tajawal,sans-serif">WordSpark</div>
@@ -463,7 +463,7 @@
     <!-- Original WordSpark Logo -->
     <div style="width:100px;height:100px;margin:0 auto 16px;border-radius:24px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4);animation:logoPop .8s cubic-bezier(.175,.885,.32,1.275) both;animation-delay:.3s;opacity:0">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:900;line-height:1">
-        <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+        <span style="color:#F5C842">⚡</span><span style="color:#fff">WS</span>
       </div>
     </div>
     <div style="font-family:'Space Grotesk',sans-serif;font-size:36px;font-weight:900;animation:logoPop .8s cubic-bezier(.175,.885,.32,1.275) both;animation-delay:.5s;opacity:0">
@@ -612,7 +612,7 @@
   <div class="cta-box">
     <div style="width:80px;height:80px;margin:0 auto 16px;border-radius:20px;background:linear-gradient(135deg,#2D1B69,#1A3A2A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(167,139,250,.4)">
       <div style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:900">
-        <span style="color:#F5C842">WS</span><span style="color:#2DD4BF">⚡</span>
+        <span style="color:#F5C842">⚡</span><span style="color:#fff">WS</span>
       </div>
     </div>
     <div class="cta-title">ابدأ رحلتك الآن</div>
@@ -637,22 +637,20 @@ window.addEventListener('DOMContentLoaded', function() {
 });
 
 // ══ SCENE SYSTEM ══
-// المدة الاحتياطية إذا لم يكن هناك صوت (بالملي ثانية)
 var scenes = [
-  { id:'scene1', duration:10000 },
-  { id:'scene2', duration:12000 },
-  { id:'scene3', duration:12000 },
-  { id:'scene4', duration:12000 },
-  { id:'scene5', duration:11000 },
-  { id:'scene6', duration:11000 },
-  { id:'scene7', duration:14000 }
+  { id:'scene1', duration:6000 },
+  { id:'scene2', duration:8000 },
+  { id:'scene3', duration:9000 },
+  { id:'scene4', duration:9000 },
+  { id:'scene5', duration:8000 },
+  { id:'scene6', duration:8000 },
+  { id:'scene7', duration:12000 }
 ];
 
 var current = 0;
 var timer = null;
 var progressTimer = null;
 var startTime = null;
-var sceneDuration = 0; // المدة الفعلية للمشهد الحالي
 var soundEnabled = true;
 var bgAudio = null;
 var voiceAudio = null;
@@ -663,7 +661,7 @@ function startBgAudio() {
   try {
     bgAudio = new Audio(baseUrl + 'voice-0.m4a');
     bgAudio.loop = true;
-    bgAudio.volume = 0.04; // خلفية خفيفة جداً
+    bgAudio.volume = 0.12;
     bgAudio.play().catch(function(){});
   } catch(e){}
 }
@@ -675,23 +673,6 @@ function speakScene(idx) {
     if (idx < voiceFiles.length) {
       voiceAudio = new Audio(baseUrl + voiceFiles[idx]);
       voiceAudio.volume = 1.0;
-
-      // عند انتهاء الصوت: انتقل للمشهد التالي بعد ثانية واحدة
-      voiceAudio.addEventListener('ended', function() {
-        if (current === idx) {
-          clearInterval(progressTimer);
-          // أكمل شريط التقدم
-          var pb = document.getElementById('progressBar');
-          if (pb) pb.style.width = (((idx + 1) / scenes.length) * 100) + '%';
-          setTimeout(function() { nextScene(); }, 1200);
-        }
-      });
-
-      // عند معرفة المدة الفعلية للصوت: حدّث مدة المشهد
-      voiceAudio.addEventListener('loadedmetadata', function() {
-        sceneDuration = Math.max((voiceAudio.duration * 1000) + 1500, scenes[idx].duration);
-      });
-
       voiceAudio.play().catch(function(){});
     }
   } catch(e){}
@@ -699,23 +680,15 @@ function speakScene(idx) {
 
 function replayPromo() {
   current = 0;
-  clearInterval(progressTimer);
-  if (voiceAudio) { voiceAudio.pause(); voiceAudio.currentTime = 0; voiceAudio = null; }
+  if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
   var replayBtn = document.getElementById('replayBtn');
   if (replayBtn) replayBtn.style.display = 'none';
-  var pb = document.getElementById('progressBar');
-  if (pb) pb.style.width = '0%';
-  if (soundEnabled) {
-    if (bgAudio) { try { bgAudio.currentTime = 0; bgAudio.play().catch(function(){}); } catch(e){} }
-    setTimeout(function() { showScene(0); }, 300);
-  } else {
-    showScene(0);
-  }
+  var soundOverlay = document.getElementById('soundOverlay');
+  if (soundOverlay) soundOverlay.style.display = 'flex';
 }
 
 function onPromoEnd() {
   if (voiceAudio) { voiceAudio.pause(); voiceAudio = null; }
-  if (bgAudio) { bgAudio.pause(); bgAudio.currentTime = 0; }
   var btn = document.getElementById('replayBtn');
   if (btn) btn.style.display = 'flex';
 }
@@ -732,14 +705,11 @@ function startPromoSilent() {
   document.getElementById('soundOverlay').style.display = 'none';
   showScene(0);
 }
-function showScene(idx) {
   if (idx === undefined || idx === null || idx >= scenes.length || idx < 0) return;
   var sceneData = scenes[idx];
   if (!sceneData) return;
 
-  current = idx;
-
-  // Hide all — reset animations by cloning nodes
+  // Hide all
   scenes.forEach(function(s, i) {
     var el = document.getElementById(s.id);
     if (el) el.classList.remove('active');
@@ -755,42 +725,26 @@ function showScene(idx) {
   if (!el) return;
   el.classList.add('active');
 
-  // Reset animation items so they replay correctly
-  var animItems = el.querySelectorAll('.feature-card,.rank-row,.station-preview-chip,.problem-card,.solution-card,.wa-bubble,.phone-mockup,.cta-title,.cta-subtitle,.cta-url,.cta-free,.scene-title,.main-title,.logo-ws,.logo-sub,.tagline');
-  animItems.forEach(function(a) {
-    try {
-      a.style.animation = 'none';
-      a.style.opacity = '0';
-      void a.offsetWidth; // reflow
-      a.style.animation = '';
-    } catch(e){}
-  });
-
-  // After a short delay, ensure everything is visible (fallback)
+  // Trigger animations
   setTimeout(function() {
     try {
       var items = el.querySelectorAll('.feature-card,.rank-row,.station-preview-chip,.problem-card,.solution-card,.wa-bubble,.phone-mockup,.cta-title,.cta-subtitle,.cta-url,.cta-free,.scene-title,.main-title');
       items.forEach(function(a) { try { a.style.opacity='1'; } catch(e){} });
     } catch(e){}
-  }, 2500);
-
-  // ضبط المدة الافتراضية أولاً ثم سيُحدَّث عند تحميل الصوت
-  sceneDuration = scenes[idx].duration;
+  }, 200);
 
   speakScene(idx);
 
   startTime = Date.now();
   clearInterval(progressTimer);
   progressTimer = setInterval(function() {
-    if (current !== idx) { clearInterval(progressTimer); return; }
+    if (!scenes[idx]) { clearInterval(progressTimer); return; }
     var elapsed = Date.now() - startTime;
-    var dur = sceneDuration; // يتحدث تلقائياً عند تحميل الصوت
-    var pct = Math.min((elapsed / dur) * 100, 99); // لا يكتمل تلقائياً — ينتظر حدث ended
+    var pct = (elapsed / scenes[idx].duration) * 100;
     var totalPct = ((idx + pct/100) / scenes.length) * 100;
     var pb = document.getElementById('progressBar');
     if (pb) pb.style.width = Math.min(totalPct, 100) + '%';
-    // الانتقال التلقائي فقط إذا لم يكن هناك صوت (وضع صامت)
-    if (!soundEnabled && elapsed >= dur) {
+    if (elapsed >= scenes[idx].duration) {
       clearInterval(progressTimer);
       nextScene();
     }
