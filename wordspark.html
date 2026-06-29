@@ -6461,14 +6461,6 @@ var CHAPTERS = [
 
 var chapterCollapsed = {1:false,2:true,3:true,4:true,5:true,6:true};
 
-function getStationStatus(stId) {
-  var p = getTrainProgress();
-  if (p.completed && p.completed.includes(stId)) return 'completed';
-  if (p.current === stId) return 'unlocked';
-  if (stId === 1 && !p.current) return 'unlocked';
-  return 'locked';
-}
-
 function renderChapterMap() {
   var p = getTrainProgress();
   var container = document.getElementById('chapterMapContainer');
@@ -6519,7 +6511,7 @@ function renderChapterMap() {
     body.style.cssText = 'padding:0 10px 12px;display:' + (chapterCollapsed[ch.id] ? 'none' : 'grid') + ';grid-template-columns:1fr 1fr 1fr;gap:6px';
 
     ch.stations.forEach(function(sid) {
-      var st = trainStations.find(function(s){ return s.id === sid; });
+      var st = TRAIN_STATIONS.find(function(s){ return s.id === sid; });
       if (!st) return;
       var status = getStationStatus(sid);
       var chip = document.createElement('div');
