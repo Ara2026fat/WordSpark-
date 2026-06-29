@@ -6419,8 +6419,10 @@ function saveTrainProgress(p) {
 
 function getStationStatus(stationId) {
   var p = getTrainProgress();
-  if (p.completed.indexOf(stationId) !== -1) return 'completed';
-  if (stationId === p.current) return 'unlocked';
+  var curr = parseInt(p.current) || 1;
+  var sid = parseInt(stationId);
+  if (p.completed.indexOf(sid) !== -1) return 'completed';
+  if (sid === curr) return 'unlocked';
   return 'locked';
 }
 
