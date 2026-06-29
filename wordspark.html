@@ -1113,8 +1113,8 @@
   .home-tile-icon {
     font-size: 36px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
   }
-  .home-tile-label { font-size: 13.5px; font-weight: 800; color: var(--white); }
-  .home-tile-sub { font-size: 9.5px; color: rgba(255,255,255,.55); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; }
+  .home-tile-label { font-size: 14px; font-weight: 900; color: var(--white); font-family: 'Space Grotesk', sans-serif; letter-spacing: .3px; }
+  .home-tile-sub { font-size: 9px; color: rgba(255,255,255,.45); font-family: 'Tajawal', sans-serif; letter-spacing: 0; }
   .home-tile-badge {
     position: absolute; top: 10px; left: 10px;
     background: rgba(0,0,0,.35); backdrop-filter: blur(4px);
@@ -2406,43 +2406,43 @@
       <div class="home-tile t-words" onclick="showTab('words', null)">
         <div class="home-tile-badge" id="homeWordsBadge">📚</div>
         <div class="home-tile-icon">📚</div>
-        <div class="home-tile-label">الكلمات</div>
-        <div class="home-tile-sub">VOCABULARY</div>
+        <div class="home-tile-label">Vocabulary</div>
+        <div class="home-tile-sub">الكلمات</div>
       </div>
       <div class="home-tile t-quiz" onclick="showTab('quiz', null)">
         <div class="home-tile-icon">🎯</div>
-        <div class="home-tile-label">اختبار</div>
-        <div class="home-tile-sub">QUIZ</div>
+        <div class="home-tile-label">Quiz</div>
+        <div class="home-tile-sub">اختبار</div>
       </div>
       <div class="home-tile t-games" onclick="showTab('games', null)">
         <div class="home-tile-icon">🎮</div>
-        <div class="home-tile-label">ألعاب</div>
-        <div class="home-tile-sub">GAMES</div>
+        <div class="home-tile-label">Games</div>
+        <div class="home-tile-sub">ألعاب</div>
       </div>
       <div class="home-tile t-conv" onclick="showTab('conv', null)">
         <div class="home-tile-icon">💬</div>
-        <div class="home-tile-label">محادثات</div>
-        <div class="home-tile-sub">CONVERSATIONS</div>
+        <div class="home-tile-label">Conversations</div>
+        <div class="home-tile-sub">محادثات</div>
       </div>
       <div class="home-tile t-voice" onclick="showTab('voice', null)">
         <div class="home-tile-icon">🎙️</div>
-        <div class="home-tile-label">المتحدّث</div>
-        <div class="home-tile-sub">VOICE COACH</div>
+        <div class="home-tile-label">Voice Coach</div>
+        <div class="home-tile-sub">المتحدّث</div>
       </div>
       <div class="home-tile t-grammar" onclick="showTab('grammar', null)">
         <div class="home-tile-icon">📐</div>
-        <div class="home-tile-label">القواعد</div>
-        <div class="home-tile-sub">GRAMMAR</div>
+        <div class="home-tile-label">Grammar</div>
+        <div class="home-tile-sub">القواعد</div>
       </div>
       <div class="home-tile t-flash" onclick="showTab('flash', null)">
         <div class="home-tile-icon">🃏</div>
-        <div class="home-tile-label">البطاقات</div>
-        <div class="home-tile-sub">FLASHCARDS</div>
+        <div class="home-tile-label">Flashcards</div>
+        <div class="home-tile-sub">البطاقات</div>
       </div>
       <div class="home-tile t-podcast" onclick="showTab('podcast', null)">
         <div class="home-tile-icon">🎧</div>
-        <div class="home-tile-label">البودكاست</div>
-        <div class="home-tile-sub">LISTENING PODCAST</div>
+        <div class="home-tile-label">Podcast</div>
+        <div class="home-tile-sub">البودكاست</div>
       </div>
     </div>
 
@@ -3427,10 +3427,10 @@
 <!-- Bottom nav for mobile -->
 <nav class="bottom-nav">
   <button class="bnav-btn active" id="bn-home" onclick="showTab('home',this,'bn')">
-    <span class="icon">🏠</span>الرئيسية
+    <span class="icon">🏠</span><span style="font-size:9px">Home</span>
   </button>
   <button class="bnav-btn" id="bn-words" onclick="showTab('words',this,'bn')">
-    <span class="icon">📚</span>الكلمات
+    <span class="icon">📚</span><span style="font-size:9px">Words</span>
   </button>
   <button class="bnav-btn" id="bn-train" onclick="openTrainJourney()">
     <span class="icon">
@@ -3452,13 +3452,13 @@
           <circle cx="218" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
           <circle cx="293" cy="42" r="6" fill="#FFF176" opacity="0.85"/>
         </svg>
-      </span>رحلتي
+      </span><span style="font-size:9px">Journey</span>
   </button>
   <button class="bnav-btn" id="bn-quiz" onclick="showTab('quiz',this,'bn')">
-    <span class="icon">🎯</span>اختبار
+    <span class="icon">🎯</span><span style="font-size:9px">Quiz</span>
   </button>
   <button class="bnav-btn" id="bn-voice" onclick="showTab('voice',this,'bn')">
-    <span class="icon">🎙️</span>المتحدّث
+    <span class="icon">🎙️</span><span style="font-size:9px">Speak</span>
   </button>
 </nav>
 
@@ -8968,7 +8968,7 @@ function devOpenJourney() {
   // تحديث الواجهة
   if (typeof loadApp === 'function') loadApp();
   if (typeof initApp === 'function') initApp();
-  // الانتقال لتبويب رحلتي
+  // الانتقال لتبويب Journey
   setTimeout(function() {
     var btn = document.getElementById('bn-journey') || document.getElementById('bn-quiz');
     var tabName = 'journey';
