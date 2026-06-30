@@ -2360,6 +2360,7 @@
   <div class="stats-bar">
     <div class="stat-chip">🔥 <span id="streakCount">0</span></div>
     <div class="stat-chip">📚 <span id="totalCount">0</span></div>
+    <button class="theme-toggle" id="fontSizeBtn" onclick="cycleFontSize()" title="تكبير الخط" style="font-weight:900;font-size:13px">A</button>
     <button class="theme-toggle" id="helpBtn" onclick="openHelp()" title="دليل الاستخدام">📖</button>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Switch theme">🌙</button>
   </div>
@@ -2626,7 +2627,7 @@
 
   <!-- ══ QUIZ ══ -->
   <div id="tab-quiz" class="section">
-    <div class="sec-title">🎯 اختبار عشوائي</div>
+    <div class="sec-title">🎯 Random Quiz <span style="font-size:10px;font-weight:400;color:var(--muted)">اختبار عشوائي</span></div>
     <div class="sec-sub">Random Vocabulary Quiz</div>
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
@@ -2645,7 +2646,7 @@
   <!-- ══ GAMES ══ -->
   <div id="tab-games" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">🎮 ألعاب تعليمية</div>
+    <div class="sec-title">🎮 Learning Games <span style="font-size:10px;font-weight:400;color:var(--muted)">ألعاب تعليمية</span></div>
     <div class="sec-sub">Learn English while having fun!</div>
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
@@ -2750,7 +2751,7 @@
   <!-- ══ CONVERSATIONS ══ -->
   <div id="tab-conv" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">💬 محادثات حياتية</div>
+    <div class="sec-title">💬 Life Conversations <span style="font-size:10px;font-weight:400;color:var(--muted)">محادثات</span></div>
     <div class="sec-sub">Real-Life Conversations</div>
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
@@ -2770,7 +2771,7 @@
 
   <!-- ══ VOICE BUDDY ══ -->
   <div id="tab-voice" class="section">
-    <div class="sec-title">🎙️ المتحدّث الصوتي</div>
+    <div class="sec-title">🎙️ Voice Coach <span style="font-size:10px;font-weight:400;color:var(--muted)">المتحدّث الصوتي</span></div>
     <div class="sec-sub">Practice speaking with your AI buddy</div>
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
@@ -2814,7 +2815,7 @@
   <!-- ══ GRAMMAR ══ -->
   <div id="tab-grammar" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">📐 قواعد اللغة</div>
+    <div class="sec-title">📐 Grammar <span style="font-size:10px;font-weight:400;color:var(--muted)">قواعد اللغة</span></div>
     <div class="sec-sub">English Grammar — من الصفر</div>
     <div class="grammar-list" id="grammarList"></div>
   </div>
@@ -2822,7 +2823,7 @@
   <!-- ══ FLASHCARDS ══ -->
   <div id="tab-flash" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">🃏 بطاقات المراجعة</div>
+    <div class="sec-title">🃏 Flashcards <span style="font-size:10px;font-weight:400;color:var(--muted)">بطاقات المراجعة</span></div>
     <div class="sec-sub">اضغط البطاقة لتقلّبها</div>
     <div id="flashArea"></div>
   </div>
@@ -2830,7 +2831,7 @@
   <!-- ══ PODCAST (Listening Training) ══ -->
   <div id="tab-podcast" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">🎧 البودكاست</div>
+    <div class="sec-title">🎧 Podcast <span style="font-size:10px;font-weight:400;color:var(--muted)">البودكاست</span></div>
     <div class="sec-sub">تدريب الاستماع — استمع وافهم</div>
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
@@ -7554,9 +7555,9 @@ function renderConvMenu() {
     <div class="conv-card" style="background:linear-gradient(135deg,${c.bg},var(--panel));border:1px solid ${c.color}44" onclick="openConv('${key}')">
       <div class="conv-icon" style="background:${c.color}22">${c.nameAr.split(' ')[0]}</div>
       <div class="conv-info">
-        <div class="conv-name" style="color:${c.color}">${c.nameAr.split(' ').slice(1).join(' ')}</div>
-        <div class="conv-name-en">${c.nameEn}</div>
-        <div class="conv-meta">${c.dialogue.length} جمل · ${c.phrases.length} عبارات مفيدة</div>
+        <div class="conv-name" style="color:${c.color}">${c.nameEn}</div>
+        <div class="conv-name-en" style="font-size:10px;color:var(--muted)">${c.nameAr.split(' ').slice(1).join(' ')}</div>
+        <div class="conv-meta">${c.dialogue.length} sentences · ${c.phrases.length} phrases</div>
       </div>
       ${mastered ? '<div style="font-size:18px">🏆</div>' : `<div class="conv-arrow" style="color:${c.color}">←</div>`}
     </div>`;
@@ -7702,7 +7703,7 @@ function markConvMastered(key) {
 // ══ VOICE BUDDY ══
 const vbTopics = {
   intro: {
-    icon:'👋', nameAr:'تعارف بسيط', descAr:'تدرّب على تقديم نفسك',
+    icon:'👋', nameAr:'تعارف بسيط', nameEn:'Simple Introduction', descAr:'تدرّب على تقديم نفسك', descEn:'Practice introducing yourself',
     prompts: [
       { en:"Hi! What's your name?", ar:"مرحباً! ما اسمك؟" },
       { en:"Nice to meet you! How are you today?", ar:"سعيد بلقائك! كيف حالك اليوم؟" },
@@ -7712,7 +7713,7 @@ const vbTopics = {
     hints: ["My name is...", "I am from...", "I like to..."],
   },
   daily: {
-    icon:'☀️', nameAr:'الروتين اليومي', descAr:'تحدّث عن يومك',
+    icon:'☀️', nameAr:'الروتين اليومي', nameEn:'Daily Routine', descAr:'تحدّث عن يومك', descEn:'Talk about your day',
     prompts: [
       { en:"What time do you wake up?", ar:"متى تستيقظ؟" },
       { en:"What did you have for breakfast?", ar:"ماذا تناولت في الفطور؟" },
@@ -7722,7 +7723,7 @@ const vbTopics = {
     hints: ["I wake up at...", "I had... for breakfast", "I usually..."],
   },
   food: {
-    icon:'🍔', nameAr:'الطعام المفضّل', descAr:'تحدّث عن أكلاتك المفضّلة',
+    icon:'🍔', nameAr:'الطعام المفضّل', nameEn:'Favorite Food', descAr:'تحدّث عن أكلاتك المفضّلة', descEn:'Talk about your favorite meals',
     prompts: [
       { en:"What's your favorite food?", ar:"ما هو طعامك المفضّل؟" },
       { en:"Do you like spicy food?", ar:"هل تحب الطعام الحار؟" },
@@ -7732,7 +7733,7 @@ const vbTopics = {
     hints: ["My favorite food is...", "Yes, I like... / No, I don't like...", "I ate..."],
   },
   hobbies: {
-    icon:'⚽', nameAr:'الهوايات', descAr:'تحدّث عن اهتماماتك',
+    icon:'⚽', nameAr:'الهوايات', nameEn:'Hobbies & Interests', descAr:'تحدّث عن اهتماماتك', descEn:'Talk about what you enjoy',
     prompts: [
       { en:"What's your favorite hobby?", ar:"ما هي هوايتك المفضّلة؟" },
       { en:"Do you play any sports?", ar:"هل تمارس أي رياضة؟" },
@@ -7742,7 +7743,7 @@ const vbTopics = {
     hints: ["My favorite hobby is...", "I play...", "I like... movies"],
   },
   travel: {
-    icon:'✈️', nameAr:'السفر والرحلات', descAr:'تحدّث عن رحلاتك وأحلامك',
+    icon:'✈️', nameAr:'السفر والرحلات', nameEn:'Travel & Trips', descAr:'تحدّث عن رحلاتك وأحلامك', descEn:'Talk about your travels and dreams',
     prompts: [
       { en:"Have you ever traveled to another country?", ar:"هل سافرت إلى بلد آخر من قبل؟" },
       { en:"Where would you like to travel?", ar:"إلى أين تحب أن تسافر؟" },
@@ -7752,7 +7753,7 @@ const vbTopics = {
     hints: ["Yes, I traveled to... / No, I haven't", "I would like to travel to...", "I prefer..."],
   },
   future: {
-    icon:'🌟', nameAr:'أحلامك وأهدافك', descAr:'تحدّث عن مستقبلك وطموحك',
+    icon:'🌟', nameAr:'أحلامك وأهدافك', nameEn:'Dreams & Goals', descAr:'تحدّث عن مستقبلك وطموحك', descEn:'Talk about your future ambitions',
     prompts: [
       { en:"What do you want to be in the future?", ar:"ماذا تريد أن تكون في المستقبل؟" },
       { en:"What's one goal you have this year?", ar:"ما هو هدف لديك هذا العام؟" },
@@ -7762,7 +7763,7 @@ const vbTopics = {
     hints: ["I want to be a...", "My goal is to...", "I am learning English because..."],
   },
   vbJobIntro: {
-    icon:'🤝', nameAr:'مقابلة عمل: عن نفسك', descAr:'تدرّب على التحدّث عن خبرتك وأسباب التقديم',
+    icon:'🤝', nameAr:'مقابلة عمل: عن نفسك', nameEn:'Job Interview: About You', descAr:'تدرّب على التحدّث عن خبرتك وأسباب التقديم', descEn:'Practice talking about your experience',
     prompts: [
       { en:"Tell me about yourself.", ar:"حدّثني عن نفسك." },
       { en:"What is your work experience?", ar:"ما خبرتك العملية؟" },
@@ -7772,7 +7773,7 @@ const vbTopics = {
     hints: ["My name is... and I have...", "I have ... years of experience in...", "I want to work here because..."],
   },
   vbJobStrengths: {
-    icon:'💪', nameAr:'مقابلة عمل: نقاط القوة والضعف', descAr:'تدرّب على الإجابة بثقة وصدق',
+    icon:'💪', nameAr:'مقابلة عمل: نقاط القوة والضعف', nameEn:'Job Interview: Strengths & Weaknesses', descAr:'تدرّب على الإجابة بثقة وصدق', descEn:'Answer confidently and honestly',
     prompts: [
       { en:"What is your greatest strength?", ar:"ما أكبر نقطة قوة لديك؟" },
       { en:"What is a weakness you are working on?", ar:"ما نقطة ضعف تعمل على تحسينها؟" },
@@ -7782,7 +7783,7 @@ const vbTopics = {
     hints: ["My greatest strength is...", "I am working on...", "When I feel pressure, I..."],
   },
   vbJobQuestions: {
-    icon:'❓', nameAr:'مقابلة عمل: اسأل المحاور', descAr:'تدرّب على طرح أسئلة ذكية في نهاية المقابلة',
+    icon:'❓', nameAr:'مقابلة عمل: اسأل المحاور', nameEn:'Job Interview: Ask the Interviewer', descAr:'تدرّب على طرح أسئلة ذكية في نهاية المقابلة', descEn:'Practice asking smart questions',
     prompts: [
       { en:"Do you have any questions for me?", ar:"هل لديك أي أسئلة لي؟" },
       { en:"What does a typical day look like in this role?", ar:"كيف يبدو يوم العمل في هذا المنصب؟" },
@@ -7841,8 +7842,9 @@ function renderVbTopics() {
     <div class="vb-topic-card" onclick="vbStartTopic('${key}')">
       <div class="vb-topic-icon">${t.icon}</div>
       <div>
-        <div class="vb-topic-name">${t.nameAr}</div>
-        <div class="vb-topic-desc">${t.descAr}</div>
+        <div class="vb-topic-name">${t.nameEn || t.nameAr}</div>
+        <div class="vb-topic-desc">${t.descEn || t.descAr}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:2px">${t.nameAr}</div>
       </div>
     </div>
   `).join('');
@@ -8892,9 +8894,30 @@ function applyTheme() {
   }
 }
 
+// ══ FONT SIZE TOGGLE ══
+var fontSizeLevels = ['A', 'A+', 'A++'];
+var fontSizeZooms  = [1, 1.15, 1.3];
+function cycleFontSize() {
+  var current = parseInt(localStorage.getItem('fontSizeLevel') || '0');
+  current = (current + 1) % 3;
+  applyFontSize(current);
+  localStorage.setItem('fontSizeLevel', current);
+}
+function applyFontSize(level) {
+  var main = document.querySelector('main');
+  if (main) main.style.zoom = fontSizeZooms[level];
+  var btn = document.getElementById('fontSizeBtn');
+  if (btn) btn.textContent = fontSizeLevels[level];
+}
+function initFontSize() {
+  var saved = parseInt(localStorage.getItem('fontSizeLevel') || '0');
+  applyFontSize(saved);
+}
+
 // ══ INIT ══
 (function init() {
   applyTheme();
+  initFontSize();
   updateCounters();
   updateStreak();
   updateDailyGoalBadge();
