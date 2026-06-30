@@ -242,7 +242,7 @@
     background-clip: text;
     line-height: 1;
   }
-  .count-label { font-size: 14px; color: var(--soft); margin-top: 4px; }
+  .count-label { font-size: 15px; font-weight:700; color: var(--soft); margin-top: 4px; font-family:'Space Grotesk',sans-serif; letter-spacing:.3px; }
   .count-sub   { font-size: 11px; color: var(--muted); margin-top: 3px; }
   .counter-row {
     display: flex; gap: 8px; margin-top: 14px; justify-content: center;
@@ -1992,6 +1992,164 @@
 .student-name-text { font-size:15px;font-weight:700;color:#FFD700; }
 .student-name-sub  { font-size:11px;color:#5A7090; }
 .btn-change-name { background:none;border:none;color:#5A7090;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;text-decoration:underline;margin-top:2px;display:block; }
+
+/* ══ PLANETS — كواكب الفصول ══ */
+.planets-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
+  max-width:380px; margin:0 auto;
+}
+.planet-card {
+  position:relative;
+  aspect-ratio:1/1;
+  border-radius:50%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  cursor:pointer;
+  transition:transform .25s ease;
+  overflow:hidden;
+}
+.planet-card:active { transform:scale(.95); }
+.planet-glow {
+  position:absolute; inset:-20%;
+  border-radius:50%;
+  opacity:.5; filter:blur(20px);
+  z-index:0;
+}
+.planet-surface {
+  position:absolute; inset:0;
+  border-radius:50%;
+  z-index:1;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:2px solid;
+}
+.planet-ring {
+  position:absolute; inset:-8px;
+  border-radius:50%;
+  border:1.5px dashed;
+  opacity:.4;
+  z-index:0;
+  animation: planetSpin 30s linear infinite;
+}
+@keyframes planetSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+.planet-num {
+  position:absolute; top:8%; right:8%;
+  width:20px; height:20px; border-radius:50%;
+  background:rgba(0,0,0,.4);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:900; z-index:3;
+}
+.planet-title { font-size:13px; font-weight:900; z-index:2; text-align:center; padding:0 10px; line-height:1.3; }
+.planet-progress {
+  position:absolute; bottom:10%; left:50%; transform:translateX(-50%);
+  font-size:9px; font-weight:700; z-index:2;
+  background:rgba(0,0,0,.35); border-radius:10px; padding:2px 8px;
+}
+.planet-locked { filter:grayscale(.7) brightness(.55); }
+
+/* ══ CHAPTER MAP OVERLAY — مخطط الرحلة ══ */
+.chapter-map-overlay {
+  position:fixed; inset:0; z-index:500;
+  background:#0A0C14;
+  display:none;
+  flex-direction:column;
+  overflow-y:auto;
+}
+.chapter-map-overlay.show { display:flex; animation:chMapFadeIn .3s ease; }
+@keyframes chMapFadeIn { from{opacity:0; transform:scale(.97)} to{opacity:1; transform:scale(1)} }
+
+.chapter-map-header {
+  display:flex; align-items:center; gap:12px;
+  padding:14px 16px;
+  background:rgba(15,18,30,.9); backdrop-filter:blur(10px);
+  border-bottom:1px solid #1E2A40;
+  position:sticky; top:0; z-index:10;
+}
+.chapter-map-back {
+  width:36px; height:36px; border-radius:50%;
+  background:rgba(255,255,255,.06); border:1px solid #243550;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:#E8ECF5; cursor:pointer; flex-shrink:0;
+}
+.chapter-map-title { font-size:15px; font-weight:900; color:#F1F5F9; }
+.chapter-map-sub { font-size:10px; color:#6B7A99; }
+
+.chapter-map-scene {
+  position:relative;
+  flex:1;
+  min-height:400px;
+  padding:24px 16px 40px;
+}
+
+.city-grid {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:18px 12px;
+  max-width:380px; margin:10px auto 0;
+}
+.city-grid:has(.single-city) {
+  display:flex; justify-content:center; align-items:center;
+  min-height:280px;
+}
+.city-grid-node {
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  cursor:pointer;
+  animation: cityGridPop .4s ease backwards;
+}
+@keyframes cityGridPop {
+  from { opacity:0; transform:scale(.5); }
+  to   { opacity:1; transform:scale(1); }
+}
+.city-grid-num {
+  position:absolute; top:-6px; right:18%;
+  width:18px; height:18px; border-radius:50%;
+  background:rgba(0,0,0,.5);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:900; z-index:3;
+}
+.city-dot {
+  width:54px; height:54px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:24px;
+  border:2.5px solid;
+  position:relative;
+  transition:transform .2s;
+}
+.city-grid-node:active .city-dot { transform:scale(.92); }
+.city-dot.big {
+  width:110px; height:110px; font-size:48px;
+  box-shadow:0 0 50px rgba(245,200,66,.6), inset 0 0 24px rgba(245,200,66,.3) !important;
+}
+.city-label.big { font-size:18px; margin-top:4px; }
+
+.city-dot.available {
+  background:radial-gradient(circle at 35% 30%, rgba(45,212,191,.35), rgba(45,212,191,.08));
+  border-color:#2DD4BF;
+  box-shadow:0 0 24px rgba(45,212,191,.5), inset 0 0 12px rgba(45,212,191,.2);
+  animation: cityPulseAvail 2.2s ease-in-out infinite;
+}
+@keyframes cityPulseAvail {
+  0%,100% { box-shadow:0 0 24px rgba(45,212,191,.5), inset 0 0 12px rgba(45,212,191,.2); }
+  50%     { box-shadow:0 0 34px rgba(45,212,191,.75), inset 0 0 16px rgba(45,212,191,.3); }
+}
+.city-dot.completed {
+  background:radial-gradient(circle at 35% 30%, rgba(245,200,66,.3), rgba(245,200,66,.06));
+  border-color:#F5C842;
+  box-shadow:0 0 16px rgba(245,200,66,.35);
+}
+.city-dot.locked {
+  background:rgba(255,255,255,.03);
+  border-color:#243550;
+  filter:grayscale(1);
+  opacity:.55;
+}
+.city-label {
+  font-size:11px; font-weight:900; color:#E8ECF5; text-align:center; line-height:1.2;
+}
+.city-label.locked-label { color:#475569; }
+.city-status-chip {
+  font-size:8px; padding:1px 7px; border-radius:8px; font-weight:700;
+}
+.city-status-chip.available { background:rgba(45,212,191,.18); color:#2DD4BF; }
+.city-status-chip.completed { background:rgba(245,200,66,.18); color:#F5C842; }
+.city-status-chip.locked { background:rgba(100,116,139,.15); color:#64748B; }
 </style>
 
 <!-- ══ TRAIN JOURNEY SCREEN ══ -->
@@ -2147,16 +2305,27 @@
 
   <!-- MAP VIEW -->
   <div id="journeyMapView">
-    <!-- خريطة الفصول -->
-    <div id="chapterMapContainer" style="display:flex;flex-direction:column;gap:10px;padding:4px 0"></div>
+    <!-- كواكب الفصول -->
+    <div id="chapterMapContainer"></div>
 
     <!-- Legend -->
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px;margin-top:12px;font-size:10px;font-family:Tajawal,sans-serif;text-align:center">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:14px;font-size:10px;font-family:Tajawal,sans-serif;text-align:center">
       <div style="background:rgba(45,212,191,.1);border:1px solid #2DD4BF44;border-radius:8px;padding:6px;color:#2DD4BF">✅ مكتملة</div>
       <div style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;border-radius:8px;padding:6px;color:#A78BFA">🚄 متاحة</div>
-      <div style="background:rgba(245,200,66,.1);border:1px solid #F5C84244;border-radius:8px;padding:6px;color:#F5C842">🏆 متقدمة</div>
       <div style="background:rgba(100,116,139,.1);border:1px solid #64748B44;border-radius:8px;padding:6px;color:#64748B">🔒 مقفلة</div>
     </div>
+  </div>
+
+  <!-- CHAPTER MAP OVERLAY (مخطط الرحلة) -->
+  <div class="chapter-map-overlay" id="chapterMapOverlay">
+    <div class="chapter-map-header">
+      <button class="chapter-map-back" onclick="closeChapterMap()">→</button>
+      <div>
+        <div class="chapter-map-title" id="chMapTitle">—</div>
+        <div class="chapter-map-sub" id="chMapSub">—</div>
+      </div>
+    </div>
+    <div class="chapter-map-scene" id="chMapScene"></div>
   </div>
 
   <!-- LIST VIEW -->
@@ -2479,11 +2648,11 @@
 
     <!-- Backup System -->
     <div class="backup-banner">
-      <div class="backup-banner-title">🛡️ النسخ الاحتياطي لتقدّمك</div>
-      <div class="backup-banner-text">احفظ نسخة من جميع كلماتك ونتائجك في ملف، حتى لا تفقدها عند تغيير الجهاز أو مسح بيانات المتصفح.</div>
+      <div class="backup-banner-title">🛡️ Backup Your Progress <span style="font-size:11px;opacity:.6;font-weight:400">النسخ الاحتياطي لتقدّمك</span></div>
+      <div class="backup-banner-text">Save a copy of your words and results to a file, so you don't lose them if you change devices or clear browser data.<br><span style="font-size:11px;opacity:.6">احفظ نسخة من جميع كلماتك ونتائجك في ملف، حتى لا تفقدها عند تغيير الجهاز أو مسح بيانات المتصفح.</span></div>
       <div class="backup-row">
-        <button class="btn-backup export" onclick="exportBackup()">⬇️ تنزيل نسخة احتياطية</button>
-        <button class="btn-backup import" onclick="document.getElementById('importFileInput').click()">⬆️ استيراد نسخة</button>
+        <button class="btn-backup export" onclick="exportBackup()">⬇️ Download Backup</button>
+        <button class="btn-backup import" onclick="document.getElementById('importFileInput').click()">⬆️ Import Backup</button>
       </div>
       <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importBackup(event)">
       <div class="backup-last-saved" id="backupLastSaved"></div>
@@ -2491,20 +2660,20 @@
 
     <!-- Reset Controls -->
     <div class="reset-row">
-      <button class="btn-reset soft" onclick="retakeLevelTest()">🎮 إعادة اختبار المستوى</button>
+      <button class="btn-reset soft" onclick="retakeLevelTest()">🎮 Retake Level Test <span style="font-size:9px;opacity:.6">إعادة اختبار المستوى</span></button>
     </div>
     <div class="reset-row">
-      <button class="btn-reset soft" onclick="confirmAction('packs')">📦 إعادة ضبط الحِزم فقط</button>
-      <button class="btn-reset" onclick="confirmAction('all')">🔄 إعادة الضبط بالكامل</button>
+      <button class="btn-reset soft" onclick="confirmAction('packs')">📦 Reset Packs Only <span style="font-size:9px;opacity:.6">إعادة ضبط الحِزم</span></button>
+      <button class="btn-reset" onclick="confirmAction('all')">🔄 Full Reset <span style="font-size:9px;opacity:.6">إعادة الضبط بالكامل</span></button>
     </div>
     <div class="counter-hero">
       <div class="big-count" id="heroCount">0</div>
-      <div class="count-label">إجمالي الكلمات المتعلَّمة</div>
-      <div class="count-sub">Total Words Learned</div>
+      <div class="count-label">Total Words Learned</div>
+      <div class="count-sub">إجمالي الكلمات المتعلَّمة</div>
       <div class="counter-row">
-        <div class="mini-stat"><div class="n" id="todayCount">0</div><div class="l">اليوم</div></div>
-        <div class="mini-stat"><div class="n" id="weekCount">0</div><div class="l">الأسبوع</div></div>
-        <div class="mini-stat"><div class="n" id="beginnerCount">0</div><div class="l">مبتدئ</div></div>
+        <div class="mini-stat"><div class="n" id="todayCount">0</div><div class="l">Today<br><span style="font-size:9px;opacity:.7">اليوم</span></div></div>
+        <div class="mini-stat"><div class="n" id="weekCount">0</div><div class="l">Week<br><span style="font-size:9px;opacity:.7">الأسبوع</span></div></div>
+        <div class="mini-stat"><div class="n" id="beginnerCount">0</div><div class="l">Beginner<br><span style="font-size:9px;opacity:.7">مبتدئ</span></div></div>
       </div>
     </div>
 
@@ -2512,7 +2681,7 @@
       <div class="streak-flame">🔥</div>
       <div class="streak-info">
         <div class="n" id="streakDisplay">0</div>
-        <div class="l">يوم متواصل</div>
+        <div class="l">Day Streak <span style="font-size:9px;opacity:.7">يوم متواصل</span></div>
       </div>
       <div class="streak-dots" id="streakDots"></div>
     </div>
@@ -2558,13 +2727,13 @@
 
     <div class="add-form">
       <div class="form-title">
-        ➕ إضافة كلمات اليوم
+        ➕ Add Today's Words <span style="font-size:11px;opacity:.6;font-weight:400">إضافة كلمات اليوم</span>
         <span class="badge" id="dailyGoalBadge" onclick="cycleDailyGoal()" style="cursor:pointer">٣ كلمات / يوم ✏️</span>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;margin-top:-4px">💡 الموصى به للمبتدئين: ٣ كلمات. اضغط على العدد لتغييره (٣/٤/٥)</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;margin-top:-4px">💡 Recommended for beginners: 3 words. Tap the number to change it (3/4/5)<br><span style="opacity:.7">الموصى به للمبتدئين: ٣ كلمات. اضغط على العدد لتغييره</span></div>
       <div class="words-grid">
         <div class="word-input-group">
-          <div class="input-label">الكلمة بالإنجليزية</div>
+          <div class="input-label">English Word <span style="font-size:9px;opacity:.6">بالإنجليزية</span></div>
           <input class="inp en" id="inp-en" placeholder="e.g. Ambitious" autocomplete="off" autocorrect="off" spellcheck="false" oninput="checkDuplicateWordLive()">
           <div id="dupWarning" style="display:none;font-size:11px;color:#FB7185;margin-top:4px">⚠️ هذه الكلمة موجودة لديك مسبقاً</div>
         </div>
@@ -2582,18 +2751,18 @@
         </div>
       </div>
       <div class="level-select">
-        <button class="level-btn active-lvl" data-lvl="beginner" onclick="setLevel(this)">🟢 مبتدئ</button>
-        <button class="level-btn" data-lvl="medium" onclick="setLevel(this)">🟡 متوسط</button>
-        <button class="level-btn" data-lvl="advanced" onclick="setLevel(this)">🔵 متقدم</button>
+        <button class="level-btn active-lvl" data-lvl="beginner" onclick="setLevel(this)">🟢 Beginner</button>
+        <button class="level-btn" data-lvl="medium" onclick="setLevel(this)">🟡 Medium</button>
+        <button class="level-btn" data-lvl="advanced" onclick="setLevel(this)">🔵 Advanced</button>
       </div>
-      <button class="btn-add" onclick="addWord()">إضافة الكلمة ✨</button>
+      <button class="btn-add" onclick="addWord()">Add Word ✨</button>
     </div>
 
     <!-- Word Packs -->
     <div id="packSelectorArea"></div>
 
     <!-- Search Toggle -->
-    <button class="search-toggle-btn" id="searchToggleBtn" onclick="toggleSearchBar()">🔍 البحث والتصفية في كلماتك</button>
+    <button class="search-toggle-btn" id="searchToggleBtn" onclick="toggleSearchBar()">🔍 Search & Filter <span style="font-size:10px;opacity:.6">البحث في كلماتك</span></button>
 
     <!-- Search & Filter -->
     <div class="search-bar-wrap" id="searchBarWrap" style="display:none">
@@ -3823,8 +3992,8 @@ function renderPackSelector() {
   const packKeys = Object.keys(wordPacks);
   area.innerHTML = `
     <div style="margin-bottom:16px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:4px">📦 حِزَم الكلمات</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">أضف مجموعة كاملة من ٥٠ كلمة دفعة واحدة — كل حزمة تُفتح بعد إكمال السابقة 🔒</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:4px;font-family:'Space Grotesk',sans-serif">📦 Word Packs <span style="font-size:11px;opacity:.6;font-family:'Tajawal',sans-serif;font-weight:400">حِزَم الكلمات</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Add a complete set of 50 words at once — each pack unlocks after completing the previous one 🔒<br><span style="opacity:.7">أضف مجموعة كاملة من ٥٠ كلمة — كل حزمة تُفتح بعد إكمال السابقة</span></div>
       ${packKeys.map((key, idx) => {
         const pack = wordPacks[key];
         const added     = !!localStorage.getItem('pack_' + key);
@@ -3835,24 +4004,24 @@ function renderPackSelector() {
 
         let rightSide;
         if (locked) {
-          rightSide = `<div class="pack-lock-msg">🔒 أكمل ${wordPacks[prevKey].nameAr.replace(/^[^\s]+\s/,'')} أولاً</div>`;
+          rightSide = `<div class="pack-lock-msg">🔒 Complete ${wordPacks[prevKey].name.replace(/^[^\s]+\s/,'')} first</div>`;
         } else if (!added) {
-          rightSide = `<button onclick="addPack('${key}')" style="background:${pack.color};color:#080C14;border:none;border-radius:10px;padding:7px 14px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ إضافة الحزمة</button>`;
+          rightSide = `<button onclick="addPack('${key}')" style="background:${pack.color};color:#080C14;border:none;border-radius:10px;padding:7px 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Pack</button>`;
         } else if (!completed) {
           rightSide = `
             <div class="pack-status-col">
-              <div style="font-size:11px;color:var(--teal);background:rgba(0,245,212,.1);border-radius:20px;padding:4px 10px;white-space:nowrap;">✅ تمت الإضافة</div>
-              <button class="pack-complete-btn" onclick="markPackComplete('${key}')">🏁 تمييز كمكتملة</button>
+              <div style="font-size:11px;color:var(--teal);background:rgba(0,245,212,.1);border-radius:20px;padding:4px 10px;white-space:nowrap;">✅ Added</div>
+              <button class="pack-complete-btn" onclick="markPackComplete('${key}')">🏁 Mark Complete</button>
             </div>`;
         } else {
-          rightSide = `<div class="pack-completed-badge">🏆 مكتملة</div>`;
+          rightSide = `<div class="pack-completed-badge">🏆 Completed</div>`;
         }
 
         return `
         <div class="pack-card ${locked ? 'locked' : ''}" style="background:linear-gradient(135deg,rgba(255,255,255,.04),var(--panel));border:1px solid ${pack.color}44;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
           <div style="flex:1">
-            <div style="font-size:15px;font-weight:700;color:${pack.color}">${pack.nameAr}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">٥٠ كلمة · جميع المستويات</div>
+            <div style="font-size:15px;font-weight:700;color:${pack.color};font-family:'Space Grotesk',sans-serif">${pack.name}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">50 words · All levels</div>
           </div>
           ${rightSide}
         </div>`;
@@ -3870,7 +4039,7 @@ function addPack(key) {
   save(); updateCounters(); renderWords(); renderFlashcards();
   localStorage.setItem('pack_' + key, '1');
   renderPackSelector();
-  showToast('✅ تمت إضافة ' + pack.nameAr + '!', pack.color);
+  showToast('✅ Added ' + pack.name + '!', pack.color);
 }
 
 function markPackComplete(key) {
@@ -4369,16 +4538,16 @@ function renderMasteryDash() {
   const pctLow  = (low/total*100).toFixed(1);
 
   el.innerHTML = `
-    <div class="mastery-dash-title">📊 مستوى إتقانك للكلمات</div>
+    <div class="mastery-dash-title">📊 Vocabulary Mastery <span style="font-size:11px;opacity:.6;font-weight:400">مستوى إتقانك للكلمات</span></div>
     <div class="mastery-bar-track">
       <div class="mastery-bar-seg" style="width:${pctHigh}%;background:var(--teal)"></div>
       <div class="mastery-bar-seg" style="width:${pctMid}%;background:var(--gold)"></div>
       <div class="mastery-bar-seg" style="width:${pctLow}%;background:rgba(255,255,255,.15)"></div>
     </div>
     <div class="mastery-legend">
-      <span><span class="dot" style="background:var(--teal)"></span>متقَنة: ${high}</span>
-      <span><span class="dot" style="background:var(--gold)"></span>قيد التعلّم: ${mid}</span>
-      <span><span class="dot" style="background:rgba(255,255,255,.4)"></span>جديدة: ${low}</span>
+      <span><span class="dot" style="background:var(--teal)"></span>Mastered: ${high}</span>
+      <span><span class="dot" style="background:var(--gold)"></span>Learning: ${mid}</span>
+      <span><span class="dot" style="background:rgba(255,255,255,.4)"></span>New: ${low}</span>
     </div>
   `;
 }
@@ -4388,7 +4557,7 @@ function renderWeeklyChart() {
   if (!el) return;
   if (!words.length) { el.innerHTML = ''; return; }
 
-  const dayLabels = ['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  const dayLabels = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const todayDate = new Date();
 
   // Build last 7 days (oldest to newest), counting words added on each day
@@ -4423,8 +4592,8 @@ function renderWeeklyChart() {
 
   el.innerHTML = `
     <div class="wc-header">
-      <div class="wc-title">📈 نشاطك خلال الأسبوع</div>
-      <div class="wc-total">${weekTotal} كلمة هذا الأسبوع</div>
+      <div class="wc-title">📈 Weekly Activity <span style="font-size:11px;opacity:.6;font-weight:400">نشاطك خلال الأسبوع</span></div>
+      <div class="wc-total">${weekTotal} words this week</div>
     </div>
     <div class="wc-bars">${barsHtml}</div>
   `;
@@ -5616,7 +5785,7 @@ var TRAIN_STATIONS = [
   { id:33, city:'زنجبار',            flag:'🌍', infoAr:'ستون تاون في زنجبار (يونسكو) أحد أبرز أمثلة الثقافة السواحيلية. وصل الإسلام للجزيرة في القرن الـ8 الميلادي، مما يجعلها من أقدم المستوطنات الإسلامية في أفريقيا جنوب الصحراء.', words:['Trade','Swahili','Maritime','Heritage','Spice'], landmarks:'🏘️ ستون تاون يونسكو · 🕌 مسجد إيبادي التاريخي · 🏰 قلعة العرب 1700م · 🌿 مزارع التوابل', quote:'زنجبار ربطت أفريقيا بالعالم الإسلامي — واللغة تربطك بكل العالم 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
   { id:34, city:'كوالالمبور',        flag:'🌏', infoAr:'ماليزيا دولة رسمية الإسلام ويشكّل المسلمون 60%+ من سكانها. وصل الإسلام في القرن الـ13 عبر التجار العرب. أبراج بتروناس كانت الأعلى عالمياً 1998-2004.', words:['Peninsula','Official','Trade','Architecture','Multicultural'], landmarks:'🏗️ أبراج بتروناس · 🕌 المسجد الوطني الماليزي · 🕌 مسجد جامع 1909م · 🏛️ متحف الفن الإسلامي', quote:'الإسلام وصل لآسيا بالتجارة والأخلاق — واللغة تحمل قيمك أينما ذهبت 🌏', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
   { id:35, city:'جاكرتا',            flag:'🌏', infoAr:'إندونيسيا أكبر دولة مسلمة بأكثر من 240 مليون مسلم. وصل الإسلام في القرن الـ13 عبر التجارة وانتشر بسلام. مسجد الاستقلال أكبر مساجد جنوب شرق آسيا.', words:['Archipelago','Majority','Peaceful','Commerce','Diversity'], landmarks:'🕌 مسجد الاستقلال · 🏛️ المتحف الوطني · 🏛️ متحف فاتاهيلا · 🌊 ميناء سوندا كيلابا', quote:'الإسلام لا يعرف حدوداً — واللغة تفتح لك كل الحدود 🌏', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:36, city:'المحطة السرية 🌟',  flag:'🏆', infoAr:'سافرت من مكة إلى أقاصي العالم الإسلامي. تعلّمت ليس الكلمات فحسب، بل قصص الحضارات التي شكّلت الإنسانية. الآن أنت في المحطة الأخيرة — العالم كله.', words:['Journey','Civilization','Achievement','World','Language'], landmarks:'🌍 العالم أجمعه ينتظرك · 👑 رتبة فارس اللغة · 📜 شهادة الرحلة · 🏆 قائمة الشرف', quote:'"من تعلّم لغة قوم أمن من شرّهم" — رواه أبو داود 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
+  { id:36, city:'لحظة التتويج 👑',  flag:'🏆', infoAr:'سافرت من مكة إلى أقاصي العالم الإسلامي. تعلّمت ليس الكلمات فحسب، بل قصص الحضارات التي شكّلت الإنسانية. الآن أنت في لحظة التتويج — العالم كله ينتظرك.', words:['Journey','Civilization','Achievement','World','Language'], landmarks:'🌍 العالم أجمعه ينتظرك · 👑 رتبة فارس اللغة · 📜 شهادة الرحلة · 🏆 قائمة الشرف', quote:'"من تعلّم لغة قوم أمن من شرّهم" — رواه أبو داود 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
 ];
 
 var trainCurrentStation = 0;
@@ -6150,6 +6319,22 @@ var TRAIN_STATIONS = [
     quote:'الجمال الحقيقي يكتشفه من يبحث — كما تكتشف جمال اللغة من يتعلمها. ✨',
     req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
 
+  { id:39, name:'بريدة', nameEn:'Buraidah', flag:'🌴', tier:1,
+    info:'Buraidah is the capital of Al-Qassim region and one of Saudi Arabia\'s most important agricultural hubs. It hosts one of the largest date markets in the world, where farmers and traders gather every harvest season. The region is famous for its fertile farms and warm hospitality.',
+    infoAr:'بريدة عاصمة منطقة القصيم وأحد أهم المراكز الزراعية في السعودية. تستضيف واحداً من أكبر أسواق التمور في العالم، حيث يجتمع المزارعون والتجار كل موسم حصاد. تشتهر المنطقة بمزارعها الخصبة وكرم أهلها.',
+    words:[{en:'Agriculture',ar:'زراعة'},{en:'Harvest',ar:'حصاد'},{en:'Fertile',ar:'خصب'},{en:'Hospitality',ar:'كرم ضيافة'},{en:'Market',ar:'سوق'}],
+    landmarks:['🌴 سوق بريدة المركزي للتمور','🏛️ متحف القصيم الإقليمي','🌿 مزارع القصيم الزراعية','🕌 جامع الإمام تركي بن عبدالله'],
+    quote:'كما تنمو النخلة بصبر — تنمو لغتك بالمثابرة كل يوم. 🌴',
+    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+
+  { id:40, name:'عنيزة', nameEn:'Unaizah', flag:'🌾', tier:1,
+    info:'Unaizah is known as the "Paris of Najd" for its historic charm and rich cultural heritage. The city has long been a center of learning, producing many scholars and merchants who traveled across Arabia and beyond. Its old quarters reflect a deep love for knowledge and trade.',
+    infoAr:'تُعرف عنيزة بـ"باريس نجد" لسحرها التاريخي وتراثها الثقافي الغني. كانت المدينة منذ القدم مركزاً للعلم، أخرجت علماء وتجاراً جابوا الجزيرة العربية وما وراءها. تعكس أحياؤها القديمة حباً عميقاً للعلم والتجارة.',
+    words:[{en:'Scholar',ar:'عالم'},{en:'Heritage',ar:'تراث'},{en:'Merchant',ar:'تاجر'},{en:'Historic',ar:'تاريخي'},{en:'Knowledge',ar:'علم'}],
+    landmarks:['🏛️ أحياء عنيزة التاريخية','📚 مكتبات عنيزة الأهلية العريقة','🕌 جامع الكبير في عنيزة','🌾 مزارع عنيزة الواسعة'],
+    quote:'مدينة العلم تذكّرك أن كل كلمة جديدة هي خطوة نحو الحكمة. 📚',
+    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+
   { id:6, name:'ينبع', nameEn:'Yanbu', flag:'⚓', tier:1,
     info:'Yanbu has been a strategic port city for centuries. Ancient trade caravans and sea merchants passed through here carrying spices, silk and gold between Arabia, Africa and Asia. Today it is one of Saudi Arabia\'s most important industrial and petrochemical cities.',
     infoAr:'كانت ينبع مدينة ميناء استراتيجية لقرون. مرّت من هنا قوافل تجارية قديمة وتجار البحر يحملون التوابل والحرير والذهب بين الجزيرة العربية وأفريقيا وآسيا.',
@@ -6180,6 +6365,14 @@ var TRAIN_STATIONS = [
     words:[{en:'Altitude',ar:'ارتفاع'},{en:'Mist',ar:'ضباب'},{en:'Preservation',ar:'حفاظ'},{en:'Geometric',ar:'هندسي'},{en:'Indigenous',ar:'أصيل'}],
     landmarks:['🏔️ جبل السودة — أعلى قمة في السعودية','🚡 تلفريك أبها','🏘️ قرية رجال ألمع التراثية','🏛️ قصر شدا المتحف','🏰 قلعة شمسان العثمانية','🏛️ متحف عسير الإقليمي'],
     quote:'كلما ارتفعت — اتسعت رؤيتك للعالم. 🏔️',
+    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+
+  { id:41, name:'الباحة', nameEn:'Al-Baha', flag:'🌲', tier:1,
+    info:'Al-Baha is a hidden gem nestled in the Sarawat Mountains, famous for its dense juniper forests, cool climate and terraced farms carved into the mountainside for centuries. The region is home to ancient stone watchtowers and traditional villages that have preserved their heritage through generations.',
+    infoAr:'الباحة جوهرة مخفية بين جبال السروات، تشتهر بغاباتها الكثيفة من أشجار العرعر ومناخها المعتدل ومدرجاتها الزراعية المنحوتة في الجبال منذ قرون. تضم المنطقة أبراج مراقبة حجرية قديمة وقرى تراثية حافظت على هويتها عبر الأجيال.',
+    words:[{en:'Forest',ar:'غابة'},{en:'Terrace',ar:'مدرجات زراعية'},{en:'Watchtower',ar:'برج مراقبة'},{en:'Heritage',ar:'تراث'},{en:'Climate',ar:'مناخ'}],
+    landmarks:['🌲 غابات رغدان','🏘️ قرية ذي عين الأثرية','🏔️ جبل المنديق','🗼 أبراج المراقبة الحجرية القديمة','🌿 منتزه الباحة الوطني'],
+    quote:'كما تتجذّر الأشجار في الجبال — تتجذّر اللغة فيك بالممارسة المستمرة. 🌲',
     req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
 
   { id:10, name:'تبوك', nameEn:'Tabuk', flag:'🏔️', tier:1,
@@ -6213,6 +6406,14 @@ var TRAIN_STATIONS = [
     words:[{en:'Petroleum',ar:'بترول'},{en:'Extraction',ar:'استخراج'},{en:'Industrial',ar:'صناعي'},{en:'Revenue',ar:'عائد'},{en:'Gateway',ar:'بوابة'}],
     landmarks:['🌊 كورنيش الدمام','🏛️ مركز إثراء في الظهران','🏖️ شاطئ نصف القمر','🌉 جسر الملك فهد','🛢️ متحف أرامكو'],
     quote:'الثروة الحقيقية في العقل — واللغة مفتاحها. ⚙️',
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+
+  { id:38, name:'الخبر', nameEn:'Al-Khobar', flag:'🌆', tier:2,
+    info:'Al-Khobar grew from a small fishing settlement into one of the Eastern Province\'s most vibrant commercial and residential cities. Its iconic Corniche stretches along the Arabian Gulf, connecting to Bahrain via the 25-kilometer King Fahd Causeway — a true bridge between two nations.',
+    infoAr:'نمت الخبر من قرية صيد صغيرة لتصبح من أكثر مدن المنطقة الشرقية حيوية تجارياً وسكنياً. يمتد كورنيشها الشهير على طول الخليج العربي، ويربطها جسر الملك فهد بطول 25 كم بمملكة البحرين — جسر حقيقي بين دولتين.',
+    words:[{en:'Causeway',ar:'جسر بحري'},{en:'Commercial',ar:'تجاري'},{en:'Vibrant',ar:'نابض بالحياة'},{en:'Residential',ar:'سكني'},{en:'Coastal',ar:'ساحلي'}],
+    landmarks:['🌊 كورنيش الخبر','🌉 جسر الملك فهد','🏙️ برج التأمينات الاجتماعية','🏖️ شاطئ نصف القمر','🛍️ مركز الراشد مول'],
+    quote:'كما يربط الجسر بين بلدين — تربط اللغة بين عقلك والعالم. 🌉',
     req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
 
   { id:14, name:'الجبيل', nameEn:'Jubail', flag:'🏭', tier:2,
@@ -6401,7 +6602,7 @@ var TRAIN_STATIONS = [
     quote:'من بورصة انطلق العثمانيون لبناء حضارة — ومن كلماتك تنطلق أنت. 🏙️',
     req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
 
-  { id:37, name:'🌟 المحطة السرية', nameEn:'The Secret Station', flag:'🌟', tier:4,
+  { id:37, name:'👑 لحظة التتويج', nameEn:'The Coronation Moment', flag:'👑', tier:4,
     info:'You have travelled from Makkah to the far corners of the Islamic world — from the Arabian Peninsula to Andalusia, from Central Asia to Southeast Asia. You have learned not just English words, but the stories of civilizations that shaped humanity. Now you stand at the final station: the world itself. Every language you learn is a new window onto this vast, beautiful world.',
     infoAr:'سافرت من مكة إلى أقاصي العالم الإسلامي — من الجزيرة العربية إلى الأندلس ومن آسيا الوسطى إلى جنوب شرق آسيا. تعلّمت ليس الكلمات فحسب، بل قصص الحضارات التي شكّلت الإنسانية. الآن تقف في المحطة الأخيرة: العالم كله.',
     words:[{en:'Journey',ar:'رحلة'},{en:'Civilization',ar:'حضارة'},{en:'Achievement',ar:'إنجاز'},{en:'World',ar:'عالم'},{en:'Language',ar:'لغة'}],
@@ -6454,101 +6655,104 @@ var currentJourneyView = 'map';
 
 // ══ CHAPTER MAP ══
 var CHAPTERS = [
-  { id:1, title:'الفصل الأول',   region:'السعودية 🇸🇦',          color:'#2DD4BF', stations:[1,2,3,4,5,6] },
-  { id:2, title:'الفصل الثاني',  region:'السعودية والخليج 🌊',    color:'#A78BFA', stations:[7,8,9,10,11,12] },
-  { id:3, title:'الفصل الثالث',  region:'الخليج 🏙️',              color:'#F5C842', stations:[13,14,15,16,17,18] },
-  { id:4, title:'الفصل الرابع',  region:'الخليج والشام 🏛️',      color:'#FB923C', stations:[19,20,21,22,23,24] },
-  { id:5, title:'الفصل الخامس',  region:'الأندلس وآسيا الوسطى 🐪', color:'#34D399', stations:[25,26,27,28,29,30] },
-  { id:6, title:'الفصل السادس',  region:'أفريقيا وجنوب شرق آسيا 🌏', color:'#F472B6', stations:[31,32,33,34,35,36] }
+  { id:1, title:'✨ بزوغ الشرارة',   region:'وسط وغرب وجنوب السعودية',  color:'#2DD4BF', stations:[1,2,4,5,11,39,40,9,41] },
+  { id:2, title:'🧭 اكتشاف الآفاق',  region:'سواحل وشمال وجنوب وشرق السعودية', color:'#34D399', stations:[10,3,6,13,38,14,12,7,8] },
+  { id:3, title:'🌉 عبور التحديات', region:'الخليج والشام والعراق',     color:'#A78BFA', stations:[15,16,17,18,20,21,23,22] },
+  { id:4, title:'🗣️ طلاقة التواصل', region:'مصر وتركيا والأندلس',       color:'#F5C842', stations:[30,36,24,25,26,27,31] },
+  { id:5, title:'👑 بلوغ الإتقان',   region:'آسيا الوسطى وأفريقيا وجنوب شرق آسيا', color:'#FB923C', stations:[28,29,32,33,34,35] },
+  { id:6, title:'🏆 لحظة التتويج',   region:'ختام الرحلة',               color:'#FFB800', stations:[37] }
 ];
 
 var chapterCollapsed = {1:false,2:true,3:true,4:true,5:true,6:true};
 
 function renderChapterMap() {
-  var p = getTrainProgress();
   var container = document.getElementById('chapterMapContainer');
   if (!container) return;
-  container.innerHTML = '';
+  container.innerHTML = '<div class="planets-grid" id="planetsGrid"></div>';
+  renderPlanets();
+}
 
-  CHAPTERS.forEach(function(ch) {
-    // حساب التقدم
-    var done = 0;
-    var isUnlocked = false;
+function renderPlanets() {
+  var grid = document.getElementById('planetsGrid');
+  if (!grid) return;
+
+  grid.innerHTML = CHAPTERS.map(function(ch) {
+    var done = 0, isUnlocked = false;
     ch.stations.forEach(function(sid) {
       var st = getStationStatus(sid);
       if (st === 'completed') done++;
       if (st === 'unlocked') isUnlocked = true;
     });
-    var pct = Math.round((done / ch.stations.length) * 100);
-    var chLocked = done === 0 && !isUnlocked;
+    var total = ch.stations.length;
+    var isLocked = done === 0 && !isUnlocked;
 
-    // بطاقة الفصل
-    var card = document.createElement('div');
-    card.style.cssText = 'background:rgba(255,255,255,.03);border:1px solid ' + (chLocked ? '#1E2D45' : ch.color + '44') + ';border-radius:16px;overflow:hidden;transition:all .3s';
-
-    // رأس الفصل
-    var header = document.createElement('div');
-    header.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:12px 14px;cursor:pointer;user-select:none';
-    header.innerHTML =
-      '<div style="display:flex;align-items:center;gap:10px">' +
-        '<div style="width:32px;height:32px;border-radius:50%;background:' + (chLocked ? '#1E2D45' : 'linear-gradient(135deg,' + ch.color + '44,' + ch.color + '22)') + ';display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:' + (chLocked ? '#3D4F6B' : ch.color) + '">' + ch.id + '</div>' +
-        '<div>' +
-          '<div style="font-size:13px;font-weight:900;color:' + (chLocked ? '#3D4F6B' : '#F1F5F9') + '">' + ch.title + '</div>' +
-          '<div style="font-size:10px;color:' + (chLocked ? '#3D4F6B' : ch.color) + ';margin-top:1px">' + ch.region + '</div>' +
+    return (
+      '<div class="planet-card ' + (isLocked ? 'planet-locked' : '') + '" onclick="openChapterMap(' + ch.id + ')">' +
+        '<div class="planet-ring" style="border-color:' + ch.color + '"></div>' +
+        '<div class="planet-glow" style="background:radial-gradient(circle, ' + ch.color + ', transparent 70%)"></div>' +
+        '<div class="planet-surface" style="background:linear-gradient(160deg, ' + ch.color + '33, ' + ch.color + '15); border-color:' + (isLocked ? '#2D3B52' : ch.color) + '">' +
+          '<div class="planet-num" style="color:' + ch.color + '">' + ch.id + '</div>' +
+          '<div class="planet-title" style="color:' + (isLocked ? '#475569' : '#fff') + '">' + ch.title + '</div>' +
+          '<div class="planet-progress" style="color:' + (isLocked ? '#475569' : ch.color) + '">' + done + '/' + total + '</div>' +
         '</div>' +
-      '</div>' +
-      '<div style="display:flex;align-items:center;gap:8px">' +
-        (chLocked ? '<span style="font-size:16px">🔒</span>' : '<span style="font-size:11px;color:' + ch.color + ';font-weight:700">' + done + '/' + ch.stations.length + '</span>') +
-        '<span style="color:#6B7A99;font-size:12px;transition:transform .3s" id="chArrow' + ch.id + '">' + (chapterCollapsed[ch.id] ? '▼' : '▲') + '</span>' +
-      '</div>';
+      '</div>'
+    );
+  }).join('');
+}
 
-    // شريط التقدم
-    var bar = document.createElement('div');
-    bar.style.cssText = 'height:3px;background:#1E2D45;margin:0 14px 10px';
-    bar.innerHTML = '<div style="height:100%;width:' + pct + '%;background:' + ch.color + ';border-radius:2px;transition:width .5s ease"></div>';
-    header.appendChild(bar);
+var currentChapterId = null;
 
-    // محتوى المحطات
-    var body = document.createElement('div');
-    body.id = 'chBody' + ch.id;
-    body.style.cssText = 'padding:0 10px 12px;display:' + (chapterCollapsed[ch.id] ? 'none' : 'grid') + ';grid-template-columns:1fr 1fr 1fr;gap:6px';
+function openChapterMap(chapterId) {
+  var ch = CHAPTERS.find(function(c){ return c.id === chapterId; });
+  if (!ch) return;
+  currentChapterId = chapterId;
 
-    ch.stations.forEach(function(sid) {
-      var st = TRAIN_STATIONS.find(function(s){ return s.id === sid; });
-      if (!st) return;
-      var status = getStationStatus(sid);
-      var chip = document.createElement('div');
-      var isComp = status === 'completed';
-      var isAvail = status === 'unlocked';
-      chip.style.cssText =
-        'background:' + (isComp ? 'rgba(45,212,191,.12)' : isAvail ? 'rgba(' + hexToRgb(ch.color) + ',.12)' : 'rgba(255,255,255,.03)') + ';' +
-        'border:1px solid ' + (isComp ? '#2DD4BF44' : isAvail ? ch.color + '55' : '#1E2D45') + ';' +
-        'border-radius:10px;padding:8px 6px;text-align:center;cursor:' + (isComp || isAvail ? 'pointer' : 'default') + ';' +
-        'opacity:' + (chLocked ? '0.4' : '1');
-      chip.innerHTML =
-        '<div style="font-size:16px;margin-bottom:3px">' + st.flag + '</div>' +
-        '<div style="font-size:9px;color:' + (isComp ? '#2DD4BF' : isAvail ? ch.color : '#6B7A99') + ';font-weight:700;line-height:1.3">' + st.city.replace(' المكرمة','').replace(' المنورة','') + '</div>' +
-        '<div style="font-size:13px;margin-top:3px">' + (isComp ? '✅' : isAvail ? '🚄' : '🔒') + '</div>';
+  document.getElementById('chMapTitle').textContent = ch.title;
+  document.getElementById('chMapSub').textContent = '🗺️ مخطط الرحلة · ' + ch.region;
 
-      if (isComp || isAvail) {
-        chip.onclick = function() { startTrainJourney(sid); };
-      }
-      body.appendChild(chip);
-    });
+  var scene = document.getElementById('chMapScene');
+  scene.style.background = 'radial-gradient(ellipse at 50% 0%, ' + ch.color + '14, transparent 60%), #0A0C14';
 
-    // toggle collapse
-    header.onclick = function(e) {
-      if (e.target.closest('[onclick]') && e.target !== header) return;
-      chapterCollapsed[ch.id] = !chapterCollapsed[ch.id];
-      body.style.display = chapterCollapsed[ch.id] ? 'none' : 'grid';
-      document.getElementById('chArrow' + ch.id).textContent = chapterCollapsed[ch.id] ? '▼' : '▲';
-    };
+  var isSingleCity = ch.stations.length === 1;
 
-    card.appendChild(header);
-    if (!chLocked || done > 0 || isUnlocked) card.appendChild(bar);
-    card.appendChild(body);
-    container.appendChild(card);
-  });
+  var citiesHtml = ch.stations.map(function(sid, idx) {
+    var st = TRAIN_STATIONS.find(function(s){ return s.id === sid; });
+    if (!st) return '';
+    var status = getStationStatus(sid);
+    var isComp = status === 'completed';
+    var isAvail = status === 'unlocked';
+    var statusLabel = isComp ? 'مكتملة ✅' : isAvail ? 'جاهزة 🚄' : 'مقفلة 🔒';
+    var labelClass = (!isComp && !isAvail) ? 'locked-label' : '';
+    var dotClass = isComp ? 'completed' : isAvail ? 'available' : 'locked';
+    var numHtml = isSingleCity ? '' : '<div class="city-grid-num" style="color:' + ch.color + '">' + (idx + 1) + '</div>';
+    var cityName = st.name.replace(' المكرمة','').replace(' المنورة','');
+
+    return (
+      '<div class="city-grid-node ' + (isSingleCity ? 'single-city' : '') + '" style="animation-delay:' + (idx * 0.06) + 's" onclick="handleCityClick(' + sid + ',\'' + dotClass + '\')">' +
+        numHtml +
+        '<div class="city-dot ' + dotClass + (isSingleCity ? ' big' : '') + '">' + (dotClass === 'locked' ? '🔒' : st.flag) + '</div>' +
+        '<div class="city-label ' + labelClass + (isSingleCity ? ' big' : '') + '">' + cityName + '</div>' +
+        '<div class="city-status-chip ' + dotClass + '">' + statusLabel + '</div>' +
+      '</div>'
+    );
+  }).join('');
+
+  scene.innerHTML = '<div class="city-grid">' + citiesHtml + '</div>';
+
+  document.getElementById('chapterMapOverlay').classList.add('show');
+}
+
+function closeChapterMap() {
+  document.getElementById('chapterMapOverlay').classList.remove('show');
+}
+
+function handleCityClick(stationId, dotClass) {
+  if (dotClass === 'locked') {
+    showToast('🔒 أكمل المحطة السابقة أولاً', '#64748B');
+    return;
+  }
+  closeChapterMap();
+  startTrainJourney(stationId);
 }
 
 function hexToRgb(hex) {
@@ -6615,7 +6819,7 @@ var STATION_COORDS = {
   34:{x:225,y:120}, // كوالالمبور
   35:{x:175,y:128}, // جاكرتا
   36:{x:130,y:150}, // بورصة
-  37:{x:82,y:190}   // المحطة السرية
+  37:{x:82,y:190}   // لحظة التتويج
 };
 
 function renderMapDots() {
@@ -8947,7 +9151,9 @@ function initFontSize() {
 
 <!-- GoatCounter: privacy-friendly analytics, no personal data collected -->
 <script data-goatcounter="https://wordspark-platform.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js">
+        async src="//gc.zgo.at/count.js"></script>
+
+<script>
 // ══ DEV MODE ══
 var devClickCount = 0;
 var devClickTimer = null;
