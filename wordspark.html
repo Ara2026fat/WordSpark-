@@ -121,11 +121,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 10px;
     position: sticky;
     top: 0;
     z-index: 100;
   }
-  .logo { display: flex; align-items: center; gap: 10px; }
+  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
   .logo-icon {
     width: 36px; height: 36px;
     border-radius: 10px;
@@ -137,7 +138,16 @@
   .logo-text { font-size: 16px; font-weight: 700; }
   .logo-sub  { font-size: 10px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
 
-  .stats-bar { display: flex; gap: 8px; align-items: center; }
+  .stats-bar {
+    display: flex; gap: 8px; align-items: center;
+    overflow-x: auto; overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-shrink: 1; min-width: 0; flex: 1;
+    padding: 2px 0;
+  }
+  .stats-bar::-webkit-scrollbar { display: none; }
+  .stats-bar > * { flex-shrink: 0; }
   .stat-chip {
     background: var(--panel);
     border: 1px solid var(--rim);
