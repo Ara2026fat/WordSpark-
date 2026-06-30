@@ -500,8 +500,8 @@
     background: linear-gradient(135deg, rgba(167,139,250,.25), rgba(45,212,191,.2));
   }
   .pod-info { flex: 1; }
-  .pod-name { font-size: 14.5px; font-weight: 700; }
-  .pod-name-en { font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .pod-name { font-size: 14.5px; font-weight: 700; font-family:'Space Grotesk',sans-serif; }
+  .pod-name-en { font-family: 'Tajawal', sans-serif; font-size: 11px; color: var(--muted); margin-top: 2px; }
   .pod-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
   .pod-arrow { font-size: 16px; color: var(--lavender); }
   .pod-done-badge { font-size: 16px; }
@@ -512,8 +512,8 @@
     border-radius: 22px; padding: 24px 18px; text-align: center; margin-bottom: 18px;
   }
   .pod-hero-icon { font-size: 38px; margin-bottom: 8px; }
-  .pod-hero-title { font-size: 17px; font-weight: 900; }
-  .pod-hero-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'Space Grotesk', sans-serif; }
+  .pod-hero-title { font-size: 17px; font-weight: 900; font-family:'Space Grotesk',sans-serif; }
+  .pod-hero-sub { font-size: 11px; color: var(--muted); margin-top: 3px; font-family: 'Tajawal', sans-serif; }
 
   .pod-player {
     display: flex; flex-direction: column; align-items: center; gap: 14px;
@@ -769,7 +769,7 @@
   }
   .rank-badge { font-size: 28px; min-width: 36px; text-align: center; }
   .rank-info { flex: 1; }
-  .rank-title { font-size: 13px; font-weight: 700; color: var(--gold); }
+  .rank-title { font-size: 13px; font-weight: 700; color: var(--gold); font-family:'Space Grotesk',sans-serif; }
   .rank-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .rank-progress-bar { height: 4px; background: var(--rim); border-radius: 4px; margin-top: 6px; overflow: hidden; }
   .rank-progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,var(--gold),var(--teal)); transition: width .5s ease; }
@@ -789,7 +789,7 @@
   }
   .rank-popup-icon { font-size: 48px; margin-bottom: 6px; }
   .rank-popup-title { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
-  .rank-popup-name { font-size: 18px; font-weight: 900; color: var(--gold); }
+  .rank-popup-name { font-size: 18px; font-weight: 900; color: var(--gold); font-family:'Space Grotesk',sans-serif; }
 
   /* ══ TRAIN JOURNEY ══ */
   .train-screen {
@@ -940,7 +940,7 @@
   .journey-header {
     text-align:center;margin-bottom:20px;
   }
-  .journey-title { font-size:20px;font-weight:900;color:#F5C842; }
+  .journey-title { font-size:20px;font-weight:900;color:#F5C842;font-family:'Space Grotesk',sans-serif; }
   .journey-subtitle { font-size:12px;color:#64748B;margin-top:4px; }
   .journey-station-row {
     display:flex;align-items:center;gap:12px;
@@ -1292,8 +1292,8 @@
   .grammar-header:active { background: rgba(255,255,255,.03); }
   .grammar-icon { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
   .grammar-meta { flex: 1; }
-  .grammar-title { font-size: 14px; font-weight: 700; }
-  .grammar-title-en { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--teal); }
+  .grammar-title { font-size: 14px; font-weight: 700; font-family:'Space Grotesk',sans-serif; color: var(--teal); }
+  .grammar-title-en { font-family: 'Tajawal', sans-serif; font-size: 11px; color: var(--muted); margin-top: 2px; }
   .grammar-level { font-size: 10px; color: var(--muted); margin-top: 2px; }
   .grammar-arrow { color: var(--muted); font-size: 12px; transition: transform .3s; flex-shrink: 0; }
   .grammar-card.open .grammar-arrow { transform: rotate(180deg); }
@@ -1839,12 +1839,14 @@
 .backup-row { display: flex; gap: 8px; }
 .btn-backup {
   flex: 1;
-  border-radius: 12px; padding: 11px 6px;
+  border-radius: 12px; padding: 11px 8px;
   font-family: 'Tajawal', sans-serif;
-  font-size: 12px; font-weight: 700;
+  font-size: 11.5px; font-weight: 700;
   cursor: pointer; border: none;
   display: flex; align-items: center; justify-content: center; gap: 5px;
-  white-space: nowrap; transition: all .2s;
+  white-space: normal; text-align: center; line-height: 1.3;
+  transition: all .2s;
+  min-width: 0;
 }
 .btn-backup:active { transform: scale(.96); }
 .btn-backup.export {
@@ -2084,14 +2086,13 @@
 
 .chapter-map-scene {
   position:relative;
-  flex:1;
-  min-height:400px;
+  min-height:auto;
   padding:24px 16px 40px;
 }
 
 .city-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:24px 14px;
-  max-width:480px; width:100%; margin:14px auto 0;
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:20px 8px;
+  max-width:520px; width:100%; margin:14px auto 0;
 }
 .city-grid:has(.single-city) {
   display:flex; justify-content:center; align-items:center;
@@ -2115,9 +2116,9 @@
   font-size:11px; font-weight:900; z-index:3;
 }
 .city-dot {
-  width:72px; height:72px; border-radius:50%;
+  width:100px; height:100px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:32px;
+  font-size:44px;
   border:3px solid;
   position:relative;
   transition:transform .2s;
@@ -2151,11 +2152,14 @@
   opacity:.55;
 }
 .city-label {
-  font-size:13px; font-weight:900; color:#E8ECF5; text-align:center; line-height:1.2;
+  font-size:14px; font-weight:900; color:#F1F5F9; text-align:center; line-height:1.3;
+  text-shadow:0 1px 3px rgba(0,0,0,.5);
+  max-width:100px; min-height:36px;
+  display:flex; align-items:center; justify-content:center;
 }
-.city-label.locked-label { color:#475569; }
+.city-label.locked-label { color:#64748B; }
 .city-status-chip {
-  font-size:9px; padding:2px 9px; border-radius:9px; font-weight:700;
+  font-size:10px; padding:2px 10px; border-radius:9px; font-weight:700;
 }
 .city-status-chip.available { background:rgba(45,212,191,.18); color:#2DD4BF; }
 .city-status-chip.completed { background:rgba(245,200,66,.18); color:#F5C842; }
@@ -2241,7 +2245,7 @@
   <div class="train-sky"></div>
   <div class="train-stars"></div>
   <div class="station-quiz-wrap">
-    <div class="station-quiz-title" id="sqTitle">🏆 اختبار المحطة</div>
+    <div class="station-quiz-title" id="sqTitle">🏆 Station Quiz <span style="font-size:11px;opacity:.6;font-weight:400">اختبار المحطة</span></div>
     <div class="station-quiz-progress">
       <div class="station-quiz-progress-fill" id="sqProgressFill" style="width:0%"></div>
     </div>
@@ -2249,7 +2253,10 @@
       <span id="sqQNum">سؤال 1</span>
       <span id="sqScore">⭐ 0</span>
     </div>
-    <div class="station-quiz-q" id="sqQuestion"></div>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
+      <div class="station-quiz-q" id="sqQuestion" style="flex:1"></div>
+      <button class="speak-btn-sm" onclick="speakWord(document.getElementById('sqQuestion').textContent, this)" title="استمع">🔊</button>
+    </div>
     <div class="station-quiz-opts" id="sqOptions"></div>
     <div class="station-quiz-feedback" id="sqFeedback"></div>
   </div>
@@ -2293,18 +2300,19 @@
         <circle cx="293" cy="42" r="6" fill="#FFF176" opacity="0.85"/>
       </svg>
     </div>
-    <div class="journey-title">رحلة القطار</div>
-    <div class="journey-subtitle">من مكة المكرمة إلى العالم الإسلامي</div>
+    <div class="journey-title">🚄 Train Journey</div>
+    <div class="journey-subtitle" dir="ltr">from Makkah to the Islamic World</div>
+    <div class="journey-subtitle" style="opacity:.6;margin-top:2px">رحلة القطار من مكة إلى العالم الإسلامي</div>
 
     <!-- Toggle buttons -->
     <div style="display:flex;gap:8px;justify-content:center;margin-top:12px">
       <button id="btnMapView" onclick="setJourneyView('map')"
-        style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
-        🌍 الخريطة
+        style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:12px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+        🌍 Map
       </button>
       <button id="btnListView" onclick="setJourneyView('list')"
-        style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;font-weight:700;cursor:pointer">
-        📋 القائمة
+        style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:12px;padding:8px 18px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer">
+        📋 List
       </button>
       <button onclick="closeJourney()"
         style="background:rgba(251,113,133,.1);border:1px solid #FB718544;color:#FB7185;border-radius:12px;padding:8px 18px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer">
@@ -2320,9 +2328,9 @@
 
     <!-- Legend -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:14px;font-size:10px;font-family:Tajawal,sans-serif;text-align:center">
-      <div style="background:rgba(45,212,191,.1);border:1px solid #2DD4BF44;border-radius:8px;padding:6px;color:#2DD4BF">✅ مكتملة</div>
-      <div style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;border-radius:8px;padding:6px;color:#A78BFA">🚄 متاحة</div>
-      <div style="background:rgba(100,116,139,.1);border:1px solid #64748B44;border-radius:8px;padding:6px;color:#64748B">🔒 مقفلة</div>
+      <div style="background:rgba(45,212,191,.1);border:1px solid #2DD4BF44;border-radius:8px;padding:6px;color:#2DD4BF;display:flex;align-items:center;justify-content:center;gap:4px" dir="ltr">✅ Completed</div>
+      <div style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;border-radius:8px;padding:6px;color:#A78BFA;display:flex;align-items:center;justify-content:center;gap:4px" dir="ltr">🚄 Available</div>
+      <div style="background:rgba(100,116,139,.1);border:1px solid #64748B44;border-radius:8px;padding:6px;color:#64748B;display:flex;align-items:center;justify-content:center;gap:4px" dir="ltr">🔒 Locked</div>
     </div>
   </div>
 
@@ -2417,7 +2425,10 @@
   </div>
   <div id="sqCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
     <div id="sqType" style="font-size:11px;color:#A78BFA;margin-bottom:6px;font-weight:700"></div>
-    <div id="sqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <div id="sqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
+      <button class="speak-btn-sm" id="sqSpeakBtn" onclick="speakWord(document.getElementById('sqQuestion').textContent, this)" title="استمع">🔊</button>
+    </div>
   </div>
   <div id="sqOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
   <div id="sqFeedback" style="text-align:center;font-size:14px;font-weight:700;min-height:24px"></div>
@@ -2575,8 +2586,8 @@
       <button class="home-settings-btn" onclick="openTeacherPhoneModal()">
         <span class="home-settings-icon">👨‍🏫</span>
         <span class="home-settings-text">
-          <span class="home-settings-title">تغيير بيانات المعلم/المعلمة</span>
-          <span class="home-settings-sub" id="homeTeacherSub">إرسال النتائج عبر واتساب</span>
+          <span class="home-settings-title">Change Teacher Info <span style="font-size:10px;opacity:.6;font-weight:400">تغيير بيانات المعلم</span></span>
+          <span class="home-settings-sub" id="homeTeacherSub">Send results via WhatsApp</span>
         </span>
         <span class="home-settings-arrow">←</span>
       </button>
@@ -2670,11 +2681,11 @@
 
     <!-- Reset Controls -->
     <div class="reset-row">
-      <button class="btn-reset soft" onclick="retakeLevelTest()">🎮 Retake Level Test <span style="font-size:9px;opacity:.6">إعادة اختبار المستوى</span></button>
+      <button class="btn-reset soft" onclick="retakeLevelTest()" style="display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.3"><span dir="ltr">🎮 Retake Level Test</span><span style="font-size:9px;opacity:.6">إعادة اختبار المستوى</span></button>
     </div>
     <div class="reset-row">
-      <button class="btn-reset soft" onclick="confirmAction('packs')">📦 Reset Packs Only <span style="font-size:9px;opacity:.6">إعادة ضبط الحِزم</span></button>
-      <button class="btn-reset" onclick="confirmAction('all')">🔄 Full Reset <span style="font-size:9px;opacity:.6">إعادة الضبط بالكامل</span></button>
+      <button class="btn-reset soft" onclick="confirmAction('packs')" style="display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.3"><span dir="ltr">📦 Reset Packs Only</span><span style="font-size:9px;opacity:.6">إعادة ضبط الحِزم</span></button>
+      <button class="btn-reset" onclick="confirmAction('all')" style="display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.3"><span dir="ltr">🔄 Full Reset</span><span style="font-size:9px;opacity:.6">إعادة الضبط بالكامل</span></button>
     </div>
     <div class="counter-hero">
       <div class="big-count" id="heroCount">0</div>
@@ -2838,7 +2849,7 @@
       <div class="game-card" onclick="startGame('hangman')">
         <div class="game-icon" style="background:linear-gradient(135deg,#FB7185,#e11d48)">🎯</div>
         <div class="game-info">
-          <div class="game-name">Hangman — المشنقة</div>
+          <div class="game-name">Hangman <span style="font-size:11px;opacity:.6;font-weight:400">المشنقة</span></div>
           <div class="game-desc">خمّن الكلمة حرفاً حرفاً قبل نفاد المحاولات</div>
         </div>
         <div class="game-arrow">←</div>
@@ -2846,7 +2857,7 @@
       <div class="game-card" onclick="startGame('race')">
         <div class="game-icon" style="background:linear-gradient(135deg,#F5C842,#d97706)">⚡</div>
         <div class="game-info">
-          <div class="game-name">سباق ٦٠ ثانية</div>
+          <div class="game-name">60-Second Race <span style="font-size:11px;opacity:.6;font-weight:400">سباق ٦٠ ثانية</span></div>
           <div class="game-desc">أجب على أكبر عدد من الأسئلة في دقيقة واحدة!</div>
         </div>
         <div class="game-arrow">←</div>
@@ -2854,7 +2865,7 @@
       <div class="game-card" onclick="startGame('daily')">
         <div class="game-icon" style="background:linear-gradient(135deg,#2DD4BF,#0891b2)">🌟</div>
         <div class="game-info">
-          <div class="game-name">تحدي اليوم</div>
+          <div class="game-name">Daily Challenge <span style="font-size:11px;opacity:.6;font-weight:400">تحدي اليوم</span></div>
           <div class="game-desc">سؤال صعب يومي — هل تستطيع الإجابة؟</div>
         </div>
         <div class="game-arrow">←</div>
@@ -2862,7 +2873,7 @@
       <div class="game-card" onclick="startGame('spelling')">
         <div class="game-icon" style="background:linear-gradient(135deg,#A78BFA,#7C5BE6)">✍️</div>
         <div class="game-info">
-          <div class="game-name">تحدي التهجئة</div>
+          <div class="game-name">Spelling Challenge <span style="font-size:11px;opacity:.6;font-weight:400">تحدي التهجئة</span></div>
           <div class="game-desc">شاهد المعنى بالعربية واكتب الكلمة الإنجليزية بحروفها الصحيحة</div>
         </div>
         <div class="game-arrow">←</div>
@@ -3091,17 +3102,17 @@
 <div class="confirm-overlay" id="teacherPhoneOverlay">
   <div class="confirm-box">
     <div class="cb-icon">👨‍🏫</div>
-    <div class="cb-title">بيانات المعلم/المعلمة</div>
-    <div class="cb-msg">أدخل اسم ورقم واتساب المعلم الذي سيستلم نتائجك</div>
+    <div class="cb-title">Teacher Info <span style="font-size:12px;opacity:.6;font-weight:400">بيانات المعلم/المعلمة</span></div>
+    <div class="cb-msg">Enter your teacher's name and WhatsApp number to receive your results <span style="opacity:.7">· أدخل اسم ورقم واتساب المعلم</span></div>
     <div style="text-align:right;margin-bottom:10px">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">اسم المعلم/المعلمة</div>
-      <input type="text" id="teacherNameInp" placeholder="مثال: ARAFAT" class="inp" style="width:100%;margin-bottom:12px" autocomplete="off">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">رقم الواتساب (بدون 966 أو 0)</div>
-      <input type="tel" id="teacherPhoneInp" placeholder="مثال: 5XXXXXXXX" class="inp en" style="width:100%" autocomplete="off" inputmode="numeric">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Teacher Name <span style="opacity:.6">اسم المعلم/المعلمة</span></div>
+      <input type="text" id="teacherNameInp" placeholder="e.g. ARAFAT" class="inp" style="width:100%;margin-bottom:12px" autocomplete="off">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">WhatsApp Number (without 966 or 0) <span style="opacity:.6">رقم الواتساب</span></div>
+      <input type="tel" id="teacherPhoneInp" placeholder="e.g. 5XXXXXXXX" class="inp en" style="width:100%" autocomplete="off" inputmode="numeric">
     </div>
     <div class="cb-row">
-      <button class="cb-btn cb-cancel" onclick="closeTeacherPhoneModal()">إلغاء</button>
-      <button class="cb-btn cb-confirm" onclick="saveTeacherPhone()" style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">💾 حفظ</button>
+      <button class="cb-btn cb-cancel" onclick="closeTeacherPhoneModal()">Cancel</button>
+      <button class="cb-btn cb-confirm" onclick="saveTeacherPhone()" style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">💾 Save</button>
     </div>
   </div>
 </div>
@@ -4763,7 +4774,7 @@ function initQuiz() {
     area.innerHTML = `<div class="no-words-msg"><div class="icon">🎯</div><p>أضف على الأقل كلمتين!</p></div>`;
     return;
   }
-  area.innerHTML = `<button class="btn-start-quiz" onclick="startQuiz()">🚀 ابدأ الاختبار العشوائي</button>`;
+  area.innerHTML = `<button class="btn-start-quiz" onclick="startQuiz()" style="display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3"><span dir="ltr">🚀 Start Random Quiz</span><span style="font-size:11px;opacity:.7;font-weight:400">ابدأ الاختبار العشوائي</span></button>`;
 }
 
 function startQuiz() {
@@ -5088,8 +5099,8 @@ function renderGrammar() {
       <div class="grammar-header" onclick="toggleG(${i})">
         <div class="grammar-icon" style="background:${g.bg}"><span>${g.icon}</span></div>
         <div class="grammar-meta">
-          <div class="grammar-title">${g.title}</div>
-          <div class="grammar-title-en">${g.titleEn}</div>
+          <div class="grammar-title">${g.titleEn}</div>
+          <div class="grammar-title-en">${g.title}</div>
           <div class="grammar-level">${g.level}</div>
         </div>
         <div class="grammar-arrow">▼</div>
@@ -5125,7 +5136,10 @@ function renderGrammar() {
         </div>
         <div class="grammar-quiz">
           <div class="quiz-label">✏️ تمرين سريع</div>
-          <div class="quiz-q">${g.quiz.q}</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="quiz-q" style="flex:1">${g.quiz.q}</div>
+            <button class="speak-btn-sm" onclick="speakWord('${g.quiz.q.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+          </div>
           <div class="quiz-options">
             ${g.quiz.opts.map(o=>`<button class="q-opt" id="go${i}${o.replace(/\W/g,'')}" onclick="checkGQ(${i},'${o.replace(/'/g,"\\'")}','${g.quiz.ans.replace(/'/g,"\\'")}','${g.quiz.fb.replace(/'/g,"\\'")}','${g.quiz.fbW.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
           </div>
@@ -6731,11 +6745,13 @@ function openChapterMap(chapterId) {
     var status = getStationStatus(sid);
     var isComp = status === 'completed';
     var isAvail = status === 'unlocked';
-    var statusLabel = isComp ? 'مكتملة ✅' : isAvail ? 'جاهزة 🚄' : 'مقفلة 🔒';
+    var statusLabel = isComp ? 'Completed ✅' : isAvail ? 'Available 🚄' : 'Locked 🔒';
     var labelClass = (!isComp && !isAvail) ? 'locked-label' : '';
     var dotClass = isComp ? 'completed' : isAvail ? 'available' : 'locked';
     var numHtml = isSingleCity ? '' : '<div class="city-grid-num" style="color:' + ch.color + '">' + (idx + 1) + '</div>';
-    var cityName = st.name.replace(' المكرمة','').replace(' المنورة','');
+    var cityName = st.nameEn
+      .replace('Makkah Al-Mukarramah', 'Makkah')
+      .replace('Al-Madinah Al-Munawwarah', 'Madinah');
 
     return (
       '<div class="city-grid-node ' + (isSingleCity ? 'single-city' : '') + '" style="animation-delay:' + (idx * 0.06) + 's" onclick="handleCityClick(' + sid + ',\'' + dotClass + '\')">' +
@@ -6890,7 +6906,7 @@ function onMapDotClick(stationId) {
 function showMapTooltip(event, stationId) {
   var s = TRAIN_STATIONS[stationId - 1];
   var status = getStationStatus(stationId);
-  var statusText = status === 'completed' ? '✅ مكتملة' : status === 'unlocked' ? '🚂 متاحة' : '🔒 مقفلة';
+  var statusText = status === 'completed' ? '✅ Completed' : status === 'unlocked' ? '🚄 Available' : '🔒 Locked';
   var tooltip = document.getElementById('mapTooltip');
   tooltip.textContent = s.flag + ' ' + s.name + ' · ' + statusText;
   tooltip.style.display = 'block';
@@ -6930,14 +6946,14 @@ function renderJourneyList() {
     var numClass = status === 'completed' ? 'num-completed' : status === 'unlocked' ? 'num-unlocked' : 'num-locked';
     var rowClass = status;
     var icon = status === 'completed' ? '✅' : status === 'unlocked' ? '🚄' : '🔒';
-    var statusText = status === 'completed' ? 'مكتملة ✅' : status === 'unlocked' ? 'جاهزة للرحلة 🚄' : 'مقفلة 🔒';
+    var statusText = status === 'completed' ? 'Completed ✅' : status === 'unlocked' ? 'Available 🚄' : 'Locked 🔒';
     var tierColors = ['','#2DD4BF','#F5C842','#A78BFA','#F5C842'];
 
     html += '<div class="journey-station-row ' + rowClass + '" onclick="' + (status !== 'locked' ? 'launchTrain(' + s.id + ')' : '') + '">';
     html += '<div class="journey-station-num ' + numClass + '" style="border:1px solid ' + tierColors[s.tier] + '44">' + s.id + '</div>';
     html += '<div class="journey-station-info">';
-    html += '<div class="journey-station-name">' + s.flag + ' ' + s.name + '</div>';
-    html += '<div class="journey-station-status">' + statusText + ' · ' + s.nameEn + '</div>';
+    html += '<div class="journey-station-name">' + s.flag + ' ' + s.nameEn + '</div>';
+    html += '<div class="journey-station-status">' + statusText + ' · ' + s.name + '</div>';
     html += '</div>';
     html += '<div class="journey-station-icon">' + icon + '</div>';
     html += '</div>';
@@ -7240,21 +7256,21 @@ function trackTrainPodcast() {
 
 // ══ RANKS & STARS SYSTEM ══
 var RANKS = [
-  { id:'r0',  icon:'🌱', title:'وصلت',         points:0,   color:'#64748B' },
-  { id:'r1',  icon:'⭐', title:'بدأت',          points:5,   color:'#94A3B8' },
-  { id:'r2',  icon:'🌟', title:'نشيط',          points:15,  color:'#F5C842' },
-  { id:'r3',  icon:'💫', title:'مجتهد',         points:30,  color:'#F5C842' },
-  { id:'r4',  icon:'🏅', title:'منتظم',         points:50,  color:'#F5C842' },
-  { id:'r5',  icon:'🎯', title:'متحمس',         points:80,  color:'#2DD4BF' },
-  { id:'r6',  icon:'🥈', title:'متقدم',         points:120, color:'#2DD4BF' },
-  { id:'r7',  icon:'🌊', title:'رحّالة',        points:180, color:'#2DD4BF' },
-  { id:'r8',  icon:'🎧', title:'مستمع',         points:250, color:'#A78BFA' },
-  { id:'r9',  icon:'🥇', title:'محترف',         points:350, color:'#A78BFA' },
-  { id:'r10', icon:'🎙️', title:'متحدث',        points:500, color:'#A78BFA' },
-  { id:'r11', icon:'📚', title:'حافظ',          points:700, color:'#FB7185' },
-  { id:'r12', icon:'👑', title:'أسطورة',        points:1000,color:'#F5C842' },
-  { id:'r13', icon:'💎', title:'فارس اللغة',    points:1500,color:'#F5C842' },
-  { id:'r14', icon:'🏆', title:'الرتبة الذهبية',points:2000,color:'#F5C842' },
+  { id:'r0',  icon:'🌱', title:'Arrived',     titleAr:'وصلت',           points:0,   color:'#64748B' },
+  { id:'r1',  icon:'⭐', title:'Starter',     titleAr:'بدأت',           points:5,   color:'#94A3B8' },
+  { id:'r2',  icon:'🌟', title:'Active',      titleAr:'نشيط',           points:15,  color:'#F5C842' },
+  { id:'r3',  icon:'💫', title:'Diligent',    titleAr:'مجتهد',          points:30,  color:'#F5C842' },
+  { id:'r4',  icon:'🏅', title:'Consistent',  titleAr:'منتظم',          points:50,  color:'#F5C842' },
+  { id:'r5',  icon:'🎯', title:'Enthusiast',  titleAr:'متحمس',          points:80,  color:'#2DD4BF' },
+  { id:'r6',  icon:'🥈', title:'Advanced',    titleAr:'متقدم',          points:120, color:'#2DD4BF' },
+  { id:'r7',  icon:'🌊', title:'Traveler',    titleAr:'رحّالة',         points:180, color:'#2DD4BF' },
+  { id:'r8',  icon:'🎧', title:'Listener',    titleAr:'مستمع',          points:250, color:'#A78BFA' },
+  { id:'r9',  icon:'🥇', title:'Professional',titleAr:'محترف',          points:350, color:'#A78BFA' },
+  { id:'r10', icon:'🎙️', title:'Speaker',    titleAr:'متحدث',          points:500, color:'#A78BFA' },
+  { id:'r11', icon:'📚', title:'Master',      titleAr:'حافظ',           points:700, color:'#FB7185' },
+  { id:'r12', icon:'👑', title:'Legend',      titleAr:'أسطورة',         points:1000,color:'#F5C842' },
+  { id:'r13', icon:'💎', title:'Language Knight', titleAr:'فارس اللغة', points:1500,color:'#F5C842' },
+  { id:'r14', icon:'🏆', title:'Golden Rank', titleAr:'الرتبة الذهبية', points:2000,color:'#F5C842' },
 ];
 
 var POINTS_CONFIG = {
@@ -7316,7 +7332,7 @@ function updateRankWidget() {
   var nextEl = document.getElementById('rankNextInfo');
 
   if (iconEl) iconEl.textContent = rank.icon;
-  if (titleEl) titleEl.textContent = rank.title;
+  if (titleEl) titleEl.innerHTML = rank.title + ' <span style="font-size:10px;opacity:.6;font-weight:400">' + rank.titleAr + '</span>';
   if (subEl) subEl.textContent = '⭐ ' + pts + ' نقطة';
 
   if (nextRank) {
@@ -7335,7 +7351,7 @@ function showRankPopup(rank) {
   var name = document.getElementById('rankPopupName');
   if (!popup) return;
   icon.textContent = rank.icon;
-  name.textContent = rank.title;
+  name.innerHTML = rank.title + '<br><span style="font-size:13px;opacity:.7;font-weight:400">' + rank.titleAr + '</span>';
   popup.classList.add('show');
   setTimeout(function() { popup.classList.remove('show'); }, 3500);
 }
@@ -7537,7 +7553,7 @@ function updateExportButtonLabel() {
   const btn = document.getElementById('exportBtnLabel');
   if (btn) btn.textContent = `Send My Results to ${getTeacherDisplayName()} via WhatsApp`;
   const sub = document.getElementById('homeTeacherSub');
-  if (sub) sub.textContent = `إرسال النتائج إلى ${getTeacherDisplayName()} عبر واتساب`;
+  if (sub) sub.textContent = `Send results to ${getTeacherDisplayName()} via WhatsApp`;
 }
 
 // ══ CONVERSATIONS ══
@@ -8843,8 +8859,8 @@ function renderPodcastMenu() {
     <div class="pod-card" onclick="openPodcast('${key}')">
       <div class="pod-icon" style="color:${ep.color}">${ep.icon}</div>
       <div class="pod-info">
-        <div class="pod-name">${ep.nameAr}</div>
-        <div class="pod-name-en">${ep.nameEn}</div>
+        <div class="pod-name">${ep.nameEn}</div>
+        <div class="pod-name-en">${ep.nameAr}</div>
         <div class="pod-meta">${ep.dialogue.length} جمل · ${ep.questions.length} أسئلة فهم</div>
       </div>
       ${done ? '<div class="pod-done-badge">🏆</div>' : '<div class="pod-arrow">←</div>'}
@@ -8905,8 +8921,8 @@ function openPodcast(key) {
   document.getElementById('podcastDetailArea').innerHTML = `
     <div class="pod-hero" style="background:linear-gradient(135deg,${ep.color}22,var(--panel))">
       <div class="pod-hero-icon">${ep.icon}</div>
-      <div class="pod-hero-title" style="color:${ep.color}">${ep.nameAr}</div>
-      <div class="pod-hero-sub">${ep.nameEn}</div>
+      <div class="pod-hero-title" style="color:${ep.color}">${ep.nameEn}</div>
+      <div class="pod-hero-sub">${ep.nameAr}</div>
     </div>
 
     <div class="pod-player">
@@ -9060,7 +9076,10 @@ function podRenderQuiz() {
     <div class="pod-quiz-title" style="font-size:14px;font-weight:700;color:var(--gold);margin:14px 0 10px">🧠 أسئلة الفهم</div>
     ${ep.questions.map((q, i) => `
       <div class="pod-quiz-card">
-        <div class="pod-quiz-q">${i+1}. ${q.q}<br><span style="font-size:12px;color:var(--muted);font-weight:400">${q.ar}</span></div>
+        <div style="display:flex;align-items:flex-start;gap:6px">
+          <div class="pod-quiz-q" style="flex:1">${i+1}. ${q.q}<br><span style="font-size:12px;color:var(--muted);font-weight:400">${q.ar}</span></div>
+          <button class="speak-btn-sm" onclick="speakWord('${q.q.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+        </div>
         <div class="pod-quiz-opts" id="podQOpts${i}">
           ${q.opts.map(o => `<button class="pod-quiz-opt" onclick="podCheckAnswer(${i},'${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
         </div>
