@@ -2164,6 +2164,103 @@
 .city-status-chip.available { background:rgba(45,212,191,.18); color:#2DD4BF; }
 .city-status-chip.completed { background:rgba(245,200,66,.18); color:#F5C842; }
 .city-status-chip.locked { background:rgba(100,116,139,.15); color:#64748B; }
+/* ══ QR OVERLAY ══ */
+.qr-overlay {
+  position:fixed; inset:0; z-index:800;
+  background:rgba(0,0,0,.85); backdrop-filter:blur(8px);
+  display:none; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:16px; gap:14px;
+  overflow-y:auto;
+}
+.qr-overlay.show { display:flex; animation:qrFadeIn .35s ease; }
+@keyframes qrFadeIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+
+/* Card */
+.qr-box {
+  background:linear-gradient(160deg,#1A2332,#0D1117);
+  border:2px solid #F5C84255;
+  border-radius:28px;
+  padding:22px 18px 18px;
+  width:100%; max-width:360px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 0 1px #F5C84222;
+  font-family:'Space Grotesk',sans-serif;
+}
+
+/* Header */
+.qr-header { text-align:center; margin-bottom:14px; }
+.qr-logo {
+  display:inline-block;
+  background:linear-gradient(135deg,#2D1B69,#1A3A2A);
+  border-radius:14px; padding:6px 12px;
+  font-size:15px; font-weight:900; color:#F5C842;
+  margin-bottom:4px;
+}
+.qr-brand { font-size:20px; font-weight:900; color:#F5C842; letter-spacing:.5px; }
+.qr-tagline { font-size:11px; color:#64748B; margin-top:2px; }
+
+/* Student */
+.qr-student { text-align:center; margin:10px 0 14px; }
+.qr-avatar { font-size:42px; margin-bottom:4px; }
+.qr-name { font-size:20px; font-weight:900; color:#F1F5F9; }
+.qr-rank {
+  display:inline-block; margin-top:5px;
+  background:rgba(245,200,66,.12); border:1px solid #F5C84244;
+  border-radius:20px; padding:3px 12px;
+  font-size:12px; color:#F5C842; font-weight:700;
+}
+
+/* Stats */
+.qr-stats {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:8px; margin-bottom:14px;
+}
+.qr-stat {
+  background:rgba(255,255,255,.04);
+  border:1px solid #243550;
+  border-radius:14px; padding:10px 8px;
+  text-align:center;
+}
+.qr-stat-val { font-size:26px; font-weight:900; color:#2DD4BF; }
+.qr-stat-lbl { font-size:10px; color:#94A3B8; margin-top:3px; line-height:1.4; font-family:'Tajawal',sans-serif; }
+.qr-stat-lbl span { color:#64748B; font-size:9px; }
+
+/* Progress */
+.qr-progress-wrap { margin-bottom:14px; }
+.qr-progress-label {
+  display:flex; justify-content:space-between;
+  font-size:11px; color:#94A3B8; margin-bottom:6px;
+}
+.qr-progress-track {
+  height:8px; background:#1E2D45; border-radius:4px; overflow:hidden;
+}
+.qr-progress-fill {
+  height:100%; background:linear-gradient(90deg,#2DD4BF,#F5C842);
+  border-radius:4px; transition:width .5s ease;
+}
+
+/* QR Code */
+.qr-code-wrap { text-align:center; margin-bottom:12px; }
+.qr-code-label { font-size:10px; color:#64748B; margin-bottom:8px; }
+#qrCodeCanvas canvas,
+#qrCodeCanvas img { border-radius:12px; border:3px solid #fff; }
+.qr-date { font-size:10px; color:#64748B; margin-top:6px; }
+
+/* Footer */
+.qr-footer { text-align:center; padding-top:10px; border-top:1px solid #1E2D45; }
+.qr-footer-brand { font-size:10px; color:#3D4F6B; }
+
+/* Buttons */
+.qr-actions { display:flex; gap:10px; width:100%; max-width:360px; }
+.qr-btn {
+  flex:1; border:none; border-radius:14px; padding:13px 10px;
+  font-family:'Tajawal',sans-serif; font-size:14px; font-weight:700;
+  cursor:pointer; display:flex; flex-direction:column;
+  align-items:center; gap:2px; line-height:1.2;
+}
+.qr-btn span { font-size:10px; opacity:.7; font-weight:400; }
+.qr-btn-save { background:linear-gradient(135deg,#2DD4BF,#0EA5E9); color:#0D1117; }
+.qr-btn-close { background:rgba(255,255,255,.06); border:1px solid #243550; color:#94A3B8; }
 </style>
 
 <!-- ══ TRAIN JOURNEY SCREEN ══ -->
@@ -2582,14 +2679,18 @@
       </div>
     </div>
 
-    <div class="home-settings-row">
-      <button class="home-settings-btn" onclick="openTeacherPhoneModal()">
+    <div class="home-settings-row" style="display:flex;gap:8px">
+      <button class="home-settings-btn" onclick="openTeacherPhoneModal()" style="flex:1">
         <span class="home-settings-icon">👨‍🏫</span>
         <span class="home-settings-text">
           <span class="home-settings-title">Change Teacher Info <span style="font-size:10px;opacity:.6;font-weight:400">تغيير بيانات المعلم</span></span>
           <span class="home-settings-sub" id="homeTeacherSub">Send results via WhatsApp</span>
         </span>
         <span class="home-settings-arrow">←</span>
+      </button>
+      <button onclick="openQR()" style="background:linear-gradient(135deg,#F5C842,#FB923C);border:none;border-radius:14px;padding:10px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0">
+        <span style="font-size:22px">📊</span>
+        <span style="font-size:9px;font-weight:700;color:#0D1117;white-space:nowrap">My QR</span>
       </button>
     </div>
 
@@ -3049,6 +3150,76 @@
       جميع الحقوق محفوظة لعرفات الراجحي<br>
       All Rights Reserved — WordSpark™<br>
       يُحظر النسخ أو التوزيع بدون إذن مسبق
+    </div>
+  </div>
+
+  <!-- ══ QR RESULTS SCREEN ══ -->
+  <div class="qr-overlay" id="qrOverlay">
+    <div class="qr-box" id="qrBox">
+      <!-- Header -->
+      <div class="qr-header">
+        <div class="qr-logo">⚡WS</div>
+        <div class="qr-brand">WordSpark</div>
+        <div class="qr-tagline">My Learning Report</div>
+      </div>
+
+      <!-- Student Name & Rank -->
+      <div class="qr-student">
+        <div class="qr-avatar" id="qrAvatar">🌱</div>
+        <div class="qr-name" id="qrName">—</div>
+        <div class="qr-rank" id="qrRank">—</div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="qr-stats">
+        <div class="qr-stat">
+          <div class="qr-stat-val" id="qrWords">0</div>
+          <div class="qr-stat-lbl">Words Learned<br><span>كلمة تعلّمتها</span></div>
+        </div>
+        <div class="qr-stat">
+          <div class="qr-stat-val" id="qrStreak">0</div>
+          <div class="qr-stat-lbl">Day Streak 🔥<br><span>يوم متواصل</span></div>
+        </div>
+        <div class="qr-stat">
+          <div class="qr-stat-val" id="qrPoints">0</div>
+          <div class="qr-stat-lbl">Points ⭐<br><span>نقطة</span></div>
+        </div>
+        <div class="qr-stat">
+          <div class="qr-stat-val" id="qrStations">0</div>
+          <div class="qr-stat-lbl">Stations ✅<br><span>محطة مكتملة</span></div>
+        </div>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="qr-progress-wrap">
+        <div class="qr-progress-label">Journey Progress <span id="qrProgressPct">0%</span></div>
+        <div class="qr-progress-track">
+          <div class="qr-progress-fill" id="qrProgressFill"></div>
+        </div>
+      </div>
+
+      <!-- QR Code -->
+      <div class="qr-code-wrap">
+        <div class="qr-code-label">Scan to verify 🔍</div>
+        <div id="qrCodeCanvas"></div>
+        <div class="qr-date" id="qrDate">—</div>
+      </div>
+
+      <!-- Footer -->
+      <div class="qr-footer">
+        <div class="qr-footer-brand">⚡ WordSpark · ara2026fat.github.io</div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="qr-actions">
+      <button class="qr-btn qr-btn-save" onclick="saveQRImage()">
+        📸 Save as Image
+        <span>احفظ كصورة</span>
+      </button>
+      <button class="qr-btn qr-btn-close" onclick="closeQR()">
+        ✕ Close
+      </button>
     </div>
   </div>
 
@@ -9304,5 +9475,89 @@ function devSkipName() {
   </div>
 </div>
 
+<!-- QRCode.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ══ QR RESULTS ══
+function openQR() {
+  // جمع البيانات
+  var name    = localStorage.getItem('studentName') || 'Student';
+  var words   = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak  = parseInt(localStorage.getItem('streak') || '0');
+  var p       = getTrainProgress();
+  var done    = (p.completed || []).length;
+  var total   = 37;
+  var pct     = Math.round((done / total) * 100);
+
+  // حساب النقاط والرتبة
+  var pts = 0;
+  try { pts = parseInt(localStorage.getItem('wsPoints') || '0'); } catch(e){}
+  var rank = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) {
+    if (pts >= RANKS[i].points) rank = RANKS[i];
+  }
+
+  // ملء البيانات
+  document.getElementById('qrName').textContent   = name;
+  document.getElementById('qrAvatar').textContent  = rank.icon;
+  document.getElementById('qrRank').textContent    = rank.title + ' · ' + rank.titleAr;
+  document.getElementById('qrWords').textContent   = words.length;
+  document.getElementById('qrStreak').textContent  = streak;
+  document.getElementById('qrPoints').textContent  = pts;
+  document.getElementById('qrStations').textContent= done;
+  document.getElementById('qrProgressPct').textContent = pct + '%';
+  document.getElementById('qrProgressFill').style.width = pct + '%';
+
+  // التاريخ
+  var now = new Date();
+  document.getElementById('qrDate').textContent =
+    now.toLocaleDateString('en-GB') + ' · ' + now.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+
+  // بيانات QR
+  var qrData = [
+    'WordSpark Report',
+    'Student: ' + name,
+    'Rank: ' + rank.title,
+    'Words: ' + words.length,
+    'Streak: ' + streak + ' days',
+    'Points: ' + pts,
+    'Stations: ' + done + '/' + total,
+    'Date: ' + now.toLocaleDateString('en-GB'),
+    'Verify: ara2026fat.github.io/WordSpark-/wordspark.html'
+  ].join('\n');
+
+  // توليد رمز QR
+  var canvas = document.getElementById('qrCodeCanvas');
+  canvas.innerHTML = '';
+  new QRCode(canvas, {
+    text: qrData,
+    width: 160, height: 160,
+    colorDark: '#0D1117',
+    colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.M
+  });
+
+  document.getElementById('qrOverlay').classList.add('show');
+}
+
+function closeQR() {
+  document.getElementById('qrOverlay').classList.remove('show');
+}
+
+function saveQRImage() {
+  // تحويل الكارد لصورة باستخدام html2canvas أو بديل بسيط
+  var box = document.getElementById('qrBox');
+  // نستخدم Print dialog كحل بسيط مضمون على كل الأجهزة
+  var printWin = window.open('', '_blank');
+  printWin.document.write('<html><head><style>');
+  printWin.document.write('body{margin:0;background:#0D1117;display:flex;justify-content:center;padding:20px}');
+  printWin.document.write('</style></head><body>');
+  printWin.document.write(box.outerHTML);
+  printWin.document.write('</body></html>');
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(function(){ printWin.print(); }, 500);
+}
+</script>
 </body>
 </html>
