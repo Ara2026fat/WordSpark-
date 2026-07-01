@@ -2261,6 +2261,113 @@
 .qr-btn span { font-size:10px; opacity:.7; font-weight:400; }
 .qr-btn-save { background:linear-gradient(135deg,#2DD4BF,#0EA5E9); color:#0D1117; }
 .qr-btn-close { background:rgba(255,255,255,.06); border:1px solid #243550; color:#94A3B8; }
+
+/* ══ FLOATING QR BUTTON ══ */
+.float-qr-btn {
+  position:fixed; bottom:76px; left:50%; transform:translateX(-50%);
+  z-index:200;
+  background:linear-gradient(135deg,#F5C842,#FB923C);
+  border:none; border-radius:30px;
+  padding:10px 22px;
+  display:flex; align-items:center; gap:8px;
+  box-shadow:0 4px 20px rgba(245,200,66,.4);
+  cursor:pointer;
+  animation:floatPulse 3s ease-in-out infinite;
+}
+@keyframes floatPulse {
+  0%,100% { box-shadow:0 4px 20px rgba(245,200,66,.4); }
+  50%      { box-shadow:0 6px 28px rgba(245,200,66,.7); }
+}
+.float-qr-icon { font-size:20px; }
+.float-qr-label { font-size:13px; font-weight:900; color:#0D1117; font-family:'Space Grotesk',sans-serif; }
+
+/* ══ SEND RESULTS OVERLAY ══ */
+.send-overlay {
+  position:fixed; inset:0; z-index:700;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(6px);
+  display:none; align-items:flex-end; justify-content:center;
+}
+.send-overlay.show { display:flex; }
+.send-box {
+  background:linear-gradient(160deg,#1A2332,#0D1117);
+  border-radius:28px 28px 0 0;
+  border-top:2px solid #F5C84244;
+  padding:24px 20px 36px;
+  width:100%; max-width:480px;
+  position:relative;
+  animation:slideUp .3s ease;
+}
+.send-close {
+  position:absolute; top:16px; left:16px;
+  background:rgba(255,255,255,.06); border:none;
+  border-radius:50%; width:30px; height:30px;
+  color:#94A3B8; font-size:14px; cursor:pointer;
+}
+.send-avatar { font-size:48px; text-align:center; }
+.send-name { font-size:20px; font-weight:900; color:#F1F5F9; text-align:center; margin-top:4px; }
+.send-rank {
+  text-align:center; margin:6px auto 14px;
+  display:inline-block; width:100%;
+  font-size:12px; color:#F5C842; font-weight:700;
+}
+.send-stats-row {
+  display:flex; gap:8px; margin-bottom:18px;
+}
+.send-stat {
+  flex:1; background:rgba(255,255,255,.04);
+  border:1px solid #243550; border-radius:12px;
+  padding:10px 6px; text-align:center;
+}
+.send-stat-v { font-size:22px; font-weight:900; color:#2DD4BF; }
+.send-stat-l { font-size:9px; color:#64748B; margin-top:2px; font-family:'Space Grotesk',sans-serif; }
+
+.send-options { display:flex; flex-direction:column; gap:10px; }
+.send-opt-btn {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 16px; border-radius:16px; border:none;
+  cursor:pointer; text-align:right;
+  transition:transform .15s;
+}
+.send-opt-btn:active { transform:scale(.97); }
+.send-opt-qr {
+  background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(14,165,233,.1));
+  border:1px solid #2DD4BF44;
+}
+.send-opt-gmail {
+  background:linear-gradient(135deg,rgba(234,67,53,.12),rgba(251,113,133,.08));
+  border:1px solid #EA433544;
+}
+.send-opt-telegram {
+  background:linear-gradient(135deg,rgba(38,170,240,.15),rgba(0,136,204,.08));
+  border:1px solid #26AAF044;
+}
+.send-opt-title { font-size:15px; font-weight:900; color:#F1F5F9; font-family:'Space Grotesk',sans-serif; }
+.send-opt-sub { font-size:11px; color:#64748B; margin-top:2px; font-family:'Tajawal',sans-serif; }
+
+/* ══ CELEBRATION ══ */
+.celebrate-overlay {
+  position:fixed; inset:0; z-index:900;
+  background:rgba(0,0,0,.8); backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center;
+}
+.celebrate-overlay.show { display:flex; animation:qrFadeIn .3s ease; }
+.celebrate-box {
+  background:linear-gradient(160deg,#1A2332,#0D1117);
+  border:2px solid #F5C84266; border-radius:28px;
+  padding:36px 28px; text-align:center;
+  max-width:320px; width:90%;
+  animation:celebPop .4s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes celebPop { from{transform:scale(.6);opacity:0} to{transform:scale(1);opacity:1} }
+.celebrate-emoji { font-size:70px; margin-bottom:10px; }
+.celebrate-title { font-size:26px; font-weight:900; color:#F5C842; font-family:'Space Grotesk',sans-serif; }
+.celebrate-msg { font-size:14px; color:#94A3B8; margin:10px 0 20px; line-height:1.6; font-family:'Tajawal',sans-serif; }
+.celebrate-btn {
+  background:linear-gradient(135deg,#F5C842,#FB923C);
+  border:none; border-radius:14px; padding:12px 28px;
+  font-size:15px; font-weight:900; color:#0D1117;
+  font-family:'Space Grotesk',sans-serif; cursor:pointer;
+}
 </style>
 
 <!-- ══ TRAIN JOURNEY SCREEN ══ -->
@@ -3274,12 +3381,14 @@
   <div class="confirm-box">
     <div class="cb-icon">👨‍🏫</div>
     <div class="cb-title">Teacher Info <span style="font-size:12px;opacity:.6;font-weight:400">بيانات المعلم/المعلمة</span></div>
-    <div class="cb-msg">Enter your teacher's name and WhatsApp number to receive your results <span style="opacity:.7">· أدخل اسم ورقم واتساب المعلم</span></div>
+    <div class="cb-msg">Enter your teacher's name, WhatsApp and Gmail to send your results <span style="opacity:.7">· أدخل بيانات معلمك لإرسال نتائجك</span></div>
     <div style="text-align:right;margin-bottom:10px">
       <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Teacher Name <span style="opacity:.6">اسم المعلم/المعلمة</span></div>
       <input type="text" id="teacherNameInp" placeholder="e.g. ARAFAT" class="inp" style="width:100%;margin-bottom:12px" autocomplete="off">
       <div style="font-size:11px;color:var(--muted);margin-bottom:4px">WhatsApp Number (without 966 or 0) <span style="opacity:.6">رقم الواتساب</span></div>
-      <input type="tel" id="teacherPhoneInp" placeholder="e.g. 5XXXXXXXX" class="inp en" style="width:100%" autocomplete="off" inputmode="numeric">
+      <input type="tel" id="teacherPhoneInp" placeholder="e.g. 5XXXXXXXX" class="inp en" style="width:100%;margin-bottom:12px" autocomplete="off" inputmode="numeric">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">📧 Gmail Address <span style="opacity:.6">إيميل المعلم</span></div>
+      <input type="email" id="teacherEmailInp" placeholder="e.g. teacher@gmail.com" class="inp en" style="width:100%" autocomplete="off">
     </div>
     <div class="cb-row">
       <button class="cb-btn cb-cancel" onclick="closeTeacherPhoneModal()">Cancel</button>
@@ -3787,6 +3896,67 @@
 </div>
 
 <!-- Bottom nav for mobile -->
+<!-- ══ FLOATING QR BUTTON ══ -->
+<button class="float-qr-btn" onclick="openSendResults()" title="Send Results to Teacher">
+  <span class="float-qr-icon">📊</span>
+  <span class="float-qr-label">Show Teacher</span>
+</button>
+
+<!-- ══ SEND RESULTS SCREEN ══ -->
+<div class="send-overlay" id="sendOverlay" onclick="if(event.target===this)closeSendResults()">
+  <div class="send-box">
+    <button class="send-close" onclick="closeSendResults()">✕</button>
+    <div class="send-avatar" id="sendAvatar">🌱</div>
+    <div class="send-name" id="sendName">—</div>
+    <div class="send-rank" id="sendRank">—</div>
+
+    <div class="send-stats-row">
+      <div class="send-stat"><div class="send-stat-v" id="sendWords">0</div><div class="send-stat-l">Words</div></div>
+      <div class="send-stat"><div class="send-stat-v" id="sendStreak">0</div><div class="send-stat-l">Streak 🔥</div></div>
+      <div class="send-stat"><div class="send-stat-v" id="sendPoints">0</div><div class="send-stat-l">Points ⭐</div></div>
+    </div>
+
+    <div class="send-options">
+      <!-- QR Option -->
+      <button class="send-opt-btn send-opt-qr" onclick="openQR()">
+        <span class="send-opt-icon">📲</span>
+        <div>
+          <div class="send-opt-title">Show QR Code</div>
+          <div class="send-opt-sub">اعرض الرمز لمعلمك مباشرة</div>
+        </div>
+      </button>
+
+      <!-- Gmail Option -->
+      <button class="send-opt-btn send-opt-gmail" onclick="sendByGmail()">
+        <span class="send-opt-icon">📧</span>
+        <div>
+          <div class="send-opt-title">Send by Gmail</div>
+          <div class="send-opt-sub">أرسل نتائجك بالإيميل</div>
+        </div>
+      </button>
+
+      <!-- Telegram Option -->
+      <button class="send-opt-btn send-opt-telegram" onclick="sendByTelegram()">
+        <span class="send-opt-icon">✈️</span>
+        <div>
+          <div class="send-opt-title">Send to Teacher Now!</div>
+          <div class="send-opt-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SUCCESS CELEBRATION ══ -->
+<div class="celebrate-overlay" id="celebrateOverlay">
+  <div class="celebrate-box">
+    <div class="celebrate-emoji" id="celebrateEmoji">🎉</div>
+    <div class="celebrate-title" id="celebrateTitle">Amazing!</div>
+    <div class="celebrate-msg" id="celebrateMsg">—</div>
+    <button class="celebrate-btn" onclick="closeCelebrate()">Awesome! 🌟</button>
+  </div>
+</div>
+
 <nav class="bottom-nav">
   <button class="bnav-btn active" id="bn-home" onclick="showTab('home',this,'bn')">
     <span class="icon">🏠</span><span style="font-size:9px">Home</span>
@@ -5866,6 +6036,18 @@ window.addEventListener('load', () => {
     s.style.opacity = '0';
     setTimeout(() => {
       s.style.display = 'none';
+
+      // ══ DEV BYPASS — ?dev=1 in URL skips name screen ══
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('dev') === '1') {
+        if (!localStorage.getItem('studentName')) {
+          localStorage.setItem('studentName', 'ARAFAT');
+        }
+        renderStudentBanner(localStorage.getItem('studentName'));
+        wsCheckTeacherInviteLink();
+        return;
+      }
+
       // Show name screen if no name saved
       const name = localStorage.getItem('studentName');
       if (!name) {
@@ -5874,9 +6056,6 @@ window.addEventListener('load', () => {
       } else {
         renderStudentBanner(name);
       }
-      // Always check for a teacher invite link, regardless of saved name —
-      // a teacher opening the link on a device that already has a student
-      // name saved should still be able to switch into teacher mode.
       wsCheckTeacherInviteLink();
     }, 650);
   }, 2200);
@@ -7748,6 +7927,10 @@ ${lastWords}
 
 // ══ TEACHER PHONE SETTINGS ══
 const DEFAULT_TEACHER_PHONE = '966590355799';
+const DEFAULT_TEACHER_EMAIL = 'Ara1979fat@gmail.com';
+const TG_BOT_TOKEN = '8910257559:AAEnoJhgRvZX1qTuoJjpKUNp0d2jGrQeOhw';
+const TG_CHAT_ID   = '1030596793';
+function getTeacherEmail() { return localStorage.getItem('teacherEmail') || DEFAULT_TEACHER_EMAIL; }
 function getTeacherPhone() {
   return localStorage.getItem('teacherPhone') || DEFAULT_TEACHER_PHONE;
 }
@@ -7757,6 +7940,7 @@ function getTeacherDisplayName() {
 function openTeacherPhoneModal() {
   document.getElementById('teacherPhoneInp').value = (localStorage.getItem('teacherPhone') || '').replace(/^966/, '');
   document.getElementById('teacherNameInp').value = localStorage.getItem('teacherName') || '';
+  document.getElementById('teacherEmailInp').value = localStorage.getItem('teacherEmail') || DEFAULT_TEACHER_EMAIL;
   document.getElementById('teacherPhoneOverlay').classList.add('show');
 }
 function closeTeacherPhoneModal() {
@@ -7765,16 +7949,17 @@ function closeTeacherPhoneModal() {
 function saveTeacherPhone() {
   let phone = document.getElementById('teacherPhoneInp').value.trim().replace(/[^0-9]/g,'');
   let tname = document.getElementById('teacherNameInp').value.trim();
+  let temail = document.getElementById('teacherEmailInp').value.trim();
   if (!phone) { showToast('⚠️ أدخل رقم الواتساب', '#FB7185'); return; }
-  // Normalize Saudi numbers: if starts with 0, replace with 966; if 9 digits starting with 5, prepend 966
   if (phone.startsWith('0')) phone = '966' + phone.slice(1);
   else if (phone.length === 9 && phone.startsWith('5')) phone = '966' + phone;
   else if (!phone.startsWith('966') && phone.length <= 10) phone = '966' + phone;
   localStorage.setItem('teacherPhone', phone);
   localStorage.setItem('teacherName', tname || 'المعلم');
+  if (temail) localStorage.setItem('teacherEmail', temail);
   updateExportButtonLabel();
   closeTeacherPhoneModal();
-  showToast('✅ تم حفظ بيانات المعلم بنجاح!');
+  showToast('✅ Teacher info saved! تم حفظ بيانات المعلم');
 }
 function updateExportButtonLabel() {
   const btn = document.getElementById('exportBtnLabel');
@@ -9534,6 +9719,131 @@ function devSkipName() {
 <!-- QRCode.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+// ══ SEND RESULTS ══
+const MOTIVATIONAL = [
+  { emoji:'🌟', title:'Amazing!', msg:'Your teacher will be so proud of you!\nمعلمك سيفخر بك جداً!' },
+  { emoji:'🚀', title:'Fantastic!', msg:'Keep up the great work, champion!\nواصل يا بطل!' },
+  { emoji:'🏆', title:'Well Done!', msg:'You are a true WordSpark star!\nأنت نجم WordSpark الحقيقي!' },
+  { emoji:'🎉', title:'Brilliant!', msg:'Your hard work is paying off!\nجهدك يؤتي ثماره!' },
+  { emoji:'💪', title:'Super Star!', msg:'Nothing can stop you now!\nلا شيء يوقفك الآن!' },
+];
+
+function openSendResults() {
+  var name   = localStorage.getItem('studentName') || 'Student';
+  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak = parseInt(localStorage.getItem('streak') || '0');
+  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var rank   = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+
+  document.getElementById('sendAvatar').textContent  = rank.icon;
+  document.getElementById('sendName').textContent    = name;
+  document.getElementById('sendRank').textContent    = rank.title + ' · ' + rank.titleAr;
+  document.getElementById('sendWords').textContent   = words.length;
+  document.getElementById('sendStreak').textContent  = streak;
+  document.getElementById('sendPoints').textContent  = pts;
+
+  document.getElementById('sendOverlay').classList.add('show');
+}
+
+function closeSendResults() {
+  document.getElementById('sendOverlay').classList.remove('show');
+}
+
+async function sendByTelegram() {
+  var name   = localStorage.getItem('studentName') || 'Student';
+  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak = parseInt(localStorage.getItem('streak') || '0');
+  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var p      = getTrainProgress();
+  var done   = (p.completed || []).length;
+  var rank   = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+  var date   = new Date().toLocaleDateString('en-GB');
+
+  var msg =
+    '📊 *WordSpark Report*\n' +
+    '━━━━━━━━━━━━━━━━━━\n' +
+    '👤 *Student:* ' + name + '\n' +
+    '🏆 *Rank:* ' + rank.icon + ' ' + rank.title + ' · ' + rank.titleAr + '\n' +
+    '📚 *Words Learned:* ' + words.length + '\n' +
+    '🔥 *Day Streak:* ' + streak + ' days\n' +
+    '⭐ *Points:* ' + pts + '\n' +
+    '🚄 *Stations:* ' + done + '/37\n' +
+    '📅 *Date:* ' + date + '\n' +
+    '━━━━━━━━━━━━━━━━━━\n' +
+    '⚡ Sent from WordSpark';
+
+  try {
+    var res = await fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TG_CHAT_ID,
+        text: msg,
+        parse_mode: 'Markdown'
+      })
+    });
+    var data = await res.json();
+    if (data.ok) {
+      closeSendResults();
+      showCelebration();
+    } else {
+      showToast('⚠️ فشل الإرسال — تحقق من الاتصال', '#FB7185');
+    }
+  } catch(e) {
+    showToast('⚠️ تعذّر الإرسال — تحقق من الإنترنت', '#FB7185');
+  }
+}
+
+function sendByGmail() {
+  var name    = localStorage.getItem('studentName') || 'Student';
+  var words   = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak  = parseInt(localStorage.getItem('streak') || '0');
+  var pts     = parseInt(localStorage.getItem('wsPoints') || '0');
+  var p       = getTrainProgress();
+  var done    = (p.completed || []).length;
+  var rank    = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+  var email   = getTeacherEmail();
+  var teacher = getTeacherDisplayName();
+  var date    = new Date().toLocaleDateString('en-GB');
+
+  var subject = encodeURIComponent('WordSpark Report — ' + name + ' — ' + date);
+  var body = encodeURIComponent(
+    '📊 WordSpark Learning Report\n' +
+    '================================\n' +
+    '👤 Student: ' + name + '\n' +
+    '🏆 Rank: ' + rank.title + ' (' + rank.titleAr + ')\n' +
+    '📚 Words Learned: ' + words.length + '\n' +
+    '🔥 Day Streak: ' + streak + ' days\n' +
+    '⭐ Total Points: ' + pts + '\n' +
+    '🚄 Stations Completed: ' + done + '/37\n' +
+    '📅 Date: ' + date + '\n' +
+    '================================\n' +
+    'Sent from WordSpark ⚡\n' +
+    'ara2026fat.github.io/WordSpark-/wordspark.html'
+  );
+
+  var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(email) + '&su=' + subject + '&body=' + body;
+  window.open(gmailUrl, '_blank');
+
+  closeSendResults();
+  showCelebration();
+}
+
+function showCelebration() {
+  var m = MOTIVATIONAL[Math.floor(Math.random() * MOTIVATIONAL.length)];
+  document.getElementById('celebrateEmoji').textContent = m.emoji;
+  document.getElementById('celebrateTitle').textContent = m.title;
+  document.getElementById('celebrateMsg').textContent   = m.msg;
+  document.getElementById('celebrateOverlay').classList.add('show');
+}
+
+function closeCelebrate() {
+  document.getElementById('celebrateOverlay').classList.remove('show');
+}
+
 // ══ QR RESULTS ══
 function openQR() {
   // جمع البيانات
