@@ -2263,87 +2263,6 @@
 .qr-btn-close { background:rgba(255,255,255,.06); border:1px solid #243550; color:#94A3B8; }
 
 /* ══ FLOATING QR BUTTON ══ */
-.float-qr-btn {
-  position:fixed; bottom:76px; left:50%; transform:translateX(-50%);
-  z-index:200;
-  background:linear-gradient(135deg,#F5C842,#FB923C);
-  border:none; border-radius:30px;
-  padding:10px 22px;
-  display:flex; align-items:center; gap:8px;
-  box-shadow:0 4px 20px rgba(245,200,66,.4);
-  cursor:pointer;
-  animation:floatPulse 3s ease-in-out infinite;
-}
-@keyframes floatPulse {
-  0%,100% { box-shadow:0 4px 20px rgba(245,200,66,.4); }
-  50%      { box-shadow:0 6px 28px rgba(245,200,66,.7); }
-}
-.float-qr-icon { font-size:20px; }
-.float-qr-label { font-size:13px; font-weight:900; color:#0D1117; font-family:'Space Grotesk',sans-serif; }
-
-/* ══ SEND RESULTS OVERLAY ══ */
-.send-overlay {
-  position:fixed; inset:0; z-index:700;
-  background:rgba(0,0,0,.75); backdrop-filter:blur(6px);
-  display:none; align-items:flex-end; justify-content:center;
-}
-.send-overlay.show { display:flex; }
-.send-box {
-  background:linear-gradient(160deg,#1A2332,#0D1117);
-  border-radius:28px 28px 0 0;
-  border-top:2px solid #F5C84244;
-  padding:24px 20px 36px;
-  width:100%; max-width:480px;
-  position:relative;
-  animation:slideUp .3s ease;
-}
-.send-close {
-  position:absolute; top:16px; left:16px;
-  background:rgba(255,255,255,.06); border:none;
-  border-radius:50%; width:30px; height:30px;
-  color:#94A3B8; font-size:14px; cursor:pointer;
-}
-.send-avatar { font-size:48px; text-align:center; }
-.send-name { font-size:20px; font-weight:900; color:#F1F5F9; text-align:center; margin-top:4px; }
-.send-rank {
-  text-align:center; margin:6px auto 14px;
-  display:inline-block; width:100%;
-  font-size:12px; color:#F5C842; font-weight:700;
-}
-.send-stats-row {
-  display:flex; gap:8px; margin-bottom:18px;
-}
-.send-stat {
-  flex:1; background:rgba(255,255,255,.04);
-  border:1px solid #243550; border-radius:12px;
-  padding:10px 6px; text-align:center;
-}
-.send-stat-v { font-size:22px; font-weight:900; color:#2DD4BF; }
-.send-stat-l { font-size:9px; color:#64748B; margin-top:2px; font-family:'Space Grotesk',sans-serif; }
-
-.send-options { display:flex; flex-direction:column; gap:10px; }
-.send-opt-btn {
-  display:flex; align-items:center; gap:14px;
-  padding:14px 16px; border-radius:16px; border:none;
-  cursor:pointer; text-align:right;
-  transition:transform .15s;
-}
-.send-opt-btn:active { transform:scale(.97); }
-.send-opt-qr {
-  background:linear-gradient(135deg,rgba(45,212,191,.15),rgba(14,165,233,.1));
-  border:1px solid #2DD4BF44;
-}
-.send-opt-gmail {
-  background:linear-gradient(135deg,rgba(234,67,53,.12),rgba(251,113,133,.08));
-  border:1px solid #EA433544;
-}
-.send-opt-telegram {
-  background:linear-gradient(135deg,rgba(38,170,240,.15),rgba(0,136,204,.08));
-  border:1px solid #26AAF044;
-}
-.send-opt-title { font-size:15px; font-weight:900; color:#F1F5F9; font-family:'Space Grotesk',sans-serif; }
-.send-opt-sub { font-size:11px; color:#64748B; margin-top:2px; font-family:'Tajawal',sans-serif; }
-
 /* ══ CELEBRATION ══ */
 .celebrate-overlay {
   position:fixed; inset:0; z-index:900;
@@ -2786,7 +2705,7 @@
       </div>
     </div>
 
-    <div class="home-settings-row" style="display:flex;gap:8px">
+    <div class="home-settings-row">
       <button class="home-settings-btn" onclick="openTeacherPhoneModal()" style="flex:1">
         <span class="home-settings-icon">👨‍🏫</span>
         <span class="home-settings-text">
@@ -2794,10 +2713,6 @@
           <span class="home-settings-sub" id="homeTeacherSub">Send results via WhatsApp</span>
         </span>
         <span class="home-settings-arrow">←</span>
-      </button>
-      <button onclick="openQR()" style="background:linear-gradient(135deg,#F5C842,#FB923C);border:none;border-radius:14px;padding:10px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0">
-        <span style="font-size:22px">📊</span>
-        <span style="font-size:9px;font-weight:700;color:#0D1117;white-space:nowrap">My QR</span>
       </button>
     </div>
 
@@ -3896,58 +3811,110 @@
 </div>
 
 <!-- Bottom nav for mobile -->
-<!-- ══ FLOATING QR BUTTON ══ -->
-<button class="float-qr-btn" onclick="openSendResults()" title="Send Results to Teacher">
-  <span class="float-qr-icon">📊</span>
-  <span class="float-qr-label">Show Teacher</span>
-</button>
+<!-- ══ RESULTS DASHBOARD ══ -->
+<div class="results-screen" id="resultsScreen" style="display:none">
 
-<!-- ══ SEND RESULTS SCREEN ══ -->
-<div class="send-overlay" id="sendOverlay" onclick="if(event.target===this)closeSendResults()">
-  <div class="send-box">
-    <button class="send-close" onclick="closeSendResults()">✕</button>
-    <div class="send-avatar" id="sendAvatar">🌱</div>
-    <div class="send-name" id="sendName">—</div>
-    <div class="send-rank" id="sendRank">—</div>
+  <!-- Header -->
+  <div class="results-header">
+    <div class="results-header-title">📊 My Results <span style="font-size:11px;opacity:.6;font-weight:400">نتائجي</span></div>
+  </div>
 
-    <div class="send-stats-row">
-      <div class="send-stat"><div class="send-stat-v" id="sendWords">0</div><div class="send-stat-l">Words</div></div>
-      <div class="send-stat"><div class="send-stat-v" id="sendStreak">0</div><div class="send-stat-l">Streak 🔥</div></div>
-      <div class="send-stat"><div class="send-stat-v" id="sendPoints">0</div><div class="send-stat-l">Points ⭐</div></div>
+  <!-- Student Card -->
+  <div class="results-student-card">
+    <div class="results-avatar" id="resAvatar">🌱</div>
+    <div class="results-name" id="resName">—</div>
+    <div class="results-rank" id="resRank">—</div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="results-stats">
+    <div class="results-stat" style="border-color:#2DD4BF44">
+      <div class="results-stat-val" style="color:#2DD4BF" id="resWords">0</div>
+      <div class="results-stat-lbl">Words<br><span>كلمة</span></div>
     </div>
-
-    <div class="send-options">
-      <!-- QR Option -->
-      <button class="send-opt-btn send-opt-qr" onclick="openQR()">
-        <span class="send-opt-icon">📲</span>
-        <div>
-          <div class="send-opt-title">Show QR Code</div>
-          <div class="send-opt-sub">اعرض الرمز لمعلمك مباشرة</div>
-        </div>
-      </button>
-
-      <!-- Gmail Option -->
-      <button class="send-opt-btn send-opt-gmail" onclick="sendByGmail()">
-        <span class="send-opt-icon">📧</span>
-        <div>
-          <div class="send-opt-title">Send by Gmail</div>
-          <div class="send-opt-sub">أرسل نتائجك بالإيميل</div>
-        </div>
-      </button>
-
-      <!-- Telegram Option -->
-      <button class="send-opt-btn send-opt-telegram" onclick="sendByTelegram()">
-        <span class="send-opt-icon">✈️</span>
-        <div>
-          <div class="send-opt-title">Send to Teacher Now!</div>
-          <div class="send-opt-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
-        </div>
-      </button>
+    <div class="results-stat" style="border-color:#FB923C44">
+      <div class="results-stat-val" style="color:#FB923C" id="resStreak">0</div>
+      <div class="results-stat-lbl">Streak 🔥<br><span>يوم</span></div>
+    </div>
+    <div class="results-stat" style="border-color:#F5C84244">
+      <div class="results-stat-val" style="color:#F5C842" id="resPoints">0</div>
+      <div class="results-stat-lbl">Points ⭐<br><span>نقطة</span></div>
+    </div>
+    <div class="results-stat" style="border-color:#A78BFA44">
+      <div class="results-stat-val" style="color:#A78BFA" id="resStations">0</div>
+      <div class="results-stat-lbl">Stations ✅<br><span>محطة</span></div>
     </div>
   </div>
+
+  <!-- Progress -->
+  <div class="results-progress-wrap">
+    <div class="results-progress-label">
+      <span>Journey Progress</span>
+      <span id="resProgressPct">0%</span>
+    </div>
+    <div class="results-progress-track">
+      <div class="results-progress-fill" id="resProgressFill"></div>
+    </div>
+  </div>
+
+  <!-- Send Options -->
+  <div class="results-section-title">Send to Teacher <span>أرسل لمعلمك</span></div>
+  <div class="results-options">
+
+    <!-- Telegram -->
+    <button class="results-opt-btn results-opt-tg" onclick="sendByTelegram()">
+      <span class="results-opt-icon">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="24" fill="#26AAF0"/>
+          <path d="M10.5 23.5l6.5 2.5 2.5 8 3.5-4 7 5 6-17-25.5 5.5z" fill="white"/>
+          <path d="M17 26l1 7 3-4" fill="#B0D9F5"/>
+        </svg>
+      </span>
+      <div class="results-opt-text">
+        <div class="results-opt-title">Send Now via Telegram</div>
+        <div class="results-opt-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
+      </div>
+      <span class="results-opt-arrow">←</span>
+    </button>
+
+    <!-- WhatsApp -->
+    <button class="results-opt-btn results-opt-wa" onclick="sendByWhatsApp()">
+      <span class="results-opt-icon">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+          <circle cx="24" cy="24" r="24" fill="#25D366"/>
+          <path d="M33 15a13 13 0 00-21.9 14.1L9 39l10.1-2.6A13 13 0 0033 15z" fill="white"/>
+          <path d="M19.5 22c.3.6 1.5 2.5 3 3.5s2.8.8 3.2.5l1-.8c.3-.3.8-.4 1.2-.1l2.5 1.5c.4.2.5.7.2 1-.5.7-1.5 1.7-2.8 1.7-2 0-4.5-1-7-4.5-1.5-2-1.8-3.8-1.5-4.8.2-.8 1-.5 1 0z" fill="#25D366"/>
+        </svg>
+      </span>
+      <div class="results-opt-text">
+        <div class="results-opt-title">Send via WhatsApp</div>
+        <div class="results-opt-sub">أرسل عبر واتساب 📱</div>
+      </div>
+      <span class="results-opt-arrow">←</span>
+    </button>
+
+    <!-- QR Code -->
+    <button class="results-opt-btn results-opt-qr" onclick="showResultsQR()">
+      <span class="results-opt-icon" style="font-size:32px">📲</span>
+      <div class="results-opt-text">
+        <div class="results-opt-title">Show QR Code</div>
+        <div class="results-opt-sub">اعرض الرمز لمعلمك وجهاً لوجه</div>
+      </div>
+      <span class="results-opt-arrow">←</span>
+    </button>
+
+  </div>
+
+  <!-- QR Section (hidden by default) -->
+  <div id="resultsQRSection" style="display:none;text-align:center;margin-top:16px">
+    <div style="font-size:12px;color:#64748B;margin-bottom:8px">📲 Show this to your teacher!</div>
+    <div id="resultsQRCanvas" style="display:inline-block"></div>
+    <div style="font-size:10px;color:#3D4F6B;margin-top:6px" id="resultsQRDate">—</div>
+  </div>
+
 </div>
 
-<!-- ══ SUCCESS CELEBRATION ══ -->
+<!-- ══ CELEBRATION ══ -->
 <div class="celebrate-overlay" id="celebrateOverlay">
   <div class="celebrate-box">
     <div class="celebrate-emoji" id="celebrateEmoji">🎉</div>
@@ -3988,6 +3955,9 @@
   </button>
   <button class="bnav-btn" id="bn-quiz" onclick="showTab('quiz',this,'bn')">
     <span class="icon">🎯</span><span style="font-size:9px">Quiz</span>
+  </button>
+  <button class="bnav-btn" id="bn-results" onclick="showResultsTab(this)">
+    <span class="icon">📊</span><span style="font-size:9px">Results</span>
   </button>
   <button class="bnav-btn" id="bn-voice" onclick="showTab('voice',this,'bn')">
     <span class="icon">🎙️</span><span style="font-size:9px">Speak</span>
@@ -9721,33 +9691,78 @@ function devSkipName() {
 <script>
 // ══ SEND RESULTS ══
 const MOTIVATIONAL = [
-  { emoji:'🌟', title:'Amazing!', msg:'Your teacher will be so proud of you!\nمعلمك سيفخر بك جداً!' },
-  { emoji:'🚀', title:'Fantastic!', msg:'Keep up the great work, champion!\nواصل يا بطل!' },
-  { emoji:'🏆', title:'Well Done!', msg:'You are a true WordSpark star!\nأنت نجم WordSpark الحقيقي!' },
-  { emoji:'🎉', title:'Brilliant!', msg:'Your hard work is paying off!\nجهدك يؤتي ثماره!' },
+  { emoji:'🌟', title:'Amazing!',    msg:'Your teacher will be so proud of you!\nمعلمك سيفخر بك جداً!' },
+  { emoji:'🚀', title:'Fantastic!',  msg:'Keep up the great work, champion!\nواصل يا بطل!' },
+  { emoji:'🏆', title:'Well Done!',  msg:'You are a true WordSpark star!\nأنت نجم WordSpark الحقيقي!' },
+  { emoji:'🎉', title:'Brilliant!',  msg:'Your hard work is paying off!\nجهدك يؤتي ثماره!' },
   { emoji:'💪', title:'Super Star!', msg:'Nothing can stop you now!\nلا شيء يوقفك الآن!' },
 ];
 
-function openSendResults() {
+// ══ RESULTS DASHBOARD JS ══
+function showResultsTab(btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var p      = getTrainProgress();
+  var done   = (p.completed || []).length;
+  var total  = 37;
+  var pct    = Math.round((done / total) * 100);
   var rank   = RANKS[0];
   for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
 
-  document.getElementById('sendAvatar').textContent  = rank.icon;
-  document.getElementById('sendName').textContent    = name;
-  document.getElementById('sendRank').textContent    = rank.title + ' · ' + rank.titleAr;
-  document.getElementById('sendWords').textContent   = words.length;
-  document.getElementById('sendStreak').textContent  = streak;
-  document.getElementById('sendPoints').textContent  = pts;
-
-  document.getElementById('sendOverlay').classList.add('show');
+  document.getElementById('resAvatar').textContent   = rank.icon;
+  document.getElementById('resName').textContent     = name;
+  document.getElementById('resRank').textContent     = rank.title + ' · ' + rank.titleAr;
+  document.getElementById('resWords').textContent    = words.length;
+  document.getElementById('resStreak').textContent   = streak;
+  document.getElementById('resPoints').textContent   = pts;
+  document.getElementById('resStations').textContent = done;
+  document.getElementById('resProgressPct').textContent = pct + '%';
+  document.getElementById('resProgressFill').style.width = pct + '%';
+  document.getElementById('resultsQRSection').style.display = 'none';
+  document.getElementById('resultsScreen').style.display = 'block';
 }
 
-function closeSendResults() {
-  document.getElementById('sendOverlay').classList.remove('show');
+function showResultsQR() {
+  var qrSec = document.getElementById('resultsQRSection');
+  if (qrSec.style.display !== 'none') { qrSec.style.display = 'none'; return; }
+  var name   = localStorage.getItem('studentName') || 'Student';
+  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak = parseInt(localStorage.getItem('streak') || '0');
+  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var p      = getTrainProgress();
+  var done   = (p.completed || []).length;
+  var rank   = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+  var date   = new Date().toLocaleDateString('en-GB');
+  var qrData = ['WordSpark Report','Student: '+name,'Rank: '+rank.title,'Words: '+words.length,'Streak: '+streak+' days','Points: '+pts,'Stations: '+done+'/37','Date: '+date,'ara2026fat.github.io/WordSpark-/wordspark.html'].join('\n');
+  var canvas = document.getElementById('resultsQRCanvas');
+  canvas.innerHTML = '';
+  new QRCode(canvas, { text:qrData, width:160, height:160, colorDark:'#0D1117', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
+  document.getElementById('resultsQRDate').textContent = date;
+  qrSec.style.display = 'block';
+  qrSec.scrollIntoView({ behavior:'smooth' });
+}
+
+function sendByWhatsApp() {
+  var name   = localStorage.getItem('studentName') || 'Student';
+  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak = parseInt(localStorage.getItem('streak') || '0');
+  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var p      = getTrainProgress();
+  var done   = (p.completed || []).length;
+  var rank   = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+  var date   = new Date().toLocaleDateString('en-GB');
+  var phone  = getTeacherPhone();
+  var msg = encodeURIComponent('📊 *WordSpark Report*\n👤 Student: '+name+'\n🏆 Rank: '+rank.icon+' '+rank.title+'\n📚 Words: '+words.length+'\n🔥 Streak: '+streak+' days\n⭐ Points: '+pts+'\n🚄 Stations: '+done+'/37\n📅 Date: '+date+'\n⚡ Sent from WordSpark');
+  window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
+  showCelebration();
 }
 
 async function sendByTelegram() {
@@ -9760,76 +9775,16 @@ async function sendByTelegram() {
   var rank   = RANKS[0];
   for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
   var date   = new Date().toLocaleDateString('en-GB');
-
-  var msg =
-    '📊 *WordSpark Report*\n' +
-    '━━━━━━━━━━━━━━━━━━\n' +
-    '👤 *Student:* ' + name + '\n' +
-    '🏆 *Rank:* ' + rank.icon + ' ' + rank.title + ' · ' + rank.titleAr + '\n' +
-    '📚 *Words Learned:* ' + words.length + '\n' +
-    '🔥 *Day Streak:* ' + streak + ' days\n' +
-    '⭐ *Points:* ' + pts + '\n' +
-    '🚄 *Stations:* ' + done + '/37\n' +
-    '📅 *Date:* ' + date + '\n' +
-    '━━━━━━━━━━━━━━━━━━\n' +
-    '⚡ Sent from WordSpark';
-
+  var msg = '📊 *WordSpark Report*\n━━━━━━━━━━━━━━━━━━\n👤 *Student:* '+name+'\n🏆 *Rank:* '+rank.icon+' '+rank.title+' · '+rank.titleAr+'\n📚 *Words Learned:* '+words.length+'\n🔥 *Day Streak:* '+streak+' days\n⭐ *Points:* '+pts+'\n🚄 *Stations:* '+done+'/37\n📅 *Date:* '+date+'\n━━━━━━━━━━━━━━━━━━\n⚡ Sent from WordSpark';
   try {
-    var res = await fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendMessage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TG_CHAT_ID,
-        text: msg,
-        parse_mode: 'Markdown'
-      })
+    var res = await fetch('https://api.telegram.org/bot'+TG_BOT_TOKEN+'/sendMessage', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ chat_id:TG_CHAT_ID, text:msg, parse_mode:'Markdown' })
     });
     var data = await res.json();
-    if (data.ok) {
-      closeSendResults();
-      showCelebration();
-    } else {
-      showToast('⚠️ فشل الإرسال — تحقق من الاتصال', '#FB7185');
-    }
-  } catch(e) {
-    showToast('⚠️ تعذّر الإرسال — تحقق من الإنترنت', '#FB7185');
-  }
-}
-
-function sendByGmail() {
-  var name    = localStorage.getItem('studentName') || 'Student';
-  var words   = JSON.parse(localStorage.getItem('wsWords') || '[]');
-  var streak  = parseInt(localStorage.getItem('streak') || '0');
-  var pts     = parseInt(localStorage.getItem('wsPoints') || '0');
-  var p       = getTrainProgress();
-  var done    = (p.completed || []).length;
-  var rank    = RANKS[0];
-  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
-  var email   = getTeacherEmail();
-  var teacher = getTeacherDisplayName();
-  var date    = new Date().toLocaleDateString('en-GB');
-
-  var subject = encodeURIComponent('WordSpark Report — ' + name + ' — ' + date);
-  var body = encodeURIComponent(
-    '📊 WordSpark Learning Report\n' +
-    '================================\n' +
-    '👤 Student: ' + name + '\n' +
-    '🏆 Rank: ' + rank.title + ' (' + rank.titleAr + ')\n' +
-    '📚 Words Learned: ' + words.length + '\n' +
-    '🔥 Day Streak: ' + streak + ' days\n' +
-    '⭐ Total Points: ' + pts + '\n' +
-    '🚄 Stations Completed: ' + done + '/37\n' +
-    '📅 Date: ' + date + '\n' +
-    '================================\n' +
-    'Sent from WordSpark ⚡\n' +
-    'ara2026fat.github.io/WordSpark-/wordspark.html'
-  );
-
-  var gmailUrl = 'https://mail.google.com/mail/?view=cm&to=' + encodeURIComponent(email) + '&su=' + subject + '&body=' + body;
-  window.open(gmailUrl, '_blank');
-
-  closeSendResults();
-  showCelebration();
+    if (data.ok) { showCelebration(); }
+    else { showToast('⚠️ Failed to send', '#FB7185'); }
+  } catch(e) { showToast('⚠️ No internet connection', '#FB7185'); }
 }
 
 function showCelebration() {
@@ -9839,7 +9794,6 @@ function showCelebration() {
   document.getElementById('celebrateMsg').textContent   = m.msg;
   document.getElementById('celebrateOverlay').classList.add('show');
 }
-
 function closeCelebrate() {
   document.getElementById('celebrateOverlay').classList.remove('show');
 }
