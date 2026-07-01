@@ -6205,29 +6205,85 @@ function checkTrainAfterWord() {
 }
 
 // ══ TRAIN JOURNEY ══
-var ltQuestions = [
-  { q:'What does "Happy" mean?', type:'meaning', opts:['حزين','سعيد','غاضب','خائف'], ans:1, level:'beginner' },
-  { q:'What does "Book" mean?', type:'meaning', opts:['قلم','كتاب','مدرسة','طاولة'], ans:1, level:'beginner' },
-  { q:'What does "Eat" mean?', type:'meaning', opts:['ينام','يركض','يأكل','يشرب'], ans:2, level:'beginner' },
-  { q:'What does "Beautiful" mean?', type:'meaning', opts:['جميل','قبيح','كبير','صغير'], ans:0, level:'beginner' },
-  { q:'I ___ to school every day.', type:'fill', opts:['goes','go','going','went'], ans:1, level:'beginner' },
-  { q:'She ___ very hard for the exam.', type:'fill', opts:['study','studied','studies','studying'], ans:1, level:'medium' },
-  { q:'What does "Achieve" mean?', type:'meaning', opts:['يفشل','يحقق','يتجاهل','يتأخر'], ans:1, level:'medium' },
-  { q:'They ___ in this city for 5 years.', type:'fill', opts:['live','lived','have lived','living'], ans:2, level:'medium' },
-  { q:'What does "Confident" mean?', type:'meaning', opts:['خجول','واثق','قلق','حزين'], ans:1, level:'medium' },
-  { q:'If it rains, we ___ stay home.', type:'fill', opts:['will','would','can','must'], ans:0, level:'medium' },
-  { q:'What does "Perseverance" mean?', type:'meaning', opts:['المرونة','المثابرة','الفضول','الاندفاع'], ans:1, level:'advanced' },
-  { q:'The project ___ by the team before deadline.', type:'fill', opts:['completed','was completed','has complete','completing'], ans:1, level:'advanced' },
-  { q:'What does "Ambiguous" mean?', type:'meaning', opts:['واضح','غامض','بسيط','معقد'], ans:1, level:'advanced' },
-  { q:'___ he studied, ___ he scored.', type:'fill', opts:['More/higher','The more/the higher','Much/very','So/therefore'], ans:1, level:'advanced' },
-  { q:'What does "Eloquent" mean?', type:'meaning', opts:['فصيح','صامت','مترد','غاضب'], ans:0, level:'advanced' },
-];
+// ══ LEVEL TEST QUESTION BANK (45 questions) ══
+var ltQuestionBank = {
+  beginner: [
+    { q:'What does "Happy" mean?', type:'meaning', opts:['حزين','سعيد','غاضب','خائف'], ans:1 },
+    { q:'What does "Book" mean?', type:'meaning', opts:['قلم','كتاب','مدرسة','طاولة'], ans:1 },
+    { q:'What does "Eat" mean?', type:'meaning', opts:['ينام','يركض','يأكل','يشرب'], ans:2 },
+    { q:'What does "Beautiful" mean?', type:'meaning', opts:['جميل','قبيح','كبير','صغير'], ans:0 },
+    { q:'What does "Fast" mean?', type:'meaning', opts:['بطيء','ثقيل','سريع','هادئ'], ans:2 },
+    { q:'What does "Friend" mean?', type:'meaning', opts:['عدو','صديق','جار','معلم'], ans:1 },
+    { q:'What does "Water" mean?', type:'meaning', opts:['هواء','نار','ماء','تراب'], ans:2 },
+    { q:'What does "Strong" mean?', type:'meaning', opts:['ضعيف','قوي','طويل','قصير'], ans:1 },
+    { q:'What does "Sleep" mean?', type:'meaning', opts:['يلعب','يأكل','ينام','يركض'], ans:2 },
+    { q:'What does "House" mean?', type:'meaning', opts:['سيارة','منزل','مدرسة','حديقة'], ans:1 },
+    { q:'I ___ to school every day.', type:'fill', opts:['goes','go','going','went'], ans:1 },
+    { q:'She ___ a student.', type:'fill', opts:['am','is','are','be'], ans:1 },
+    { q:'They ___ football on Fridays.', type:'fill', opts:['plays','playing','play','played'], ans:2 },
+    { q:'He ___ coffee every morning.', type:'fill', opts:['drink','drinks','drinking','drank'], ans:1 },
+    { q:'We ___ happy today.', type:'fill', opts:['is','am','are','be'], ans:2 },
+  ],
+  medium: [
+    { q:'What does "Achieve" mean?', type:'meaning', opts:['يفشل','يحقق','يتجاهل','يتأخر'], ans:1 },
+    { q:'What does "Confident" mean?', type:'meaning', opts:['خجول','واثق','قلق','حزين'], ans:1 },
+    { q:'What does "Determine" mean?', type:'meaning', opts:['يتردد','يحدد','يتجاهل','يتأخر'], ans:1 },
+    { q:'What does "Improve" mean?', type:'meaning', opts:['يتراجع','يتجاهل','يتحسن','يتوقف'], ans:2 },
+    { q:'What does "Challenge" mean?', type:'meaning', opts:['راحة','فرصة','تحدي','مساعدة'], ans:2 },
+    { q:'What does "Responsible" mean?', type:'meaning', opts:['مسؤول','مهمل','كسول','خجول'], ans:0 },
+    { q:'What does "Curious" mean?', type:'meaning', opts:['غير مبالٍ','فضولي','خائف','غاضب'], ans:1 },
+    { q:'What does "Patient" mean?', type:'meaning', opts:['متسرع','صبور','غاضب','خجول'], ans:1 },
+    { q:'She ___ very hard for the exam.', type:'fill', opts:['study','studied','studies','studying'], ans:1 },
+    { q:'They ___ in this city for 5 years.', type:'fill', opts:['live','lived','have lived','living'], ans:2 },
+    { q:'If it rains, we ___ stay home.', type:'fill', opts:['will','would','can','must'], ans:0 },
+    { q:'By the time he arrived, she ___ already left.', type:'fill', opts:['has','have','had','was'], ans:2 },
+    { q:'I wish I ___ more time to study.', type:'fill', opts:['have','had','has','having'], ans:1 },
+    { q:'She ___ finish the project by tomorrow.', type:'fill', opts:['must','should','ought','need'], ans:0 },
+    { q:'He ___ English for three years now.', type:'fill', opts:['learns','learned','has been learning','is learn'], ans:2 },
+  ],
+  advanced: [
+    { q:'What does "Perseverance" mean?', type:'meaning', opts:['المرونة','المثابرة','الفضول','الاندفاع'], ans:1 },
+    { q:'What does "Ambiguous" mean?', type:'meaning', opts:['واضح','غامض','بسيط','معقد'], ans:1 },
+    { q:'What does "Eloquent" mean?', type:'meaning', opts:['فصيح','صامت','متردد','غاضب'], ans:0 },
+    { q:'What does "Pragmatic" mean?', type:'meaning', opts:['مثالي','عملي / براغماتي','عاطفي','متهور'], ans:1 },
+    { q:'What does "Diligent" mean?', type:'meaning', opts:['كسول','مجتهد','متهور','عشوائي'], ans:1 },
+    { q:'What does "Resilient" mean?', type:'meaning', opts:['هش','صامد / مرن','ضعيف','سريع الانكسار'], ans:1 },
+    { q:'What does "Profound" mean?', type:'meaning', opts:['سطحي','عميق','بسيط','عادي'], ans:1 },
+    { q:'What does "Meticulous" mean?', type:'meaning', opts:['مهمل','دقيق للغاية','سريع','عشوائي'], ans:1 },
+    { q:'The project ___ by the team before the deadline.', type:'fill', opts:['completed','was completed','has complete','completing'], ans:1 },
+    { q:'"___ more he studied, ___ higher he scored." Choose the correct words.', type:'fill', opts:['More/higher','The more/the higher','Much/very','So/therefore'], ans:1 },
+    { q:'Had she known the truth, she ___ differently.', type:'fill', opts:['would act','would have acted','will act','had acted'], ans:1 },
+    { q:'Not only ___ late, but he also forgot his homework.', type:'fill', opts:['he was','was he','he is','is he'], ans:1 },
+    { q:'The earlier you start, ___ you will finish.', type:'fill', opts:['the sooner','sooner','more soon','the more soon'], ans:0 },
+    { q:'She spoke so ___ that everyone was impressed.', type:'fill', opts:['eloquent','eloquently','eloquence','more eloquent'], ans:1 },
+    { q:'___ the heavy rain, they continued playing.', type:'fill', opts:['Despite','Although','However','Because'], ans:0 },
+  ]
+};
+
+// اختيار 15 سؤالاً عشوائياً (5 من كل مستوى)
+function buildLTQuestions() {
+  function pickRandom(arr, n) {
+    var copy = arr.slice();
+    for (var i = copy.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = copy[i]; copy[i] = copy[j]; copy[j] = tmp;
+    }
+    return copy.slice(0, n);
+  }
+  var b = pickRandom(ltQuestionBank.beginner, 5).map(function(q){ return Object.assign({}, q, {level:'beginner'}); });
+  var m = pickRandom(ltQuestionBank.medium, 5).map(function(q){ return Object.assign({}, q, {level:'medium'}); });
+  var a = pickRandom(ltQuestionBank.advanced, 5).map(function(q){ return Object.assign({}, q, {level:'advanced'}); });
+  return b.concat(m).concat(a);
+}
+
+var ltQuestions = buildLTQuestions();
 
 var ltCurrent = 0, ltScore = 0, ltStarsCount = 0;
 var ltColors = { beginner:'#2DD4BF', medium:'#F5C842', advanced:'#A78BFA' };
 var ltEmojis = { beginner:'🟢', medium:'🟡', advanced:'🔵' };
 
 function startLevelTest() {
+  ltQuestions = buildLTQuestions();
   ltCurrent = 0; ltScore = 0; ltStarsCount = 0;
   document.getElementById('levelTestScreen').style.display = 'block';
   document.getElementById('levelResultScreen').style.display = 'none';
