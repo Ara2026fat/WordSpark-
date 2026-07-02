@@ -2076,11 +2076,15 @@
   position:sticky; top:0; z-index:10;
 }
 .chapter-map-back {
-  width:36px; height:36px; border-radius:50%;
+  display:flex; align-items:center; gap:6px;
   background:rgba(255,255,255,.06); border:1px solid #243550;
-  display:flex; align-items:center; justify-content:center;
-  font-size:16px; color:#E8ECF5; cursor:pointer; flex-shrink:0;
+  border-radius:20px; padding:8px 14px;
+  font-size:13px; font-weight:700;
+  color:#E8ECF5; cursor:pointer; flex-shrink:0;
+  font-family:'Space Grotesk',sans-serif;
+  transition:background .2s;
 }
+.chapter-map-back:active { background:rgba(255,255,255,.12); }
 .chapter-map-title { font-size:15px; font-weight:900; color:#F1F5F9; }
 .chapter-map-sub { font-size:10px; color:#6B7A99; }
 
@@ -2614,7 +2618,7 @@
   <!-- CHAPTER MAP OVERLAY (مخطط الرحلة) -->
   <div class="chapter-map-overlay" id="chapterMapOverlay">
     <div class="chapter-map-header">
-      <button class="chapter-map-back" onclick="closeChapterMap()">→</button>
+      <button class="chapter-map-back" onclick="closeChapterMap()">← Back</button>
       <div>
         <div class="chapter-map-title" id="chMapTitle">—</div>
         <div class="chapter-map-sub" id="chMapSub">—</div>
@@ -9906,19 +9910,14 @@ const MOTIVATIONAL = [
 // ══ RESULTS DASHBOARD JS ══
 function closeResultsTab() {
   document.getElementById('resultsScreen').style.display = 'none';
-  document.getElementById('mainContent') && (document.getElementById('mainContent').style.display = '');
   document.querySelectorAll('.bnav-btn, .tab-btn').forEach(b => b.classList.remove('active'));
   var homeBtn = document.getElementById('bn-home');
   showTab('home', homeBtn);
 }
 
 function showResultsTab(btn) {
-  // نُخفي Results فقط ثم نُظهره — لا نمسّ الأقسام الأخرى
   document.querySelectorAll('.bnav-btn, .tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-
-  // نُخفي main content فقط
-  document.getElementById('mainContent') && (document.getElementById('mainContent').style.display = 'none');
 
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
