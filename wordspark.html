@@ -2308,7 +2308,72 @@
   font-family:'Space Grotesk',sans-serif; cursor:pointer;
 }
 
-/* ══ RESULTS DASHBOARD ══ */
+/* ══ SETTINGS PANEL ══ */
+.settings-overlay {
+  position:fixed; inset:0; z-index:600;
+  background:rgba(0,0,0,.75); backdrop-filter:blur(8px);
+  display:none; align-items:flex-end; justify-content:center;
+}
+.settings-overlay.show { display:flex; animation:spFadeIn .2s ease; }
+@keyframes spFadeIn { from{opacity:0} to{opacity:1} }
+.settings-panel {
+  width:100%; max-width:480px;
+  background:linear-gradient(160deg,#141A2C,#0D1117);
+  border-radius:28px 28px 0 0;
+  border-top:2px solid #F5C84233;
+  padding:0 18px 40px;
+  animation:spSlideUp .32s cubic-bezier(.25,.46,.45,.94);
+  max-height:92vh; overflow-y:auto;
+}
+@keyframes spSlideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sp-handle { width:40px; height:4px; border-radius:2px; background:#2D3B52; margin:14px auto 0; }
+.sp-top { display:flex; align-items:center; justify-content:space-between; padding:16px 0 8px; }
+.sp-title { font-size:18px; font-weight:900; color:#F1F5F9; font-family:'Space Grotesk',sans-serif; }
+.sp-close {
+  width:30px; height:30px; border-radius:50%;
+  background:rgba(255,255,255,.06); border:1px solid #243550;
+  color:#94A3B8; font-size:13px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+}
+.sp-student {
+  display:flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,rgba(245,200,66,.07),transparent);
+  border:1px solid #F5C84222; border-radius:16px;
+  padding:12px 14px; margin-bottom:16px;
+}
+.sp-student-avatar { font-size:28px; flex-shrink:0; }
+.sp-student-name { font-size:15px; font-weight:900; color:#F5C842; font-family:'Space Grotesk',sans-serif; }
+.sp-student-rank { font-size:10px; color:#64748B; margin-top:2px; }
+.sp-stat-val { font-size:16px; font-weight:900; font-family:'Space Grotesk',sans-serif; }
+.sp-stat-lbl { font-size:9px; color:#64748B; }
+.sp-section-label {
+  font-size:10px; font-weight:700; color:#3D4F6B;
+  font-family:'Space Grotesk',sans-serif;
+  text-transform:uppercase; letter-spacing:.8px;
+  margin:14px 0 8px 2px;
+  display:flex; align-items:center; gap:6px;
+}
+.sp-row {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,.03); border:1px solid #1E2A40;
+  border-radius:14px; padding:11px 13px;
+  margin-bottom:8px; cursor:pointer; width:100%;
+  transition:background .15s, transform .1s;
+  direction:ltr; text-align:left;
+}
+.sp-row:active { background:rgba(255,255,255,.07); transform:scale(.98); }
+.sp-row-icon {
+  width:38px; height:38px; border-radius:11px;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.sp-row-body { flex:1; min-width:0; }
+.sp-row-title { font-size:13px; font-weight:700; color:#F1F5F9; font-family:'Space Grotesk',sans-serif; }
+.sp-row-sub { font-size:10px; color:#64748B; margin-top:2px; font-family:'Tajawal',sans-serif; direction:rtl; }
+.sp-row-arrow { color:#2D3B52; font-size:13px; flex-shrink:0; }
+.sp-danger { border-color:#FB718522; }
+</style>
+
+<style>
 .results-screen {
   position:fixed; inset:0; z-index:200;
   background:#0A0C14; overflow-y:auto;
@@ -2850,6 +2915,7 @@
     <button class="theme-toggle" id="fontSizeBtn" onclick="cycleFontSize()" title="تكبير الخط" style="font-weight:900;font-size:13px">A</button>
     <button class="theme-toggle" id="helpBtn" onclick="openHelp()" title="دليل الاستخدام">📖</button>
     <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Switch theme">🌙</button>
+    <button class="theme-toggle" onclick="openSettingsPanel()" title="Settings" style="font-size:16px">⚙️</button>
   </div>
 </header>
 
@@ -4164,6 +4230,165 @@
     <div class="celebrate-title" id="celebrateTitle">Amazing!</div>
     <div class="celebrate-msg" id="celebrateMsg">—</div>
     <button class="celebrate-btn" onclick="closeCelebrate()">Awesome! 🌟</button>
+  </div>
+</div>
+
+<!-- ══ SETTINGS PANEL ══ -->
+<div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettingsPanel()">
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-handle"></div>
+
+    <!-- Panel Top -->
+    <div class="sp-top">
+      <div class="sp-title">⚙️ Settings</div>
+      <button class="sp-close" onclick="closeSettingsPanel()">✕</button>
+    </div>
+
+    <!-- Student Card -->
+    <div class="sp-student" id="spStudent">
+      <div class="sp-student-avatar" id="spAvatar">🌱</div>
+      <div style="flex:1;min-width:0">
+        <div class="sp-student-name" id="spName">—</div>
+        <div class="sp-student-rank" id="spRank" style="display:none">—</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div class="sp-stat-val" id="spWords" style="color:#2DD4BF">0</div>
+        <div class="sp-stat-lbl">Words</div>
+      </div>
+      <div style="text-align:center;flex-shrink:0">
+        <div class="sp-stat-val" id="spStreak" style="color:#FB923C">0</div>
+        <div class="sp-stat-lbl">Streak 🔥</div>
+      </div>
+    </div>
+
+    <!-- 1. Send Results -->
+    <div class="sp-section-label">📤 Send Results · إرسال النتائج</div>
+
+    <button class="sp-row" onclick="closeSettingsPanel();sendByTelegram()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#26AAF0,#0088cc)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M10.5 23.5l6.5 2.5 2.5 8 3.5-4 7 5 6-17-25.5 5.5z" fill="white"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Send via Telegram</div>
+        <div class="sp-row-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="closeSettingsPanel();exportResults()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#25D366,#128C7E)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M33 15a13 13 0 00-21.9 14.1L9 39l10.1-2.6A13 13 0 0033 15z" fill="white"/><path d="M19.5 22c.3.6 1.5 2.5 3 3.5s2.8.8 3.2.5l1-.8c.3-.3.8-.4 1.2-.1l2.5 1.5c.4.2.5.7.2 1-.5.7-1.5 1.7-2.8 1.7-2 0-4.5-1-7-4.5-1.5-2-1.8-3.8-1.5-4.8.2-.8 1-.5 1 0z" fill="#25D366"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title" id="spTeacherWALabel">Teacher WhatsApp</div>
+        <div class="sp-row-sub">واتساب المعلم</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="closeSettingsPanel();exportToParent()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="18" cy="16" r="6" fill="white" opacity=".9"/><circle cx="30" cy="16" r="6" fill="white" opacity=".7"/><path d="M6 38c0-7 5-11 12-11s12 4 12 11" fill="white" opacity=".9"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Father WhatsApp</div>
+        <div class="sp-row-sub">واتساب ولي الأمر</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="closeSettingsPanel();showResultsQR()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="26" y="8" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="8" y="26" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="12" y="12" width="6" height="6" rx="1" fill="white"/><rect x="30" y="12" width="6" height="6" rx="1" fill="white"/><rect x="12" y="30" width="6" height="6" rx="1" fill="white"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Show QR Code</div>
+        <div class="sp-row-sub">اعرض الرمز لمعلمك وجهاً لوجه</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <!-- 2. Teacher Info -->
+    <div class="sp-section-label">👨‍🏫 Teacher Info · بيانات المعلم</div>
+
+    <button class="sp-row" onclick="closeSettingsPanel();openTeacherPhoneModal()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#1E3A5F,#243550)">
+        <span style="font-size:20px">👨‍🏫</span>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Change Teacher Info</div>
+        <div class="sp-row-sub" id="spTeacherInfoSub">اسم المعلم · الواتساب · الإيميل</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <!-- 3. Learning -->
+    <div class="sp-section-label">📚 Learning · التعلّم</div>
+
+    <button class="sp-row" onclick="closeSettingsPanel();retakeLevelTest()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#FB923C)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none" opacity=".4"/><path d="M24 14v10l7 4" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M10 10l4 5-5 3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Retake Level Test</div>
+        <div class="sp-row-sub">إعادة اختبار تحديد المستوى</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <!-- 4. Backup -->
+    <div class="sp-section-label">🛡️ Backup · النسخ الاحتياطي</div>
+
+    <button class="sp-row" onclick="closeSettingsPanel();exportBackup()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#0EA5E9,#2DD4BF)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="8" y="32" width="32" height="7" rx="3" fill="white" opacity=".3"/><rect x="20" y="8" width="8" height="18" rx="3" fill="white"/><path d="M14 22l10 12 10-12" fill="white"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Download Backup</div>
+        <div class="sp-row-sub">احفظ نسخة احتياطية من كلماتك</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="closeSettingsPanel();document.getElementById('importFileInput').click()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#475569,#64748B)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="8" y="32" width="32" height="7" rx="3" fill="white" opacity=".3"/><rect x="20" y="10" width="8" height="18" rx="3" fill="white"/><path d="M14 22l10-12 10 12" fill="white"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Restore Backup</div>
+        <div class="sp-row-sub">استعد نسخة احتياطية سابقة</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <!-- 5. Danger Zone -->
+    <div class="sp-section-label" style="color:#FB718566">⚠️ Danger Zone</div>
+
+    <button class="sp-row sp-danger" onclick="closeSettingsPanel();confirmAction('packs')">
+      <div class="sp-row-icon" style="background:rgba(251,113,133,.1);border:1px solid #FB718533">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="10" y="14" width="28" height="22" rx="4" stroke="#FB7185" stroke-width="2.5" fill="none"/><rect x="16" y="10" width="16" height="6" rx="2" stroke="#FB7185" stroke-width="2" fill="none"/><path d="M18 26h12M18 32h8" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title" style="color:#FB7185">Reset Packs Only</div>
+        <div class="sp-row-sub">إعادة ضبط الحزم فقط</div>
+      </div>
+      <div class="sp-row-arrow" style="color:#FB718555">→</div>
+    </button>
+
+    <button class="sp-row sp-danger" onclick="closeSettingsPanel();confirmAction('all')">
+      <div class="sp-row-icon" style="background:rgba(251,113,133,.1);border:1px solid #FB718533">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M24 10C16.3 10 10 16.3 10 24s6.3 14 14 14 14-6.3 14-14" stroke="#FB7185" stroke-width="3" stroke-linecap="round" fill="none"/><path d="M34 8l4 6-6 2" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M20 20l8 8M28 20l-8 8" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title" style="color:#FB7185">Full Reset</div>
+        <div class="sp-row-sub">إعادة الضبط الكامل — لا يمكن التراجع</div>
+      </div>
+      <div class="sp-row-arrow" style="color:#FB718555">→</div>
+    </button>
+
+    <div style="text-align:center;font-size:10px;color:#1E2A40;margin-top:16px;font-family:'Space Grotesk',sans-serif">
+      ⚡ WordSpark v2.1 · Developed by ARAFAT ALRAJHI
+    </div>
   </div>
 </div>
 
@@ -10013,6 +10238,29 @@ const MOTIVATIONAL = [
   { emoji:'🎉', title:'Brilliant!',  msg:'Your hard work is paying off!\nجهدك يؤتي ثماره!' },
   { emoji:'💪', title:'Super Star!', msg:'Nothing can stop you now!\nلا شيء يوقفك الآن!' },
 ];
+
+// ══ SETTINGS PANEL ══
+function openSettingsPanel() {
+  var name   = localStorage.getItem('studentName') || 'Student';
+  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var streak = parseInt(localStorage.getItem('streak') || '0');
+  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
+  var rank   = RANKS[0];
+  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
+  var tname  = localStorage.getItem('teacherName') || 'المعلم';
+
+  document.getElementById('spAvatar').textContent  = rank.icon;
+  document.getElementById('spName').textContent    = name + ' · ' + rank.title;
+  document.getElementById('spWords').textContent   = words.length;
+  document.getElementById('spStreak').textContent  = streak;
+  document.getElementById('spTeacherWALabel').textContent = tname + ' WhatsApp';
+  document.getElementById('spTeacherInfoSub').textContent = tname + ' · ' + (localStorage.getItem('teacherPhone') || '—');
+  document.getElementById('settingsOverlay').classList.add('show');
+}
+
+function closeSettingsPanel() {
+  document.getElementById('settingsOverlay').classList.remove('show');
+}
 
 // ══ RESULTS DASHBOARD JS ══
 function closeResultsTab() {
