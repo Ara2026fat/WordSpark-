@@ -3219,12 +3219,21 @@
           <div class="input-label">المعنى بالعربية</div>
           <input class="inp" id="inp-ar" placeholder="مثال: طموح" autocomplete="off">
         </div>
+
+        <!-- AI Generate Button -->
+        <div style="text-align:center;margin:4px 0">
+          <button id="aiGenBtn" onclick="generateExample()" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);border:none;border-radius:12px;padding:8px 18px;color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;margin:0 auto;transition:opacity .2s">
+            <span id="aiGenIcon">✨</span>
+            <span id="aiGenLabel">Generate Example with AI · توليد مثال بالذكاء الاصطناعي</span>
+          </button>
+        </div>
+
         <div class="word-input-group">
-          <div class="input-label">مثال بالإنجليزية</div>
+          <div class="input-label">Example in English <span style="font-size:9px;opacity:.6">مثال بالإنجليزية</span></div>
           <input class="inp en" id="inp-ex" placeholder="e.g. She is ambitious." autocomplete="off" autocorrect="off">
         </div>
         <div class="word-input-group">
-          <div class="input-label">ترجمة المثال</div>
+          <div class="input-label">Arabic Translation <span style="font-size:9px;opacity:.6">ترجمة المثال</span></div>
           <input class="inp" id="inp-exar" placeholder="مثال: هي طموحة" autocomplete="off">
         </div>
       </div>
@@ -5215,6 +5224,63 @@ function updateCounters() {
   document.getElementById('beginnerCount').textContent = words.filter(w => w.level === 'beginner').length;
 }
 
+// ══ AI GENERATE EXAMPLE ══
+async function generateExample() {
+  const en = document.getElementById('inp-en').value.trim();
+  const ar = document.getElementById('inp-ar').value.trim();
+
+  if (!en) { showToast('⚠️ Enter the English word first', '#FB7185'); return; }
+
+  const btn   = document.getElementById('aiGenBtn');
+  const icon  = document.getElementById('aiGenIcon');
+  const label = document.getElementById('aiGenLabel');
+
+  // Loading state
+  btn.style.opacity = '.6';
+  btn.disabled = true;
+  icon.textContent  = '⏳';
+  label.textContent = 'Generating... · جاري التوليد';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 150,
+        messages: [{
+          role: 'user',
+          content: `Write ONE simple example sentence in English using the word "${en}" (meaning: ${ar || 'unknown'}). Then translate it to Arabic. Format EXACTLY as:
+EN: [sentence]
+AR: [Arabic translation]
+Keep it simple for a language learner. No extra text.`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+
+    const enMatch = text.match(/EN:\s*(.+)/);
+    const arMatch = text.match(/AR:\s*(.+)/);
+
+    if (enMatch && arMatch) {
+      document.getElementById('inp-ex').value   = enMatch[1].trim();
+      document.getElementById('inp-exar').value = arMatch[1].trim();
+      showToast('✨ Example generated! · تم توليد المثال', '#A78BFA');
+    } else {
+      showToast('⚠️ Try again · حاول مرة أخرى', '#FB7185');
+    }
+  } catch(e) {
+    showToast('⚠️ Connection error · خطأ في الاتصال', '#FB7185');
+  } finally {
+    btn.style.opacity = '1';
+    btn.disabled = false;
+    icon.textContent  = '✨';
+    label.textContent = 'Generate Example with AI · توليد مثال بالذكاء الاصطناعي';
+  }
+}
+
 // ══ ADD WORD ══
 const ARABIC_NUMS = {3:'٣', 4:'٤', 5:'٥'};
 function getDailyGoal() {
@@ -5253,7 +5319,8 @@ function addWord() {
   const ar   = document.getElementById('inp-ar').value.trim();
   const ex   = document.getElementById('inp-ex').value.trim();
   const exar = document.getElementById('inp-exar').value.trim();
-  if (!en || !ar) { showToast('⚠️ أدخل الكلمة والمعنى', '#FB7185'); return; }
+  console.log('addWord called:', {en, ar, wordsCount: words.length, today, goal: getDailyGoal(), todayCount: words.filter(w=>w.date===today).length});
+  if (!en || !ar) { showToast('⚠️ Enter the word and its meaning · أدخل الكلمة والمعنى', '#FB7185'); return; }
 
   // Prevent duplicates: check if this English word already exists (case-insensitive)
   const normalizedEn = en.toLowerCase().trim();
