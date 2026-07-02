@@ -2572,7 +2572,74 @@
   direction:rtl; text-align:right;
 }
 .results-opt-arrow { color:#3D4F6B; font-size:14px; flex-shrink:0; }
+
+/* ══ READING LAB ══ */
+.rl-level-tabs{display:flex;gap:8px;margin-bottom:16px}
+.rl-level-tab{flex:1;text-align:center;padding:10px 6px;border-radius:12px;border:1.5px solid var(--rim);background:var(--panel);cursor:pointer}
+.rl-level-tab.active{border-color:var(--teal);background:rgba(45,212,191,.1)}
+.rl-level-tab .en{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--white)}
+.rl-level-tab .ar{font-size:10px;color:var(--soft);margin-top:2px}
+
+.rl-passage-card{background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:18px;padding:16px;margin-bottom:12px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:transform .15s}
+.rl-passage-card:active{transform:scale(.98)}
+.rl-passage-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.rl-passage-info{flex:1;min-width:0}
+.rl-passage-title-en{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--white)}
+.rl-passage-title-ar{font-size:11.5px;color:var(--soft);margin-top:2px}
+.rl-passage-meta{display:flex;gap:8px;margin-top:7px}
+.rl-tag{font-size:9.5px;padding:2px 8px;border-radius:8px;background:rgba(255,255,255,.06);color:var(--soft)}
+.rl-passage-status{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.rl-status-done{background:rgba(45,212,191,.15);color:var(--teal)}
+.rl-status-new{background:rgba(245,200,66,.15);color:var(--gold)}
+
+.rl-passage-hero{background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:20px;padding:20px 18px;margin-bottom:16px}
+.rl-passage-hero-top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.rl-hero-icon{width:44px;height:44px;border-radius:12px;background:rgba(167,139,250,.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.rl-hero-title-en{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:800;color:var(--white)}
+.rl-hero-title-ar{font-size:11.5px;color:var(--soft)}
+.rl-listen-btn{margin-inline-start:auto;width:38px;height:38px;border-radius:50%;background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.3);color:var(--teal);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;cursor:pointer}
+
+.rl-passage-text{font-family:'Space Grotesk',sans-serif;font-size:16px;line-height:2.1;color:var(--white);direction:ltr;text-align:left}
+.rl-word{cursor:pointer;border-bottom:1.5px dashed rgba(167,139,250,.5);border-radius:3px;transition:background .15s}
+.rl-word:active,.rl-word.rl-tapped{background:rgba(167,139,250,.25)}
+
+.rl-hint{text-align:center;font-size:11px;color:var(--muted);margin:14px 0 4px}
+
+.rl-popup-backdrop{display:none;position:fixed;inset:0;background:rgba(5,8,14,.55);z-index:9999;align-items:flex-end;justify-content:center}
+.rl-popup-backdrop.show{display:flex}
+.rl-popup{width:100%;max-width:480px;background:var(--card);border-radius:22px 22px 0 0;padding:20px 20px calc(20px + var(--safe-bottom));border:1px solid var(--rim);border-bottom:none;animation:rlPopUp .25s ease}
+@keyframes rlPopUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+.rl-popup-word{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:var(--lavender);direction:ltr;text-align:left}
+.rl-popup-meaning{font-size:16px;color:var(--white);margin-top:6px}
+.rl-popup-close{margin-top:16px;width:100%;padding:12px;border-radius:12px;background:var(--panel);border:1px solid var(--rim);color:var(--soft);font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer}
+
+.rl-quiz-card{background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:20px;padding:20px 18px;margin-top:16px}
+.rl-quiz-qnum{font-size:11px;color:var(--soft);margin-bottom:8px}
+.rl-quiz-q{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;color:var(--white);direction:ltr;text-align:left;margin-bottom:4px}
+.rl-quiz-q-ar{font-size:11.5px;color:var(--soft);margin-bottom:14px}
+.rl-quiz-opt{padding:12px 14px;border-radius:12px;border:1.5px solid var(--rim);background:rgba(255,255,255,.03);margin-bottom:9px;font-family:'Space Grotesk',sans-serif;font-size:13.5px;color:var(--white);direction:ltr;text-align:left;cursor:pointer}
+.rl-quiz-opt.rl-correct{border-color:var(--teal);background:rgba(45,212,191,.12);color:var(--teal)}
+.rl-quiz-opt.rl-wrong{border-color:var(--rose);background:rgba(251,113,133,.12);color:var(--rose)}
+
+.rl-cta{margin-top:16px;width:100%;padding:14px;border-radius:14px;background:linear-gradient(135deg,var(--lavender),#7C3AED);border:none;color:white;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}
+.rl-cta .ar{font-size:10px;font-weight:400;opacity:.8}
+.rl-cta-teal{background:linear-gradient(135deg,#2DD4BF,#0E9F8A) !important}
+
+.rl-voice-warning{background:rgba(251,113,133,.08);border:1px solid rgba(251,113,133,.25);border-radius:12px;padding:10px 14px;font-size:11.5px;color:var(--rose);margin-bottom:12px;line-height:1.7}
+
+.rl-result-card{background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:18px;padding:16px 18px;margin-bottom:16px}
+.rl-result-score{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px}
+.rl-result-compare{font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:2;direction:ltr;text-align:left}
 </style>
+
+<!-- TAP-TRANSLATE POPUP (Reading Lab) -->
+<div class="rl-popup-backdrop" id="rlPopup" onclick="if(event.target===this)rlClosePopup()">
+  <div class="rl-popup">
+    <div class="rl-popup-word" id="rlPopupEn">Word</div>
+    <div class="rl-popup-meaning" id="rlPopupAr">المعنى</div>
+    <button class="rl-popup-close" onclick="rlClosePopup()">إغلاق</button>
+  </div>
+</div>
 
 <!-- ══ TRAIN JOURNEY SCREEN ══ -->
 <div class="train-screen" id="trainScreen">
@@ -3085,6 +3152,11 @@
         <div class="home-tile-label">Podcast</div>
         <div class="home-tile-sub">البودكاست</div>
       </div>
+      <div class="home-tile t-reading" onclick="showTab('reading', null)">
+        <div class="home-tile-icon">📖</div>
+        <div class="home-tile-label">Reading Lab</div>
+        <div class="home-tile-sub">مختبر القراءة</div>
+      </div>
     </div>
 
     <div class="home-footer-link">
@@ -3218,14 +3290,6 @@
         <div class="word-input-group">
           <div class="input-label">المعنى بالعربية</div>
           <input class="inp" id="inp-ar" placeholder="مثال: طموح" autocomplete="off">
-        </div>
-
-        <!-- AI Generate Button -->
-        <div style="text-align:center;margin:4px 0">
-          <button id="aiGenBtn" onclick="generateExample()" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);border:none;border-radius:12px;padding:8px 18px;color:white;font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;margin:0 auto;transition:opacity .2s">
-            <span id="aiGenIcon">✨</span>
-            <span id="aiGenLabel">Generate Example with AI · توليد مثال بالذكاء الاصطناعي</span>
-          </button>
         </div>
 
         <div class="word-input-group">
@@ -3506,6 +3570,60 @@
       <div id="podcastDetailArea"></div>
     </div>
   </div>
+
+  <!-- ══ READING LAB ══ -->
+  <div id="tab-reading" class="section">
+    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
+    <div class="sec-title">📖 Reading Lab <span style="font-size:10px;font-weight:400;color:var(--muted)">مختبر القراءة</span></div>
+    <div class="sec-sub">اقرأ، افهم، وتحقّق من نطقك</div>
+
+    <div id="rlMenuArea">
+      <div class="rl-level-tabs" id="rlLevelTabs">
+        <div class="rl-level-tab active" data-level="beginner" onclick="rlSelectLevel('beginner', this)"><div class="en">🟢 Beginner</div><div class="ar">مبتدئ</div></div>
+        <div class="rl-level-tab" data-level="medium" onclick="rlSelectLevel('medium', this)"><div class="en">🟡 Medium</div><div class="ar">متوسط</div></div>
+        <div class="rl-level-tab" data-level="advanced" onclick="rlSelectLevel('advanced', this)"><div class="en">🔵 Advanced</div><div class="ar">متقدم</div></div>
+      </div>
+      <div id="rlPassageList"></div>
+    </div>
+
+    <div id="rlReaderArea" style="display:none">
+      <button class="back-btn" onclick="rlCloseReader()">← العودة لقائمة النصوص</button>
+
+      <div class="rl-passage-hero">
+        <div class="rl-passage-hero-top">
+          <div class="rl-hero-icon" id="rlHeroIcon">📖</div>
+          <div>
+            <div class="rl-hero-title-en" id="rlHeroTitleEn">Title</div>
+            <div class="rl-hero-title-ar" id="rlHeroTitleAr">العنوان</div>
+          </div>
+          <div class="rl-listen-btn" onclick="rlListenPassage()">🔊</div>
+        </div>
+        <div class="rl-passage-text" id="rlText"></div>
+      </div>
+
+      <div class="rl-hint">💡 اضغط على أي كلمة مسطّرة لمعرفة معناها</div>
+
+      <div id="rlVoiceWarning" style="display:none" class="rl-voice-warning"></div>
+
+      <button class="rl-cta rl-cta-teal" id="rlReadAloudBtn" onclick="rlStartReadAloud()">
+        <span id="rlRaLabel">🎙️ Read Aloud &amp; Check</span>
+        <span class="ar" id="rlRaLabelAr">اقرأ بصوتك واحصل على تصحيح</span>
+      </button>
+
+      <div id="rlRaResult" style="display:none" class="rl-result-card">
+        <div class="rl-result-score" id="rlRaScoreLine">Score: —</div>
+        <div class="rl-result-compare" id="rlRaCompare"></div>
+      </div>
+
+      <div id="rlQuizArea"></div>
+
+      <button class="rl-cta" onclick="rlCloseReader()">
+        <span>Back to Reading Lab</span>
+        <span class="ar">العودة إلى مختبر القراءة</span>
+      </button>
+    </div>
+  </div>
+
   <!-- ══ FOOTER SIGNATURE ══ -->
   <div class="sig-footer">
     <div class="sig-label">💡 Developed by</div>
@@ -5224,63 +5342,6 @@ function updateCounters() {
   document.getElementById('beginnerCount').textContent = words.filter(w => w.level === 'beginner').length;
 }
 
-// ══ AI GENERATE EXAMPLE ══
-async function generateExample() {
-  const en = document.getElementById('inp-en').value.trim();
-  const ar = document.getElementById('inp-ar').value.trim();
-
-  if (!en) { showToast('⚠️ Enter the English word first', '#FB7185'); return; }
-
-  const btn   = document.getElementById('aiGenBtn');
-  const icon  = document.getElementById('aiGenIcon');
-  const label = document.getElementById('aiGenLabel');
-
-  // Loading state
-  btn.style.opacity = '.6';
-  btn.disabled = true;
-  icon.textContent  = '⏳';
-  label.textContent = 'Generating... · جاري التوليد';
-
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 150,
-        messages: [{
-          role: 'user',
-          content: `Write ONE simple example sentence in English using the word "${en}" (meaning: ${ar || 'unknown'}). Then translate it to Arabic. Format EXACTLY as:
-EN: [sentence]
-AR: [Arabic translation]
-Keep it simple for a language learner. No extra text.`
-        }]
-      })
-    });
-
-    const data = await res.json();
-    const text = data.content?.[0]?.text || '';
-
-    const enMatch = text.match(/EN:\s*(.+)/);
-    const arMatch = text.match(/AR:\s*(.+)/);
-
-    if (enMatch && arMatch) {
-      document.getElementById('inp-ex').value   = enMatch[1].trim();
-      document.getElementById('inp-exar').value = arMatch[1].trim();
-      showToast('✨ Example generated! · تم توليد المثال', '#A78BFA');
-    } else {
-      showToast('⚠️ Try again · حاول مرة أخرى', '#FB7185');
-    }
-  } catch(e) {
-    showToast('⚠️ Connection error · خطأ في الاتصال', '#FB7185');
-  } finally {
-    btn.style.opacity = '1';
-    btn.disabled = false;
-    icon.textContent  = '✨';
-    label.textContent = 'Generate Example with AI · توليد مثال بالذكاء الاصطناعي';
-  }
-}
-
 // ══ ADD WORD ══
 const ARABIC_NUMS = {3:'٣', 4:'٤', 5:'٥'};
 function getDailyGoal() {
@@ -6194,6 +6255,7 @@ function showTab(name, btn, navType) {
   if (name === 'flash') renderFlashcards();
   if (name === 'home')  updateHomeStats();
   if (name === 'words') updateWordsDashboard();
+  if (name === 'reading') rlRenderList();
 
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
 }
@@ -8341,6 +8403,7 @@ var POINTS_CONFIG = {
   listenPodcast:10,  // استماع بودكاست
   voiceChat:    10,  // دردشة صوتية
   passQuiz:     15,  // اجتياز اختبار
+  readComplete: 10,  // إكمال نص قراءة
   streak3:      10,  // 3 أيام متواصلة
   streak7:      25,  // 7 أيام متواصلة
   streak15:     50,  // 15 يوماً
@@ -10036,6 +10099,585 @@ function podToggleTranscript() {
   const showing = t.classList.toggle('show');
   btn.textContent = showing ? '🙈 إخفاء النص' : '📜 إظهار النص';
 }
+
+// ══ READING LAB ══
+const readingPassages = [
+  // ── BEGINNER ──
+  {
+    id:'market', icon:'🛒', color:'rgba(45,212,191,.15)', level:'beginner',
+    titleEn:'A Trip to the Market', titleAr:'رحلة إلى السوق', words:59, minutes:1,
+    parts:[
+      {t:"On Saturday morning, Sara goes to the "},
+      {t:"market", w:true, ar:"السوق"},
+      {t:" with her mother. The market is "},
+      {t:"busy", w:true, ar:"مزدحم"},
+      {t:" and "},
+      {t:"colorful", w:true, ar:"ملوّن"},
+      {t:". They buy fresh vegetables, fruit, and bread. Sara likes to smell the oranges before buying them. Her mother talks to the "},
+      {t:"seller", w:true, ar:"البائع"},
+      {t:" and asks about the "},
+      {t:"price", w:true, ar:"السعر"},
+      {t:". After shopping, they carry the bags home together. Sara feels "},
+      {t:"proud", w:true, ar:"فخورة"},
+      {t:" to help her mother."}
+    ],
+    questions:[
+      { q:"What does Sara like to do before buying oranges?", ar:"ماذا تحب سارة أن تفعل قبل شراء البرتقال؟", opts:["Smell them","Count them","Paint them"], ans:"Smell them" },
+      { q:"How does Sara feel after shopping?", ar:"كيف تشعر سارة بعد التسوق؟", opts:["Tired","Proud","Angry"], ans:"Proud" }
+    ]
+  },
+  {
+    id:'school', icon:'🎒', color:'rgba(167,139,250,.15)', level:'beginner',
+    titleEn:'My First Day at School', titleAr:'يومي الأول في المدرسة', words:66, minutes:1,
+    parts:[
+      {t:"Yousef wakes up early for his first day at school. He wears his new "},
+      {t:"backpack", w:true, ar:"حقيبة الظهر"},
+      {t:" and shoes. His father drives him to school and smiles at him. In the "},
+      {t:"classroom", w:true, ar:"الفصل الدراسي"},
+      {t:", Yousef meets his teacher and new friends. At first, he feels a little "},
+      {t:"shy", w:true, ar:"خجول"},
+      {t:". During break time, he plays football with his "},
+      {t:"classmates", w:true, ar:"زملاء الصف"},
+      {t:". By the end of the day, Yousef feels happy and "},
+      {t:"excited", w:true, ar:"متحمس"},
+      {t:" about tomorrow."}
+    ],
+    questions:[
+      { q:"How does Yousef feel at first?", ar:"كيف يشعر يوسف في البداية؟", opts:["Excited","Shy","Angry"], ans:"Shy" },
+      { q:"What does he play during break time?", ar:"ماذا يلعب خلال وقت الاستراحة؟", opts:["Football","Basketball","Chess"], ans:"Football" }
+    ]
+  },
+  {
+    id:'family', icon:'👨‍👩‍👧', color:'rgba(245,200,66,.15)', level:'beginner',
+    titleEn:'A Weekend with Family', titleAr:'عطلة نهاية أسبوع مع العائلة', words:64, minutes:1,
+    parts:[
+      {t:"Every weekend, Lina's family visits her "},
+      {t:"grandparents", w:true, ar:"الأجداد"},
+      {t:". Her grandfather tells old stories about his "},
+      {t:"childhood", w:true, ar:"طفولته"},
+      {t:", and everyone listens with interest. Her grandmother cooks "},
+      {t:"delicious", w:true, ar:"لذيذ"},
+      {t:" food, and the smell fills the whole house. After lunch, the children play in the "},
+      {t:"garden", w:true, ar:"الحديقة"},
+      {t:" while the adults drink tea and talk. Lina loves these weekends because the whole family is "},
+      {t:"together", w:true, ar:"معاً"},
+      {t:"."}
+    ],
+    questions:[
+      { q:"What does Lina's grandmother do?", ar:"ماذا تفعل جدة لينا؟", opts:["Cooks food","Tells stories","Plays football"], ans:"Cooks food" },
+      { q:"Why does Lina love these weekends?", ar:"لماذا تحب لينا هذه العطلات؟", opts:["The food only","The whole family is together","The garden only"], ans:"The whole family is together" }
+    ]
+  },
+  {
+    id:'match', icon:'⚽', color:'rgba(251,113,133,.15)', level:'beginner',
+    titleEn:'The Football Match', titleAr:'مباراة كرة القدم', words:61, minutes:1,
+    parts:[
+      {t:"On Friday afternoon, Khalid plays in a football "},
+      {t:"match", w:true, ar:"مباراة"},
+      {t:" with his school team. Before the game, the "},
+      {t:"coach", w:true, ar:"المدرب"},
+      {t:" gives the players some advice. Khalid feels a little "},
+      {t:"nervous", w:true, ar:"متوتر"},
+      {t:", but also excited. In the second half, he scores a "},
+      {t:"goal", w:true, ar:"هدف"},
+      {t:", and his teammates cheer loudly. His team wins the match. Khalid feels very "},
+      {t:"proud", w:true, ar:"فخور"},
+      {t:" and thanks his coach and teammates."}
+    ],
+    questions:[
+      { q:"How does Khalid feel before the game?", ar:"كيف يشعر خالد قبل المباراة؟", opts:["Bored","Nervous and excited","Angry"], ans:"Nervous and excited" },
+      { q:"What happens in the second half?", ar:"ماذا يحدث في الشوط الثاني؟", opts:["Khalid scores a goal","The match stops","Khalid gets tired"], ans:"Khalid scores a goal" }
+    ]
+  },
+  {
+    id:'grandma', icon:'👵', color:'rgba(167,139,250,.15)', level:'beginner',
+    titleEn:'Helping Grandma Cross the Street', titleAr:'مساعدة الجدة في عبور الشارع', words:78, minutes:1,
+    parts:[
+      {t:"Every Sunday, Yazan walks to the park with his "},
+      {t:"grandmother", w:true, ar:"جدّته"},
+      {t:". She walks slowly and holds his hand. When they reach a busy street, Yazan looks both ways and helps her cross "},
+      {t:"safely", w:true, ar:"بأمان"},
+      {t:". He always speaks to her with a soft, "},
+      {t:"respectful", w:true, ar:"محترم"},
+      {t:" voice. At the park, they sit together, and Yazan "},
+      {t:"listens", w:true, ar:"ينصت"},
+      {t:" to her stories with a "},
+      {t:"smile", w:true, ar:"ابتسامة"},
+      {t:". His grandmother says, \"You are a good boy, Yazan.\" He feels warm and happy inside, knowing he made her day easier."}
+    ],
+    questions:[
+      { q:"How does Yazan help his grandmother?", ar:"كيف يساعد يزن جدّته؟", opts:["He helps her cross the street safely","He carries her bag","He buys her food"], ans:"He helps her cross the street safely" },
+      { q:"How does Yazan feel at the end?", ar:"كيف يشعر يزن في النهاية؟", opts:["Tired","Warm and happy","Bored"], ans:"Warm and happy" }
+    ]
+  },
+
+  // ── MEDIUM ──
+  {
+    id:'trip', icon:'✈️', color:'rgba(45,212,191,.15)', level:'medium',
+    titleEn:'Planning a Summer Trip', titleAr:'التخطيط لرحلة صيفية', words:104, minutes:2,
+    parts:[
+      {t:"Every summer, Faisal's family "},
+      {t:"plans", w:true, ar:"يخطّطون"},
+      {t:" a trip together. This year, they decided to visit a new city by the sea. Faisal's mother made a list of things to pack, while his father "},
+      {t:"booked", w:true, ar:"حجز"},
+      {t:" the hotel online. Faisal was "},
+      {t:"responsible", w:true, ar:"مسؤول"},
+      {t:" for planning fun "},
+      {t:"activities", w:true, ar:"أنشطة"},
+      {t:" for the family, like visiting museums and trying local food. On the day of the trip, everyone woke up early and packed the car. The drive was long, but they enjoyed talking and playing word games along the way. When they finally "},
+      {t:"arrived", w:true, ar:"وصلوا"},
+      {t:", Faisal felt excited to "},
+      {t:"explore", w:true, ar:"يستكشف"},
+      {t:" the new city."}
+    ],
+    questions:[
+      { q:"Who was responsible for planning fun activities?", ar:"من كان مسؤولاً عن التخطيط للأنشطة الممتعة؟", opts:["Faisal","His mother","His father"], ans:"Faisal" },
+      { q:"How did the family travel to the new city?", ar:"كيف سافرت العائلة إلى المدينة الجديدة؟", opts:["By plane","By car","By train"], ans:"By car" }
+    ]
+  },
+  {
+    id:'restaurant', icon:'🍽️', color:'rgba(245,200,66,.15)', level:'medium',
+    titleEn:'A Busy Day at the Restaurant', titleAr:'يوم مزدحم في المطعم', words:98, minutes:2,
+    parts:[
+      {t:"Noura's family owns a small restaurant in the city. On weekends, it becomes very busy with "},
+      {t:"customers", w:true, ar:"زبائن"},
+      {t:". Noura helps her parents after school by taking orders and "},
+      {t:"serving", w:true, ar:"تقديم"},
+      {t:" drinks. She enjoys talking to the customers and making them feel "},
+      {t:"welcome", w:true, ar:"مرحّب بهم"},
+      {t:". Sometimes, the "},
+      {t:"kitchen", w:true, ar:"المطبخ"},
+      {t:" gets extremely hot and noisy, but everyone works as a "},
+      {t:"team", w:true, ar:"فريق"},
+      {t:" to finish orders quickly. At the end of the day, the family sits together, tired but "},
+      {t:"proud", w:true, ar:"فخورون"},
+      {t:" of their hard work."}
+    ],
+    questions:[
+      { q:"What does Noura do at the restaurant?", ar:"ماذا تفعل نورة في المطعم؟", opts:["Cooks the food","Takes orders and serves drinks","Cleans the tables"], ans:"Takes orders and serves drinks" },
+      { q:"How does the family feel at the end of the day?", ar:"كيف تشعر العائلة في نهاية اليوم؟", opts:["Angry","Tired but proud","Bored"], ans:"Tired but proud" }
+    ]
+  },
+  {
+    id:'swim', icon:'🏊', color:'rgba(167,139,250,.15)', level:'medium',
+    titleEn:'Learning to Swim', titleAr:'تعلّم السباحة', words:92, minutes:2,
+    parts:[
+      {t:"Last month, Abdullah decided to learn how to swim. At first, he was "},
+      {t:"afraid", w:true, ar:"خائف"},
+      {t:" of the deep water and held tightly to the edge of the pool. His "},
+      {t:"coach", w:true, ar:"مدربه"},
+      {t:" taught him how to "},
+      {t:"breathe", w:true, ar:"يتنفّس"},
+      {t:" correctly and move his arms and legs together. Abdullah "},
+      {t:"practiced", w:true, ar:"تدرّب"},
+      {t:" every day after school, even when he felt tired. After a few weeks, he noticed real "},
+      {t:"improvement", w:true, ar:"تحسّن"},
+      {t:", and his "},
+      {t:"confidence", w:true, ar:"ثقته بنفسه"},
+      {t:" grew. Now, Abdullah can swim across the pool without any help."}
+    ],
+    questions:[
+      { q:"Why was Abdullah afraid at first?", ar:"لماذا كان عبدالله خائفاً في البداية؟", opts:["Of the coach","Of the deep water","Of his friends"], ans:"Of the deep water" },
+      { q:"What helped Abdullah improve?", ar:"ماذا ساعد عبدالله على التحسّن؟", opts:["Watching videos","Daily practice","Reading books"], ans:"Daily practice" }
+    ]
+  },
+  {
+    id:'neighbor', icon:'🏠', color:'rgba(251,113,133,.15)', level:'medium',
+    titleEn:'The New Neighbor', titleAr:'الجار الجديد', words:99, minutes:2,
+    parts:[
+      {t:"Last week, a new family moved into the house next to Omar's. Omar noticed a boy about his age carrying boxes into the house. He felt "},
+      {t:"curious", w:true, ar:"فضولي"},
+      {t:" but a little shy to "},
+      {t:"introduce", w:true, ar:"يعرّف"},
+      {t:" himself. The next day, Omar decided to be "},
+      {t:"brave", w:true, ar:"شجاع"},
+      {t:" and knocked on their door with a plate of dates as a "},
+      {t:"welcome", w:true, ar:"ترحيب"},
+      {t:" gift. The boy's name was Sami, and he was happy to meet a friend "},
+      {t:"nearby", w:true, ar:"قريب"},
+      {t:". They talked about school and their favorite sports. By the end of the day, Omar and Sami had become good friends."}
+    ],
+    questions:[
+      { q:"How did Omar welcome Sami's family?", ar:"كيف رحّب عمر بعائلة سامي؟", opts:["He called them","He gave them a plate of dates","He ignored them"], ans:"He gave them a plate of dates" },
+      { q:"What did Omar and Sami talk about?", ar:"عن ماذا تحدّث عمر وسامي؟", opts:["Their pets","School and sports","Video games"], ans:"School and sports" }
+    ]
+  },
+  {
+    id:'momadvice', icon:'👨‍👩‍👦', color:'rgba(45,212,191,.15)', level:'medium',
+    titleEn:"Listening to Mom's Advice", titleAr:'الاستماع لنصيحة الأم', words:98, minutes:2,
+    parts:[
+      {t:"Tariq often stayed up late playing games and felt tired every morning. His mother gently "},
+      {t:"advised", w:true, ar:"نصحت"},
+      {t:" him to create a proper daily "},
+      {t:"schedule", w:true, ar:"جدول"},
+      {t:", with fixed times for studying, resting, and free time. At first, Tariq found it difficult to follow her advice, but he decided to "},
+      {t:"trust", w:true, ar:"يثق في"},
+      {t:" her experience. He began sleeping earlier and "},
+      {t:"organizing", w:true, ar:"ينظّم"},
+      {t:" his homework before dinner. Within two weeks, Tariq noticed that he felt more "},
+      {t:"energetic", w:true, ar:"نشيطاً"},
+      {t:" and his grades started to improve. He thanked his mother for her "},
+      {t:"patience", w:true, ar:"صبرها"},
+      {t:" and realized that listening to her advice had truly made a positive difference in his life."}
+    ],
+    questions:[
+      { q:"What did Tariq's mother advise him to do?", ar:"بماذا نصحت أم طارق؟", opts:["Play more games","Create a daily schedule","Sleep less"], ans:"Create a daily schedule" },
+      { q:"What happened after Tariq followed her advice?", ar:"ماذا حدث بعد أن اتّبع طارق النصيحة؟", opts:["He felt more tired","His grades improved","He stopped studying"], ans:"His grades improved" }
+    ]
+  },
+
+  // ── ADVANCED ──
+  {
+    id:'business', icon:'💼', color:'rgba(45,212,191,.15)', level:'advanced',
+    titleEn:'Starting a Small Business', titleAr:'بدء مشروع صغير', words:141, minutes:2,
+    parts:[
+      {t:"When Layla turned sixteen, she decided to start a small business selling handmade bracelets. At first, she was "},
+      {t:"nervous", w:true, ar:"متوترة"},
+      {t:" about whether people would be interested in her designs. She spent her weekends "},
+      {t:"researching", w:true, ar:"تبحث عن"},
+      {t:" materials, calculating costs, and practicing her marketing skills. Layla's parents "},
+      {t:"encouraged", w:true, ar:"شجّعوا"},
+      {t:" her to be patient and reminded her that success rarely happens overnight. She created a simple online page to "},
+      {t:"showcase", w:true, ar:"تعرض"},
+      {t:" her products and began sharing it with family and friends. Within a few months, she had received several orders and positive "},
+      {t:"feedback", w:true, ar:"آراء وتعليقات"},
+      {t:". Layla learned valuable lessons about responsibility, budgeting, and communicating with customers. More importantly, she discovered that hard work and "},
+      {t:"persistence", w:true, ar:"المثابرة"},
+      {t:" can turn a simple idea into something meaningful."}
+    ],
+    questions:[
+      { q:"What was Layla worried about at first?", ar:"ممّ كانت ليلى قلقة في البداية؟", opts:["Whether people would like her designs","Whether her parents would allow it","Whether she had enough bracelets"], ans:"Whether people would like her designs" },
+      { q:"What did Layla learn from this experience?", ar:"ماذا تعلّمت ليلى من هذه التجربة؟", opts:["How to bake","Responsibility, budgeting, and communication","How to swim"], ans:"Responsibility, budgeting, and communication" }
+    ]
+  },
+  {
+    id:'sciencefair', icon:'🔬', color:'rgba(167,139,250,.15)', level:'advanced',
+    titleEn:'The Science Fair', titleAr:'معرض العلوم', words:136, minutes:2,
+    parts:[
+      {t:"Every year, Khalid's school holds a science fair where students present original projects. This year, Khalid chose to "},
+      {t:"investigate", w:true, ar:"يبحث في"},
+      {t:" how different types of soil affect plant growth. He spent weeks collecting "},
+      {t:"samples", w:true, ar:"عينات"},
+      {t:", planting seeds, and recording daily "},
+      {t:"observations", w:true, ar:"ملاحظات"},
+      {t:" in a notebook. Some of his plants grew quickly, while others struggled, which "},
+      {t:"puzzled", w:true, ar:"حيّره"},
+      {t:" him at first. After researching the topic further, Khalid realized that soil with better "},
+      {t:"drainage", w:true, ar:"تصريف"},
+      {t:" produced healthier plants. On the day of the fair, he presented his findings "},
+      {t:"confidently", w:true, ar:"بثقة"},
+      {t:" to teachers and classmates, explaining his method step by step. Although he did not win first place, Khalid felt proud of the effort and curiosity that guided his project from start to finish."}
+    ],
+    questions:[
+      { q:"What did Khalid investigate for his project?", ar:"ماذا بحث خالد في مشروعه؟", opts:["How soil affects plant growth","How water boils","How animals sleep"], ans:"How soil affects plant growth" },
+      { q:"What did Khalid discover about drainage?", ar:"ماذا اكتشف خالد عن التصريف؟", opts:["It has no effect","Better drainage produces healthier plants","It kills the plants"], ans:"Better drainage produces healthier plants" }
+    ]
+  },
+  {
+    id:'volunteer', icon:'🤝', color:'rgba(245,200,66,.15)', level:'advanced',
+    titleEn:'A Volunteer Day', titleAr:'يوم تطوّعي', words:139, minutes:2,
+    parts:[
+      {t:"Last Saturday, Reem joined a group of "},
+      {t:"volunteers", w:true, ar:"متطوعين"},
+      {t:" cleaning up the local park. She had never volunteered before and was not sure what to expect. When she arrived, she met people of different ages who shared the same goal: making their "},
+      {t:"community", w:true, ar:"مجتمعهم"},
+      {t:" cleaner and more beautiful. The team was "},
+      {t:"divided", w:true, ar:"مقسّم"},
+      {t:" into small groups, each responsible for a different section of the park. Reem worked alongside an "},
+      {t:"elderly", w:true, ar:"مسنّ"},
+      {t:" man who shared stories about how the park looked decades ago. By the end of the day, the park looked completely different, and everyone felt a strong sense of "},
+      {t:"accomplishment", w:true, ar:"إنجاز"},
+      {t:". Reem realized that even small actions, when done together, can create a meaningful "},
+      {t:"impact", w:true, ar:"أثر"},
+      {t:" on the community."}
+    ],
+    questions:[
+      { q:"What was the volunteer group's goal?", ar:"ما هدف مجموعة المتطوعين؟", opts:["To make money","To make the community cleaner","To play games"], ans:"To make the community cleaner" },
+      { q:"How did Reem feel by the end of the day?", ar:"كيف شعرت ريم في نهاية اليوم؟", opts:["Bored","A sense of accomplishment","Angry"], ans:"A sense of accomplishment" }
+    ]
+  },
+  {
+    id:'university', icon:'🎓', color:'rgba(251,113,133,.15)', level:'advanced',
+    titleEn:'Preparing for University', titleAr:'الاستعداد للجامعة', words:144, minutes:2,
+    parts:[
+      {t:"As Hind entered her final year of high school, she began thinking seriously about her future. She "},
+      {t:"researched", w:true, ar:"بحثت عن"},
+      {t:" different universities, compared programs, and attended several information sessions to learn more about her options. "},
+      {t:"Balancing", w:true, ar:"الموازنة بين"},
+      {t:" schoolwork with this research was not easy, especially during exam season. Hind's teachers encouraged her to "},
+      {t:"reflect", w:true, ar:"تتأمّل"},
+      {t:" on her strengths and interests rather than simply choosing a popular major. After weeks of consideration, she decided to "},
+      {t:"pursue", w:true, ar:"تسعى إلى"},
+      {t:" a degree in engineering, a field that combined her love of mathematics with her desire to solve real-world problems. Although she still felt nervous about the "},
+      {t:"transition", w:true, ar:"الانتقال"},
+      {t:" ahead, Hind was "},
+      {t:"confident", w:true, ar:"واثقة"},
+      {t:" that careful planning had prepared her well for this new chapter."}
+    ],
+    questions:[
+      { q:"What did Hind's teachers encourage her to do?", ar:"بماذا نصح المعلمون هند؟", opts:["Choose the most popular major","Reflect on her strengths and interests","Skip university"], ans:"Reflect on her strengths and interests" },
+      { q:"What field did Hind decide to pursue?", ar:"ما التخصص الذي قررت هند دراسته؟", opts:["Medicine","Engineering","Art"], ans:"Engineering" }
+    ]
+  },
+  {
+    id:'routine', icon:'⏰', color:'rgba(45,212,191,.15)', level:'advanced',
+    titleEn:'A Daily Routine', titleAr:'روتين يومي منضبط', words:145, minutes:2,
+    parts:[
+      {t:"Maha always admired students who seemed to "},
+      {t:"accomplish", w:true, ar:"ينجزون"},
+      {t:" so much in a single day, and she wondered how they managed their time so effectively. She decided to design her own daily routine, waking up at the same time every morning and "},
+      {t:"dedicating", w:true, ar:"تخصّص"},
+      {t:" specific hours to studying, exercise, and rest. In the beginning, staying "},
+      {t:"disciplined", w:true, ar:"منضبطة"},
+      {t:" felt challenging, especially on days when she preferred to relax instead. However, Maha reminded herself that small, "},
+      {t:"consistent", w:true, ar:"ثابتة/منتظمة"},
+      {t:" habits eventually create meaningful results. She began tracking her progress in a notebook, which helped her stay motivated and "},
+      {t:"accountable", w:true, ar:"مسؤولة عن نفسها"},
+      {t:". After a month of commitment, Maha noticed that she completed her tasks more "},
+      {t:"efficiently", w:true, ar:"بكفاءة"},
+      {t:" and felt significantly less stressed before exams. Her disciplined routine not only improved her grades but also taught her the value of consistency in every part of life."}
+    ],
+    questions:[
+      { q:"Why did Maha create a daily routine?", ar:"لماذا وضعت مها روتيناً يومياً؟", opts:["To copy her friends","To manage her time effectively","Because her teacher forced her"], ans:"To manage her time effectively" },
+      { q:"What did Maha learn from being disciplined?", ar:"ماذا تعلّمت مها من الانضباط؟", opts:["The value of consistency","How to play sports","How to cook"], ans:"The value of consistency" }
+    ]
+  }
+];
+
+let rlCurrentLevel = 'beginner';
+let rlCurrentPassage = null;
+let rlRecognition = null;
+let rlListening = false;
+
+function rlGetCompleted() {
+  try { return JSON.parse(localStorage.getItem('readingCompleted') || '[]'); }
+  catch(e) { return []; }
+}
+function rlMarkCompleted(id) {
+  const done = rlGetCompleted();
+  if (!done.includes(id)) {
+    done.push(id);
+    localStorage.setItem('readingCompleted', JSON.stringify(done));
+    addStarPoints('readComplete');
+  }
+}
+
+function rlSelectLevel(level, el) {
+  rlCurrentLevel = level;
+  document.querySelectorAll('#rlLevelTabs .rl-level-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  rlRenderList();
+}
+
+function rlRenderList() {
+  const list = document.getElementById('rlPassageList');
+  if (!list) return;
+  const done = rlGetCompleted();
+  const items = readingPassages.filter(p => p.level === rlCurrentLevel);
+  list.innerHTML = items.map(p => {
+    const isDone = done.includes(p.id);
+    return `
+    <div class="rl-passage-card" onclick="rlOpenReader('${p.id}')">
+      <div class="rl-passage-icon" style="background:${p.color}">${p.icon}</div>
+      <div class="rl-passage-info">
+        <div class="rl-passage-title-en">${p.titleEn}</div>
+        <div class="rl-passage-title-ar">${p.titleAr}</div>
+        <div class="rl-passage-meta">
+          <span class="rl-tag">~${p.words} words</span>
+          <span class="rl-tag">⏱️ ${p.minutes} min</span>
+        </div>
+      </div>
+      <div class="rl-passage-status ${isDone ? 'rl-status-done' : 'rl-status-new'}">${isDone ? '✓' : '✨'}</div>
+    </div>`;
+  }).join('');
+}
+
+function rlOpenReader(id) {
+  rlCurrentPassage = readingPassages.find(p => p.id === id);
+  if (!rlCurrentPassage) return;
+
+  document.getElementById('rlHeroIcon').textContent = rlCurrentPassage.icon;
+  document.getElementById('rlHeroTitleEn').textContent = rlCurrentPassage.titleEn;
+  document.getElementById('rlHeroTitleAr').textContent = rlCurrentPassage.titleAr;
+
+  const textEl = document.getElementById('rlText');
+  textEl.innerHTML = rlCurrentPassage.parts.map(part =>
+    part.w ? `<span class="rl-word" data-en="${part.t}" data-ar="${part.ar}">${part.t}</span>` : part.t
+  ).join('');
+
+  textEl.querySelectorAll('.rl-word').forEach(w => {
+    w.addEventListener('click', () => {
+      document.getElementById('rlPopupEn').textContent = w.dataset.en;
+      document.getElementById('rlPopupAr').textContent = w.dataset.ar;
+      document.getElementById('rlPopup').classList.add('show');
+      w.classList.add('rl-tapped');
+    });
+  });
+
+  const quizArea = document.getElementById('rlQuizArea');
+  quizArea.innerHTML = rlCurrentPassage.questions.map((q, i) => `
+    <div class="rl-quiz-card">
+      <div class="rl-quiz-qnum">سؤال ${i+1} من ${rlCurrentPassage.questions.length}</div>
+      <div class="rl-quiz-q">${q.q}</div>
+      <div class="rl-quiz-q-ar">${q.ar}</div>
+      ${q.opts.map(opt => `<div class="rl-quiz-opt" onclick="rlSelectOpt(this,'${opt.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}')">${opt}</div>`).join('')}
+    </div>
+  `).join('');
+
+  document.getElementById('rlMenuArea').style.display = 'none';
+  document.getElementById('rlReaderArea').style.display = '';
+  document.getElementById('rlRaResult').style.display = 'none';
+  document.getElementById('rlVoiceWarning').style.display = 'none';
+  rlResetReadAloudBtn();
+  window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+}
+
+function rlCloseReader() {
+  document.getElementById('rlMenuArea').style.display = '';
+  document.getElementById('rlReaderArea').style.display = 'none';
+  rlRenderList();
+}
+
+function rlClosePopup() {
+  document.getElementById('rlPopup').classList.remove('show');
+}
+
+function rlListenPassage() {
+  if (!rlCurrentPassage) return;
+  const text = rlCurrentPassage.parts.map(p => p.t).join('');
+  speakWord(text, null);
+}
+
+function rlSelectOpt(el, chosen, correct) {
+  const group = el.parentElement.querySelectorAll('.rl-quiz-opt');
+  group.forEach(o => o.style.pointerEvents = 'none');
+  if (chosen === correct) {
+    el.classList.add('rl-correct');
+  } else {
+    el.classList.add('rl-wrong');
+    group.forEach(o => { if (o.textContent.trim() === correct) o.classList.add('rl-correct'); });
+  }
+  if (rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
+}
+
+// ── Read Aloud & Check (Web Speech API) ──
+function rlCheckSupport() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  return !!SR;
+}
+function rlPlainText(passage) {
+  return passage.parts.map(p => p.t).join('');
+}
+function rlNormalize(str) {
+  return str.toLowerCase().replace(/[.,!?"']/g,'').trim().split(/\s+/).filter(Boolean);
+}
+function rlResetReadAloudBtn() {
+  document.getElementById('rlRaLabel').textContent = '🎙️ Read Aloud & Check';
+  document.getElementById('rlRaLabelAr').textContent = 'اقرأ بصوتك واحصل على تصحيح';
+}
+
+function rlStartReadAloud() {
+  if (!rlCurrentPassage) return;
+  const warning = document.getElementById('rlVoiceWarning');
+
+  if (!rlCheckSupport()) {
+    warning.textContent = '⚠️ متصفحك لا يدعم التعرّف على الصوت لهذه الميزة. جرّب فتح الملف عبر Chrome على أندرويد.';
+    warning.style.display = '';
+    return;
+  }
+  warning.style.display = 'none';
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    warning.textContent = '⚠️ الجهاز أو المتصفح لا يدعم الوصول للميكروفون.';
+    warning.style.display = '';
+    return;
+  }
+
+  document.getElementById('rlRaLabel').textContent = '⏳ Requesting microphone...';
+  document.getElementById('rlRaLabelAr').textContent = 'جاري طلب إذن الميكروفون';
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then((stream) => {
+      stream.getTracks().forEach(t => t.stop());
+      rlLaunchRecognition();
+    })
+    .catch((err) => {
+      rlResetReadAloudBtn();
+      let msg = '⚠️ تعذّر الوصول إلى الميكروفون. حاول مرة أخرى.';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg = '🎙️ تم رفض إذن الميكروفون. افتح إعدادات الموقع في المتصفح واسمح بالوصول للميكروفون، ثم أعد المحاولة.';
+      } else if (err.name === 'NotFoundError') {
+        msg = '🎙️ لم يتم العثور على ميكروفون على هذا الجهاز.';
+      }
+      warning.textContent = msg;
+      warning.style.display = '';
+    });
+}
+
+function rlLaunchRecognition() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rlRecognition = new SR();
+  rlRecognition.lang = 'en-US';
+  rlRecognition.interimResults = false;
+  rlRecognition.maxAlternatives = 1;
+
+  rlListening = true;
+  document.getElementById('rlRaLabel').textContent = '🔴 Listening...';
+  document.getElementById('rlRaLabelAr').textContent = 'استمع الآن... اقرأ الفقرة';
+
+  rlRecognition.onresult = (e) => {
+    const spoken = e.results[0][0].transcript;
+    rlShowReadAloudResult(spoken);
+  };
+  rlRecognition.onerror = (e) => {
+    rlListening = false;
+    rlResetReadAloudBtn();
+    const warning = document.getElementById('rlVoiceWarning');
+    let msg = '⚠️ حدث خطأ غير متوقع. حاول مرة أخرى.';
+    if (e.error === 'not-allowed' || e.error === 'permission-denied') {
+      msg = '🎙️ يجب السماح بإذن الميكروفون من إعدادات المتصفح لاستخدام هذه الميزة.';
+    } else if (e.error === 'no-speech') {
+      msg = '🤫 لم يتم رصد أي صوت. تأكد من التحدث بوضوح بالقرب من الميكروفون وحاول مرة أخرى.';
+    } else if (e.error === 'network') {
+      msg = '📡 مشكلة في الاتصال بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.';
+    } else if (e.error === 'audio-capture') {
+      msg = '🎙️ لم يتم العثور على ميكروفون على هذا الجهاز.';
+    }
+    warning.textContent = msg;
+    warning.style.display = '';
+  };
+  rlRecognition.onend = () => {
+    rlListening = false;
+    rlResetReadAloudBtn();
+  };
+  rlRecognition.start();
+}
+
+function rlShowReadAloudResult(spokenText) {
+  const original = rlNormalize(rlPlainText(rlCurrentPassage));
+  const spoken = rlNormalize(spokenText);
+
+  let correctCount = 0;
+  const compareHtml = original.map((word, i) => {
+    const said = spoken[i];
+    const isCorrect = said === word;
+    if (isCorrect) correctCount++;
+    const color = isCorrect ? 'var(--teal)' : 'var(--rose)';
+    return `<span style="color:${color}">${word}</span>`;
+  }).join(' ');
+
+  const score = Math.round((correctCount / original.length) * 100);
+
+  document.getElementById('rlRaScoreLine').textContent =
+    score >= 80 ? `🌟 Score: ${score}% — Great reading!` :
+    score >= 50 ? `👍 Score: ${score}% — Good try, keep practicing!` :
+    `💪 Score: ${score}% — Try reading slower and clearer.`;
+  document.getElementById('rlRaCompare').innerHTML = compareHtml;
+  document.getElementById('rlRaResult').style.display = '';
+
+  if (score >= 50 && rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
+}
+
 
 function podTogglePlay() {
   if (podIsPlaying) {
