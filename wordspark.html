@@ -2373,6 +2373,35 @@
 </style>
 
 <style>
+/* ══ WORDS DASHBOARD ══ */
+.words-dashboard { margin-bottom:16px; }
+.wd-card {
+  background:linear-gradient(135deg,#1A2332,#0F1C2E);
+  border:1px solid #243550; border-radius:20px;
+  padding:16px; margin-bottom:10px; text-align:center;
+}
+.wd-total { font-size:56px; font-weight:900; color:#2DD4BF; font-family:'Space Grotesk',sans-serif; line-height:1; }
+.wd-total-lbl { font-size:13px; font-weight:700; color:#94A3B8; margin:4px 0 14px; font-family:'Space Grotesk',sans-serif; }
+.wd-total-lbl span { display:block; font-size:10px; color:#3D4F6B; font-family:'Tajawal',sans-serif; }
+.wd-levels { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.wd-level { background:rgba(255,255,255,.03); border:1px solid; border-radius:12px; padding:10px 4px; }
+.wd-level-val { font-size:20px; font-weight:900; font-family:'Space Grotesk',sans-serif; }
+.wd-level-lbl { font-size:9px; color:#64748B; margin-top:3px; font-family:'Tajawal',sans-serif; line-height:1.4; }
+.wd-level-lbl span { color:#3D4F6B; }
+.wd-last { background:rgba(245,200,66,.06); border:1px solid #F5C84222; border-radius:14px; padding:12px 14px; margin-bottom:10px; }
+.wd-last-en { font-size:16px; font-weight:900; color:#F5C842; font-family:'Space Grotesk',sans-serif; }
+.wd-last-ar { font-size:12px; color:#64748B; margin-top:2px; }
+.wd-suggest-btn {
+  width:100%; background:rgba(167,139,250,.08);
+  border:1px dashed #A78BFA44; border-radius:14px;
+  padding:12px; cursor:pointer; color:#A78BFA;
+  font-size:14px; font-weight:700; font-family:'Space Grotesk',sans-serif;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  transition:background .2s; margin-bottom:10px;
+}
+.wd-suggest-btn:active { background:rgba(167,139,250,.15); }
+.wd-suggest-btn span { font-size:10px; color:#64748B; font-family:'Tajawal',sans-serif; font-weight:400; }
+
 .results-screen {
   position:fixed; inset:0; z-index:200;
   background:#0A0C14; overflow-y:auto;
@@ -3075,6 +3104,42 @@
 
     <!-- Weekly Progress Chart -->
     <div class="weekly-chart" id="weeklyChart"></div>
+
+    <!-- ══ WORDS DASHBOARD ══ -->
+    <div class="words-dashboard" id="wordsDashboard">
+      <!-- Total + Distribution -->
+      <div class="wd-card">
+        <div class="wd-total" id="wdTotal">0</div>
+        <div class="wd-total-lbl">Total Words Learned <span>إجمالي الكلمات المتعلَّمة</span></div>
+        <div class="wd-levels">
+          <div class="wd-level" style="border-color:#2DD4BF44">
+            <div class="wd-level-val" style="color:#2DD4BF" id="wdBeginner">0</div>
+            <div class="wd-level-lbl">Beginner<br><span>مبتدئ</span></div>
+          </div>
+          <div class="wd-level" style="border-color:#F5C84244">
+            <div class="wd-level-val" style="color:#F5C842" id="wdMedium">0</div>
+            <div class="wd-level-lbl">Medium<br><span>متوسط</span></div>
+          </div>
+          <div class="wd-level" style="border-color:#A78BFA44">
+            <div class="wd-level-val" style="color:#A78BFA" id="wdAdvanced">0</div>
+            <div class="wd-level-lbl">Advanced<br><span>متقدم</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Last Word Added -->
+      <div class="wd-last" id="wdLastWord" style="display:none">
+        <div style="font-size:10px;color:#64748B;margin-bottom:4px">⏱ Last Added · آخر كلمة أضفتها</div>
+        <div class="wd-last-en" id="wdLastEn">—</div>
+        <div class="wd-last-ar" id="wdLastAr">—</div>
+      </div>
+
+      <!-- Suggest Word Button -->
+      <button class="wd-suggest-btn" onclick="suggestWord()">
+        💡 Suggest a Word
+        <span>اقتراح كلمة مناسبة لمستواك</span>
+      </button>
+    </div>
 
     <div class="add-form">
       <div class="form-title">
@@ -5135,15 +5200,27 @@ function addWord() {
 
 function doAddWord(en, ar, ex, exar) {
   if (words.filter(w => w.date === today).length >= goal) {
-    showToast(`✅ أضفت ${ARABIC_NUMS[goal]} كلمات اليوم — ممتاز!`, '#F5C842');
+    showToast(`🎉 Daily goal reached! · أكملت هدف اليوم`, '#F5C842');
     return;
   }
   words.unshift({ en, ar, ex, exar, level: selectedLevel, date: today, id: Date.now(), source: 'mine' });
   save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
   ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('inp-en').focus();
-  showToast('✨ تمت إضافة "' + en + '"!');
+
+  // رسالة تحفيزية مع عداد
+  var todayCount = words.filter(w => w.date === today).length;
+  var msgs = [
+    '⚡ 1 word added! Keep going! · كلمة واحدة أُضيفت!',
+    '🔥 2 words! You\'re on fire! · كلمتان رائعتان!',
+    '🌟 3 words! Goal reached! · وصلت للهدف!',
+    '💪 4 words! Amazing effort! · مجهود رائع!',
+    '🏆 5 words! Champion! · بطل حقيقي!'
+  ];
+  var msg = msgs[Math.min(todayCount - 1, msgs.length - 1)] || '✨ "' + en + '" added!';
+  showToast(msg, '#2DD4BF');
   addStarPoints('addWord');
+  updateWordsDashboard();
 }
 
 // ══ RENDER WORDS ══
@@ -5951,6 +6028,7 @@ function showTab(name, btn, navType) {
   if (name === 'quiz')  initQuiz();
   if (name === 'flash') renderFlashcards();
   if (name === 'home')  updateHomeStats();
+  if (name === 'words') updateWordsDashboard();
 
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
 }
@@ -10143,7 +10221,7 @@ const MOTIVATIONAL = [
 // ══ SETTINGS PANEL ══
 function openSettingsPanel() {
   var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
   var rank   = RANKS[0];
@@ -10163,6 +10241,87 @@ function closeSettingsPanel() {
   document.getElementById('settingsOverlay').classList.remove('show');
 }
 
+// ══ WORDS DASHBOARD ══
+function updateWordsDashboard() {
+  var ws = JSON.parse(localStorage.getItem('mywords') || '[]');
+  var beg = ws.filter(function(w){ return w.level === 'beginner'; }).length;
+  var med = ws.filter(function(w){ return w.level === 'medium'; }).length;
+  var adv = ws.filter(function(w){ return w.level === 'advanced'; }).length;
+
+  var totalEl = document.getElementById('wdTotal');
+  var begEl   = document.getElementById('wdBeginner');
+  var medEl   = document.getElementById('wdMedium');
+  var advEl   = document.getElementById('wdAdvanced');
+  if (totalEl) totalEl.textContent = ws.length;
+  if (begEl)   begEl.textContent   = beg;
+  if (medEl)   medEl.textContent   = med;
+  if (advEl)   advEl.textContent   = adv;
+
+  // Last word
+  if (ws.length > 0) {
+    var last = ws[ws.length - 1];
+    var lastEl = document.getElementById('wdLastWord');
+    var lastEn = document.getElementById('wdLastEn');
+    var lastAr = document.getElementById('wdLastAr');
+    if (lastEl) lastEl.style.display = 'block';
+    if (lastEn) lastEn.textContent = last.en;
+    if (lastAr) lastAr.textContent = last.ar;
+  }
+}
+
+// كلمات مقترحة حسب المستوى
+var SUGGESTED_WORDS = {
+  beginner: [
+    {en:'Happy',ar:'سعيد'},{en:'Beautiful',ar:'جميل'},{en:'Strong',ar:'قوي'},
+    {en:'Brave',ar:'شجاع'},{en:'Clever',ar:'ذكي'},{en:'Kind',ar:'لطيف'},
+    {en:'Fast',ar:'سريع'},{en:'Clean',ar:'نظيف'},{en:'Help',ar:'يساعد'},
+    {en:'Dream',ar:'يحلم / حلم'}
+  ],
+  medium: [
+    {en:'Achieve',ar:'يحقق'},{en:'Confident',ar:'واثق'},{en:'Patient',ar:'صبور / مريض'},
+    {en:'Improve',ar:'يتحسن'},{en:'Challenge',ar:'تحدي'},{en:'Determine',ar:'يحدد'},
+    {en:'Curious',ar:'فضولي'},{en:'Responsible',ar:'مسؤول'},
+    {en:'Generous',ar:'كريم'},{en:'Ambitious',ar:'طموح'}
+  ],
+  advanced: [
+    {en:'Perseverance',ar:'المثابرة'},{en:'Eloquent',ar:'فصيح'},
+    {en:'Resilient',ar:'صامد / مرن'},{en:'Diligent',ar:'مجتهد'},
+    {en:'Pragmatic',ar:'عملي'},{en:'Meticulous',ar:'دقيق للغاية'},
+    {en:'Profound',ar:'عميق'},{en:'Integrity',ar:'نزاهة'},
+    {en:'Empathy',ar:'تعاطف'},{en:'Versatile',ar:'متعدد المواهب'}
+  ]
+};
+
+function suggestWord() {
+  var ws = JSON.parse(localStorage.getItem('mywords') || '[]');
+  var beg = ws.filter(function(w){ return w.level==='beginner'; }).length;
+  var med = ws.filter(function(w){ return w.level==='medium'; }).length;
+
+  var level = beg < 10 ? 'beginner' : med < 10 ? 'medium' : 'advanced';
+  var pool  = SUGGESTED_WORDS[level];
+  var existing = ws.map(function(w){ return w.en.toLowerCase(); });
+  var available = pool.filter(function(w){ return !existing.includes(w.en.toLowerCase()); });
+
+  if (available.length === 0) {
+    showToast('🌟 أضفت كل الكلمات المقترحة!', '#F5C842');
+    return;
+  }
+
+  var pick = available[Math.floor(Math.random() * available.length)];
+  document.getElementById('inp-en').value = pick.en;
+  document.getElementById('inp-ar').value = pick.ar;
+
+  // اختيار المستوى تلقائياً
+  document.querySelectorAll('.level-btn').forEach(function(b){ b.classList.remove('active'); });
+  var levelBtn = document.querySelector('.level-btn[data-level="' + level + '"]');
+  if (levelBtn) levelBtn.classList.add('active');
+
+  showToast('💡 ' + pick.en + ' · ' + pick.ar, '#A78BFA');
+
+  // تمرير للنموذج
+  document.getElementById('inp-en').scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
 // ══ RESULTS DASHBOARD JS ══
 function closeResultsTab() {
   document.getElementById('resultsScreen').style.display = 'none';
@@ -10176,7 +10335,7 @@ function showResultsTab(btn) {
   if (btn) btn.classList.add('active');
 
   var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
   var p      = getTrainProgress();
@@ -10203,7 +10362,7 @@ function showResultsQR() {
   var qrSec = document.getElementById('resultsQRSection');
   if (qrSec.style.display !== 'none') { qrSec.style.display = 'none'; return; }
   var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
   var p      = getTrainProgress();
@@ -10222,7 +10381,7 @@ function showResultsQR() {
 
 function sendByWhatsApp() {
   var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
   var p      = getTrainProgress();
@@ -10238,7 +10397,7 @@ function sendByWhatsApp() {
 
 async function sendByTelegram() {
   var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
   var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
   var p      = getTrainProgress();
@@ -10273,7 +10432,7 @@ function closeCelebrate() {
 function openQR() {
   // جمع البيانات
   var name    = localStorage.getItem('studentName') || 'Student';
-  var words   = JSON.parse(localStorage.getItem('wsWords') || '[]');
+  var words   = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak  = parseInt(localStorage.getItem('streak') || '0');
   var p       = getTrainProgress();
   var done    = (p.completed || []).length;
