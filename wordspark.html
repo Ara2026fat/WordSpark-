@@ -10653,16 +10653,42 @@ function rlLaunchRecognition() {
   rlRecognition.start();
 }
 
+// LCS-based word alignment — a single extra/missing/misheard word no longer
+// cascades and marks everything after it as wrong.
+function rlLcsMatch(original, spoken) {
+  const n = original.length, m = spoken.length;
+  const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = 1; i <= n; i++) {
+    for (let j = 1; j <= m; j++) {
+      if (original[i - 1] === spoken[j - 1]) dp[i][j] = dp[i - 1][j - 1] + 1;
+      else dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+    }
+  }
+  const matched = new Array(n).fill(false);
+  let i = n, j = m;
+  while (i > 0 && j > 0) {
+    if (original[i - 1] === spoken[j - 1]) {
+      matched[i - 1] = true;
+      i--; j--;
+    } else if (dp[i - 1][j] >= dp[i][j - 1]) {
+      i--;
+    } else {
+      j--;
+    }
+  }
+  return matched;
+}
+
 function rlShowReadAloudResult(spokenText) {
   const original = rlNormalize(rlPlainText(rlCurrentPassage));
   const spoken = rlNormalize(spokenText);
+  const matched = rlLcsMatch(original, spoken);
 
   let correctCount = 0;
   const compareHtml = original.map((word, i) => {
-    const said = spoken[i];
-    const isCorrect = said === word;
+    const isCorrect = matched[i];
     if (isCorrect) correctCount++;
-    const color = isCorrect ? 'var(--teal)' : 'var(--rose)';
+    const color = isCorrect ? 'var(--teal)' : 'var(--white)';
     return `<span style="color:${color}">${word}</span>`;
   }).join(' ');
 
