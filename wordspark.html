@@ -2373,6 +2373,68 @@
 </style>
 
 <style>
+/* ══ SMART PACK CARDS ══ */
+.smart-pack-card {
+  background:linear-gradient(135deg,rgba(255,255,255,.04),var(--panel));
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:20px; padding:16px;
+  margin-bottom:12px; position:relative;
+  overflow:hidden; transition:transform .15s;
+  border-left:3px solid var(--pack-color);
+}
+.smart-pack-card:active { transform:scale(.98); }
+.pack-is-locked { opacity:.6; }
+
+.smart-pack-top { display:flex; align-items:center; gap:14px; margin-bottom:12px; }
+.smart-pack-icon {
+  width:52px; height:52px; border-radius:16px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:26px; flex-shrink:0;
+  box-shadow:0 4px 14px rgba(0,0,0,.3);
+}
+.smart-pack-info { flex:1; min-width:0; }
+.smart-pack-name { font-size:15px; font-weight:900; color:var(--white); font-family:'Space Grotesk',sans-serif; }
+.smart-pack-name-ar { font-size:11px; color:var(--muted); margin-top:1px; font-family:'Tajawal',sans-serif; }
+
+/* Status Badges */
+.pack-status-badge {
+  display:inline-block; border-radius:20px;
+  padding:3px 10px; font-size:10px; font-weight:700;
+  font-family:'Space Grotesk',sans-serif;
+}
+.pack-locked    { background:rgba(100,116,139,.15); color:#64748B; border:1px solid #64748B33; }
+.pack-unlocked  { background:rgba(45,212,191,.1); color:#2DD4BF; border:1px solid #2DD4BF33; }
+.pack-added     { background:rgba(45,212,191,.1); color:#2DD4BF; border:1px solid #2DD4BF33; }
+.pack-completed { background:rgba(245,200,66,.1); color:#F5C842; border:1px solid #F5C84233; }
+
+/* Progress */
+.smart-pack-progress-wrap { margin-bottom:10px; }
+.smart-pack-progress-track {
+  height:6px; background:rgba(255,255,255,.06);
+  border-radius:3px; overflow:hidden;
+}
+.smart-pack-progress-fill { height:100%; border-radius:3px; transition:width .5s ease; }
+
+/* Action Buttons */
+.smart-pack-action { margin-top:4px; }
+.pack-add-btn {
+  border:none; border-radius:12px; padding:9px 20px;
+  font-family:'Space Grotesk',sans-serif; font-size:13px;
+  font-weight:900; color:#0D1117; cursor:pointer;
+  width:100%; transition:opacity .2s;
+}
+.pack-add-btn:active { opacity:.85; }
+.pack-complete-btn {
+  background:rgba(245,200,66,.1); border:1px solid #F5C84233;
+  color:#F5C842; border-radius:12px; padding:8px 16px;
+  font-family:'Space Grotesk',sans-serif; font-size:12px;
+  font-weight:700; cursor:pointer; width:100%;
+}
+
+/* Lock Reason */
+.pack-lock-reason { font-size:11px; color:var(--muted); margin-top:2px; }
+.smart-pack-lock-overlay { display:none; }
+
 /* ══ WORDS DASHBOARD ══ */
 .words-dashboard { margin-bottom:16px; }
 .wd-card {
@@ -4465,8 +4527,9 @@ const preloadedWords = [
 // ══ THEMED WORD PACKS ══
 const wordPacks = {
   home: {
-    name: "🏠 Home & Daily Life",
-    nameAr: "🏠 المنزل والحياة اليومية",
+    name: "Home & Daily Life",
+    nameAr: "المنزل والحياة اليومية",
+    icon: "🏠", bg: "linear-gradient(135deg,#0EA5E9,#2DD4BF)",
     color: "#00F5D4",
     words: [
       { en:"Breakfast",  ar:"فطور",           ex:"I have breakfast at 7 AM.",         exar:"أتناول الفطور الساعة ٧ صباحاً.",     level:"beginner" },
@@ -4522,8 +4585,9 @@ const wordPacks = {
     ]
   },
   work: {
-    name: "💼 Work & Career",
-    nameAr: "💼 العمل والمهنة",
+    name: "Work & Career",
+    nameAr: "العمل والمهنة",
+    icon: "💼", bg: "linear-gradient(135deg,#F5C842,#FB923C)",
     color: "#FFD700",
     words: [
       { en:"Resume",     ar:"سيرة ذاتية",     ex:"Update your resume regularly.",      exar:"حدّث سيرتك الذاتية بانتظام.",        level:"medium"   },
@@ -4579,8 +4643,9 @@ const wordPacks = {
     ]
   },
   travel: {
-    name: "🌍 Travel & Places",
-    nameAr: "🌍 السفر والأماكن",
+    name: "Travel & Places",
+    nameAr: "السفر والأماكن",
+    icon: "🌍", bg: "linear-gradient(135deg,#FF9F43,#FF6B8A)",
     color: "#FF9F43",
     words: [
       { en:"Passport",   ar:"جواز سفر",       ex:"Never forget your passport.",        exar:"لا تنسَ جواز سفرك أبداً.",           level:"beginner" },
@@ -4636,8 +4701,9 @@ const wordPacks = {
     ]
   },
   conversation: {
-    name: "💬 Conversation Phrases",
-    nameAr: "💬 عبارات المحادثة",
+    name: "Conversation Phrases",
+    nameAr: "عبارات المحادثة",
+    icon: "💬", bg: "linear-gradient(135deg,#A78BFA,#7C3AED)",
     color: "#BF94FF",
     words: [
       { en:"Excuse me",  ar:"عفواً / المعذرة", ex:"Excuse me, where is the bank?",     exar:"عفواً، أين البنك؟",                  level:"beginner" },
@@ -4693,8 +4759,9 @@ const wordPacks = {
     ]
   },
   academic: {
-    name: "🎓 Academic Words",
-    nameAr: "🎓 كلمات أكاديمية",
+    name: "Academic Words",
+    nameAr: "كلمات أكاديمية",
+    icon: "🎓", bg: "linear-gradient(135deg,#FF6B8A,#FB7185)",
     color: "#FF6B8A",
     words: [
       { en:"Analyse",    ar:"يحلّل",           ex:"Analyse the data carefully.",        exar:"حلّل البيانات بعناية.",               level:"medium"   },
@@ -4759,37 +4826,67 @@ function renderPackSelector() {
   area.innerHTML = `
     <div style="margin-bottom:16px">
       <div style="font-size:16px;font-weight:700;margin-bottom:4px;font-family:'Space Grotesk',sans-serif">📦 Word Packs <span style="font-size:11px;opacity:.6;font-family:'Tajawal',sans-serif;font-weight:400">حِزَم الكلمات</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Add a complete set of 50 words at once — each pack unlocks after completing the previous one 🔒<br><span style="opacity:.7">أضف مجموعة كاملة من ٥٠ كلمة — كل حزمة تُفتح بعد إكمال السابقة</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Add a complete set of 50 words — each pack unlocks after completing the previous one 🔒<br><span style="opacity:.7">أضف ٥٠ كلمة دفعة واحدة — كل حزمة تُفتح بعد إكمال السابقة</span></div>
       ${packKeys.map((key, idx) => {
         const pack = wordPacks[key];
-        const added     = !!localStorage.getItem('pack_' + key);
-        const completed = !!localStorage.getItem('pack_completed_' + key);
-        const prevKey   = packKeys[idx - 1];
+        const added       = !!localStorage.getItem('pack_' + key);
+        const completed   = !!localStorage.getItem('pack_completed_' + key);
+        const prevKey     = packKeys[idx - 1];
         const prevCompleted = idx === 0 || !!localStorage.getItem('pack_completed_' + prevKey);
-        const locked = !prevCompleted;
+        const locked      = !prevCompleted;
 
-        let rightSide;
+        // حساب التقدم
+        const packWords = pack.words || [];
+        const userWords = JSON.parse(localStorage.getItem('mywords') || '[]');
+        const learnedCount = added ? packWords.filter(pw =>
+          userWords.some(uw => uw.en.toLowerCase() === pw.en.toLowerCase())
+        ).length : 0;
+        const total = packWords.length;
+        const pct   = total ? Math.round((learnedCount / total) * 100) : 0;
+
+        // حالة البكج
+        let statusBadge, actionBtn;
         if (locked) {
-          rightSide = `<div class="pack-lock-msg">🔒 Complete ${wordPacks[prevKey].name.replace(/^[^\s]+\s/,'')} first</div>`;
-        } else if (!added) {
-          rightSide = `<button onclick="addPack('${key}')" style="background:${pack.color};color:#080C14;border:none;border-radius:10px;padding:7px 14px;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;">+ Add Pack</button>`;
-        } else if (!completed) {
-          rightSide = `
-            <div class="pack-status-col">
-              <div style="font-size:11px;color:var(--teal);background:rgba(0,245,212,.1);border-radius:20px;padding:4px 10px;white-space:nowrap;">✅ Added</div>
-              <button class="pack-complete-btn" onclick="markPackComplete('${key}')">🏁 Mark Complete</button>
-            </div>`;
+          statusBadge = `<div class="pack-status-badge pack-locked">🔒 Locked · مقفلة</div>`;
+          actionBtn   = `<div class="pack-lock-reason">Complete <b>${wordPacks[prevKey].name}</b> first</div>`;
+        } else if (completed) {
+          statusBadge = `<div class="pack-status-badge pack-completed">🏆 Completed · مكتملة</div>`;
+          actionBtn   = '';
+        } else if (added) {
+          statusBadge = `<div class="pack-status-badge pack-added">✅ Added · مضافة</div>`;
+          actionBtn   = `<button class="pack-complete-btn" onclick="markPackComplete('${key}')">🏁 Mark as Complete</button>`;
         } else {
-          rightSide = `<div class="pack-completed-badge">🏆 Completed</div>`;
+          statusBadge = `<div class="pack-status-badge pack-unlocked">🔓 Available · متاحة</div>`;
+          actionBtn   = `<button class="pack-add-btn" style="background:${pack.bg}" onclick="addPack('${key}')">+ Add Pack</button>`;
         }
 
         return `
-        <div class="pack-card ${locked ? 'locked' : ''}" style="background:linear-gradient(135deg,rgba(255,255,255,.04),var(--panel));border:1px solid ${pack.color}44;border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;">
-          <div style="flex:1">
-            <div style="font-size:15px;font-weight:700;color:${pack.color};font-family:'Space Grotesk',sans-serif">${pack.name}</div>
-            <div style="font-size:11px;color:var(--muted);margin-top:2px">50 words · All levels</div>
+        <div class="smart-pack-card ${locked ? 'pack-is-locked' : ''}" style="--pack-color:${pack.color}">
+          <!-- Icon + Info -->
+          <div class="smart-pack-top">
+            <div class="smart-pack-icon" style="background:${pack.bg}">${pack.icon}</div>
+            <div class="smart-pack-info">
+              <div class="smart-pack-name">${pack.name}</div>
+              <div class="smart-pack-name-ar">${pack.nameAr}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                ${statusBadge}
+                <span style="font-size:10px;color:var(--muted)">${total} words</span>
+              </div>
+            </div>
           </div>
-          ${rightSide}
+          ${added || completed ? `
+          <!-- Progress Bar -->
+          <div class="smart-pack-progress-wrap">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px">
+              <span>Progress · التقدم</span>
+              <span style="color:${pack.color};font-weight:700">${learnedCount}/${total} · ${pct}%</span>
+            </div>
+            <div class="smart-pack-progress-track">
+              <div class="smart-pack-progress-fill" style="width:${pct}%;background:${pack.bg}"></div>
+            </div>
+          </div>` : ''}
+          ${actionBtn ? `<div class="smart-pack-action">${actionBtn}</div>` : ''}
+          ${locked ? `<div class="smart-pack-lock-overlay"><div class="smart-pack-lock-reason">Complete <b>${wordPacks[prevKey].name}</b> first to unlock 🔓</div></div>` : ''}
         </div>`;
       }).join('')}
     </div>`;
@@ -5199,6 +5296,7 @@ function addWord() {
 }
 
 function doAddWord(en, ar, ex, exar) {
+  const goal = getDailyGoal();
   if (words.filter(w => w.date === today).length >= goal) {
     showToast(`🎉 Daily goal reached! · أكملت هدف اليوم`, '#F5C842');
     return;
