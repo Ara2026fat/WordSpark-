@@ -792,53 +792,6 @@
   .rank-popup-name { font-size: 18px; font-weight: 900; color: var(--gold); font-family:'Space Grotesk',sans-serif; }
 
   /* ══ TRAIN JOURNEY ══ */
-  .train-screen {
-    position:fixed;inset:0;z-index:400;background:#060810;
-    display:none;flex-direction:column;font-family:'Tajawal',sans-serif;overflow:hidden;
-  }
-  .train-screen.show{display:flex;}
-  .train-sky{position:absolute;inset:0;background:linear-gradient(180deg,#0A0E1A 0%,#0D1B3E 40%,#1A0A2E 70%,#060810 100%);}
-  .train-stars{position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,#fff 0%,transparent 100%),radial-gradient(1px 1px at 50% 10%,#fff 0%,transparent 100%),radial-gradient(1px 1px at 70% 25%,#fff 0%,transparent 100%),radial-gradient(1px 1px at 80% 50%,rgba(255,255,255,.5) 0%,transparent 100%),radial-gradient(1.5px 1.5px at 10% 80%,rgba(255,255,255,.7) 0%,transparent 100%),radial-gradient(1px 1px at 90% 15%,#fff 0%,transparent 100%);}
-  .train-track-wrap{position:absolute;bottom:100px;left:0;right:0;height:50px;}
-  .train-track{position:absolute;bottom:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#2A1F0E,#8B6914,#2A1F0E);border-radius:3px;}
-  .train-ties{position:absolute;bottom:6px;left:0;right:0;height:16px;background:repeating-linear-gradient(90deg,transparent 0px,transparent 18px,#5C3D0A 18px,#5C3D0A 26px);}
-  .train-emoji-wrap{position:absolute;bottom:90px;left:-320px;width:300px;height:110px;animation:trainRide 2.5s cubic-bezier(.25,.46,.45,.94) forwards;filter:drop-shadow(0 8px 28px rgba(45,212,191,0.35));}
-  .train-emoji-wrap .wspin{animation:wspin 1s linear infinite;transform-box:fill-box;transform-origin:center;}
-  @keyframes wspin{to{transform:rotate(360deg);}}
-  .train-emoji-wrap .hlight{animation:hpulse 2s ease-in-out infinite;}
-  @keyframes hpulse{0%,100%{opacity:.75;}50%{opacity:1;}}
-  .train-emoji-wrap .pbob{animation:pbob 3.5s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom center;}
-  @keyframes pbob{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
-  @keyframes trainRide{0%{left:-200px}60%{left:calc(50% - 36px)}80%{left:calc(50% - 28px)}100%{left:calc(50% - 36px)}}
-  .station-arrival{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:16px 16px 140px;text-align:center;opacity:0;animation:fadeInUp .6s ease 2.3s forwards;}
-  @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  .station-arrived-label{font-size:11px;color:#A78BFA;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
-  .station-city-name{font-size:26px;font-weight:900;background:linear-gradient(135deg,#FFD700,#2DD4BF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
-  .station-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;max-width:360px;width:100%;margin-bottom:14px;text-align:right;}
-  .station-info-text{font-size:12px;color:#94A3B8;line-height:1.7;margin-bottom:10px;}
-  .station-words{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
-  .station-word-chip{background:rgba(45,212,191,.1);border:1px solid rgba(45,212,191,.3);border-radius:20px;padding:3px 10px;font-size:11px;color:#2DD4BF;direction:ltr;}
-  .station-landmarks{font-size:11px;color:#64748B;line-height:1.8;}
-  .station-quote{font-size:12px;font-weight:700;color:#F5C842;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);}
-  .station-enter-btn{background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#060810;border:none;border-radius:14px;padding:13px 36px;font-size:14px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;box-shadow:0 8px 24px rgba(167,139,250,.4);}
-  .station-quiz-wrap{position:relative;z-index:10;display:flex;flex-direction:column;padding:16px 16px 140px;flex:1;opacity:0;animation:fadeInUp .5s ease forwards;}
-  .station-quiz-title{text-align:center;font-size:15px;font-weight:900;color:#A78BFA;margin-bottom:14px;}
-  .station-quiz-q{background:rgba(255,255,255,.05);border:1px solid rgba(167,139,250,.2);border-radius:14px;padding:16px;text-align:center;font-size:15px;font-weight:700;color:#F1F5F9;margin-bottom:14px;min-height:70px;display:flex;align-items:center;justify-content:center;}
-  .station-quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-  .station-quiz-opt{background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;padding:11px 8px;font-size:13px;font-family:'Tajawal',sans-serif;color:#F1F5F9;cursor:pointer;transition:all .2s;}
-  .station-quiz-feedback{text-align:center;font-size:13px;font-weight:700;min-height:22px;margin-bottom:10px;}
-  .station-quiz-progress{height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;margin-bottom:6px;}
-  .station-quiz-progress-fill{height:100%;background:linear-gradient(90deg,#A78BFA,#2DD4BF);border-radius:4px;transition:width .4s ease;}
-  .station-quiz-info{display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:14px;}
-  .journey-station-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;padding:10px 12px;border-radius:12px;}
-  .journey-station-row.unlocked{background:rgba(45,212,191,.08);}
-  .journey-station-row.current{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);}
-  .journey-station-row.locked{opacity:.35;}
-  .journey-station-icon{font-size:20px;min-width:28px;text-align:center;}
-  .journey-station-name{font-size:13px;font-weight:700;color:#F1F5F9;}
-  .journey-station-sub{font-size:10px;color:#64748B;}
-
-  /* ══ TRAIN JOURNEY ══ */
   .train-overlay {
     position:fixed;inset:0;z-index:500;
     background:#000;
@@ -899,24 +852,25 @@
   .station-card {
     background:linear-gradient(150deg,#1A2332,#0F1C2E);
     border:1px solid #A78BFA44;border-radius:24px;
-    padding:20px;margin:0 16px;
+    padding:20px;width:100%;max-width:360px;margin:0 auto 14px;
+    box-sizing:border-box;
     opacity:0;animation:fadeUp .6s ease forwards;
   }
   .station-flag { font-size:40px;text-align:center;margin-bottom:8px; }
   .station-title { font-size:20px;font-weight:900;color:#F5C842;text-align:center;margin-bottom:4px; }
   .station-subtitle { font-size:12px;color:#A78BFA;text-align:center;margin-bottom:14px; }
-  .station-info { font-size:13px;color:#94A3B8;line-height:1.8;margin-bottom:14px; }
-  .station-info-ar { font-size:12px;color:#64748B;line-height:1.7;margin-bottom:14px;font-style:italic; }
-  .station-words { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px; }
+  .station-info { font-size:13px;color:#94A3B8;line-height:1.8;margin-bottom:14px;text-align:center; }
+  .station-info-ar { font-size:12px;color:#64748B;line-height:1.7;margin-bottom:14px;text-align:center; }
+  .station-words { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center; }
   .station-word-chip {
     background:rgba(167,139,250,.15);border:1px solid #A78BFA44;
     border-radius:20px;padding:4px 10px;font-size:11px;color:#A78BFA;
   }
-  .station-landmarks { font-size:12px;color:#64748B;line-height:1.8;margin-bottom:14px; }
+  .station-landmarks { font-size:12px;color:#64748B;line-height:1.8;margin-bottom:14px;text-align:center; }
   .station-quote {
-    background:rgba(245,200,66,.08);border-right:3px solid #F5C842;
-    padding:10px 14px;border-radius:8px;
-    font-size:13px;color:#F5C842;font-weight:700;text-align:right;
+    background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25);
+    padding:10px 14px;border-radius:10px;
+    font-size:13px;color:#F5C842;font-weight:700;text-align:center;
   }
   .station-req {
     background:#0F1C2E;border-radius:14px;padding:12px;margin-top:12px;
@@ -1714,14 +1668,6 @@
     border-radius: 20px; padding: 4px 10px;
     white-space: nowrap; display: flex; align-items: center; gap: 4px;
   }
-  .pack-complete-btn {
-    background: transparent; border: 1px solid var(--lavender);
-    color: var(--lavender); border-radius: 10px;
-    padding: 6px 12px; font-family: 'Tajawal', sans-serif;
-    font-size: 11px; font-weight: 700; cursor: pointer;
-    white-space: nowrap; transition: all .2s;
-  }
-  .pack-complete-btn:active { transform: scale(.95); background: rgba(167,139,250,.1); }
   .pack-status-col { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
   .pack-completed-badge {
     font-size: 11px; color: var(--lavender);
@@ -2708,115 +2654,6 @@
         <button class="rw-action-btn" onclick="rwReset()">🔄 أدر مرة أخرى</button>
       </div>
     </div>
-  </div>
-</div>
-
-<!-- ══ TRAIN JOURNEY SCREEN ══ -->
-<div class="train-screen" id="trainScreen">
-  <div class="train-sky"></div>
-  <div class="train-stars"></div>
-  <div class="train-track-wrap">
-    <div class="train-ties"></div>
-    <div class="train-track"></div>
-  </div>
-<div class="train-emoji-wrap" id="trainEmoji">
-    <svg width="300" height="110" viewBox="0 0 300 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="tBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="40%" stop-color="#153D57"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
-        <linearGradient id="tRoof" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2A6E90"/><stop offset="100%" stop-color="#1A4D6A"/></linearGradient>
-        <linearGradient id="tNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
-        <linearGradient id="tWin" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#D4F0FF"/><stop offset="100%" stop-color="#38BDF8" stop-opacity="0.4"/></linearGradient>
-        <linearGradient id="tWhl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1E4A6A"/><stop offset="100%" stop-color="#071520"/></linearGradient>
-        <linearGradient id="tGold" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#FF9500"/><stop offset="50%" stop-color="#F5C842"/><stop offset="100%" stop-color="#FF9500"/></linearGradient>
-        <filter id="tGlow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-        <clipPath id="tw1"><rect x="53" y="29" width="36" height="20" rx="4"/></clipPath>
-        <clipPath id="tw2"><rect x="103" y="29" width="36" height="20" rx="4"/></clipPath>
-        <clipPath id="tw3"><rect x="191" y="29" width="36" height="20" rx="4"/></clipPath>
-      </defs>
-      <ellipse cx="152" cy="104" rx="130" ry="7" fill="rgba(0,0,0,0.35)"/>
-      <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="url(#tRoof)"/>
-      <rect x="42" y="20" width="228" height="5" rx="2" fill="#2A6E90"/>
-      <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#tBody)"/>
-      <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#tNose)"/>
-      <line x1="268" y1="42" x2="295" y2="42" stroke="white" stroke-width="0.8" opacity="0.3"/>
-      <rect x="40" y="39" width="258" height="6" rx="3" fill="url(#tGold)"/>
-      <rect x="52" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.88"/>
-      <rect x="52" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
-      <rect x="54" y="30" width="10" height="5" rx="2.5" fill="white" opacity="0.3"/>
-      <rect x="102" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.88"/>
-      <rect x="102" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
-      <rect x="104" y="30" width="10" height="5" rx="2.5" fill="white" opacity="0.3"/>
-      <rect x="190" y="28" width="38" height="22" rx="5" fill="url(#tWin)" opacity="0.85"/>
-      <rect x="190" y="28" width="38" height="22" rx="5" fill="none" stroke="#2DD4BF" stroke-width="0.8" opacity="0.5"/>
-      <g clip-path="url(#tw1)" class="pbob"><rect x="60" y="40" width="14" height="10" rx="3" fill="#A78BFA" opacity="0.9"/><circle cx="67" cy="37" r="6" fill="#FBBF24"/><path d="M61 35 Q67 30 73 35" fill="#92400E"/><rect x="56" y="43" width="8" height="6" rx="1" fill="#F5C842" opacity="0.9"/></g>
-      <g clip-path="url(#tw2)" class="pbob"><rect x="110" y="40" width="14" height="10" rx="3" fill="#2DD4BF" opacity="0.85"/><circle cx="117" cy="37" r="6" fill="#FCA5A5"/><path d="M111 34 Q117 28 123 34 L124 44 Q117 46 110 44 Z" fill="#7C3AED" opacity="0.8"/><circle cx="114" cy="37" r="1.2" fill="#1E1E2E"/><circle cx="120" cy="37" r="1.2" fill="#1E1E2E"/><path d="M114 40 Q117 42 120 40" stroke="#1E1E2E" stroke-width="0.8" fill="none" stroke-linecap="round"/></g>
-      <g clip-path="url(#tw3)" class="pbob"><rect x="198" y="40" width="14" height="10" rx="3" fill="#F97316" opacity="0.85"/><circle cx="205" cy="37" r="6" fill="#86EFAC"/><path d="M199 33 Q205 28 211 33" fill="#064E3B"/><circle cx="202" cy="37" r="1.5" fill="#1E1E2E"/><circle cx="208" cy="37" r="1.5" fill="#1E1E2E"/><circle cx="205" cy="40" r="1.5" fill="#1E1E2E"/></g>
-      <rect x="152" y="30" width="26" height="46" rx="4" fill="#0D2A3E" stroke="#2DD4BF" stroke-width="0.8" opacity="0.8"/>
-      <circle cx="162" cy="53" r="2.5" fill="#2DD4BF" opacity="0.8"/>
-      <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
-      <rect x="44" y="8" width="12" height="18" rx="4" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.2"/>
-      <ellipse cx="50" cy="8" rx="9" ry="4.5" fill="#2DD4BF" opacity="0.7"/>
-      <rect x="108" y="48" width="42" height="14" rx="3.5" fill="rgba(245,200,66,0.1)" stroke="#F5C84244" stroke-width="1"/>
-      <text x="129" y="58.5" font-family="Arial Black,Arial" font-weight="900" font-size="9.5" fill="#F5C842" text-anchor="middle">&#x26A1;WS</text>
-      <circle class="hlight" cx="293" cy="37" r="6" fill="#FFF176" filter="url(#tGlow)" opacity="0.9"/>
-      <circle class="hlight" cx="293" cy="49" r="4.5" fill="#FFF176" filter="url(#tGlow)" opacity="0.7"/>
-      <line x1="68" y1="88" x2="148" y2="88" stroke="#1E4A6A" stroke-width="4" stroke-linecap="round"/>
-      <line x1="148" y1="88" x2="218" y2="88" stroke="#1E4A6A" stroke-width="4" stroke-linecap="round"/>
-      <g transform="translate(68,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
-      <g transform="translate(148,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
-      <g transform="translate(218,88)"><circle r="14" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="2"/><g class="wspin"><line x1="0" y1="-9" x2="0" y2="9" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-9" y1="0" x2="9" y2="0" stroke="#2DD4BF" stroke-width="1.8" stroke-linecap="round" opacity="0.7"/><line x1="-6.5" y1="-6.5" x2="6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/><line x1="6.5" y1="-6.5" x2="-6.5" y2="6.5" stroke="#2DD4BF" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/></g><circle r="5" fill="#1B4D6E" stroke="#2DD4BF" stroke-width="1.5"/><circle r="2.5" fill="#2DD4BF"/></g>
-      <g transform="translate(255,90)"><circle r="9" fill="url(#tWhl)" stroke="#2DD4BF" stroke-width="1.5"/><g class="wspin"><line x1="0" y1="-6" x2="0" y2="6" stroke="#2DD4BF" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/><line x1="-6" y1="0" x2="6" y2="0" stroke="#2DD4BF" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/></g><circle r="2.5" fill="#2DD4BF"/></g>
-    </svg>
-  </div>
-
-  <!-- Station arrival card -->
-  <div class="station-arrival" id="stationArrival">
-    <div class="station-arrived-label">🚉 وصلنا إلى</div>
-    <div class="station-city-name" id="stationCityName">مكة المكرمة</div>
-    <div class="station-card">
-      <div class="station-info-text" id="stationInfoAr"></div>
-      <div class="station-words" id="stationWords"></div>
-      <div class="station-landmarks" id="stationLandmarks"></div>
-      <div class="station-quote" id="stationQuote"></div>
-    </div>
-    <button class="station-enter-btn" onclick="startStationQuiz()">
-      🚪 ادخل المحطة واجتز الاختبار
-    </button>
-  </div>
-</div>
-
-<!-- ══ STATION QUIZ SCREEN ══ -->
-<div class="train-screen" id="stationQuizScreen">
-  <div class="train-sky"></div>
-  <div class="train-stars"></div>
-  <div class="station-quiz-wrap">
-    <div class="station-quiz-title" id="sqTitle">🏆 Station Quiz <span style="font-size:11px;opacity:.6;font-weight:400">اختبار المحطة</span></div>
-    <div class="station-quiz-progress">
-      <div class="station-quiz-progress-fill" id="sqProgressFill" style="width:0%"></div>
-    </div>
-    <div class="station-quiz-info">
-      <span id="sqQNum">سؤال 1</span>
-      <span id="sqScore">⭐ 0</span>
-    </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:8px">
-      <div class="station-quiz-q" id="sqQuestion" style="flex:1"></div>
-      <button class="speak-btn-sm" onclick="speakWord(document.getElementById('sqQuestion').textContent, this)" title="استمع">🔊</button>
-    </div>
-    <div class="station-quiz-opts" id="sqOptions"></div>
-    <div class="station-quiz-feedback" id="sqFeedback"></div>
-  </div>
-</div>
-
-<!-- ══ STATION QUIZ RESULT ══ -->
-<div class="train-screen" id="stationQuizResult">
-  <div class="train-sky"></div>
-  <div class="train-stars"></div>
-  <div class="station-arrival">
-    <div id="sqrEmoji" style="font-size:64px;margin-bottom:12px"></div>
-    <div id="sqrTitle" style="font-size:20px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
-    <div id="sqrScore" style="font-size:32px;font-weight:900;color:#A78BFA;margin-bottom:8px"></div>
-    <div id="sqrMsg" style="font-size:13px;color:#94A3B8;margin-bottom:24px;line-height:1.7;max-width:300px"></div>
-    <button id="sqrBtn" class="station-enter-btn"></button>
   </div>
 </div>
 
@@ -6852,274 +6689,6 @@ function saveName() {
   }
 }
 
-// ══ TRAIN JOURNEY SYSTEM ══
-var TRAIN_STATIONS = [
-  // 🟢 1-10 سعودية
-  { id:1,  city:'مكة المكرمة',      flag:'🕌', infoAr:'مكة المكرمة أقدس مدينة في الإسلام ومسقط رأس النبي محمد ﷺ. تحتضن المسجد الحرام وبئر زمزم والكعبة المشرفة قبلة المسلمين. كل عام يجتمع ملايين الحجاج من كل أرجاء الأرض.', words:['Pilgrimage','Circumambulate','Sanctuary','Sacred','Unite'], landmarks:'🕌 المسجد الحرام · 🏔️ جبل النور · 💧 بئر زمزم · 🏙️ أبراج البيت', quote:'رحلتك مع اللغة تبدأ هنا — كما تبدأ كل رحلة عظيمة من مكة 🕌', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:2,  city:'المدينة المنورة',   flag:'🌟', infoAr:'المدينة المنورة استقبلت النبي ﷺ بعد الهجرة وأصبحت أول دولة إسلامية. تضم المسجد النبوي ومسجد قباء أول مسجد بُني في الإسلام.', words:['Migration','Illuminate','Sanctuary','Scholar','Spiritual'], landmarks:'🕌 المسجد النبوي · 🕌 مسجد قباء · ⛰️ جبل أحد · 🚂 متحف سكة الحديد', quote:'العلم بنى المدينة — واللغة تبني عقلك 🌟', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:3,  city:'تبوك',              flag:'🏔️', infoAr:'تبوك شهدت اختبارات العزيمة في التاريخ الإسلامي. اليوم مدينة نامية تربط المملكة بالعالم.', words:['Expedition','Perseverance','Frontier','Endurance','Resolve'], landmarks:'🏔️ وادي الدسيم · 🏛️ قلعة تبوك العثمانية · 🌊 شاطئ العقبة', quote:'الإصرار وصل بك إلى هنا — ولن يخذلك فيما يأتي 💪', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:4,  city:'العلا',             flag:'✨', infoAr:'العلا من أعظم الكنوز المخفية — وادٍ واحي قديم تحيط به تشكيلات صخرية مذهلة يسكنه الإنسان منذ آلاف السنين.', words:['Oasis','Formation','Dramatic','Excavation','Mesmerizing'], landmarks:'🏛️ الحِجر (مدائن صالح) يونسكو · 🌴 واحة العلا · 🎭 موقع دادان الأثري', quote:'الجمال الحقيقي يكتشفه من يبحث — كما تكتشف جمال اللغة ✨', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:5,  city:'ينبع',              flag:'⚓', infoAr:'كانت ينبع ميناءً استراتيجياً لقرون. مرّت منها قوافل تجارية تحمل التوابل والحرير والذهب بين الجزيرة العربية وأفريقيا وآسيا.', words:['Maritime','Strategic','Caravan','Commerce','Navigate'], landmarks:'⚓ ميناء ينبع · 🌊 شواطئ البحر الأحمر · 🏛️ قرية ينبع البحر', quote:'التجارة العالمية تحتاج لغة — وأنت تبني جسرك للعالم 🌊', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:6,  city:'الطائف',            flag:'🌹', infoAr:'تُعرف بـ"مدينة الورود" وتقع على ارتفاع 1879 متراً. تنتج مزارعها الـ900+ أكثر من 300 مليون زهرة سنوياً من الورد الطائفي الشهير.', words:['Blossom','Distill','Fragrance','Altitude','Heritage'], landmarks:'🌹 مزارع الورد الطائفي · 🏛️ سوق عكاظ · 🚡 تلفريك الهدا · 🏛️ قصر شبرا', quote:'كما يُعطّر الورد كل مكان — تُعطّر اللغة كل فرصة في حياتك 🌹', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:7,  city:'جدة',              flag:'🌊', infoAr:'كانت جدة بوابة مكة المكرمة لأكثر من ألف عام. مدينتها القديمة "البلد" موقع تراث عالمي لليونسكو بمنازلها المبنية من المرجان.', words:['Cosmopolitan','Heritage','Coral','Vibrant','Gateway'], landmarks:'🏘️ البلد التاريخية يونسكو · 🌊 كورنيش جدة · 🏛️ متحف الفن الإسلامي', quote:'جدة تجمع الشرق والغرب — واللغة تجمع قلبك مع العالم 🌊', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:8,  city:'جازان',             flag:'🌿', infoAr:'جازان الجنة الاستوائية للمملكة — منطقة ذات تنوع بيولوجي استثنائي ومزارع مدرّجة قديمة وساحل غني بالشعاب المرجانية.', words:['Biodiversity','Mangrove','Terraced','Tropical','Indigenous'], landmarks:'🌿 الشعاب المرجانية · 🏛️ قلعة الدسارية · 🌴 مزارع الفاكهة الاستوائية', quote:'التنوع ثروة — وكل كلمة جديدة تُثري عالمك الداخلي 🌿', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:9,  city:'جزيرة فرسان',       flag:'🏝️', infoAr:'جزر فرسان أرخبيل من 200 جزيرة مرجانية — محمية يونسكو للمحيط الحيوي 2021. نقش لاتيني من 144م يؤكد وجوداً رومانياً يبعد 4000 كم عن روما.', words:['Archipelago','Biosphere','Inscription','Endangered','Garrison'], landmarks:'🌿 غابة القندل · 🏚️ قرية القصار الأثرية · 🦌 محمية الغزال العربي', quote:'الأسرار الجميلة يكتشفها من يواصل الرحلة 🏝️', req:{words:5,games:1,quiz:5,pass:60} },
-  { id:10, city:'أبها',              flag:'🏔️', infoAr:'أبها "عروس الجبال" تقع على 2270 متراً. تستقبل منطقة عسير 500 ملم من الأمطار سنوياً. وفن القط العسيري معترف به من اليونسكو.', words:['Altitude','Mist','Preservation','Geometric','Indigenous'], landmarks:'🏔️ جبل السودة أعلى قمة · 🚡 تلفريك أبها · 🏘️ رجال ألمع التراثية · 🏰 قلعة شمسان', quote:'كلما ارتفعت — اتسعت رؤيتك للعالم 🏔️', req:{words:5,games:1,quiz:5,pass:60} },
-
-  // 🟡 11-20
-  { id:11, city:'الرياض',            flag:'🏙️', infoAr:'الرياض نشأت قرب محطات تجارية قديمة وأصبحت عاصمة الدولة السعودية 1932. قلعة المصمك شهدت استعادة الملك عبدالعزيز للمدينة 1902 ولا تزال الرمح مغروزة في بوابتها.', words:['Metropolis','Transform','Fortress','Ambition','Heritage'], landmarks:'🏰 قلعة المصمك · 🏛️ الدرعية يونسكو · 🏛️ قصر المربع · 🌿 حديقة الملك سلمان', quote:'الطموح يبني المدن — واللغة تفتح أبوابها 🏙️', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:12, city:'الأحساء',           flag:'🌴', infoAr:'الأحساء أكبر واحة طبيعية في العالم ويونسكو. اسمها يعني "صوت الماء المتدفق تحت الأرض". تضم 2.5 مليون نخلة وأنظمة ري قديمة منذ العصر الحجري.', words:['Oasis','Palm','Ancient','Civilization','Fertile'], landmarks:'🌴 واحة الأحساء يونسكو · 🕌 مسجد جواثا · 🏔️ جبل القارة · 🏛️ قيصرية 1822م', quote:'الجذور العميقة تُنتج ثماراً عظيمة — كذلك اللغة 🌴', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:13, city:'الدمام',            flag:'⚙️', infoAr:'الدمام بوابة المنطقة الشرقية — اكتشاف النفط 1938 في بئر الدمام رقم 7 غيّر الاقتصاد العالمي بأكمله. المنطقة فوق أكبر احتياطيات نفطية في العالم.', words:['Petroleum','Extraction','Industrial','Revenue','Gateway'], landmarks:'🌊 كورنيش الدمام · 🏛️ إثراء الظهران · 🏖️ شاطئ نصف القمر · 🌉 جسر الملك فهد', quote:'الثروة الحقيقية في العقل — واللغة مفتاحها ⚙️', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:14, city:'الجبيل',            flag:'🏭', infoAr:'مدينة الجبيل الصناعية من أكبر المجمعات الصناعية التي بُنيت من الصفر في تاريخ البشرية. وخارج مصانعها تكمن أطلال إحدى أقدم الكنائس المسيحية في الجزيرة العربية (القرن الـ4م).', words:['Refinery','Manufacturing','Ruins','Ancient','Coastline'], landmarks:'🏭 المدينة الصناعية · ⛪ أطلال الكنيسة القديمة · 🌊 شواطئ الجبيل · 🐬 محمية بحرية', quote:'من الصفر إلى القمة — هذه قصة كل متعلم حقيقي 🏭', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:15, city:'الكويت',            flag:'🌊', infoAr:'الكويت دولة صغيرة بروح عملاقة. نهضت من قرية لصيد اللؤلؤ إلى دولة حديثة في جيل واحد بعد اكتشاف النفط 1938. اشتُهر الكويتيون بمهاراتهم في التجارة والملاحة.', words:['Pearl','Merchant','Seafarer','Prosperity','Resilience'], landmarks:'🏛️ أبراج الكويت · 🕌 مسجد الصفاة · 🏛️ المتحف الوطني · ⚓ قرية الصيادين التراثية', quote:'الصمود يصنع الأمم — واللغة تحكي قصصها 🌊', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:16, city:'المنامة',           flag:'🌉', infoAr:'المنامة عاصمة البحرين من أقدم المدن المأهولة في الخليج. كانت مركز تجارة اللؤلؤ لقرون. اليوم مركز مالي يضم أكثر من 400 بنك ومؤسسة.', words:['Financial','Hub','Pearl','Ancient','Inhabited'], landmarks:'🏰 قلعة البحرين يونسكو · 🏛️ متحف البحرين الوطني · 🕌 مسجد الفاتح · 🌳 شجرة الحياة (400 عام)', quote:'الجسور تربط العالم — واللغة أقوى الجسور 🌉', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:17, city:'الدوحة',            flag:'🏆', infoAr:'الدوحة تحوّلت من قرية صيد متواضعة في السبعينيات إلى مدينة عالمية استضافت كأس العالم 2022 — أول بطولة في العالم العربي. متحف الفن الإسلامي يضم مقتنيات تمتد 1400 عام.', words:['Transformation','Investment','Ambitious','Heritage','Phenomenon'], landmarks:'🏛️ متحف الفن الإسلامي · 🌊 كورنيش الدوحة · 🏘️ سوق واقف · 🏛️ المتحف الوطني لقطر', quote:'خمسون عاماً غيّرت الدوحة — وأنت تغيّر نفسك كلمة كلمة 🏆', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:18, city:'أبوظبي',            flag:'🕌', infoAr:'أبوظبي تضم مسجد الشيخ زايد الكبير بطاقة 40,000 مصلٍّ. ومتحف اللوفر أبوظبي أول متحف شامل في العالم العربي. ومدينة مصدر رائدة في الاستدامة.', words:['Innovation','Sustainable','Architecture','Universal','Coexist'], landmarks:'🕌 مسجد الشيخ زايد · 🏛️ متحف اللوفر أبوظبي · 🌿 مدينة مصدر · 🏛️ قصر الإمارات', quote:'الإيمان والعلم والجمال تجتمع هنا — كما تجتمع في عقل المتعلم 🕌', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:19, city:'دبي',               flag:'🌇', infoAr:'دبي جعلت المستحيل ممكناً. برج خليفة أطول مبنى في العالم (828م). تحوّلت من قرية صيد لؤلؤ في الستينيات إلى مدينة عالمية بأكثر من 3 ملايين نسمة.', words:['Skyscraper','Artificial','Metropolis','Landmark','Transform'], landmarks:'🗼 برج خليفة · 🏝️ جزيرة النخلة · 🏘️ الفهيدي التاريخي · 🌊 كريك دبي', quote:'لا حدود لمن يحلم ويعمل — ولا حدود لمن يتعلم ويُصرّ 🌇', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-  { id:20, city:'مسقط',              flag:'🌊', infoAr:'مسقط عاصمة عُمان من أقدم موانئ الجزيرة العربية. البحارة العُمانيون كانوا من أمهر الملاحين في المحيط الهندي. مسجد السلطان قابوس يستوعب 20,000 مصلٍّ.', words:['Navigation','Maritime','Trade','Ancient','Seafarer'], landmarks:'🕌 مسجد السلطان قابوس · 🏰 قلعة مطرح · 🌊 كورنيش مطرح · 🏛️ المتحف الوطني', quote:'البحار يعرف طريقه بالنجوم — وأنت تجد طريقك باللغة 🌊', req:{words:10,games:1,conv:1,quiz:7,pass:65} },
-
-  // 🔵 21-30
-  { id:21, city:'دمشق',              flag:'🏛️', infoAr:'دمشق أُسّست في الألفية الثالثة ق.م وهي من أقدم المدن المأهولة باستمرار. كانت عاصمة الخلافة الأموية. تضم 125 معلماً تاريخياً أبرزها الجامع الأموي (القرن الـ8م).', words:['Ancient','Caliphate','Civilization','Mosaic','Monument'], landmarks:'🕌 الجامع الأموي · 🏰 قلعة دمشق · 🏛️ المتحف الوطني السوري · 🛤️ الشارع المستقيم', quote:'دمشق علّمت العالم — واللغة تحمل تراث الحضارات 🏛️', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:22, city:'بغداد',             flag:'📚', infoAr:'أسّسها الخليفة أبو جعفر المنصور 762م "مدينة السلام". أصبحت أكبر مدن العالم في القرن الـ10 وعاصمة العصر الذهبي الإسلامي. بيت الحكمة استقطب علماء من كل العالم.', words:['Caliphate','Scholar','Translate','Wisdom','Prosperity'], landmarks:'🏛️ المتحف العراقي · 🕌 مسجد أبي حنيفة النعمان · 🏛️ المدرسة المستنصرية 1227م · 📚 شارع المتنبي', quote:'حين كان العالم في ظلام — كانت بغداد تُنير العقول 📚', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:23, city:'القدس',             flag:'🕌', infoAr:'القدس ثالث الحرمين الشريفين. قبة الصخرة بناها الخليفة عبد الملك بن مروان 691م على الموضع الذي عُرج منه النبي ﷺ. والمسجد الأقصى أول قبلة للمسلمين.', words:['Sacred','Ascension','Qibla','Pilgrimage','Ancient'], landmarks:'🕌 المسجد الأقصى · 🕌 قبة الصخرة 691م · 🏛️ البلدة القديمة يونسكو · 🏰 قلعة القدس', quote:'القدس في القلب — واللغة تُعبّر عما يعجز عنه الصمت 🕌', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:24, city:'إسطنبول',           flag:'🌉', infoAr:'إسطنبول المدينة الوحيدة على قارتين. فتحها السلطان محمد الفاتح 1453م وحوّل آيا صوفيا — المبنى الاستثنائي منذ 537م — إلى مسجد. وظلّت عاصمة الخلافة العثمانية 600 عام.', words:['Conquest','Byzantine','Caliphate','Architecture','Continent'], landmarks:'🕌 مسجد آيا صوفيا 537م · 🕌 الجامع الأزرق · 🏰 قصر طوب قابي · 🏛️ البازار الكبير 1455م', quote:'مدينة تجمع قارتين — واللغة تجمع الشعوب 🌉', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:25, city:'قونيا',             flag:'🏛️', infoAr:'قونيا من أقدم مدن تركيا تعود للعصر الحجري. كانت عاصمة سلاجقة الروم في القرنين الـ12 والـ13، وشيّد فيها السلاجقة مساجد ومدارس ومنارات رائعة لا تزال شاهدة على عبقريتهم.', words:['Seljuk','Medieval','Caravanserai','Architecture','Legacy'], landmarks:'🕌 مسجد علاء الدين السلجوقي · 🏔️ تلة علاء الدين · 🏛️ مدرسة إنجه مناري · 🏛️ مدرسة قرا طاي', quote:'الحضارة الحقيقية تبقى في العقول — كما تبقى كلمة تعلّمتها اليوم 🏛️', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:26, city:'قرطبة',             flag:'🌟', infoAr:'في القرن الـ10 كانت قرطبة أكبر مدن أوروبا الغربية (500,000 نسمة) وعاصمة الخلافة الأموية في الأندلس. المسجد الكبير بغابته من 856 عموداً من روائع العمارة العالمية.', words:['Caliphate','Coexistence','Architecture','Scholar','GoldenAge'], landmarks:'🕌 المسجد الكبير يونسكو · 🏰 مدينة الزهراء يونسكو · 🏛️ البلدية التاريخية · 🌉 الجسر الروماني', quote:'قرطبة أضاءت أوروبا في أحلك أوقاتها — فأضئ أنت محيطك بلغتك 🌟', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:27, city:'غرناطة',            flag:'🏰', infoAr:'غرناطة موطن قصر الحمراء — أحد أجمل المباني في العالم. كانت آخر ممالك الإسلام في الأندلس، وسقطت 1492م نفس العام الذي أبحر فيه كولومبوس لأمريكا.', words:['Dynasty','Intricate','Inscription','Fortress','Legacy'], landmarks:'🏰 قصر الحمراء يونسكو · 🌿 حدائق جنة العريف · 🏘️ حي البيازين يونسكو · 🏛️ قصر كارلوس', quote:'الحمراء باقية — لأن الجمال الحقيقي لا يُنسى 🏰', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:28, city:'سمرقند',            flag:'🐪', infoAr:'سمرقند ذُكرت في القرن الـ7 ق.م وكانت محطة حيوية على طريق الحرير. في القرن الـ14 تحت حكم تيمورلنك أصبحت عاصمة شاسعة. الريجستان أروع ميادين العالم.', words:['SilkRoad','Caravan','Architecture','Empire','Astronomy'], landmarks:'🏛️ الريجستان يونسكو · 🕌 مسجد بيبي خانم · 🔭 مرصد أولوغ بيك · 🏛️ أفراسياب الأثرية', quote:'طريق الحرير ربط العالم بالتجارة — واللغة تربطه بالمعرفة 🐪', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:29, city:'بخارى',             flag:'📖', infoAr:'بخارى من أكثر المدن الإسلامية حفاظاً — 2500 عام من التاريخ ويونسكو. وُلد فيها الإمام البخاري (810م) مؤلف صحيح البخاري. تضم أكثر من 140 معلماً أثرياً.', words:['Scholarship','Hadith','Medieval','Preserve','Heritage'], landmarks:'🕌 مسجد كلان ومئذنته · 🏛️ مدرسة مير عرب · 🏰 قلعة أرك · 🌿 ساحة لابي حوض', quote:'من بخارى خرج علماء غيّروا العالم — وأنت تسير على خطاهم 📖', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-  { id:30, city:'القاهرة',           flag:'🕌', infoAr:'فتح عمرو بن العاص مصر 641م وأسّس الفسطاط. عام 970م أسّس الفاطميون القاهرة التي بلغت ذروتها القرن الـ14. الجامع الأزهر (970م) أقدم جامعات العالم وأبرز مراكز العلوم الإسلامية.', words:['Conquest','Madrasa','Caliphate','Medieval','Architecture'], landmarks:'🕌 الجامع الأزهر 970م · 🏰 قلعة صلاح الدين · 🛤️ شارع المعز يونسكو · 🕌 مسجد عمرو بن العاص 642م', quote:'القاهرة تحمل ألف عام من العلم — واللغة هي مفتاح كل علم 🕌', req:{words:15,games:1,conv:1,podcast:1,quiz:8,pass:70} },
-
-  // 🏆 31-37
-  { id:31, city:'تونس',              flag:'🏛️', infoAr:'المدينة التاريخية لتونس (يونسكو) تضم 700 معلم. اعتُبرت في عهد الموحدين والحفصيين (القرن 12-16) من أعظم المدن الإسلامية. جامع الزيتونة (732م) من أبرز معالم شمال أفريقيا.', words:['Dynasty','Medina','Preserve','Minaret','Mosque'], landmarks:'🕌 جامع الزيتونة 732م يونسكو · 🏛️ متحف باردو · 🏰 قلعة تونس · 🕌 جامع عقبة بن نافع 670م', quote:'تونس جمعت حضارات المتوسط — واللغة تجمع حضارات العالم 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:32, city:'فاس',               flag:'📚', infoAr:'فاس تضم أقدم جامعة لا تزال تعمل — جامعة القرويين 859م. ومدينة فاس البالي أكبر وأقدم مدينة إسلامية وسيطة في العالم بنحو 10,000 زقاق.', words:['University','Medieval','Dynasty','Scholarship','Alleyway'], landmarks:'🕌 مسجد وجامعة القرويين 859م · 🏛️ فاس البالي يونسكو · 🏛️ مدرسة البو عنانية · 🌿 دباغة الجلود', quote:'من فاس انطلق العلم نحو الغرب — ومن لغتك تنطلق أنت نحو العالم 📚', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:33, city:'زنجبار',            flag:'🌍', infoAr:'ستون تاون في زنجبار (يونسكو) أحد أبرز أمثلة الثقافة السواحيلية. وصل الإسلام للجزيرة في القرن الـ8 الميلادي، مما يجعلها من أقدم المستوطنات الإسلامية في أفريقيا جنوب الصحراء.', words:['Trade','Swahili','Maritime','Heritage','Spice'], landmarks:'🏘️ ستون تاون يونسكو · 🕌 مسجد إيبادي التاريخي · 🏰 قلعة العرب 1700م · 🌿 مزارع التوابل', quote:'زنجبار ربطت أفريقيا بالعالم الإسلامي — واللغة تربطك بكل العالم 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:34, city:'كوالالمبور',        flag:'🌏', infoAr:'ماليزيا دولة رسمية الإسلام ويشكّل المسلمون 60%+ من سكانها. وصل الإسلام في القرن الـ13 عبر التجار العرب. أبراج بتروناس كانت الأعلى عالمياً 1998-2004.', words:['Peninsula','Official','Trade','Architecture','Multicultural'], landmarks:'🏗️ أبراج بتروناس · 🕌 المسجد الوطني الماليزي · 🕌 مسجد جامع 1909م · 🏛️ متحف الفن الإسلامي', quote:'الإسلام وصل لآسيا بالتجارة والأخلاق — واللغة تحمل قيمك أينما ذهبت 🌏', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:35, city:'جاكرتا',            flag:'🌏', infoAr:'إندونيسيا أكبر دولة مسلمة بأكثر من 240 مليون مسلم. وصل الإسلام في القرن الـ13 عبر التجارة وانتشر بسلام. مسجد الاستقلال أكبر مساجد جنوب شرق آسيا.', words:['Archipelago','Majority','Peaceful','Commerce','Diversity'], landmarks:'🕌 مسجد الاستقلال · 🏛️ المتحف الوطني · 🏛️ متحف فاتاهيلا · 🌊 ميناء سوندا كيلابا', quote:'الإسلام لا يعرف حدوداً — واللغة تفتح لك كل الحدود 🌏', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-  { id:36, city:'لحظة التتويج 👑',  flag:'🏆', infoAr:'سافرت من مكة إلى أقاصي العالم الإسلامي. تعلّمت ليس الكلمات فحسب، بل قصص الحضارات التي شكّلت الإنسانية. الآن أنت في لحظة التتويج — العالم كله ينتظرك.', words:['Journey','Civilization','Achievement','World','Language'], landmarks:'🌍 العالم أجمعه ينتظرك · 👑 رتبة فارس اللغة · 📜 شهادة الرحلة · 🏆 قائمة الشرف', quote:'"من تعلّم لغة قوم أمن من شرّهم" — رواه أبو داود 🌍', req:{words:20,games:1,conv:1,podcast:1,quiz:10,pass:75} },
-];
-
-var trainCurrentStation = 0;
-var trainQuizQuestions = [];
-var trainQuizCurrent = 0;
-var trainQuizCorrect = 0;
-
-function getTrainProgress() {
-  return parseInt(localStorage.getItem('trainStation') || '0');
-}
-
-function setTrainProgress(n) {
-  localStorage.setItem('trainStation', n);
-}
-
-function getStationGamesPlayed() {
-  return parseInt(localStorage.getItem('trainGamesPlayed') || '0');
-}
-
-function getStationConvsPlayed() {
-  return parseInt(localStorage.getItem('trainConvsPlayed') || '0');
-}
-
-function getStationPodcastPlayed() {
-  return parseInt(localStorage.getItem('trainPodcastPlayed') || '0');
-}
-
-function checkTrainProgress() {
-  var current = getTrainProgress();
-  if (current >= TRAIN_STATIONS.length) return;
-  var station = TRAIN_STATIONS[current];
-  var req = station.req;
-
-  // Check requirements
-  var wordsOk = words.length >= req.words;
-  var gamesOk = getStationGamesPlayed() >= (req.games || 0);
-  var convOk  = !req.conv || getStationConvsPlayed() >= req.conv;
-  var podOk   = !req.podcast || getStationPodcastPlayed() >= req.podcast;
-
-  if (wordsOk && gamesOk && convOk && podOk) {
-    // Launch train!
-    launchTrainToStation(current);
-  }
-}
-
-function launchTrainToStation(idx) {
-  trainCurrentStation = idx;
-  var station = TRAIN_STATIONS[idx];
-
-  // Reset quiz
-  trainQuizQuestions = [];
-  trainQuizCurrent = 0;
-  trainQuizCorrect = 0;
-
-  // Setup station info
-  document.getElementById('stationCityName').textContent = station.city;
-  document.getElementById('stationInfoAr').textContent = station.infoAr;
-  document.getElementById('stationQuote').textContent = station.quote;
-
-  // Words chips
-  var wHtml = '';
-  station.words.forEach(function(w) { wHtml += '<span class="station-word-chip">' + w + '</span>'; });
-  document.getElementById('stationWords').innerHTML = wHtml;
-
-  // Landmarks
-  document.getElementById('stationLandmarks').innerHTML = station.landmarks;
-
-  // Show train screen
-  var sc = document.getElementById('trainScreen');
-  sc.classList.add('show');
-  document.getElementById('stationArrival').style.display = 'flex';
-
-  // Reset train animation
-  var tr = document.getElementById('trainEmoji');
-  tr.style.animation = 'none';
-  tr.offsetHeight; // reflow
-  tr.style.animation = 'trainRide 2.5s cubic-bezier(.25,.46,.45,.94) forwards';
-}
-
-function startStationQuiz() {
-  var station = TRAIN_STATIONS[trainCurrentStation];
-  var req = station.req;
-  var qCount = req.quiz || 5;
-  var passRate = (req.pass || 60) / 100;
-
-  // Build questions from student words
-  var pool = words.slice();
-  for (var i = pool.length-1; i>0; i--) {
-    var j = Math.floor(Math.random()*(i+1));
-    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
-  }
-  var selected = pool.slice(0, Math.min(qCount, pool.length));
-
-  // If not enough words, fill from station words
-  if (selected.length < qCount) {
-    trainQuizQuestions = selected.map(function(w) {
-      return buildTrainQuestion(w, pool);
-    });
-  } else {
-    trainQuizQuestions = selected.map(function(w) {
-      return buildTrainQuestion(w, pool);
-    });
-  }
-
-  trainQuizCurrent = 0;
-  trainQuizCorrect = 0;
-
-  document.getElementById('trainScreen').classList.remove('show');
-  document.getElementById('stationQuizScreen').classList.add('show');
-  document.getElementById('sqTitle').textContent = '🚉 اختبار محطة ' + station.city;
-
-  renderTrainQuizQ();
-}
-
-function buildTrainQuestion(w, pool) {
-  var wrong = pool.filter(function(x){ return x.en !== w.en; });
-  for (var i=wrong.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t;}
-  var opts = wrong.slice(0,3).map(function(x){return x.ar;});
-  var ci = Math.floor(Math.random()*4);
-  opts.splice(ci,0,w.ar);
-  return {q:w.en, opts:opts, ans:ci};
-}
-
-function renderTrainQuizQ() {
-  var q = trainQuizQuestions[trainQuizCurrent];
-  if (!q) { showTrainQuizResult(); return; }
-  var total = trainQuizQuestions.length;
-  var pct = (trainQuizCurrent/total)*100;
-  document.getElementById('sqProgressFill').style.width = pct+'%';
-  document.getElementById('sqQNum').textContent = 'سؤال '+(trainQuizCurrent+1)+' من '+total;
-  document.getElementById('sqScore').textContent = '⭐ '+trainQuizCorrect;
-  document.getElementById('sqQuestion').textContent = q.q;
-  document.getElementById('sqFeedback').textContent = '';
-
-  var opts = document.getElementById('sqOptions');
-  opts.innerHTML = '';
-  q.opts.forEach(function(opt,i){
-    var btn = document.createElement('button');
-    btn.className = 'station-quiz-opt';
-    btn.textContent = opt;
-    btn.onclick = function(){ answerTrainQ(i, btn); };
-    opts.appendChild(btn);
-  });
-}
-
-function answerTrainQ(idx, btn) {
-  var q = trainQuizQuestions[trainQuizCurrent];
-  var btns = document.getElementById('sqOptions').querySelectorAll('button');
-  btns.forEach(function(b){b.onclick=null;b.style.opacity='.5';});
-  var fb = document.getElementById('sqFeedback');
-  if (idx === q.ans) {
-    btn.style.background='rgba(45,212,191,.2)';btn.style.borderColor='#2DD4BF';btn.style.opacity='1';
-    trainQuizCorrect++;
-    document.getElementById('sqScore').textContent='⭐ '+trainQuizCorrect;
-    fb.style.color='#2DD4BF';
-    fb.textContent=['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
-  } else {
-    btn.style.background='rgba(251,113,133,.2)';btn.style.borderColor='#FB7185';btn.style.opacity='1';
-    btns[q.ans].style.background='rgba(45,212,191,.15)';btns[q.ans].style.borderColor='#2DD4BF';btns[q.ans].style.opacity='1';
-    fb.style.color='#FB7185';
-    fb.textContent=['لا بأس، واصل! 😊','قريب! استمر 🌟','راجع هذه الكلمة 📚'][Math.floor(Math.random()*3)];
-  }
-  setTimeout(function(){
-    trainQuizCurrent++;
-    if (trainQuizCurrent < trainQuizQuestions.length) renderTrainQuizQ();
-    else showTrainQuizResult();
-  }, 900);
-}
-
-function showTrainQuizResult() {
-  document.getElementById('stationQuizScreen').classList.remove('show');
-  var rs = document.getElementById('stationQuizResult');
-  rs.classList.add('show');
-
-  var station = TRAIN_STATIONS[trainCurrentStation];
-  var total = trainQuizQuestions.length;
-  var passScore = Math.ceil(total * (station.req.pass/100));
-  var passed = trainQuizCorrect >= passScore;
-
-  document.getElementById('sqrEmoji').textContent = passed ? '🏆' : '📚';
-  document.getElementById('sqrTitle').textContent = passed ? 'أحسنت! اجتزت المحطة!' : 'القطار ينتظرك!';
-  document.getElementById('sqrScore').textContent = trainQuizCorrect + ' / ' + total;
-  document.getElementById('sqrMsg').textContent = passed
-    ? 'وصلت إلى ' + station.city + '! 🎉 المحطة التالية تنتظرك. واصل الرحلة!'
-    : 'راجع كلماتك وعُد أقوى. تحتاج ' + passScore + ' إجابات صحيحة للانتقال.';
-
-  var btn = document.getElementById('sqrBtn');
-  if (passed) {
-    setTrainProgress(trainCurrentStation + 1);
-    addStarPoints('passQuiz');
-    btn.textContent = '🚄 واصل الرحلة!';
-    btn.onclick = function() {
-      rs.classList.remove('show');
-    };
-  } else {
-    btn.textContent = '🔄 أعد الاختبار';
-    btn.onclick = function() {
-      rs.classList.remove('show');
-      startStationQuiz();
-    };
-  }
-}
-
-// Hook into existing game/conv/podcast completions
-var _origEndRace = endRace;
-
-// Track games played for train
-function trackTrainGame() {
-  var n = getStationGamesPlayed() + 1;
-  localStorage.setItem('trainGamesPlayed', n);
-}
-
-// Track podcast for train
-function trackTrainPodcast() {
-  var n = getStationPodcastPlayed() + 1;
-  localStorage.setItem('trainPodcastPlayed', n);
-}
-
-// Check train progress after adding word
-function checkTrainAfterWord() {
-  setTimeout(checkTrainProgress, 500);
-}
-
 // ══ TRAIN JOURNEY ══
 // ══ LEVEL TEST QUESTION BANK (45 questions) ══
 var ltQuestionBank = {
@@ -11072,7 +10641,12 @@ function rwBuildWheel() {
   const wheel = document.getElementById('rwWheel');
   const zone = document.getElementById('rwWheelZone');
   if (rwStations.length === 0) {
-    zone.innerHTML = `<div class="rw-empty">🚂 لا توجد محطات مكتملة بعد!<br>أكمل أول محطة في رحلة القطار حتى تقدر تستخدم عجلة المراجعة 🌟</div>`;
+    zone.innerHTML = `<div class="rw-empty">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px">🚂 No completed stations yet!</div>
+      <div style="font-size:11px;color:var(--soft);margin-bottom:14px">لا توجد محطات مكتملة بعد!</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--white)">Finish your first station on the Train Journey to unlock the Review Wheel 🌟</div>
+      <div style="font-size:11px;color:var(--soft);margin-top:4px">أكمل أول محطة في رحلة القطار حتى تقدر تستخدم عجلة المراجعة</div>
+    </div>`;
     return;
   }
   const n = rwStations.length;
