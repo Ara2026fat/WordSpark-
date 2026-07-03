@@ -2630,6 +2630,34 @@
 .rl-result-card{background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:18px;padding:16px 18px;margin-bottom:16px}
 .rl-result-score{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;color:var(--white);margin-bottom:10px}
 .rl-result-compare{font-family:'Space Grotesk',sans-serif;font-size:15px;line-height:2;direction:ltr;text-align:left}
+
+/* ══ REVIEW WHEEL ══ */
+.rw-backdrop{display:none;position:fixed;inset:0;background:rgba(5,8,14,.75);z-index:9999;align-items:center;justify-content:center;padding:16px}
+.rw-backdrop.show{display:flex}
+.rw-modal{width:100%;max-width:380px;max-height:92vh;overflow-y:auto;background:var(--ink);border:1px solid var(--rim);border-radius:24px;padding:20px 18px 26px;text-align:center;animation:rwPop .3s ease}
+@keyframes rwPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+.rw-close{position:absolute;top:14px;left:14px;width:32px;height:32px;border-radius:50%;background:var(--panel);border:1px solid var(--rim);color:var(--soft);font-size:16px;cursor:pointer}
+.rw-title-en{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;margin-top:6px}
+.rw-title-ar{font-size:11.5px;color:var(--soft);margin-top:2px;margin-bottom:14px}
+.rw-wrap{position:relative;width:260px;height:260px;margin:6px auto 18px}
+.rw-pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;border-top:20px solid var(--gold);z-index:5;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4))}
+.rw-wheel{width:100%;height:100%;border-radius:50%;position:relative;border:6px solid var(--panel);box-shadow:0 0 0 2px var(--rim),0 8px 30px rgba(0,0,0,.5);transition:transform 4s cubic-bezier(.17,.67,.16,1);overflow:hidden}
+.rw-seg{position:absolute;width:50%;height:50%;top:0;left:50%;transform-origin:0% 100%;display:flex;align-items:flex-start;justify-content:center;padding-top:12px}
+.rw-seg-label{display:flex;flex-direction:column;align-items:center;gap:2px;transform:rotate(90deg);font-family:'Space Grotesk',sans-serif;font-weight:700;color:#0D1117;font-size:10px;white-space:nowrap}
+.rw-seg-icon{font-size:16px}
+.rw-hub{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:66px;height:66px;border-radius:16px;background:#05070C;border:2.5px solid var(--gold);display:flex;align-items:center;justify-content:center;z-index:4;box-shadow:0 0 10px rgba(245,200,66,.5),0 2px 10px rgba(0,0,0,.4)}
+.rw-spin-btn{padding:13px 36px;border-radius:16px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--lavender),#7C3AED);color:white;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 6px 20px rgba(124,58,237,.35)}
+.rw-spin-btn .ar{font-size:10px;font-weight:400;opacity:.85}
+.rw-spin-btn:disabled{opacity:.5}
+.rw-result-card{display:none;margin-top:18px;background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid var(--rim);border-radius:18px;padding:18px;text-align:center}
+.rw-result-card.show{display:block;animation:rwPop .3s ease}
+.rw-result-icon{font-size:36px;margin-bottom:6px}
+.rw-result-title-en{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:800}
+.rw-result-title-ar{font-size:11.5px;color:var(--soft);margin-top:2px;margin-bottom:12px}
+.rw-result-actions{display:flex;flex-direction:column;gap:8px}
+.rw-action-btn{padding:10px;border-radius:12px;border:1px solid var(--rim);background:rgba(255,255,255,.03);color:var(--white);font-family:'Tajawal',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer}
+.rw-action-btn.primary{background:rgba(45,212,191,.12);border-color:var(--teal);color:var(--teal)}
+.rw-empty{text-align:center;padding:30px 16px;color:var(--soft);font-size:12.5px;line-height:1.9}
 </style>
 
 <!-- TAP-TRANSLATE POPUP (Reading Lab) -->
@@ -2638,6 +2666,48 @@
     <div class="rl-popup-word" id="rlPopupEn">Word</div>
     <div class="rl-popup-meaning" id="rlPopupAr">المعنى</div>
     <button class="rl-popup-close" onclick="rlClosePopup()">إغلاق</button>
+  </div>
+</div>
+
+<!-- REVIEW WHEEL MODAL -->
+<div class="rw-backdrop" id="rwBackdrop" onclick="if(event.target===this)rwClose()">
+  <div class="rw-modal" style="position:relative">
+    <button class="rw-close" onclick="rwClose()">✕</button>
+    <div class="rw-title-en">🎡 Review Wheel</div>
+    <div class="rw-title-ar">عجلة مراجعة المحطات</div>
+
+    <div id="rwWheelZone">
+      <div class="rw-wrap">
+        <div class="rw-pointer"></div>
+        <div class="rw-wheel" id="rwWheel"></div>
+        <div class="rw-hub">
+          <svg width="46" height="46" viewBox="0 0 140 140">
+            <defs>
+              <linearGradient id="rwHubWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient>
+              <linearGradient id="rwHubSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient>
+            </defs>
+            <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text>
+            <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#rwHubWS)" text-anchor="middle" letter-spacing="-3">WS</text>
+            <path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#rwHubSpark)"/>
+          </svg>
+        </div>
+      </div>
+      <button class="rw-spin-btn" id="rwSpinBtn" onclick="rwSpin()">
+        <span>🎲 Spin the Wheel</span>
+        <span class="ar">أدر العجلة</span>
+      </button>
+    </div>
+
+    <div class="rw-result-card" id="rwResult">
+      <div class="rw-result-icon" id="rwResIcon">🏙️</div>
+      <div class="rw-result-title-en" id="rwResEn">Riyadh</div>
+      <div class="rw-result-title-ar" id="rwResAr">الرياض</div>
+      <div class="rw-result-actions">
+        <button class="rw-action-btn primary" id="rwReadBtn" onclick="rwOpenReading()">📖 اقرأ عن هذه المدينة</button>
+        <button class="rw-action-btn" onclick="rwOpenStation()">🗺️ راجع بطاقة المحطة</button>
+        <button class="rw-action-btn" onclick="rwReset()">🔄 أدر مرة أخرى</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2826,6 +2896,7 @@
           <div style="display:flex;gap:5px">
             <button id="btnMapView" onclick="setJourneyView('map')" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">🌍 Map</button>
             <button id="btnListView" onclick="setJourneyView('list')" style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">📋 List</button>
+            <button onclick="rwOpen()" style="background:rgba(245,200,66,.1);border:1px solid #F5C84244;color:#F5C842;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">🎡</button>
           </div>
           <button onclick="closeJourney()" style="background:rgba(251,113,133,.1);border:1px solid #FB718544;color:#FB7185;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer;width:100%">✕ Exit</button>
         </div>
@@ -10210,6 +10281,27 @@ const readingPassages = [
       { q:"How does Yazan feel at the end?", ar:"كيف يشعر يزن في النهاية؟", opts:["Tired","Warm and happy","Bored"], ans:"Warm and happy" }
     ]
   },
+  {
+    id:'rainyday', icon:'☔', color:'rgba(45,212,191,.15)', level:'beginner',
+    titleEn:'A Rainy Day', titleAr:'يوم ممطر', words:65, minutes:1,
+    parts:[
+      {t:"One morning, Sami wakes up and hears rain hitting the window. He puts on his boots and "},
+      {t:"raincoat", w:true, ar:"معطف المطر"},
+      {t:" before walking to school. The streets look "},
+      {t:"shiny", w:true, ar:"لامعة"},
+      {t:" and fresh after the rain. At school, Sami and his friends jump over small "},
+      {t:"puddles", w:true, ar:"برك ماء"},
+      {t:" and laugh together. During class, he watches the "},
+      {t:"raindrops", w:true, ar:"قطرات المطر"},
+      {t:" slide down the window glass. Sami loves rainy days because everything feels "},
+      {t:"calm", w:true, ar:"هادئ"},
+      {t:" and new."}
+    ],
+    questions:[
+      { q:"What do Sami and his friends do at school?", ar:"ماذا يفعل سامي وأصدقاؤه في المدرسة؟", opts:["Jump over puddles","Build a fort","Play chess"], ans:"Jump over puddles" },
+      { q:"Why does Sami love rainy days?", ar:"لماذا يحب سامي الأيام الممطرة؟", opts:["Because school is closed","Because everything feels calm and new","Because he gets candy"], ans:"Because everything feels calm and new" }
+    ]
+  },
 
   // ── MEDIUM ──
   {
@@ -10323,6 +10415,138 @@ const readingPassages = [
     questions:[
       { q:"What did Tariq's mother advise him to do?", ar:"بماذا نصحت أم طارق؟", opts:["Play more games","Create a daily schedule","Sleep less"], ans:"Create a daily schedule" },
       { q:"What happened after Tariq followed her advice?", ar:"ماذا حدث بعد أن اتّبع طارق النصيحة؟", opts:["He felt more tired","His grades improved","He stopped studying"], ans:"His grades improved" }
+    ]
+  },
+  {
+    id:'cooking', icon:'🍳', color:'rgba(245,200,66,.15)', level:'medium',
+    titleEn:'Learning to Cook', titleAr:'تعلّم الطبخ', words:98, minutes:2,
+    parts:[
+      {t:"Adam has always enjoyed watching his father cook dinner, but he never tried it himself. One weekend, his father invited him to help "},
+      {t:"prepare", w:true, ar:"يحضّر"},
+      {t:" a simple pasta dish. At first, Adam felt "},
+      {t:"nervous", w:true, ar:"متوتراً"},
+      {t:" about using the stove and chopping vegetables carefully. His father patiently "},
+      {t:"guided", w:true, ar:"أرشد"},
+      {t:" him through each step, explaining why timing and "},
+      {t:"temperature", w:true, ar:"درجة الحرارة"},
+      {t:" matter in cooking. After nearly an hour, they finally sat down to eat the meal together. Adam felt "},
+      {t:"proud", w:true, ar:"فخوراً"},
+      {t:" tasting something he had helped create with his own hands. From that day on, he started helping in the kitchen every weekend, slowly learning new "},
+      {t:"recipes", w:true, ar:"وصفات"},
+      {t:"."}
+    ],
+    questions:[
+      { q:"How did Adam feel at first?", ar:"كيف شعر آدم في البداية؟", opts:["Confident","Nervous","Bored"], ans:"Nervous" },
+      { q:"What did Adam's father explain to him?", ar:"ماذا شرح والد آدم له؟", opts:["Why timing and temperature matter","How to wash dishes","How to set the table"], ans:"Why timing and temperature matter" }
+    ]
+  },
+  {
+    id:'library', icon:'📚', color:'rgba(167,139,250,.15)', level:'medium',
+    titleEn:'The Library Visit', titleAr:'زيارة المكتبة', words:92, minutes:2,
+    parts:[
+      {t:"Every Thursday afternoon, Maryam visits the public library near her house. She enjoys the quiet "},
+      {t:"atmosphere", w:true, ar:"الأجواء"},
+      {t:" and the smell of old books. Last week, a "},
+      {t:"librarian", w:true, ar:"أمينة المكتبة"},
+      {t:" recommended a new mystery novel that matched her interests perfectly. Maryam found a "},
+      {t:"cozy", w:true, ar:"دافئ ومريح"},
+      {t:" corner near the window and read for nearly two hours without noticing the time. She sometimes brings a notebook to write down interesting sentences or new words she discovers. For Maryam, the library feels like a peaceful "},
+      {t:"escape", w:true, ar:"ملاذ"},
+      {t:" from her busy daily schedule, a place where her "},
+      {t:"imagination", w:true, ar:"خيالها"},
+      {t:" can wander freely."}
+    ],
+    questions:[
+      { q:"Who recommended a new book to Maryam?", ar:"من أوصت مريم بكتاب جديد؟", opts:["Her teacher","A librarian","Her friend"], ans:"A librarian" },
+      { q:"How does Maryam feel about the library?", ar:"كيف تشعر مريم تجاه المكتبة؟", opts:["It feels boring","It feels like a peaceful escape","It feels crowded"], ans:"It feels like a peaceful escape" }
+    ]
+  },
+  {
+    id:'makkah', icon:'🕌', color:'rgba(245,200,66,.15)', level:'medium', journey:true, station:'مكة المكرمة',
+    titleEn:'Makkah Al-Mukarramah', titleAr:'مكة المكرمة', words:99, minutes:2,
+    parts:[
+      {t:"Makkah Al-Mukarramah holds a place of "},
+      {t:"profound", w:true, ar:"عميقة"},
+      {t:" importance in Islamic history as the "},
+      {t:"holiest", w:true, ar:"الأقدس"},
+      {t:" city in Islam and the birthplace of Prophet Muhammad, peace be upon him. At its center stands Al-Masjid Al-Haram, the largest mosque in the world, surrounding the Holy Kaaba. Each year, millions of "},
+      {t:"pilgrims", w:true, ar:"حجاج"},
+      {t:" travel from every corner of the earth to gather in this "},
+      {t:"sacred", w:true, ar:"مقدسة"},
+      {t:" city, united by a shared faith. Nearby, Mount Al-Noor rises above the landscape, home to the Cave of Hira, a site of deep historical "},
+      {t:"significance", w:true, ar:"أهمية"},
+      {t:". For millions of people worldwide, Makkah remains a place of lasting importance and meaning."}
+    ],
+    questions:[
+      { q:"What is Al-Masjid Al-Haram known for?", ar:"بماذا يشتهر المسجد الحرام؟", opts:["It is the largest mosque in the world","It is a small local mosque","It was built recently"], ans:"It is the largest mosque in the world" },
+      { q:"Why do millions of pilgrims travel to Makkah each year?", ar:"لماذا يسافر ملايين الحجاج إلى مكة كل عام؟", opts:["For trade","United by a shared faith","For tourism only"], ans:"United by a shared faith" }
+    ]
+  },
+  {
+    id:'madinah', icon:'🕌', color:'rgba(167,139,250,.15)', level:'medium', journey:true, station:'المدينة المنورة',
+    titleEn:'Al-Madinah Al-Munawwarah', titleAr:'المدينة المنورة', words:103, minutes:2,
+    parts:[
+      {t:"Al-Madinah Al-Munawwarah holds a "},
+      {t:"distinguished", w:true, ar:"متميزة"},
+      {t:" place in Islamic history as the city that welcomed Prophet Muhammad, peace be upon him, after the Hijrah, or "},
+      {t:"migration", w:true, ar:"هجرة"},
+      {t:". It became the first Islamic state, built upon "},
+      {t:"principles", w:true, ar:"مبادئ"},
+      {t:" of knowledge and justice. The city is home to Al-Masjid An-Nabawi, the second holiest site in Islam, along with Masjid Quba, recognized as the very first mosque built in Islamic history. Nearby, Mount Uhud stands as a witness to significant historical events. "},
+      {t:"Scholars", w:true, ar:"علماء"},
+      {t:" from across generations have studied the rich history connected to this city, and its "},
+      {t:"legacy", w:true, ar:"إرث"},
+      {t:" continues to hold deep meaning for people around the world today."}
+    ],
+    questions:[
+      { q:"What does 'Hijrah' refer to in this passage?", ar:"ماذا تعني 'الهجرة' في هذا النص؟", opts:["A type of mosque","The migration of Prophet Muhammad to Madinah","A historical battle"], ans:"The migration of Prophet Muhammad to Madinah" },
+      { q:"What is Masjid Quba known for?", ar:"بماذا يشتهر مسجد قباء؟", opts:["It is the largest mosque in the world","It is recognized as the first mosque in Islamic history","It was built recently"], ans:"It is recognized as the first mosque in Islamic history" }
+    ]
+  },
+  {
+    id:'jeddah', icon:'🌊', color:'rgba(45,212,191,.15)', level:'medium', journey:true, station:'جدة',
+    titleEn:'Jeddah: Gateway to the Red Sea', titleAr:'جدة: بوابة البحر الأحمر', words:105, minutes:2,
+    parts:[
+      {t:"For more than a thousand years, Jeddah has served as a major "},
+      {t:"gateway", w:true, ar:"بوابة"},
+      {t:" on the Red Sea coast, connecting travelers and traders from around the world. Its historic district, known as Al-Balad, is famous for houses built from "},
+      {t:"coral", w:true, ar:"مرجان"},
+      {t:" stone and decorated with tall wooden "},
+      {t:"balconies", w:true, ar:"شرفات"},
+      {t:" called Rawasheen. These balconies allowed cool breezes to pass through homes long before modern air conditioning existed. Because of its unique architecture and rich "},
+      {t:"heritage", w:true, ar:"تراث"},
+      {t:", Al-Balad was recognized as a UNESCO World Heritage Site. Today, Jeddah balances its deep-rooted history with a modern, "},
+      {t:"cosmopolitan", w:true, ar:"عالمي"},
+      {t:" lifestyle, making it one of the most "},
+      {t:"vibrant", w:true, ar:"نابض بالحياة"},
+      {t:" coastal cities in the region."}
+    ],
+    questions:[
+      { q:"What material were the historic houses in Al-Balad built from?", ar:"من أي مادة بُنيت منازل البلد التاريخية؟", opts:["Wood","Coral stone","Marble"], ans:"Coral stone" },
+      { q:"What was the purpose of the Rawasheen balconies?", ar:"ما فائدة شرفات الرواشين؟", opts:["For decoration only","To let cool air pass through","To store goods"], ans:"To let cool air pass through" }
+    ]
+  },
+  {
+    id:'riyadh', icon:'🏙️', color:'rgba(245,200,66,.15)', level:'medium', journey:true, station:'الرياض',
+    titleEn:'Riyadh: From Fortress to Metropolis', titleAr:'الرياض: من القلعة إلى المدينة الكبرى', words:105, minutes:2,
+    parts:[
+      {t:"Riyadh, whose name means \"gardens,\" began as a small stop along ancient "},
+      {t:"caravan", w:true, ar:"قافلة"},
+      {t:" routes crossing the desert. Over time, the "},
+      {t:"settlement", w:true, ar:"المستوطنة"},
+      {t:" grew into a thriving town, and in 1932 it became the "},
+      {t:"capital", w:true, ar:"العاصمة"},
+      {t:" of Saudi Arabia. At the heart of the old city stands the Masmak "},
+      {t:"fortress", w:true, ar:"قلعة"},
+      {t:", a strong clay building with tall watchtowers. In 1902, a decisive event took place at its gate, shaping the country's modern history. Today, visitors can still see a spear "},
+      {t:"embedded", w:true, ar:"مغروزة"},
+      {t:" in the fortress door, a lasting reminder of that moment. Riyadh has since transformed into a modern "},
+      {t:"metropolis", w:true, ar:"مدينة كبرى"},
+      {t:", blending its historic roots with towering skyscrapers and wide highways."}
+    ],
+    questions:[
+      { q:"What does the name 'Riyadh' mean?", ar:"ماذا يعني اسم 'الرياض'؟", opts:["Gardens","Mountains","Rivers"], ans:"Gardens" },
+      { q:"What can visitors still see at the Masmak Fortress gate?", ar:"ماذا يستطيع الزوار رؤيته عند بوابة قلعة المصمك؟", opts:["A golden door","A spear embedded in the door","A statue"], ans:"A spear embedded in the door" }
     ]
   },
 
@@ -10441,6 +10665,71 @@ const readingPassages = [
       { q:"Why did Maha create a daily routine?", ar:"لماذا وضعت مها روتيناً يومياً؟", opts:["To copy her friends","To manage her time effectively","Because her teacher forced her"], ans:"To manage her time effectively" },
       { q:"What did Maha learn from being disciplined?", ar:"ماذا تعلّمت مها من الانضباط؟", opts:["The value of consistency","How to play sports","How to cook"], ans:"The value of consistency" }
     ]
+  },
+  {
+    id:'alahsa', icon:'🌴', color:'rgba(45,212,191,.15)', level:'advanced', journey:true, station:'الأحساء',
+    titleEn:'Al-Ahsa: The Largest Oasis on Earth', titleAr:'الأحساء: أكبر واحة في العالم', words:150, minutes:2,
+    parts:[
+      {t:"Al-Ahsa is home to the largest natural "},
+      {t:"oasis", w:true, ar:"واحة"},
+      {t:" in the world, a vast landscape shaped by underground "},
+      {t:"springs", w:true, ar:"ينابيع"},
+      {t:" that have flowed for thousands of years. In fact, the name Al-Ahsa refers to the gentle sound of water moving beneath the earth's surface. This "},
+      {t:"abundant", w:true, ar:"وفيرة"},
+      {t:" water source has supported human life since the Stone Age, making the region one of the oldest continuously "},
+      {t:"inhabited", w:true, ar:"مأهولة"},
+      {t:" areas in the world. Today, more than two and a half million date palm trees stretch across the oasis, forming a green landscape that contrasts sharply with the surrounding desert. Because of its historical significance and unique "},
+      {t:"ecosystem", w:true, ar:"نظام بيئي"},
+      {t:", Al-Ahsa was designated a UNESCO World Heritage Site. For centuries, the oasis served as an important "},
+      {t:"crossroads", w:true, ar:"ملتقى طرق"},
+      {t:" where traders, travelers, and different civilizations intersected, exchanging goods, ideas, and stories along the way."}
+    ],
+    questions:[
+      { q:"What does the name 'Al-Ahsa' refer to?", ar:"إلى ماذا يشير اسم 'الأحساء'؟", opts:["The sound of water underground","A type of palm tree","A desert wind"], ans:"The sound of water underground" },
+      { q:"Why was Al-Ahsa an important historical location?", ar:"لماذا كانت الأحساء موقعاً تاريخياً مهماً؟", opts:["It was a mountain fortress","It was a crossroads for trade and civilizations","It had gold mines"], ans:"It was a crossroads for trade and civilizations" }
+    ]
+  },
+  {
+    id:'publicspeaking', icon:'🎤', color:'rgba(167,139,250,.15)', level:'advanced',
+    titleEn:'Overcoming a Fear of Public Speaking', titleAr:'التغلب على الخوف من التحدث أمام الجمهور', words:150, minutes:2,
+    parts:[
+      {t:"When Sultan was asked to give a presentation in front of his entire class, his first "},
+      {t:"instinct", w:true, ar:"غريزة"},
+      {t:" was to panic. He had always felt comfortable speaking with friends, but standing before dozens of classmates felt completely different. In the days leading up to the presentation, Sultan practiced "},
+      {t:"repeatedly", w:true, ar:"مراراً وتكراراً"},
+      {t:" in front of a mirror and even recorded himself to identify areas for improvement. His teacher advised him to focus on one friendly face in the audience rather than the entire room, which made the experience feel less "},
+      {t:"overwhelming", w:true, ar:"مرهقاً"},
+      {t:". On the day of the presentation, his hands were still shaking slightly, but he managed to speak clearly and stay on topic. Afterward, several classmates "},
+      {t:"complimented", w:true, ar:"أثنوا على"},
+      {t:" his confidence, which surprised him given how nervous he had felt inside. Sultan realized that "},
+      {t:"courage", w:true, ar:"الشجاعة"},
+      {t:" does not mean feeling no fear at all, but choosing to act despite it."}
+    ],
+    questions:[
+      { q:"What technique helped Sultan feel less overwhelmed?", ar:"ما الأسلوب الذي ساعد سلطان على الشعور بارتياح أكبر؟", opts:["Avoiding eye contact entirely","Focusing on one friendly face","Reading directly from notes"], ans:"Focusing on one friendly face" },
+      { q:"What did Sultan realize about courage?", ar:"ماذا أدرك سلطان عن الشجاعة؟", opts:["Courage means feeling no fear","Courage means acting despite fear","Courage means avoiding challenges"], ans:"Courage means acting despite fear" }
+    ]
+  },
+  {
+    id:'patience', icon:'⏳', color:'rgba(245,200,66,.15)', level:'advanced',
+    titleEn:'A Lesson in Patience', titleAr:'درس في الصبر', words:140, minutes:2,
+    parts:[
+      {t:"Noor had always wanted to grow her own vegetable garden, imagining fresh tomatoes and herbs within just a few weeks. However, after planting her first seeds, she quickly realized that gardening required far more "},
+      {t:"patience", w:true, ar:"صبر"},
+      {t:" than she had expected. Some mornings, nothing seemed to change at all, and she found herself feeling "},
+      {t:"frustrated", w:true, ar:"محبطة"},
+      {t:" by the slow progress. Her grandmother, who had gardened for decades, reminded her that meaningful growth rarely happens quickly, whether in plants or in people. Instead of checking the garden impatiently every day, Noor began keeping a journal to track small changes over time, which helped her appreciate "},
+      {t:"gradual", w:true, ar:"تدريجي"},
+      {t:" progress rather than expecting instant results. By the end of the season, her garden was "},
+      {t:"thriving", w:true, ar:"مزدهرة"},
+      {t:", and Noor had learned a "},
+      {t:"valuable", w:true, ar:"قيّم"},
+      {t:" lesson that extended far beyond gardening itself."}
+    ],
+    questions:[
+      { q:"What did Noor's grandmother remind her?", ar:"بماذا ذكّرت جدة نور؟", opts:["That gardening is easy","That meaningful growth rarely happens quickly","That she should quit"], ans:"That meaningful growth rarely happens quickly" },
+      { q:"What helped Noor appreciate gradual progress?", ar:"ماذا ساعد نور على تقدير التقدّم التدريجي؟", opts:["Buying new tools","Keeping a journal","Asking her friends"], ans:"Keeping a journal" }
+    ]
   }
 ];
 
@@ -10485,6 +10774,7 @@ function rlRenderList() {
         <div class="rl-passage-meta">
           <span class="rl-tag">~${p.words} words</span>
           <span class="rl-tag">⏱️ ${p.minutes} min</span>
+          ${p.journey ? `<span class="rl-tag" style="background:rgba(245,200,66,.15);color:var(--gold)">🚂 ${p.station}</span>` : ''}
         </div>
       </div>
       <div class="rl-passage-status ${isDone ? 'rl-status-done' : 'rl-status-new'}">${isDone ? '✓' : '✨'}</div>
@@ -10533,6 +10823,10 @@ function rlOpenReader(id) {
 }
 
 function rlCloseReader() {
+  if (rlListening && rlRecognition) {
+    rlManualStop = true;
+    try { rlRecognition.stop(); } catch (e) { /* no-op */ }
+  }
   document.getElementById('rlMenuArea').style.display = '';
   document.getElementById('rlReaderArea').style.display = 'none';
   rlRenderList();
@@ -10578,6 +10872,14 @@ function rlResetReadAloudBtn() {
 
 function rlStartReadAloud() {
   if (!rlCurrentPassage) return;
+
+  // If already listening, this tap means "I'm done" — stop and score.
+  if (rlListening) {
+    rlManualStop = true;
+    if (rlRecognition) rlRecognition.stop();
+    return;
+  }
+
   const warning = document.getElementById('rlVoiceWarning');
 
   if (!rlCheckSupport()) {
@@ -10614,41 +10916,73 @@ function rlStartReadAloud() {
     });
 }
 
+let rlAccumulatedTranscript = '';
+let rlManualStop = false;
+let rlAutoRestarting = false;
+
 function rlLaunchRecognition() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   rlRecognition = new SR();
   rlRecognition.lang = 'en-US';
   rlRecognition.interimResults = false;
   rlRecognition.maxAlternatives = 1;
+  rlRecognition.continuous = true; // keep listening across natural pauses between sentences
 
+  rlAccumulatedTranscript = '';
+  rlManualStop = false;
+  rlAutoRestarting = false;
   rlListening = true;
-  document.getElementById('rlRaLabel').textContent = '🔴 Listening...';
-  document.getElementById('rlRaLabelAr').textContent = 'استمع الآن... اقرأ الفقرة';
+  document.getElementById('rlRaLabel').textContent = '🔴 Listening... tap to finish';
+  document.getElementById('rlRaLabelAr').textContent = 'استمع الآن... اضغط مرة أخرى عند الانتهاء';
 
   rlRecognition.onresult = (e) => {
-    const spoken = e.results[0][0].transcript;
-    rlShowReadAloudResult(spoken);
+    // Append every newly finalized chunk as the student keeps reading.
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) {
+        rlAccumulatedTranscript += ' ' + e.results[i][0].transcript;
+      }
+    }
   };
   rlRecognition.onerror = (e) => {
+    // 'no-speech' can fire mid-reading during a longer pause — in continuous
+    // mode we treat it as recoverable rather than ending the session.
+    if (e.error === 'no-speech' && !rlManualStop) return;
     rlListening = false;
     rlResetReadAloudBtn();
     const warning = document.getElementById('rlVoiceWarning');
     let msg = '⚠️ حدث خطأ غير متوقع. حاول مرة أخرى.';
     if (e.error === 'not-allowed' || e.error === 'permission-denied') {
       msg = '🎙️ يجب السماح بإذن الميكروفون من إعدادات المتصفح لاستخدام هذه الميزة.';
-    } else if (e.error === 'no-speech') {
-      msg = '🤫 لم يتم رصد أي صوت. تأكد من التحدث بوضوح بالقرب من الميكروفون وحاول مرة أخرى.';
     } else if (e.error === 'network') {
       msg = '📡 مشكلة في الاتصال بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.';
     } else if (e.error === 'audio-capture') {
       msg = '🎙️ لم يتم العثور على ميكروفون على هذا الجهاز.';
     }
-    warning.textContent = msg;
-    warning.style.display = '';
+    if (e.error !== 'no-speech') {
+      warning.textContent = msg;
+      warning.style.display = '';
+    }
   };
   rlRecognition.onend = () => {
+    // Some browsers end the session on their own after a silence timeout even
+    // in continuous mode. If the student didn't tap "finish" yet, just
+    // restart listening quietly and keep accumulating — from the student's
+    // perspective the mic never stopped.
+    if (!rlManualStop) {
+      rlAutoRestarting = true;
+      try { rlRecognition.start(); } catch (err) { /* already starting */ }
+      return;
+    }
     rlListening = false;
     rlResetReadAloudBtn();
+    const finalText = rlAccumulatedTranscript.trim();
+    if (finalText) {
+      rlShowReadAloudResult(finalText);
+    } else {
+      const warning = document.getElementById('rlVoiceWarning');
+      warning.textContent = '🤫 لم يتم رصد أي صوت. تأكد من التحدث بوضوح بالقرب من الميكروفون وحاول مرة أخرى.';
+      warning.style.display = '';
+    }
   };
   rlRecognition.start();
 }
@@ -10702,6 +11036,113 @@ function rlShowReadAloudResult(spokenText) {
   document.getElementById('rlRaResult').style.display = '';
 
   if (score >= 50 && rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
+}
+
+// ══ REVIEW WHEEL ══
+const RW_PALETTE = ['#F5C842','#2DD4BF','#A78BFA','#FB7185','#34D399','#FB923C','#60A5FA','#F472B6'];
+let rwStations = [];
+let rwSpinning = false;
+let rwCurrentRotation = 0;
+let rwSelectedStation = null;
+
+function rwOpen() {
+  const p = getTrainProgress();
+  const completedIds = p.completed || [];
+  rwStations = TRAIN_STATIONS
+    .filter(s => completedIds.indexOf(s.id) !== -1)
+    .map((s, i) => {
+      const linkedPassage = readingPassages.find(rp => rp.journey && rp.station === s.name);
+      return {
+        id: s.id, en: s.nameEn, ar: s.name, icon: s.flag,
+        color: RW_PALETTE[i % RW_PALETTE.length],
+        readingId: linkedPassage ? linkedPassage.id : null
+      };
+    });
+  document.getElementById('rwBackdrop').classList.add('show');
+  document.getElementById('rwResult').classList.remove('show');
+  document.getElementById('rwWheelZone').style.display = '';
+  rwBuildWheel();
+}
+
+function rwClose() {
+  document.getElementById('rwBackdrop').classList.remove('show');
+}
+
+function rwBuildWheel() {
+  const wheel = document.getElementById('rwWheel');
+  const zone = document.getElementById('rwWheelZone');
+  if (rwStations.length === 0) {
+    zone.innerHTML = `<div class="rw-empty">🚂 لا توجد محطات مكتملة بعد!<br>أكمل أول محطة في رحلة القطار حتى تقدر تستخدم عجلة المراجعة 🌟</div>`;
+    return;
+  }
+  const n = rwStations.length;
+  const segAngle = 360 / n;
+  wheel.innerHTML = '';
+  rwStations.forEach((st, i) => {
+    const seg = document.createElement('div');
+    seg.className = 'rw-seg';
+    seg.style.transform = `rotate(${segAngle * i}deg) skewY(${90 - segAngle}deg)`;
+    seg.style.background = st.color;
+    seg.style.transformOrigin = '0% 100%';
+    const label = document.createElement('div');
+    label.className = 'rw-seg-label';
+    label.style.transform = `skewY(${-(90 - segAngle)}deg) rotate(${segAngle / 2}deg)`;
+    label.innerHTML = `<span class="rw-seg-icon">${st.icon}</span><span>${st.ar}</span>`;
+    seg.appendChild(label);
+    wheel.appendChild(seg);
+  });
+}
+
+function rwSpin() {
+  if (rwSpinning || rwStations.length === 0) return;
+  rwSpinning = true;
+  document.getElementById('rwSpinBtn').disabled = true;
+  document.getElementById('rwResult').classList.remove('show');
+
+  const n = rwStations.length;
+  const segAngle = 360 / n;
+  const targetIndex = Math.floor(Math.random() * n);
+  const extraSpins = 5;
+  const targetCenter = targetIndex * segAngle + segAngle / 2;
+
+  const currentMod = rwCurrentRotation % 360;
+  const desiredMod = (360 - targetCenter) % 360;
+  const delta = (desiredMod - currentMod + 360) % 360;
+  rwCurrentRotation += extraSpins * 360 + delta;
+
+  document.getElementById('rwWheel').style.transform = `rotate(${rwCurrentRotation}deg)`;
+
+  setTimeout(() => {
+    rwSpinning = false;
+    document.getElementById('rwSpinBtn').disabled = false;
+    rwShowResult(rwStations[targetIndex]);
+  }, 4100);
+}
+
+function rwShowResult(station) {
+  rwSelectedStation = station;
+  document.getElementById('rwResIcon').textContent = station.icon;
+  document.getElementById('rwResEn').textContent = station.en;
+  document.getElementById('rwResAr').textContent = station.ar;
+  document.getElementById('rwReadBtn').style.display = station.readingId ? '' : 'none';
+  document.getElementById('rwResult').classList.add('show');
+}
+
+function rwReset() {
+  document.getElementById('rwResult').classList.remove('show');
+}
+
+function rwOpenStation() {
+  if (!rwSelectedStation) return;
+  rwClose();
+  launchTrain(rwSelectedStation.id);
+}
+
+function rwOpenReading() {
+  if (!rwSelectedStation || !rwSelectedStation.readingId) return;
+  rwClose();
+  showTab('reading', null);
+  setTimeout(() => rlOpenReader(rwSelectedStation.readingId), 100);
 }
 
 
