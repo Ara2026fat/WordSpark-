@@ -2505,6 +2505,7 @@
 .results-opt-btn:active { transform:scale(.97); }
 .results-opt-tg  { background:linear-gradient(135deg,rgba(38,170,240,.15),rgba(0,136,204,.08)); border:1px solid #26AAF044; }
 .results-opt-wa  { background:linear-gradient(135deg,rgba(37,211,102,.12),rgba(18,140,126,.08)); border:1px solid #25D36644; }
+.results-opt-parent { background:linear-gradient(135deg,rgba(245,200,66,.14),rgba(45,212,191,.08)); border:1px solid #F5C84244; }
 .results-opt-qr  { background:linear-gradient(135deg,rgba(167,139,250,.12),rgba(124,91,230,.08)); border:1px solid #A78BFA44; }
 .results-opt-icon { flex-shrink:0; }
 .results-opt-text { flex:1; min-width:0; text-align:left; }
@@ -4317,8 +4318,8 @@
   <!-- Send to Parent -->
   <div class="results-section-title">Send to Parent <span>أرسل لوالدك</span></div>
   <div class="results-options">
-    <button class="results-opt-btn" onclick="exportToParent()" style="border-color:rgba(167,139,250,.3)">
-      <span class="results-opt-icon" style="font-size:32px">👨‍👩‍👦</span>
+    <button class="results-opt-btn results-opt-parent" onclick="exportToParent()">
+      <span class="results-opt-icon" style="background:linear-gradient(135deg,#F5C842,#2DD4BF);width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">👨‍👩‍👦</span>
       <div class="results-opt-text">
         <div class="results-opt-title">Send via WhatsApp</div>
         <div class="results-opt-sub">أرسل تقريرك لوالدك عبر واتساب 📱</div>
@@ -4411,7 +4412,7 @@
     </button>
 
     <button class="sp-row" onclick="closeSettingsPanel();exportToParent()">
-      <div class="sp-row-icon" style="background:linear-gradient(135deg,#7C3AED,#A78BFA)">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#2DD4BF)">
         <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="18" cy="16" r="6" fill="white" opacity=".9"/><circle cx="30" cy="16" r="6" fill="white" opacity=".7"/><path d="M6 38c0-7 5-11 12-11s12 4 12 11" fill="white" opacity=".9"/></svg>
       </div>
       <div class="sp-row-body">
