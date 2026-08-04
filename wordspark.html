@@ -8,11 +8,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="كلمتي اليوم">
+<meta name="apple-mobile-web-app-title" content="WordSpark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#0D1117">
 <title>WordSpark ✨ | شرارة الكلمة v2.1</title>
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22%D9%83%D9%84%D9%85%D8%AA%D9%8A%20%D8%A7%D9%84%D9%8A%D9%88%D9%85%22%2C%22short_name%22%3A%22My%20Word%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230D1117%22%2C%22theme_color%22%3A%22%230D1117%22%7D">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1778,6 +1780,14 @@
 .sig-label  { font-family:'Space Grotesk',sans-serif; font-size:9px; color:#3A5070; letter-spacing:1.2px; text-transform:uppercase; }
 .sig-name   { font-family:'Space Grotesk',sans-serif; font-size:11px; font-weight:700; background:linear-gradient(90deg,#FFD700,#FF9F43); -webkit-background-clip:text; -webkit-text-fill-color:transparent; letter-spacing:1.8px; margin-top:2px; }
 .sig-year   { font-family:'Space Grotesk',sans-serif; font-size:9px; color:#253545; margin-top:2px; }
+.sig-legal {
+  margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,.05);
+  max-width:280px; margin-inline:auto;
+}
+.sig-legal-row { display:flex; flex-direction:column; gap:2px; }
+.sig-legal-ar { font-size:10px; color:#4A5A72; line-height:1.6; }
+.sig-legal-en { font-size:9px; color:#374151; letter-spacing:.3px; }
+.sig-legal-note { font-size:8.5px; color:#2A3646; margin-top:5px; }
 
 /* ── NAME SCREEN ── */
 #nameScreen {
@@ -2024,6 +2034,44 @@
 .btn-change-name { background:none;border:none;color:#5A7090;font-size:11px;font-family:'Tajawal',sans-serif;cursor:pointer;text-decoration:underline;margin-top:2px;display:block; }
 
 /* ══ PLANETS — كواكب الفصول ══ */
+/* ══ AURORA JOURNEY FLOW (2026 redesign — replaces planet grid) ══ */
+.flow-path-wrap {
+  position: relative; width: 100%; max-width: 400px; margin: 0 auto;
+  background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.08); border-radius: 28px;
+  padding: 26px 14px; box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.flow-path-svg { position: absolute; top: 0; left: 0; width: 100%; pointer-events: none; }
+.flow-node { position: relative; width: 100%; display: flex; margin-bottom: 34px; }
+.flow-node:last-child { margin-bottom: 0; }
+.flow-node.align-r { justify-content: flex-end; }
+.flow-node.align-l { justify-content: flex-start; }
+.node-card {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; width: 208px;
+  background: linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.1); border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  cursor: pointer; transition: transform .15s;
+}
+.node-card:active { transform: scale(.97); }
+.node-card.current { border-color: rgba(255,184,108,.5); box-shadow: 0 0 0 1px rgba(255,184,108,.2), 0 12px 32px rgba(255,184,108,.18); }
+.node-card.locked { opacity: .45; }
+.node-orb {
+  width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0; position: relative;
+  display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900;
+}
+.node-orb.done { background: radial-gradient(circle at 35% 30%, #7FFFD4, #2DD4BF 60%, #0E9F8A); box-shadow: 0 0 18px rgba(45,212,191,.55); color:#06251f; }
+.node-orb.current { background: radial-gradient(circle at 35% 30%, #FFE9A8, #FFB86C 55%, #FF8FA3); box-shadow: 0 0 22px rgba(255,184,108,.65); color:#3a1f06; animation: flowBreathe 2.6s ease-in-out infinite; }
+.node-orb.locked { background: rgba(255,255,255,.06); color: #475569; }
+@keyframes flowBreathe { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.1); } }
+.node-info { flex: 1; min-width: 0; }
+.node-title { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 800; color: var(--white); }
+.node-sub { font-size: 9.5px; color: var(--soft); margin-top: 1px; }
+.node-track { height: 4px; background: rgba(255,255,255,.08); border-radius: 3px; margin-top: 6px; overflow: hidden; }
+.node-fill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
 .planets-grid {
   display:grid; grid-template-columns:1fr 1fr; gap:16px;
   max-width:380px; margin:0 auto;
@@ -2518,6 +2566,33 @@
 .results-story b { color: var(--white); font-weight: 700; }
 
 /* ══ VISUAL REPORT (shareable infographic) ══ */
+.ach-modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 9999;
+  background: rgba(5,8,14,.85); align-items: center; justify-content: center; padding: 14px;
+}
+.ach-modal-overlay.show { display: flex; }
+.ach-modal-inner {
+  width: 100%; max-width: 420px; max-height: 82vh; display: flex; flex-direction: column;
+  background: linear-gradient(165deg, #1A2332, #0F1C2E); border: 1px solid var(--rim);
+  border-radius: 22px; overflow: hidden;
+}
+.ach-modal-header { display: flex; justify-content: space-between; align-items: flex-start; padding: 18px 18px 14px; border-bottom: 1px solid var(--rim); }
+.ach-modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; }
+.ach-modal-title span { font-size: 11px; color: var(--soft); font-weight: 400; margin-inline-start: 6px; }
+.ach-modal-count { font-size: 11px; color: var(--gold); margin-top: 3px; }
+.ach-close { width: 30px; height: 30px; border-radius: 50%; background: var(--panel); border: 1px solid var(--rim); color: var(--soft); font-size: 14px; cursor: pointer; flex-shrink: 0; }
+.ach-modal-list { overflow-y: auto; padding: 14px 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+.ach-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--panel); border: 1px solid var(--rim); }
+.ach-item.done { border-color: rgba(45,212,191,.35); background: rgba(45,212,191,.06); }
+.ach-item-icon { font-size: 20px; width: 32px; text-align: center; flex-shrink: 0; opacity: .4; }
+.ach-item.done .ach-item-icon { opacity: 1; }
+.ach-item-text { flex: 1; min-width: 0; }
+.ach-item-en { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700; color: var(--soft); }
+.ach-item.done .ach-item-en { color: var(--white); }
+.ach-item-ar { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+.ach-item-check { font-size: 16px; flex-shrink: 0; opacity: .25; }
+.ach-item.done .ach-item-check { opacity: 1; color: var(--teal); }
+
 .vr-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 9999;
   background: rgba(5,8,14,.85); align-items: center; justify-content: center; padding: 14px;
@@ -2714,6 +2789,38 @@
 .sp-dot.active { background:var(--teal); }
 .sp-dot.today { border:1.5px solid var(--gold); }
 .sp-empty { text-align:center; color:var(--muted); font-size:11px; padding:6px 0; }
+
+.level-progress-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
+.lp-card {
+  background:var(--panel); border:1px solid var(--rim); border-radius:12px;
+  padding:10px 12px;
+}
+.lp-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.lp-name { display:flex; align-items:center; gap:6px; }
+.lp-title { font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:700; color:var(--white); }
+.lp-region { font-size:9.5px; color:var(--muted); }
+.lp-pct { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:800; }
+.lp-track { height:6px; background:var(--rim); border-radius:4px; overflow:hidden; }
+.lp-fill { height:100%; border-radius:4px; transition:width .4s ease; }
+.lp-card.locked { opacity:.45; }
+.lp-card.complete .lp-pct { color:var(--teal); }
+
+.improvement-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:8px; }
+.imp-card { background:var(--panel); border:1px solid var(--rim); border-radius:12px; padding:12px 14px; }
+.imp-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.imp-icon { font-size:16px; }
+.imp-title { font-family:'Space Grotesk',sans-serif; font-size:12.5px; font-weight:700; color:var(--white); }
+.imp-sub { font-size:9.5px; color:var(--muted); margin-inline-start:auto; }
+.imp-empty { font-size:11px; color:var(--muted); line-height:1.7; }
+.imp-compare { display:flex; align-items:center; gap:10px; }
+.imp-stage { flex:1; text-align:center; }
+.imp-stage-val { font-family:'Space Grotesk',sans-serif; font-size:17px; font-weight:800; }
+.imp-stage-lbl { font-size:9px; color:var(--muted); margin-top:2px; }
+.imp-arrow { font-size:16px; color:var(--muted); }
+.imp-delta { text-align:center; font-size:11px; font-weight:700; margin-top:6px; }
+.imp-delta.up { color:var(--teal); }
+.imp-delta.down { color:#FB7185; }
+.imp-delta.flat { color:var(--muted); }
 
 /* ══ READING LAB ══ */
 .rl-level-tabs{display:flex;gap:8px;margin-bottom:16px}
@@ -3316,6 +3423,7 @@
       <div class="home-stats-row">
         <div class="home-stat-pill"><div class="v" id="homeTotalWords">0</div><div class="l">كلمة</div></div>
         <div class="home-stat-pill"><div class="v" id="homeStreak">0</div><div class="l">يوم متواصل 🔥</div></div>
+        <div class="home-stat-pill" onclick="openAchievementsModal()" style="cursor:pointer"><div class="v" id="homeAchievements">0/25</div><div class="l">إنجاز 🏆</div></div>
       </div>
     </div>
 
@@ -3898,10 +4006,12 @@
     <div class="sig-label">💡 Developed by</div>
     <div class="sig-name">ARAFAT ALRAJHI</div>
     <div class="sig-year">© 2026 · WordSpark</div>
-    <div style="font-size:10px;color:#374151;margin-top:6px;line-height:1.7">
-      جميع الحقوق محفوظة لعرفات الراجحي<br>
-      All Rights Reserved — WordSpark™<br>
-      يُحظر النسخ أو التوزيع بدون إذن مسبق
+    <div class="sig-legal">
+      <div class="sig-legal-row">
+        <span class="sig-legal-ar">جميع الحقوق محفوظة لعرفات الراجحي</span>
+        <span class="sig-legal-en">All Rights Reserved — WordSpark™</span>
+      </div>
+      <div class="sig-legal-note">يُحظر النسخ أو التوزيع بدون إذن مسبق</div>
     </div>
   </div>
 
@@ -4602,6 +4712,14 @@
   <div class="results-section-title">Progress by Section <span>التقدّم في كل قسم</span></div>
   <div id="sectionProgressGrid" class="section-progress-grid"></div>
 
+  <!-- Progress by Level -->
+  <div class="results-section-title">Progress by Level <span>التقدّم في كل مستوى</span></div>
+  <div id="levelProgressGrid" class="level-progress-grid"></div>
+
+  <!-- My Improvement — quality over time, not just quantity -->
+  <div class="results-section-title">My Improvement <span>تحسّني الحقيقي</span></div>
+  <div id="improvementGrid" class="improvement-grid"></div>
+
   <!-- Send Options -->
   <div class="results-section-title">Send to Teacher <span>أرسل لمعلمك</span></div>
   <div class="results-options">
@@ -4699,6 +4817,20 @@
     <div class="celebrate-title" id="levelCompleteTitle">Level Complete!</div>
     <div class="celebrate-msg" id="levelCompleteMsg">—</div>
     <button class="celebrate-btn" onclick="closeLevelCompleteOverlay()">Continue the journey! 🚄</button>
+  </div>
+</div>
+
+<!-- ══ ACHIEVEMENTS MODAL ══ -->
+<div class="ach-modal-overlay" id="achModalOverlay" onclick="if(event.target===this)closeAchievementsModal()">
+  <div class="ach-modal-inner">
+    <div class="ach-modal-header">
+      <div>
+        <div class="ach-modal-title">🏆 My Achievements <span>إنجازاتي</span></div>
+        <div class="ach-modal-count" id="achModalCount">0/24 unlocked</div>
+      </div>
+      <button class="ach-close" onclick="closeAchievementsModal()">✕</button>
+    </div>
+    <div class="ach-modal-list" id="achModalList"></div>
   </div>
 </div>
 
@@ -5777,6 +5909,11 @@ function updateStreak() {
   document.getElementById('streakCount').textContent   = streak;
   document.getElementById('streakDisplay').textContent = streak;
   renderStreakDots();
+
+  // A permanent record — unlike current streak, this never resets, so it's
+  // safe to use as a genuine achievement milestone.
+  const longest = parseInt(localStorage.getItem('longestStreakEver') || '0');
+  if (streak > longest) localStorage.setItem('longestStreakEver', streak);
 }
 
 // ══ STREAK MILESTONE & WELCOME-BACK CELEBRATIONS ══
@@ -5848,6 +5985,55 @@ function processSparkQueue() {
 // total words, stations completed, and times they came back after a gap.
 // Every input here only ever goes up, so Spark itself only ever grows,
 // exactly like the learner's own progress never truly resets.
+// ══ IMPROVEMENT TRACKING ══
+// Progress systems elsewhere measure QUANTITY (words added, stations done).
+// This measures QUALITY OVER TIME — is the learner actually getting more
+// accurate? Every entry is a real 0–100 score from an actual attempt; the
+// trend is never invented, and stays silent until there's enough real data
+// to compare honestly.
+const IMPROVEMENT_TYPES = {
+  reading:     { icon: '📖', en: 'Reading Accuracy',    ar: 'دقة القراءة' },
+  quiz:        { icon: '🎯', en: 'Quiz Accuracy',       ar: 'دقة الاختبار' },
+  stationQuiz: { icon: '🚂', en: 'Station Quiz Accuracy', ar: 'دقة اختبار المحطات' }
+};
+
+function logImprovement(type, score) {
+  if (!IMPROVEMENT_TYPES[type]) return;
+  try {
+    const key = 'improvementLog_' + type;
+    const log = JSON.parse(localStorage.getItem(key) || '[]');
+    log.push({ score: Math.round(score), date: today });
+    if (log.length > 60) log.shift(); // keep it bounded, most recent 60 attempts
+    localStorage.setItem(key, JSON.stringify(log));
+  } catch(e) {}
+}
+
+// Compares the average of the earliest attempts to the average of the most
+// recent ones. Requires at least 6 logged attempts before saying anything —
+// fewer than that isn't a trend, it's noise, and showing one anyway would be
+// exactly the kind of fake signal this whole platform has avoided elsewhere.
+function getImprovementTrend(type) {
+  try {
+    const log = JSON.parse(localStorage.getItem('improvementLog_' + type) || '[]');
+    if (log.length < 6) return { hasEnoughData: false, attemptsLogged: log.length, needed: 6 };
+    const chunkSize = Math.max(3, Math.floor(log.length / 3));
+    const early = log.slice(0, chunkSize);
+    const recent = log.slice(-chunkSize);
+    const earlyAvg = early.reduce((s,e) => s+e.score, 0) / early.length;
+    const recentAvg = recent.reduce((s,e) => s+e.score, 0) / recent.length;
+    const delta = Math.round(recentAvg - earlyAvg);
+    return {
+      hasEnoughData: true,
+      earlyAvg: Math.round(earlyAvg),
+      recentAvg: Math.round(recentAvg),
+      delta,
+      trend: delta > 3 ? 'up' : delta < -3 ? 'down' : 'flat',
+      attemptsLogged: log.length,
+      recentScores: log.slice(-10).map(e => e.score)
+    };
+  } catch(e) { return { hasEnoughData: false, attemptsLogged: 0, needed: 6 }; }
+}
+
 function getSparkGrowthTier() {
   // Only words the learner added themselves count toward growth — the free
   // starter pack gives everyone a head start, but Spark should grow with
@@ -6510,7 +6696,6 @@ function afterAnswer(btn, isRight, correctText, typedText) {
     showToast('✅ صحيح! +10 نقاط');
   } else {
     card.classList.add('wrong');
-    if (btn) showToast('❌ الصواب: ' + correctText, '#FB7185');
   }
   document.getElementById('btnNext').classList.add('show');
   quizIdx++;
@@ -6524,6 +6709,7 @@ function renderQuizResult() {
   document.getElementById('quizProgressFill').style.width = '100%';
   document.getElementById('quizProgressText').textContent = `${quizList.length} / ${quizList.length}`;
   const pct = Math.round((quizScore / (quizList.length * 10)) * 100);
+  logImprovement('quiz', pct);
   const e = pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '💪';
   document.getElementById('quizArea').innerHTML = `
     <div style="text-align:center;padding:28px 20px;background:var(--panel);border:1px solid var(--rim);border-radius:20px">
@@ -6539,44 +6725,8 @@ function renderQuizResult() {
 // ══ GRAMMAR ══
 const grammarLessons = [
   {
-    icon:'⏰',color:"#F5C842",bg:'rgba(245,200,66,.12)',
-    title:'زمن المضارع البسيط',titleEn:'Simple Present Tense',level:"الدرس الأول · Lesson 1",
-    explanation:'نستخدم المضارع البسيط للتعبير عن الأفعال المعتادة والحقائق الثابتة. يُعدّ هذا الزمن هو القاعدة الأساسية الأولى في اللغة الإنجليزية.',
-    formula:'Subject + Verb (base form) + Object',
-    formulaNote:'* مع he / she / it نضيف s أو es للفعل',
-    examples:[{en:"I eat breakfast every day.",ar:"أنا آكل الفطور كل يوم.",struct:"{S:I} {V:eat} {O:breakfast} {ADV:every day}."},{en:"She works at a hospital.",ar:"هي تعمل في مستشفى.",struct:"{S:She} {V:works} {ADV:at a hospital}."},{en:"They play football on Fridays.",ar:"يلعبون كرة القدم أيام الجمعة.",struct:"{S:They} {V:play} {O:football} {ADV:on Fridays}."}],
-    quiz:{q:'اختر الشكل الصحيح: "She ___ to school every day."',opts:['go','goes','going','gone'],ans:'goes',fb:'صحيح! مع she نضيف s → goes ✅',fbW:'مع she / he / it نضيف s للفعل → goes'}
-  },
-  {
-    icon:'🔮',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
-    title:'زمن المضارع المستمر',titleEn:'Present Continuous',level:"الدرس الثاني · Lesson 2",
-    explanation:'نستخدم المضارع المستمر للتعبير عن فعل يحدث الآن. يتكون من am/is/are مع إضافة ing للفعل.',
-    formula:'Subject + am/is/are + Verb-ing',
-    formulaNote:'I → am | He/She/It → is | We/You/They → are',
-    examples:[{en:"I am studying English now.",ar:"أنا أدرس الإنجليزية الآن.",struct:"{S:I} {V:am studying} {O:English} {ADV:now}."},{en:"He is reading a book.",ar:"هو يقرأ كتاباً.",struct:"{S:He} {V:is reading} {O:a book}."},{en:"They are playing in the park.",ar:"هم يلعبون في الحديقة.",struct:"{S:They} {V:are playing} {ADV:in the park}."}],
-    quiz:{q:'أكمل: "We ___ (watch) a movie right now."',opts:['watch','watches','are watching','is watching'],ans:'are watching',fb:'ممتاز! We + are + watching ✅',fbW:'مع We نستخدم are + الفعل + ing'}
-  },
-  {
-    icon:'📜',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
-    title:'زمن الماضي البسيط',titleEn:'Simple Past Tense',level:"الدرس الثالث · Lesson 3",
-    explanation:'نستخدم الماضي البسيط للحديث عن أحداث انتهت. للأفعال المنتظمة نضيف ed، وللأفعال الشاذة يكون لها شكل خاص.',
-    formula:'Subject + Verb (past form) + Object',
-    formulaNote:'منتظم: add + ed | شاذ: go→went, eat→ate, see→saw',
-    examples:[{en:"I visited my grandmother yesterday.",ar:"زرت جدتي أمس.",struct:"{S:I} {V:visited} {O:my grandmother} {ADV:yesterday}."},{en:"She went to the market.",ar:"ذهبت إلى السوق.",struct:"{S:She} {V:went} {ADV:to the market}."},{en:"They ate dinner together.",ar:"تناولوا العشاء معاً.",struct:"{S:They} {V:ate} {O:dinner} {ADV:together}."}],
-    quiz:{q:'"I ___ (go) to the gym yesterday."',opts:['go','goes','went','going'],ans:'went',fb:'صحيح! go → went في الماضي ✅',fbW:'الفعل go شاذ → يصبح went في الماضي'}
-  },
-  {
-    icon:'🌅',color:"#FB7185",bg:'rgba(251,113,133,.12)',
-    title:'زمن المستقبل البسيط',titleEn:'Simple Future — will',level:"الدرس الرابع · Lesson 4",
-    explanation:'نستخدم will للتعبير عن المستقبل أو الوعود. يبقى الفعل في صيغته الأساسية بعد will دائماً.',
-    formula:'Subject + will + Verb (base form)',
-    formulaNote:"النفي: will not = won't | السؤال: Will + subject + verb?",
-    examples:[{en:"I will travel to London next year.",ar:"سأسافر إلى لندن العام القادم.",struct:"{S:I} {V:will travel} {ADV:to London} {ADV:next year}."},{en:"She will call you tonight.",ar:"ستتصل بك الليلة.",struct:"{S:She} {V:will call} {O:you} {ADV:tonight}."},{en:"We won't forget this day.",ar:"لن ننسى هذا اليوم.",struct:"{S:We} {V:won't forget} {O:this day}."}],
-    quiz:{q:'"___ you help me tomorrow?"',opts:['Do','Are','Will','Have'],ans:'Will',fb:'ممتاز! Will you...? هو سؤال المستقبل ✅',fbW:'في أسئلة المستقبل نبدأ بـ Will'}
-  },
-  {
     icon:'🔗',color:"#34D399",bg:'rgba(52,211,153,.12)',
-    title:'الضمائر الشخصية',titleEn:'Personal Pronouns',level:"الدرس الخامس · Lesson 5",
+    title:'الضمائر الشخصية',titleEn:'Personal Pronouns',level:"الدرس الأول · Lesson 1",
     explanation:'الضمائر تحل محل الأسماء. في الإنجليزية لها موقعان: فاعل (Subject) أو مفعول (Object).',
     formula:'I / You / He / She / It / We / They',
     formulaNote:'مفعول: me / you / him / her / it / us / them',
@@ -6584,35 +6734,8 @@ const grammarLessons = [
     quiz:{q:'"Ahmad is kind. ___ helps everyone."',opts:['She','He','They','It'],ans:'He',fb:'صحيح! Ahmad مذكر → He ✅',fbW:'Ahmad اسم مذكر → نستخدم He'}
   },
   {
-    icon:'✅',color:"#FFD700",bg:'rgba(255,215,0,.12)',
-    title:'زمن المضارع التام',titleEn:'Present Perfect',level:"الدرس السادس · Lesson 6",
-    explanation:'نستخدم المضارع التام لحدث بدأ في الماضي وله أثر أو صلة بالحاضر، أو لتجربة حياتية بدون تحديد الوقت بالضبط.',
-    formula:'Subject + have/has + Past Participle',
-    formulaNote:'I/You/We/They → have | He/She/It → has | eat→eaten, see→seen, go→gone',
-    examples:[{en:"I have visited Paris twice.",ar:"زرت باريس مرتين.",struct:"{S:I} {V:have visited} {O:Paris} {ADV:twice}."},{en:"She has finished her homework.",ar:"أنهت واجبها.",struct:"{S:She} {V:has finished} {O:her homework}."},{en:"They have never tried sushi.",ar:"لم يجربوا السوشي أبداً.",struct:"{S:They} {V:have never tried} {O:sushi}."}],
-    quiz:{q:'"She ___ (finish) her work already."',opts:['finish','finished','has finished','finishing'],ans:'has finished',fb:'ممتاز! She + has + finished ✅',fbW:'مع She نستخدم has + التصريف الثالث للفعل'}
-  },
-  {
-    icon:'⚖️',color:"#FB7185",bg:'rgba(251,113,133,.12)',
-    title:'المقارنة والتفضيل',titleEn:'Comparatives & Superlatives',level:"الدرس السابع · Lesson 7",
-    explanation:'نستخدم صيغة المقارنة (comparative) لمقارنة شيئين، وصيغة التفضيل (superlative) للتعبير عن الأفضل/الأكبر ضمن مجموعة.',
-    formula:'Short: adjective+er / the+adjective+est — Long: more+adj / the most+adj',
-    formulaNote:'tall→taller→the tallest | beautiful→more beautiful→the most beautiful',
-    examples:[{en:"This car is faster than that one.",ar:"هذه السيارة أسرع من تلك.",struct:"{S:This car} {V:is} {O:faster} {ADV:than that one}."},{en:"She is the smartest student in class.",ar:"هي الطالبة الأذكى في الصف.",struct:"{S:She} {V:is} {O:the smartest student} {ADV:in class}."},{en:"This book is more interesting than the movie.",ar:"هذا الكتاب أكثر إثارة من الفيلم.",struct:"{S:This book} {V:is} {O:more interesting} {ADV:than the movie}."}],
-    quiz:{q:'"Today is ___ (hot) than yesterday."',opts:['hot','hoter','hotter','more hot'],ans:'hotter',fb:'صحيح! hot كلمة قصيرة → نضاعف الحرف ونضيف er ✅',fbW:'الكلمات القصيرة مثل hot تأخذ er مع مضاعفة الحرف الأخير → hotter'}
-  },
-  {
-    icon:'🎯',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
-    title:'الأفعال الناقصة',titleEn:'Modal Verbs',level:"الدرس الثامن · Lesson 8",
-    explanation:'الأفعال الناقصة (can, must, should, may) تضيف معنى مثل القدرة، الإلزام، أو النصيحة، ولا تتغيّر مع الفاعل ولا تحتاج to بعدها.',
-    formula:'Subject + Modal + Verb (base form)',
-    formulaNote:'can=قدرة | must=إلزام | should=نصيحة | may=احتمال',
-    examples:[{en:"I can swim very well.",ar:"أستطيع السباحة جيداً جداً.",struct:"{S:I} {V:can swim} {ADV:very well}."},{en:"You must wear a seatbelt.",ar:"يجب أن ترتدي حزام الأمان.",struct:"{S:You} {V:must wear} {O:a seatbelt}."},{en:"She should see a doctor.",ar:"يجب أن تذهب لطبيب (نصيحة).",struct:"{S:She} {V:should see} {O:a doctor}."}],
-    quiz:{q:'"You ___ smoke here — it is forbidden."',opts:['can','must not','should','may'],ans:'must not',fb:'صحيح! must not تعني ممنوع تماماً ✅',fbW:'للتعبير عن المنع القوي نستخدم must not'}
-  },
-  {
     icon:'📦',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
-    title:'أدوات التعريف والتنكير',titleEn:'Articles: a / an / the',level:"الدرس التاسع · Lesson 9",
+    title:'أدوات التعريف والتنكير',titleEn:'Articles: a / an / the',level:"الدرس الثاني · Lesson 2",
     explanation:'نستخدم a/an للتعبير عن شيء غير محدد (مرة أولى)، و the للشيء المحدد والمعروف لدى المتحدث والسامع.',
     formula:'a + consonant sound | an + vowel sound | the + specific noun',
     formulaNote:'a book, an apple (vowel sound) | the sun (شيء واحد معروف)',
@@ -6621,7 +6744,7 @@ const grammarLessons = [
   },
   {
     icon:'🔢',color:"#F5C842",bg:'rgba(245,200,66,.12)',
-    title:'جمع الأسماء',titleEn:'Plural Nouns',level:"الدرس العاشر · Lesson 10",
+    title:'جمع الأسماء',titleEn:'Plural Nouns',level:"الدرس الثالث · Lesson 3",
     explanation:'معظم الأسماء تُجمع بإضافة s، لكن هناك قواعد خاصة لبعض الكلمات، وأسماء أخرى شاذة تماماً ولها جمع مختلف.',
     formula:'Regular: noun + s/es — Irregular: special forms',
     formulaNote:'book→books, box→boxes | child→children, man→men, foot→feet',
@@ -6629,8 +6752,35 @@ const grammarLessons = [
     quiz:{q:'"I saw three ___ in the park." (child)',opts:['childs','childes','children','child'],ans:'children',fb:'صحيح! child جمعها شاذ → children ✅',fbW:'كلمة child من الجموع الشاذة، جمعها children وليس childs'}
   },
   {
+    icon:'👑',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
+    title:'صفات الملكية',titleEn:'Possessive Adjectives',level:"الدرس الرابع · Lesson 4",
+    explanation:'صفات الملكية (my, your, his, her) تأتي قبل الاسم مباشرة للدلالة على ملكيته لشخص معيّن.',
+    formula:'Possessive Adjective + Noun',
+    formulaNote:'I→my | you→your | he→his | she→her | we→our | they→their',
+    examples:[{en:"This is my favorite book.",ar:"هذا كتابي المفضّل.",struct:"{S:This} {V:is} {O:my favorite book}."},{en:"He forgot his keys at home.",ar:"نسي مفاتيحه في المنزل.",struct:"{S:He} {V:forgot} {O:his keys} {ADV:at home}."},{en:"Their house is very big.",ar:"منزلهم كبير جداً.",struct:"{S:Their house} {V:is} {O:very big}."}],
+    quiz:{q:'"Sarah lost ___ phone yesterday."',opts:['she','her','hers','herself'],ans:'her',fb:'صحيح! Sarah مؤنث → her قبل الاسم ✅',fbW:'نستخدم her كصفة ملكية قبل الاسم مباشرة'}
+  },
+  {
+    icon:'⏰',color:"#F5C842",bg:'rgba(245,200,66,.12)',
+    title:'زمن المضارع البسيط',titleEn:'Simple Present Tense',level:"الدرس الخامس · Lesson 5",
+    explanation:'نستخدم المضارع البسيط للتعبير عن الأفعال المعتادة والحقائق الثابتة. يُعدّ هذا الزمن هو القاعدة الأساسية الأولى في اللغة الإنجليزية.',
+    formula:'Subject + Verb (base form) + Object',
+    formulaNote:'* مع he / she / it نضيف s أو es للفعل',
+    examples:[{en:"I eat breakfast every day.",ar:"أنا آكل الفطور كل يوم.",struct:"{S:I} {V:eat} {O:breakfast} {ADV:every day}."},{en:"She works at a hospital.",ar:"هي تعمل في مستشفى.",struct:"{S:She} {V:works} {ADV:at a hospital}."},{en:"They play football on Fridays.",ar:"يلعبون كرة القدم أيام الجمعة.",struct:"{S:They} {V:play} {O:football} {ADV:on Fridays}."}],
+    quiz:{q:'اختر الشكل الصحيح: "She ___ to school every day."',opts:['go','goes','going','gone'],ans:'goes',fb:'صحيح! مع she نضيف s → goes ✅',fbW:'مع she / he / it نضيف s للفعل → goes'}
+  },
+  {
+    icon:'🔮',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
+    title:'زمن المضارع المستمر',titleEn:'Present Continuous',level:"الدرس السادس · Lesson 6",
+    explanation:'نستخدم المضارع المستمر للتعبير عن فعل يحدث الآن. يتكون من am/is/are مع إضافة ing للفعل.',
+    formula:'Subject + am/is/are + Verb-ing',
+    formulaNote:'I → am | He/She/It → is | We/You/They → are',
+    examples:[{en:"I am studying English now.",ar:"أنا أدرس الإنجليزية الآن.",struct:"{S:I} {V:am studying} {O:English} {ADV:now}."},{en:"He is reading a book.",ar:"هو يقرأ كتاباً.",struct:"{S:He} {V:is reading} {O:a book}."},{en:"They are playing in the park.",ar:"هم يلعبون في الحديقة.",struct:"{S:They} {V:are playing} {ADV:in the park}."}],
+    quiz:{q:'أكمل: "We ___ (watch) a movie right now."',opts:['watch','watches','are watching','is watching'],ans:'are watching',fb:'ممتاز! We + are + watching ✅',fbW:'مع We نستخدم are + الفعل + ing'}
+  },
+  {
     icon:'📍',color:"#34D399",bg:'rgba(52,211,153,.12)',
-    title:'حروف الجر المكانية',titleEn:'Prepositions of Place',level:"الدرس الحادي عشر · Lesson 11",
+    title:'حروف الجر المكانية',titleEn:'Prepositions of Place',level:"الدرس السابع · Lesson 7",
     explanation:'حروف الجر مثل in, on, at تحدد مكان الشيء. كل واحد له استخدام مختلف حسب نوع المكان.',
     formula:'in (داخل/مدينة) | on (على سطح) | at (نقطة محددة)',
     formulaNote:'in a room, in Riyadh | on the table | at the door, at school',
@@ -6638,8 +6788,26 @@ const grammarLessons = [
     quiz:{q:'"I left my phone ___ the car."',opts:['in','on','at','to'],ans:'in',fb:'صحيح! نستخدم in للأماكن المغلقة مثل السيارة ✅',fbW:'السيارة مكان مغلق من الداخل → نستخدم in'}
   },
   {
+    icon:'📜',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
+    title:'زمن الماضي البسيط',titleEn:'Simple Past Tense',level:"الدرس الثامن · Lesson 8",
+    explanation:'نستخدم الماضي البسيط للحديث عن أحداث انتهت. للأفعال المنتظمة نضيف ed، وللأفعال الشاذة يكون لها شكل خاص.',
+    formula:'Subject + Verb (past form) + Object',
+    formulaNote:'منتظم: add + ed | شاذ: go→went, eat→ate, see→saw',
+    examples:[{en:"I visited my grandmother yesterday.",ar:"زرت جدتي أمس.",struct:"{S:I} {V:visited} {O:my grandmother} {ADV:yesterday}."},{en:"She went to the market.",ar:"ذهبت إلى السوق.",struct:"{S:She} {V:went} {ADV:to the market}."},{en:"They ate dinner together.",ar:"تناولوا العشاء معاً.",struct:"{S:They} {V:ate} {O:dinner} {ADV:together}."}],
+    quiz:{q:'"I ___ (go) to the gym yesterday."',opts:['go','goes','went','going'],ans:'went',fb:'صحيح! go → went في الماضي ✅',fbW:'الفعل go شاذ → يصبح went في الماضي'}
+  },
+  {
+    icon:'🌅',color:"#FB7185",bg:'rgba(251,113,133,.12)',
+    title:'زمن المستقبل البسيط',titleEn:'Simple Future — will',level:"الدرس التاسع · Lesson 9",
+    explanation:'نستخدم will للتعبير عن المستقبل أو الوعود. يبقى الفعل في صيغته الأساسية بعد will دائماً.',
+    formula:'Subject + will + Verb (base form)',
+    formulaNote:"النفي: will not = won't | السؤال: Will + subject + verb?",
+    examples:[{en:"I will travel to London next year.",ar:"سأسافر إلى لندن العام القادم.",struct:"{S:I} {V:will travel} {ADV:to London} {ADV:next year}."},{en:"She will call you tonight.",ar:"ستتصل بك الليلة.",struct:"{S:She} {V:will call} {O:you} {ADV:tonight}."},{en:"We won't forget this day.",ar:"لن ننسى هذا اليوم.",struct:"{S:We} {V:won't forget} {O:this day}."}],
+    quiz:{q:'"___ you help me tomorrow?"',opts:['Do','Are','Will','Have'],ans:'Will',fb:'ممتاز! Will you...? هو سؤال المستقبل ✅',fbW:'في أسئلة المستقبل نبدأ بـ Will'}
+  },
+  {
     icon:'❓',color:"#FB7185",bg:'rgba(251,113,133,.12)',
-    title:'تكوين الأسئلة',titleEn:'Question Formation',level:"الدرس الثاني عشر · Lesson 12",
+    title:'تكوين الأسئلة',titleEn:'Question Formation',level:"الدرس العاشر · Lesson 10",
     explanation:'نُكوّن الأسئلة بقلب ترتيب الفاعل والفعل المساعد، أو باستخدام أدوات استفهام مثل what, where, when, why, how.',
     formula:'(Question Word) + Auxiliary + Subject + Verb?',
     formulaNote:'Do/Does/Did + subject + verb | What/Where/When/Why/How + auxiliary',
@@ -6647,8 +6815,17 @@ const grammarLessons = [
     quiz:{q:'"___ do you usually wake up?"',opts:['What','When','Who','Which'],ans:'When',fb:'صحيح! When تُستخدم للسؤال عن الوقت ✅',fbW:'للسؤال عن الوقت نستخدم When'}
   },
   {
+    icon:'⚖️',color:"#FB7185",bg:'rgba(251,113,133,.12)',
+    title:'المقارنة والتفضيل',titleEn:'Comparatives & Superlatives',level:"الدرس الحادي عشر · Lesson 11",
+    explanation:'نستخدم صيغة المقارنة (comparative) لمقارنة شيئين، وصيغة التفضيل (superlative) للتعبير عن الأفضل/الأكبر ضمن مجموعة.',
+    formula:'Short: adjective+er / the+adjective+est — Long: more+adj / the most+adj',
+    formulaNote:'tall→taller→the tallest | beautiful→more beautiful→the most beautiful',
+    examples:[{en:"This car is faster than that one.",ar:"هذه السيارة أسرع من تلك.",struct:"{S:This car} {V:is} {O:faster} {ADV:than that one}."},{en:"She is the smartest student in class.",ar:"هي الطالبة الأذكى في الصف.",struct:"{S:She} {V:is} {O:the smartest student} {ADV:in class}."},{en:"This book is more interesting than the movie.",ar:"هذا الكتاب أكثر إثارة من الفيلم.",struct:"{S:This book} {V:is} {O:more interesting} {ADV:than the movie}."}],
+    quiz:{q:'"Today is ___ (hot) than yesterday."',opts:['hot','hoter','hotter','more hot'],ans:'hotter',fb:'صحيح! hot كلمة قصيرة → نضاعف الحرف ونضيف er ✅',fbW:'الكلمات القصيرة مثل hot تأخذ er مع مضاعفة الحرف الأخير → hotter'}
+  },
+  {
     icon:'🔀',color:"#FFD700",bg:'rgba(255,215,0,.12)',
-    title:'أدوات الربط',titleEn:'Conjunctions',level:"الدرس الثالث عشر · Lesson 13",
+    title:'أدوات الربط',titleEn:'Conjunctions',level:"الدرس الثاني عشر · Lesson 12",
     explanation:'أدوات الربط مثل and, but, or, because تربط بين جملتين أو فكرتين، وتوضّح العلاقة بينهما (إضافة، تضاد، سبب).',
     formula:'Sentence 1 + and/but/or/because + Sentence 2',
     formulaNote:'and=إضافة | but=تضاد | or=اختيار | because=سبب',
@@ -6656,13 +6833,22 @@ const grammarLessons = [
     quiz:{q:'"I stayed home ___ it was raining."',opts:['but','or','because','and'],ans:'because',fb:'صحيح! because تربط السبب بالنتيجة ✅',fbW:'نستخدم because عندما نشرح سبب حدوث الفعل'}
   },
   {
-    icon:'👑',color:"#A78BFA",bg:'rgba(167,139,250,.12)',
-    title:'صفات الملكية',titleEn:'Possessive Adjectives',level:"الدرس الرابع عشر · Lesson 14",
-    explanation:'صفات الملكية (my, your, his, her) تأتي قبل الاسم مباشرة للدلالة على ملكيته لشخص معيّن.',
-    formula:'Possessive Adjective + Noun',
-    formulaNote:'I→my | you→your | he→his | she→her | we→our | they→their',
-    examples:[{en:"This is my favorite book.",ar:"هذا كتابي المفضّل.",struct:"{S:This} {V:is} {O:my favorite book}."},{en:"He forgot his keys at home.",ar:"نسي مفاتيحه في المنزل.",struct:"{S:He} {V:forgot} {O:his keys} {ADV:at home}."},{en:"Their house is very big.",ar:"منزلهم كبير جداً.",struct:"{S:Their house} {V:is} {O:very big}."}],
-    quiz:{q:'"Sarah lost ___ phone yesterday."',opts:['she','her','hers','herself'],ans:'her',fb:'صحيح! Sarah مؤنث → her قبل الاسم ✅',fbW:'نستخدم her كصفة ملكية قبل الاسم مباشرة'}
+    icon:'🎯',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
+    title:'الأفعال الناقصة',titleEn:'Modal Verbs',level:"الدرس الثالث عشر · Lesson 13",
+    explanation:'الأفعال الناقصة (can, must, should, may) تضيف معنى مثل القدرة، الإلزام، أو النصيحة، ولا تتغيّر مع الفاعل ولا تحتاج to بعدها.',
+    formula:'Subject + Modal + Verb (base form)',
+    formulaNote:'can=قدرة | must=إلزام | should=نصيحة | may=احتمال',
+    examples:[{en:"I can swim very well.",ar:"أستطيع السباحة جيداً جداً.",struct:"{S:I} {V:can swim} {ADV:very well}."},{en:"You must wear a seatbelt.",ar:"يجب أن ترتدي حزام الأمان.",struct:"{S:You} {V:must wear} {O:a seatbelt}."},{en:"She should see a doctor.",ar:"يجب أن تذهب لطبيب (نصيحة).",struct:"{S:She} {V:should see} {O:a doctor}."}],
+    quiz:{q:'"You ___ smoke here — it is forbidden."',opts:['can','must not','should','may'],ans:'must not',fb:'صحيح! must not تعني ممنوع تماماً ✅',fbW:'للتعبير عن المنع القوي نستخدم must not'}
+  },
+  {
+    icon:'✅',color:"#FFD700",bg:'rgba(255,215,0,.12)',
+    title:'زمن المضارع التام',titleEn:'Present Perfect',level:"الدرس الرابع عشر · Lesson 14",
+    explanation:'نستخدم المضارع التام لحدث بدأ في الماضي وله أثر أو صلة بالحاضر، أو لتجربة حياتية بدون تحديد الوقت بالضبط.',
+    formula:'Subject + have/has + Past Participle',
+    formulaNote:'I/You/We/They → have | He/She/It → has | eat→eaten, see→seen, go→gone',
+    examples:[{en:"I have visited Paris twice.",ar:"زرت باريس مرتين.",struct:"{S:I} {V:have visited} {O:Paris} {ADV:twice}."},{en:"She has finished her homework.",ar:"أنهت واجبها.",struct:"{S:She} {V:has finished} {O:her homework}."},{en:"They have never tried sushi.",ar:"لم يجربوا السوشي أبداً.",struct:"{S:They} {V:have never tried} {O:sushi}."}],
+    quiz:{q:'"She ___ (finish) her work already."',opts:['finish','finished','has finished','finishing'],ans:'has finished',fb:'ممتاز! She + has + finished ✅',fbW:'مع She نستخدم has + التصريف الثالث للفعل'}
   },
   {
     icon:'📢',color:"#2DD4BF",bg:'rgba(45,212,191,.12)',
@@ -6871,6 +7057,12 @@ function updateHomeStats() {
   if (totalEl)  totalEl.textContent  = words.length;
   if (streakEl) streakEl.textContent = streak;
 
+  const achEl = document.getElementById('homeAchievements');
+  if (achEl) {
+    const summary = getAchievementSummary();
+    achEl.textContent = summary.done + '/' + summary.total;
+  }
+
   const greetEl = document.getElementById('homeGreeting');
   if (greetEl) {
     const name = localStorage.getItem('studentName');
@@ -6878,6 +7070,26 @@ function updateHomeStats() {
   }
 
   renderMissionCard();
+}
+
+function openAchievementsModal() {
+  const summary = getAchievementSummary();
+  document.getElementById('achModalCount').textContent = summary.done + '/' + summary.total + ' unlocked · مُنجَز';
+  document.getElementById('achModalList').innerHTML = summary.list.map(a => `
+    <div class="ach-item ${a.done ? 'done' : ''}">
+      <div class="ach-item-icon">${a.icon}</div>
+      <div class="ach-item-text">
+        <div class="ach-item-en">${a.en}</div>
+        <div class="ach-item-ar">${a.ar}</div>
+      </div>
+      <div class="ach-item-check">${a.done ? '✓' : '○'}</div>
+    </div>
+  `).join('');
+  document.getElementById('achModalOverlay').classList.add('show');
+}
+
+function closeAchievementsModal() {
+  document.getElementById('achModalOverlay').classList.remove('show');
 }
 
 // ══ TODAY'S MISSION & CONTINUE LEARNING ══
@@ -7060,7 +7272,37 @@ function toggleWordsStats() {
 function getSynth() { return window.speechSynthesis || null; }
 let currentSpeakingBtn = null;
 
-function speakWord(text, btnEl, retry) {
+// ══ NATURAL VOICE VARIATION ══
+// A fixed rate/pitch every single time is what makes speech feel like a
+// looping recording. Real speech has small natural fluctuation utterance to
+// utterance. This keeps that fluctuation subtle enough to never harm
+// clarity or pronunciation accuracy — just enough to stop sounding robotic.
+function naturalRate(base) {
+  return +(base + (Math.random() * 0.06 - 0.03)).toFixed(3); // ±0.03 jitter
+}
+function naturalPitch(base) {
+  return +(base + (Math.random() * 0.08 - 0.04)).toFixed(3); // ±0.04 jitter
+}
+
+// Picks a consistent voice per "character" (by cache key) instead of always
+// grabbing the first available English voice — different characters in a
+// dialogue then sound like different people, not the same voice twice.
+const _voiceCache = {};
+function pickEnglishVoice(voices, characterKey) {
+  const enVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
+  if (!enVoices.length) return voices[0] || null;
+  if (!characterKey) return enVoices[0];
+  if (_voiceCache[characterKey]) return _voiceCache[characterKey];
+  // Deterministic-but-distinct pick per character key, cycling through
+  // whatever English voices this device/browser actually has.
+  let hash = 0;
+  for (let i = 0; i < characterKey.length; i++) hash = (hash * 31 + characterKey.charCodeAt(i)) >>> 0;
+  const chosen = enVoices[hash % enVoices.length];
+  _voiceCache[characterKey] = chosen;
+  return chosen;
+}
+
+function speakWord(text, btnEl, retry, characterKey) {
   const synth = getSynth();
   if (!synth) { showToast('⚠️ متصفحك لا يدعم النطق الصوتي', '#FB7185'); return; }
 
@@ -7070,13 +7312,13 @@ function speakWord(text, btnEl, retry) {
 
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'en-US';
-  utter.rate = 0.85;
-  utter.pitch = 1;
+  utter.rate = naturalRate(0.85);
+  utter.pitch = naturalPitch(characterKey === 'convB' ? 0.92 : 1);
   utter.volume = 1;
 
   const voices = synth.getVoices();
   if (voices && voices.length) {
-    const enVoice = voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+    const enVoice = pickEnglishVoice(voices, characterKey);
     if (enVoice) utter.voice = enVoice;
   }
 
@@ -7170,7 +7412,7 @@ function guessLetter(letter, btn) {
     btn.classList.add('miss');
     document.getElementById(hmParts[hmWrong]).setAttribute('opacity','1');
     hmWrong++;
-    showToast('❌ خطأ!', '#FB7185');
+    showToast('🎯 حاول حرفاً آخر', '#94A3B8');
   }
   renderHangman();
 }
@@ -7320,7 +7562,7 @@ function checkDaily(btn, chosen, correct, word, meaning) {
   else {
     btn.classList.add('wrong');
     document.querySelectorAll('.daily-opt').forEach(b=>{ if(b.textContent.trim()===correct) b.classList.add('correct'); });
-    showToast('❌ حاول غداً!','#FB7185');
+    showToast('📚 شاهد الإجابة الصحيحة أعلاه — نراك غداً بكلمة جديدة!','#94A3B8');
   }
   localStorage.setItem('daily_'+new Date().toDateString(), JSON.stringify({won,word,meaning}));
   setTimeout(()=>initDaily(), 1500);
@@ -7340,6 +7582,16 @@ function pickSpellingWord() {
   const pool = words.filter(w => /^[a-zA-Z]{3,}$/.test(w.en || ''));
   const list = pool.length ? pool : words;
   return list[Math.floor(Math.random()*list.length)];
+}
+
+function maskWordInSentence(sentence, targetWord) {
+  if (!sentence) return sentence;
+  // Replace the target word AND its common inflected forms (walks, walked,
+  // walking, etc.) — matching only the exact word would still visibly leak
+  // the root spelling inside forms like "improves" or "discovered".
+  const escaped = targetWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp('\\b' + escaped + '\\w*\\b', 'gi');
+  return sentence.replace(re, m => '_'.repeat(m.length));
 }
 
 function renderSpellingQ() {
@@ -7366,7 +7618,7 @@ function renderSpellingQ() {
     <div class="spell-card">
       <div class="spell-badge">✍️ اكتب الكلمة الإنجليزية</div>
       <div class="spell-meaning">${w.ar}</div>
-      ${w.ex ? `<div class="spell-example">💡 ${w.ex}</div>` : ''}
+      ${w.ex ? `<div class="spell-example">💡 ${maskWordInSentence(w.ex, w.en)}</div>` : ''}
       <div class="spell-boxes" style="grid-template-columns: repeat(${len}, minmax(0,1fr))" onclick="focusSpellInput()">${boxesHtml}</div>
       <input type="text" id="spellInput" class="spell-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="onSpellInput(this)" onkeydown="if(event.key==='Enter')checkSpelling()">
       <div class="spell-actions">
@@ -7386,7 +7638,31 @@ function renderSpellingQ() {
 
 function focusSpellInput() {
   const inp = document.getElementById('spellInput');
-  if (inp && !spellLocked) inp.focus();
+  if (inp && !spellLocked) {
+    inp.focus();
+    // On mobile, the on-screen keyboard shrinks the visible viewport. Without
+    // this, the boxes/buttons can end up pushed below the keyboard with no
+    // way to scroll them into view. A short delay lets the keyboard finish
+    // animating open before we scroll.
+    setTimeout(() => {
+      const card = document.querySelector('.spell-card');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+  }
+}
+
+// Safety net: some Android keyboards resize the visual viewport after our
+// initial scroll already ran (e.g. when a Chrome autofill suggestion bar
+// appears above the keyboard a moment later). Re-scroll whenever the
+// visible area changes while the spelling game is open.
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const gameEl = document.getElementById('gameSpelling');
+    if (gameEl && gameEl.style.display !== 'none' && document.activeElement && document.activeElement.id === 'spellInput') {
+      const card = document.querySelector('.spell-card');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
 }
 
 function onSpellInput(input) {
@@ -7464,8 +7740,7 @@ function checkSpelling() {
   } else {
     spellStreak = 0;
     fb.className = 'spell-feedback show no';
-    fb.textContent = '❌ الكلمة الصحيحة: ' + spellWord.toUpperCase();
-    showToast('❌ حاول مرة أخرى في الكلمة القادمة', '#FB7185');
+    fb.textContent = '📝 الكلمة الصحيحة: ' + spellWord.toUpperCase();
   }
   document.querySelectorAll('.spell-stat .n')[0].textContent = spellScore;
   document.querySelectorAll('.spell-stat .n')[1].textContent = spellStreak;
@@ -7980,7 +8255,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Cosmopolitan',ar:'عالمي'},{en:'Heritage',ar:'تراث'},{en:'Coral',ar:'مرجان'},{en:'Vibrant',ar:'نابض'},{en:'Gateway',ar:'بوابة'}],
     landmarks:['🏘️ البلد التاريخي (يونسكو)','🌊 كورنيش جدة','⛲ نافورة الملك فهد','🏛️ متحف جدة الإقليمي'],
     quote:'جدة تجمع الشرق والغرب — واللغة تجمع قلبك مع العالم. 🌊',
-    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+    req:{words:7,game:true,conv:false,podcast:false,quiz:5,pass:63} },
 
   { id:4, name:'الطائف', nameEn:'Taif', flag:'🌹', tier:1,
     info:'Known as the "City of Roses" and a UNESCO Creative City of Literature, Taif sits at 1,879 meters above sea level. Its 900-plus rose farms produce over 300 million blossoms annually of the famous Ward Taifi — a 30-petalled Damask rose whose oil perfumes the world.',
@@ -8020,7 +8295,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Maritime',ar:'بحري'},{en:'Strategic',ar:'استراتيجي'},{en:'Caravan',ar:'قافلة'},{en:'Commerce',ar:'تجارة'},{en:'Port',ar:'ميناء'}],
     landmarks:['🌊 ميناء ينبع التاريخي','🏛️ متحف ينبع','🌿 الشعاب المرجانية','🏭 مدينة ينبع الصناعية'],
     quote:'التجارة العالمية تحتاج لغة — وأنت تبني جسرك للعالم. 🌊',
-    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+    req:{words:7,game:true,conv:false,podcast:false,quiz:5,pass:63} },
 
   { id:7, name:'جازان', nameEn:'Jazan', flag:'🌿', tier:1,
     info:'Jazan is Saudi Arabia\'s tropical paradise — a region of extraordinary biodiversity, ancient terraced farms, and a coastline rich with coral reefs and mangroves. Its people have preserved unique traditions and crafts that tell stories of a deeply rooted civilization in the southwest of the Kingdom.',
@@ -8028,7 +8303,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Biodiversity',ar:'تنوع بيولوجي'},{en:'Mangrove',ar:'مانغروف'},{en:'Terraced',ar:'مدرّج'},{en:'Tropical',ar:'استوائي'},{en:'Indigenous',ar:'أصيل'}],
     landmarks:['🌿 غابات المانغروف','🏰 قلعة الدصارية','🌊 كورنيش جازان','🏛️ متحف جازان الإقليمي'],
     quote:'التنوع ثروة — وكل كلمة جديدة تُثري عالمك الداخلي. 🌿',
-    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+    req:{words:7,game:true,conv:false,podcast:false,quiz:5,pass:63} },
 
   { id:8, name:'جزيرة فرسان', nameEn:'Farasan Islands', flag:'🏝️', tier:1,
     info:'The Farasan Islands are an archipelago of nearly 200 coral islands, designated a UNESCO Biosphere Reserve in 2021. A Latin inscription from 144 AD confirms Roman military presence here — making it one of Rome\'s furthest outposts, 4,000 km from Rome itself.',
@@ -8036,7 +8311,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Archipelago',ar:'أرخبيل'},{en:'Biosphere',ar:'محيط حيوي'},{en:'Inscription',ar:'نقش'},{en:'Endangered',ar:'مهدد بالانقراض'},{en:'Garrison',ar:'حامية عسكرية'}],
     landmarks:['🏚️ قرية القصار الأثرية','🕌 المسجد النجدي (1928م)','🏠 بيت الرفاعي','🌿 غابة القندل','🦌 محمية الغزال العربي'],
     quote:'وصلت إلى الجزيرة! الأسرار الجميلة يكتشفها من يواصل الرحلة. 🏝️',
-    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+    req:{words:7,game:true,conv:false,podcast:false,quiz:5,pass:63} },
 
   { id:9, name:'أبها', nameEn:'Abha', flag:'🏔️', tier:1,
     info:'Abha, known as the "Bride of the Mountain," sits at 2,270 meters above sea level in the Asir Mountains — one of Saudi Arabia\'s highest and greenest cities. The region receives up to 500mm of annual rainfall. Al-Qatt Al-Asiri, a unique geometric art form practiced by women, is recognized by UNESCO.',
@@ -8068,7 +8343,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Expedition',ar:'بعثة'},{en:'Perseverance',ar:'مثابرة'},{en:'Frontier',ar:'حدود'},{en:'Endurance',ar:'تحمّل'},{en:'Resolve',ar:'عزيمة'}],
     landmarks:['🏰 قلعة تبوك التاريخية','🚂 محطة سكة حديد الحجاز','🌊 شاطئ تبوك','🏛️ متحف تبوك'],
     quote:'الإصرار وصل بك إلى هنا — ولن يخذلك فيما يأتي. 💪',
-    req:{words:5,game:true,conv:false,podcast:false,quiz:5,pass:60} },
+    req:{words:7,game:true,conv:false,podcast:false,quiz:5,pass:63} },
 
   // 🟡 11-20 الخليج والشام
   { id:11, name:'الرياض', nameEn:'Riyadh', flag:'🏙️', tier:2,
@@ -8077,7 +8352,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Metropolis',ar:'مدينة كبرى'},{en:'Transform',ar:'يتحوّل'},{en:'Fortress',ar:'قلعة'},{en:'Ambition',ar:'طموح'},{en:'Heritage',ar:'تراث'}],
     landmarks:['🏰 قلعة المصمك','🏛️ الدرعية (يونسكو)','🏛️ قصر المربع التاريخي','🌿 حديقة الملك سلمان','🗼 برج المملكة'],
     quote:'الطموح يبني المدن — واللغة تفتح أبوابها. 🏙️',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:5,game:true,conv:true,podcast:false,quiz:7,pass:60} },
 
   { id:12, name:'الأحساء', nameEn:'Al-Ahsa', flag:'🌴', tier:2,
     info:'Al-Ahsa is the largest natural oasis in the world and a UNESCO World Heritage Site. Its name means "the sound of water flowing underground." Home to over 2.5 million date palms, it has been a vital crossroads of civilizations since the Stone Age.',
@@ -8085,7 +8360,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Oasis',ar:'واحة'},{en:'Palm',ar:'نخلة'},{en:'Ancient',ar:'قديم'},{en:'Civilization',ar:'حضارة'},{en:'Fertile',ar:'خصيب'}],
     landmarks:['🌴 واحة الأحساء (يونسكو)','🕌 مسجد جواثا','🏔️ جبل القارة وكهوفه','🏛️ قيصرية الأحساء (1822م)','💛 البحيرة الصفراء'],
     quote:'الجذور العميقة تُنتج ثماراً عظيمة — كذلك اللغة. 🌴',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:7,game:true,conv:true,podcast:false,quiz:7,pass:63} },
 
   { id:13, name:'الدمام', nameEn:'Dammam', flag:'🛢️', tier:2,
     info:'Dammam is the gateway to Saudi Arabia\'s Eastern Province — where the discovery of oil in 1938 transformed not just the Kingdom, but the entire global economy. The Eastern Province sits above the world\'s largest conventional oil reserves.',
@@ -8093,7 +8368,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Petroleum',ar:'بترول'},{en:'Extraction',ar:'استخراج'},{en:'Industrial',ar:'صناعي'},{en:'Revenue',ar:'عائد'},{en:'Gateway',ar:'بوابة'}],
     landmarks:['🌊 كورنيش الدمام','🏛️ مركز إثراء في الظهران','🏖️ شاطئ نصف القمر','🌉 جسر الملك فهد','🛢️ متحف أرامكو'],
     quote:'الثروة الحقيقية في العقل — واللغة مفتاحها. ⚙️',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:7,game:true,conv:true,podcast:false,quiz:7,pass:63} },
 
   { id:38, name:'الخبر', nameEn:'Al-Khobar', flag:'🌆', tier:2,
     info:'Al-Khobar grew from a small fishing settlement into one of the Eastern Province\'s most vibrant commercial and residential cities. Its iconic Corniche stretches along the Arabian Gulf, connecting to Bahrain via the 25-kilometer King Fahd Causeway — a true bridge between two nations.',
@@ -8101,7 +8376,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Causeway',ar:'جسر بحري'},{en:'Commercial',ar:'تجاري'},{en:'Vibrant',ar:'نابض بالحياة'},{en:'Residential',ar:'سكني'},{en:'Coastal',ar:'ساحلي'}],
     landmarks:['🌊 كورنيش الخبر','🌉 جسر الملك فهد','🏙️ برج التأمينات الاجتماعية','🏖️ شاطئ نصف القمر','🛍️ مركز الراشد مول'],
     quote:'كما يربط الجسر بين بلدين — تربط اللغة بين عقلك والعالم. 🌉',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:7,game:true,conv:true,podcast:false,quiz:7,pass:63} },
 
   { id:14, name:'الجبيل', nameEn:'Jubail', flag:'🏭', tier:2,
     info:'Jubail Industrial City is one of the largest industrial complexes ever built from scratch in human history — transforming a small fishing village into a global petrochemical powerhouse in just decades. Beyond its factories, Jubail holds ruins of one of Arabia\'s oldest Christian churches dating to the 4th century AD.',
@@ -8109,7 +8384,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Refinery',ar:'مصفاة'},{en:'Manufacturing',ar:'تصنيع'},{en:'Ruins',ar:'أطلال'},{en:'Ancient',ar:'قديم'},{en:'Coastline',ar:'ساحل'}],
     landmarks:['🏭 المدينة الصناعية','⛪ آثار الكنيسة القديمة (القرن الـ4م)','🌊 شواطئ الجبيل','🐬 محمية الحياة البحرية','🌿 حديقة الجبيل الملكية'],
     quote:'من الصفر إلى القمة — هذه قصة كل متعلم حقيقي. 🏭',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:7,game:true,conv:true,podcast:false,quiz:7,pass:63} },
 
   { id:15, name:'الكويت', nameEn:'Kuwait City', flag:'🌊', tier:2,
     info:'Kuwait rose from a pearl-diving and trading settlement in the 18th century to one of the world\'s wealthiest countries per capita. Kuwaiti sailors were known as skilled navigators whose dhows sailed as far as India and East Africa.',
@@ -8117,7 +8392,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Pearl',ar:'لؤلؤ'},{en:'Merchant',ar:'تاجر'},{en:'Seafarer',ar:'بحّار'},{en:'Prosperity',ar:'ازدهار'},{en:'Resilience',ar:'صمود'}],
     landmarks:['🏛️ أبراج الكويت','🕌 مسجد الصفاة الكبير','🏛️ متحف الكويت الوطني','⚓ قرية الصيادين التراثية','🌊 كورنيش الكويت'],
     quote:'الصمود يصنع الأمم — واللغة تحكي قصصها. 🌊',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   { id:16, name:'المنامة', nameEn:'Manama', flag:'🌉', tier:2,
     info:'Manama, capital of Bahrain, is one of the oldest continuously inhabited cities in the Gulf. For centuries it was the center of the Gulf pearl trade, attracting merchants from India and Persia. Today it is a leading financial hub with over 400 banks and institutions.',
@@ -8125,7 +8400,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Financial',ar:'مالي'},{en:'Hub',ar:'مركز'},{en:'Pearl',ar:'لؤلؤ'},{en:'Ancient',ar:'قديم'},{en:'Inhabited',ar:'مأهول'}],
     landmarks:['🏰 قلعة البحرين (يونسكو)','🏛️ متحف البحرين الوطني','🕌 مسجد الفاتح الكبير','🌳 شجرة الحياة (400 عام)','🏛️ بيت القرآن'],
     quote:'الجسور تربط العالم — واللغة أقوى الجسور. 🌉',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   { id:17, name:'الدوحة', nameEn:'Doha', flag:'🏆', tier:2,
     info:'Doha witnessed one of the most dramatic transformations in modern history — from a modest fishing village in the 1970s to a global city hosting the FIFA World Cup 2022, the first ever held in the Arab world. The Museum of Islamic Art houses one of the world\'s finest collections spanning 1,400 years.',
@@ -8133,7 +8408,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Transformation',ar:'تحوّل'},{en:'Investment',ar:'استثمار'},{en:'Ambitious',ar:'طموح'},{en:'Heritage',ar:'تراث'},{en:'Phenomenon',ar:'ظاهرة'}],
     landmarks:['🏛️ متحف الفن الإسلامي','🌊 كورنيش الدوحة','🏘️ سوق واقف التراثي','🏛️ المتحف الوطني لقطر','🌆 مشيرب — أول حي تراثي مستدام','🏰 قلعة الكوت التاريخية'],
     quote:'خمسون عاماً غيّرت الدوحة — وأنت تغيّر نفسك كلمة كلمة. 🏆',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   { id:18, name:'أبوظبي', nameEn:'Abu Dhabi', flag:'🕌', tier:2,
     info:'Abu Dhabi is home to the Sheikh Zayed Grand Mosque — one of the world\'s most beautiful buildings, accommodating 40,000 worshippers. It also houses the Louvre Abu Dhabi, the first universal museum in the Arab world, and Masdar City, a pioneering zero-carbon urban development.',
@@ -8141,7 +8416,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Innovation',ar:'ابتكار'},{en:'Sustainable',ar:'مستدام'},{en:'Architecture',ar:'عمارة'},{en:'Universal',ar:'شامل'},{en:'Coexist',ar:'يتعايش'}],
     landmarks:['🕌 مسجد الشيخ زايد الكبير','🏛️ متحف اللوفر أبوظبي','🌿 مدينة مصدر المستدامة','🏛️ قصر الإمارات','🏛️ جزيرة السعديات الثقافية'],
     quote:'الإيمان والعلم والجمال تجتمع هنا — كما تجتمع في عقل المتعلم. 🕌',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   { id:19, name:'دبي', nameEn:'Dubai', flag:'🌇', tier:2,
     info:'Dubai made the impossible possible. Home to the Burj Khalifa — the world\'s tallest building at 828 meters — and the Palm Jumeirah, an artificial island visible from space. Dubai transformed from a small pearl-diving village in the 1960s into a global metropolis receiving over 14 million tourists annually.',
@@ -8149,7 +8424,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Skyscraper',ar:'ناطحة سحاب'},{en:'Artificial',ar:'اصطناعي'},{en:'Metropolis',ar:'مدينة كبرى'},{en:'Landmark',ar:'معلم'},{en:'Transform',ar:'يتحوّل'}],
     landmarks:['🗼 برج خليفة','🏝️ جزيرة النخلة','🛍️ دبي مول','🏘️ الحي التاريخي الفهيدي','🌊 كريك دبي والأسواق التراثية'],
     quote:'لا حدود لمن يحلم ويعمل — ولا حدود لمن يتعلم ويُصرّ. 🌇',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   { id:20, name:'مسقط', nameEn:'Muscat', flag:'🌊', tier:2,
     info:'Muscat, capital of Oman, is one of the oldest port cities in the Arabian Peninsula. For centuries, Omani sailors were among the most skilled navigators in the Indian Ocean, trading with India, East Africa and Southeast Asia. The Sultan Qaboos Grand Mosque can accommodate 20,000 worshippers.',
@@ -8157,7 +8432,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Navigation',ar:'ملاحة'},{en:'Maritime',ar:'بحري'},{en:'Trade',ar:'تجارة'},{en:'Ancient',ar:'قديم'},{en:'Seafarer',ar:'بحّار'}],
     landmarks:['🕌 مسجد السلطان قابوس الكبير','🏰 قلعة مطرح التاريخية','🌊 كورنيش مطرح','🏛️ المتحف الوطني العُماني','🏰 قلعتا الجلالي والميراني'],
     quote:'البحار يعرف طريقه بالنجوم — وأنت تجد طريقك باللغة. 🌊',
-    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:65} },
+    req:{words:10,game:true,conv:true,podcast:false,quiz:7,pass:66} },
 
   // 🔵 21-30 العالم الإسلامي
   { id:21, name:'دمشق', nameEn:'Damascus', flag:'🏛️', tier:3,
@@ -8166,7 +8441,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Ancient',ar:'قديم'},{en:'Caliphate',ar:'خلافة'},{en:'Civilization',ar:'حضارة'},{en:'Mosaic',ar:'فسيفساء'},{en:'Monument',ar:'معلم'}],
     landmarks:['🕌 الجامع الأموي','🏰 قلعة دمشق','🏛️ قصر العظم','🛤️ الشارع المستقيم','🏛️ المتحف الوطني السوري'],
     quote:'دمشق علّمت العالم — واللغة تحمل تراث الحضارات. 🏛️',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:10,game:true,conv:true,podcast:true,quiz:8,pass:66} },
 
   { id:22, name:'بغداد', nameEn:'Baghdad', flag:'📚', tier:3,
     info:'Founded in 762 AD by Abbasid Caliph Abu Ja\'far Al-Mansur as "City of Peace," Baghdad became the world\'s largest city by the 10th century. The House of Wisdom (Bayt Al-Hikmah) attracted scholars worldwide, translating Greek, Persian and Indian knowledge. At its peak, Baghdad had over one million people — centuries before any European city reached that scale.',
@@ -8174,7 +8449,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Caliphate',ar:'خلافة'},{en:'Scholar',ar:'عالم'},{en:'Translate',ar:'يترجم'},{en:'Wisdom',ar:'حكمة'},{en:'Prosperity',ar:'ازدهار'}],
     landmarks:['🏛️ المتحف العراقي','🕌 مسجد أبي حنيفة النعمان','🏛️ المدرسة المستنصرية (1227م)','🏛️ القصر العباسي','📚 شارع المتنبي'],
     quote:'حين كان العالم في ظلام — كانت بغداد تُنير العقول. وأنت اليوم تحمل مشعلها. 📚',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:10,game:true,conv:true,podcast:true,quiz:8,pass:66} },
 
   { id:23, name:'القدس', nameEn:'Jerusalem', flag:'🕌', tier:3,
     info:'Jerusalem is one of the oldest cities in the world and the third holiest city in Islam. The Dome of the Rock, built in 691 AD by Umayyad Caliph Abd Al-Malik ibn Marwan, stands on the site from which Muslims believe Prophet Muhammad (peace be upon him) ascended to the heavens. Al-Masjid Al-Aqsa was the first qibla of Muslims.',
@@ -8182,7 +8457,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Sacred',ar:'مقدس'},{en:'Ascension',ar:'معراج'},{en:'Qibla',ar:'قبلة'},{en:'Pilgrimage',ar:'حج'},{en:'Ancient',ar:'قديم'}],
     landmarks:['🕌 المسجد الأقصى المبارك','🕌 قبة الصخرة المشرفة (691م)','🏛️ البلدة القديمة (يونسكو)','🏰 قلعة القدس','🏛️ متحف روكفلر الأثري'],
     quote:'القدس في القلب — واللغة تُعبّر عما يعجز عنه الصمت. 🕌',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:10,game:true,conv:true,podcast:true,quiz:8,pass:66} },
 
   { id:24, name:'إسطنبول', nameEn:'Istanbul', flag:'🌉', tier:3,
     info:'Istanbul is the only city in the world that spans two continents — Europe and Asia. Founded as Byzantium in 657 BC, it became Constantinople, capital of the Byzantine Empire for over 1,000 years. In 1453, Sultan Muhammad Al-Fatih conquered it and transformed the Hagia Sophia into a mosque. For 600 years it served as the capital of the Ottoman Caliphate.',
@@ -8190,7 +8465,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Conquest',ar:'فتح'},{en:'Byzantine',ar:'بيزنطي'},{en:'Caliphate',ar:'خلافة'},{en:'Architecture',ar:'عمارة'},{en:'Continent',ar:'قارة'}],
     landmarks:['🕌 مسجد آيا صوفيا (537م)','🕌 مسجد السلطان أحمد','🏰 قصر طوب قابي','🏛️ البازار الكبير (1455م)','🌉 جسر البوسفور'],
     quote:'مدينة تجمع قارتين — واللغة تجمع الشعوب. 🌉',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:8,pass:69} },
 
   { id:25, name:'قونيا', nameEn:'Konya', flag:'🏛️', tier:3,
     info:'Konya is one of Turkey\'s oldest cities, serving as the capital of the Seljuk Sultanate of Rum in the 12th and 13th centuries — one of the most important centers of Islamic civilization in Anatolia. The Seljuks built magnificent mosques, caravanserais and madrasas that still stand today as testaments to their architectural genius.',
@@ -8198,7 +8473,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Seljuk',ar:'سلجوقي'},{en:'Medieval',ar:'وسيط'},{en:'Caravanserai',ar:'خان'},{en:'Architecture',ar:'عمارة'},{en:'Legacy',ar:'إرث'}],
     landmarks:['🕌 مسجد علاء الدين السلجوقي (القرن الـ12م)','🏔️ تلة علاء الدين التاريخية','🏛️ مدرسة إنجه مناري','🏛️ مدرسة قرا طاي','🏰 قلعة قونيا التاريخية'],
     quote:'الحضارة الحقيقية تبقى في العقول — كما تبقى كلمة تعلّمتها اليوم. 🏛️',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:8,pass:69} },
 
   { id:26, name:'قرطبة', nameEn:'Córdoba', flag:'🌟', tier:3,
     info:'At its peak in the 10th century, Córdoba was the largest city in Western Europe with over 500,000 people — dwarfing London and Paris. It was the capital of the Umayyad Caliphate of Al-Andalus. The Great Mosque of Córdoba with its famous forest of 856 columns is one of the masterpieces of world architecture.',
@@ -8206,7 +8481,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Caliphate',ar:'خلافة'},{en:'Coexistence',ar:'تعايش'},{en:'Architecture',ar:'عمارة'},{en:'Scholar',ar:'عالم'},{en:'Golden Age',ar:'عصر ذهبي'}],
     landmarks:['🕌 المسجد الكبير (يونسكو)','🏰 مدينة الزهراء الأثرية (يونسكو)','🏛️ البلدية التاريخية (يونسكو)','🌉 الجسر الروماني القديم'],
     quote:'قرطبة أضاءت أوروبا في أحلك أوقاتها — فأضئ أنت محيطك بلغتك. 🌟',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:8,pass:69} },
 
   { id:27, name:'غرناطة', nameEn:'Granada', flag:'🏰', tier:3,
     info:'Granada is home to the Alhambra — widely considered one of the most beautiful buildings ever constructed. Built by the Nasrid dynasty in the 13th-14th centuries, it is a UNESCO World Heritage Site. Granada was the last Muslim kingdom in the Iberian Peninsula, finally falling in 1492 — the same year Columbus sailed to America.',
@@ -8214,7 +8489,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Dynasty',ar:'سلالة'},{en:'Intricate',ar:'متقن'},{en:'Inscription',ar:'نقش'},{en:'Fortress',ar:'قلعة'},{en:'Legacy',ar:'إرث'}],
     landmarks:['🏰 قصر الحمراء (يونسكو)','🌿 حدائق جنة العريف (يونسكو)','🕌 مسجد غرناطة الكبير','🏘️ حي البيازين (يونسكو)'],
     quote:'الحمراء باقية — لأن الجمال الحقيقي لا يُنسى. 🏰',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:8,pass:69} },
 
   { id:28, name:'سمرقند', nameEn:'Samarkand', flag:'🏛️', tier:3,
     info:'Samarkand is one of Central Asia\'s oldest cities, mentioned in records as far back as the 7th century BC. A vital hub on the ancient Silk Road connecting China, Persia and the Mediterranean. Under Timur in the 14th century, it became the capital of a vast empire, adorned with magnificent Islamic architecture including the Registan — one of the world\'s most spectacular public squares.',
@@ -8222,7 +8497,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Silk Road',ar:'طريق الحرير'},{en:'Caravan',ar:'قافلة'},{en:'Architecture',ar:'عمارة'},{en:'Empire',ar:'إمبراطورية'},{en:'Astronomy',ar:'علم الفلك'}],
     landmarks:['🏛️ الريجستان (يونسكو)','🕌 مسجد بيبي خانم الكبير','🔭 مرصد أولوغ بيك (القرن الـ15م)','🏛️ متحف تاريخ سمرقند','🏛️ أفراسياب الأثرية'],
     quote:'طريق الحرير ربط العالم بالتجارة — واللغة تربطه بالمعرفة. 🐪',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:72} },
 
   { id:29, name:'بخارى', nameEn:'Bukhara', flag:'📖', tier:3,
     info:'Bukhara is one of the best-preserved Islamic cities in Central Asia with a 2,500-year history and a UNESCO World Heritage Site. The famous Islamic scholar Imam Al-Bukhari — compiler of Sahih Al-Bukhari, one of the most authentic collections of Hadith — was born here in 810 AD. The old town contains over 140 architectural monuments.',
@@ -8230,7 +8505,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Scholarship',ar:'علم'},{en:'Hadith',ar:'حديث'},{en:'Medieval',ar:'وسيط'},{en:'Preserve',ar:'يحفظ'},{en:'Heritage',ar:'تراث'}],
     landmarks:['🕌 مسجد كلان ومئذنته','🏛️ مدرسة مير عرب (القرن الـ16م)','🏰 قلعة أرك','🕌 مسجد بولو خوض','🏛️ سوق تاق زارغارون','🌿 لابي حوض'],
     quote:'من بخارى خرج علماء غيّروا العالم — وأنت تسير على خطاهم. 📖',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:72} },
 
   { id:30, name:'القاهرة', nameEn:'Cairo', flag:'🕌', tier:3,
     info:'Cairo was founded in 641 AD when Amr ibn al-As conquered Egypt. In 970 AD the Fatimids founded Al-Qahira, which became the new center of the Islamic world — the largest city in the Islamic world in the 14th century with nearly half a million people. Al-Azhar Mosque, founded in 970 AD, remains the foremost center of Islamic learning globally.',
@@ -8238,7 +8513,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Conquest',ar:'فتح'},{en:'Madrasa',ar:'مدرسة'},{en:'Caliphate',ar:'خلافة'},{en:'Medieval',ar:'وسيط'},{en:'Architecture',ar:'عمارة'}],
     landmarks:['🕌 الجامع الأزهر (970م)','🏰 قلعة صلاح الدين الأيوبي','🕌 مسجد السلطان حسن (1356م)','🛤️ شارع المعز (يونسكو)','🏛️ متحف الفن الإسلامي','🕌 مسجد عمرو بن العاص (642م)'],
     quote:'القاهرة تحمل ألف عام من العلم — واللغة هي مفتاح كل علم. 🕌',
-    req:{words:15,game:true,conv:true,podcast:true,quiz:8,pass:70} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:8,pass:69} },
 
   // 🏆 31-37 نهاية الرحلة
   { id:31, name:'تونس', nameEn:'Tunis', flag:'🏛️', tier:4,
@@ -8247,7 +8522,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Dynasty',ar:'سلالة'},{en:'Medina',ar:'مدينة'},{en:'Preserve',ar:'يحفظ'},{en:'Minaret',ar:'مئذنة'},{en:'Mosque',ar:'مسجد'}],
     landmarks:['🕌 جامع الزيتونة (732م)','🏛️ مدينة تونس التاريخية (يونسكو)','🏛️ متحف باردو','🕌 الجامع الكبير بالقيروان (670م)','🌿 سوق البلاط'],
     quote:'تونس جمعت حضارات المتوسط — واللغة تجمع حضارات العالم. 🌍',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:10,pass:69} },
 
   { id:32, name:'فاس', nameEn:'Fes', flag:'📚', tier:4,
     info:'Fes is home to the world\'s oldest continually functioning university — the University of Al-Qarawiyyin, founded in 859 AD. The Medina of Fes Al-Bali is the largest and oldest medieval Islamic city in the world with nearly 10,000 alleyways. It was the first capital of Morocco during the Idrisid dynasty.',
@@ -8255,7 +8530,7 @@ var TRAIN_STATIONS = [
     words:[{en:'University',ar:'جامعة'},{en:'Medieval',ar:'وسيط'},{en:'Dynasty',ar:'سلالة'},{en:'Scholarship',ar:'علم'},{en:'Alleyway',ar:'زقاق'}],
     landmarks:['🕌 مسجد وجامعة القرويين (859م)','🏛️ مدينة فاس البالي (يونسكو)','🏛️ مدرسة البو عنانية','🏛️ مدرسة العطارين','🌿 دباغة الجلود'],
     quote:'من فاس انطلق العلم نحو الغرب — ومن لغتك تنطلق أنت نحو العالم. 📚',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:10,pass:72} },
 
   { id:33, name:'زنجبار', nameEn:'Zanzibar', flag:'🌍', tier:4,
     info:'Zanzibar\'s Stone Town is a UNESCO World Heritage Site and one of the best examples of the Swahili trading culture in East Africa. Islam arrived in Zanzibar in the 8th century, making it one of the earliest Islamic settlements in Sub-Saharan Africa. Arab and Omani merchants dominated trade routes for centuries.',
@@ -8263,7 +8538,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Trade',ar:'تجارة'},{en:'Swahili',ar:'سواحيلي'},{en:'Maritime',ar:'بحري'},{en:'Heritage',ar:'تراث'},{en:'Spice',ar:'توابل'}],
     landmarks:['🏘️ مدينة ستون تاون (يونسكو)','🕌 مسجد إيبادي','🏰 قلعة العرب (1700م)','🏛️ قصر بيت العجائب','🌊 ميناء زنجبار التاريخي'],
     quote:'زنجبار ربطت أفريقيا بالعالم الإسلامي — واللغة تربطك بكل العالم. 🌍',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:10,pass:72} },
 
   { id:34, name:'كوالالمبور', nameEn:'Kuala Lumpur', flag:'🌏', tier:4,
     info:'Malaysia is a country where Islam is the official religion and Muslims make up over 60% of the population. Islam arrived in the Malay Peninsula in the 13th century through Arab and Indian Muslim traders. Kuala Lumpur is home to the Petronas Twin Towers — the world\'s tallest buildings from 1998 to 2004.',
@@ -8271,7 +8546,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Peninsula',ar:'شبه جزيرة'},{en:'Official',ar:'رسمي'},{en:'Trade',ar:'تجارة'},{en:'Architecture',ar:'عمارة'},{en:'Multicultural',ar:'متعدد الثقافات'}],
     landmarks:['🏗️ أبراج بتروناس التوأم','🕌 المسجد الوطني الماليزي','🕌 مسجد جامع كوالالمبور (1909م)','🏛️ متحف الفن الإسلامي في ماليزيا','🏛️ المتحف الوطني'],
     quote:'الإسلام وصل لآسيا بالتجارة والأخلاق — واللغة تحمل قيمك أينما ذهبت. 🌏',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:10,pass:72} },
 
   { id:35, name:'جاكرتا', nameEn:'Jakarta', flag:'🌏', tier:4,
     info:'Indonesia is the world\'s largest Muslim-majority country with over 240 million Muslims — more than any Arab country. Islam arrived in the 13th century through Arab and Indian Muslim traders, spread peacefully through commerce and wisdom. Jakarta reflects this remarkable story of how Islam crossed oceans to become the faith of the largest archipelago on earth.',
@@ -8279,7 +8554,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Archipelago',ar:'أرخبيل'},{en:'Majority',ar:'أغلبية'},{en:'Peaceful',ar:'سلمي'},{en:'Commerce',ar:'تجارة'},{en:'Diversity',ar:'تنوع'}],
     landmarks:['🕌 مسجد الاستقلال — أكبر مساجد جنوب شرق آسيا','🏛️ المتحف الوطني الإندونيسي','🏛️ متحف فاتاهيلا','🏰 قلعة باتافيا الهولندية','🌊 ميناء سوندا كيلابا'],
     quote:'الإسلام لا يعرف حدوداً — واللغة الإنجليزية تفتح لك كل الحدود. 🌏',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:15,game:true,conv:true,podcast:true,quiz:10,pass:72} },
 
   { id:36, name:'بورصة', nameEn:'Bursa', flag:'🏙️', tier:4,
     info:'Bursa was the first capital of the Ottoman Empire, founded in 1326 AD. Known as "Green Bursa" for its lush landscapes and green-domed mosques, it was here that the Ottoman civilization began its remarkable journey that would eventually span three continents. The city is a UNESCO World Heritage Site.',
@@ -8287,7 +8562,7 @@ var TRAIN_STATIONS = [
     words:[{en:'Ottoman',ar:'عثماني'},{en:'Capital',ar:'عاصمة'},{en:'Civilization',ar:'حضارة'},{en:'Dome',ar:'قبة'},{en:'Flourish',ar:'يزدهر'}],
     landmarks:['🕌 الجامع الكبير (1399م)','🏛️ الجامع الأخضر وتربته (يونسكو)','🏰 قلعة بورصة','🏛️ سوق قبة قيصري','🌿 المتحف العثماني'],
     quote:'من بورصة انطلق العثمانيون لبناء حضارة — ومن كلماتك تنطلق أنت. 🏙️',
-    req:{words:20,game:true,conv:true,podcast:true,quiz:10,pass:75} },
+    req:{words:12,game:true,conv:true,podcast:true,quiz:10,pass:69} },
 
   { id:37, name:'👑 لحظة التتويج', nameEn:'The Coronation Moment', flag:'👑', tier:4,
     info:'You have travelled from Makkah to the far corners of the Islamic world — from the Arabian Peninsula to Andalusia, from Central Asia to Southeast Asia. You have learned not just English words, but the stories of civilizations that shaped humanity. Now you stand at the final station: the world itself. Every language you learn is a new window onto this vast, beautiful world.',
@@ -8315,7 +8590,7 @@ function getStationStatus(stationId) {
 }
 
 function checkStationRequirements(stationId) {
-  var station = TRAIN_STATIONS[stationId - 1];
+  var station = getStationById(stationId);
   var p = getTrainProgress();
   var req = station.req;
   var totalWords = words.length;
@@ -8343,7 +8618,7 @@ var currentJourneyView = 'map';
 var CHAPTERS = [
   { id:1, title:'✨ بزوغ الشرارة',   region:'وسط وغرب وجنوب السعودية',  color:'#2DD4BF', stations:[1,2,4,5,11,39,40,9,42,41] },
   { id:2, title:'🧭 اكتشاف الآفاق',  region:'سواحل وشمال وجنوب وشرق السعودية', color:'#34D399', stations:[10,3,6,13,38,14,12,7,8] },
-  { id:3, title:'🌉 عبور التحديات', region:'الخليج والشام والعراق',     color:'#A78BFA', stations:[15,16,17,18,20,21,23,22] },
+  { id:3, title:'🌉 عبور التحديات', region:'الخليج والشام والعراق',     color:'#A78BFA', stations:[15,16,17,18,19,20,21,23,22] },
   { id:4, title:'🗣️ طلاقة التواصل', region:'مصر وتركيا والأندلس',       color:'#F5C842', stations:[30,36,24,25,26,27,31] },
   { id:5, title:'👑 بلوغ الإتقان',   region:'آسيا الوسطى وأفريقيا وجنوب شرق آسيا', color:'#FB923C', stations:[28,29,32,33,34,35] },
   { id:6, title:'🏆 لحظة التتويج',   region:'ختام الرحلة',               color:'#FFB800', stations:[37] }
@@ -8370,6 +8645,18 @@ function getCurrentStationId(p) {
     if (p.completed.indexOf(seq[i]) === -1) return seq[i];
   }
   return seq[seq.length - 1]; // whole journey complete — stay on the last station
+}
+
+// Robust lookup by id — TRAIN_STATIONS is NOT guaranteed to be physically
+// ordered by id (stations were added over time in narrative/geographic
+// groupings, not strict numeric sequence), so array[id-1] silently returns
+// the WRONG station for most ids. Always resolve by id explicitly.
+const _stationByIdCache = {};
+function getStationById(id) {
+  if (_stationByIdCache[id]) return _stationByIdCache[id];
+  const s = TRAIN_STATIONS.find(st => st.id === id);
+  if (s) _stationByIdCache[id] = s;
+  return s;
 }
 
 function getChapterForStation(stationId) {
@@ -8400,15 +8687,69 @@ function closeLevelCompleteOverlay() {
 function renderChapterMap() {
   var container = document.getElementById('chapterMapContainer');
   if (!container) return;
-  container.innerHTML = '<div class="planets-grid" id="planetsGrid"></div>';
+  container.innerHTML = '<div class="flow-path-wrap" id="flowPathWrap"></div>';
   renderPlanets();
 }
 
-function renderPlanets() {
-  var grid = document.getElementById('planetsGrid');
-  if (!grid) return;
+// Short, warm status lines per state — this is where the "beautiful words"
+// live. Kept to one line so it never competes with the title for attention.
+function flowNodeCopy(state, ch) {
+  if (state === 'done')    return 'اكتمل بامتياز — أنت أقوى مما كنت';
+  if (state === 'current') return 'رحلتك الآن هنا — كل كلمة تقرّبك';
+  return 'ينتظرك عند وصولك';
+}
 
-  grid.innerHTML = CHAPTERS.map(function(ch) {
+function renderPlanets() {
+  var wrap = document.getElementById('flowPathWrap');
+  if (!wrap) return;
+
+  var n = CHAPTERS.length;
+  var nodeGap = 130; // vertical spacing between node centers
+  var svgHeight = nodeGap * (n - 1) + 60;
+  var pathWidth = 340;
+
+  // Alternate left/right for an organic, non-mechanical feel
+  var points = CHAPTERS.map(function(ch, i) {
+    var x = i % 2 === 0 ? pathWidth * 0.32 : pathWidth * 0.68;
+    var y = 30 + i * nodeGap;
+    return { x: x, y: y };
+  });
+
+  // Build a smooth path through all points, and figure out how far along
+  // it "completion" reaches so the lit portion stops exactly at the
+  // current level, not before or past it.
+  var currentIdx = 0;
+  CHAPTERS.forEach(function(ch, i) {
+    var done = ch.stations.filter(function(sid){ return getStationStatus(sid) === 'completed'; }).length;
+    if (done === ch.stations.length && i === currentIdx) currentIdx = Math.min(i + 1, n - 1);
+  });
+
+  function buildPath(pts) {
+    if (pts.length < 2) return '';
+    var d = 'M' + pts[0].x + ',' + pts[0].y;
+    for (var i = 0; i < pts.length - 1; i++) {
+      var midY = (pts[i].y + pts[i+1].y) / 2;
+      d += ' C' + pts[i].x + ',' + midY + ' ' + pts[i+1].x + ',' + midY + ' ' + pts[i+1].x + ',' + pts[i+1].y;
+    }
+    return d;
+  }
+
+  var fullPathD = buildPath(points);
+  var litPathD = buildPath(points.slice(0, currentIdx + 1));
+
+  var svg =
+    '<svg class="flow-path-svg" viewBox="0 0 ' + pathWidth + ' ' + svgHeight + '" height="' + svgHeight + '">' +
+      '<defs>' +
+        '<linearGradient id="fpGradLit" x1="0%" y1="0%" x2="100%" y2="100%">' +
+          '<stop offset="0%" stop-color="#2DD4BF"/><stop offset="100%" stop-color="#FFB86C"/>' +
+        '</linearGradient>' +
+        '<filter id="fpGlow"><feGaussianBlur stdDeviation="3"/></filter>' +
+      '</defs>' +
+      '<path d="' + fullPathD + '" stroke="rgba(255,255,255,.08)" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+      '<path d="' + litPathD + '" stroke="url(#fpGradLit)" stroke-width="5" fill="none" stroke-linecap="round" filter="url(#fpGlow)"/>' +
+    '</svg>';
+
+  var nodesHtml = CHAPTERS.map(function(ch, i) {
     var done = 0, isUnlocked = false;
     ch.stations.forEach(function(sid) {
       var st = getStationStatus(sid);
@@ -8416,20 +8757,27 @@ function renderPlanets() {
       if (st === 'unlocked') isUnlocked = true;
     });
     var total = ch.stations.length;
-    var isLocked = done === 0 && !isUnlocked;
+    var state = done === total ? 'done' : isUnlocked ? 'current' : 'locked';
+    var align = i % 2 === 0 ? 'align-r' : 'align-l';
+    var orbContent = state === 'done' ? '✓' : state === 'locked' ? '🔒' : String(ch.id);
+    var fillPct = Math.round((done / total) * 100);
+    var fillGrad = state === 'done' ? 'linear-gradient(90deg,#2DD4BF,#0E9F8A)' : 'linear-gradient(90deg,#FFE9A8,#FF8FA3)';
 
     return (
-      '<div class="planet-card ' + (isLocked ? 'planet-locked' : '') + '" onclick="openChapterMap(' + ch.id + ')">' +
-        '<div class="planet-ring" style="border-color:' + ch.color + '"></div>' +
-        '<div class="planet-glow" style="background:radial-gradient(circle, ' + ch.color + ', transparent 70%)"></div>' +
-        '<div class="planet-surface" style="background:linear-gradient(160deg, ' + ch.color + '33, ' + ch.color + '15); border-color:' + (isLocked ? '#2D3B52' : ch.color) + '">' +
-          '<div class="planet-num" style="color:' + ch.color + '">' + ch.id + '</div>' +
-          '<div class="planet-title" style="color:' + (isLocked ? '#475569' : '#fff') + '">' + ch.title + '</div>' +
-          '<div class="planet-progress" style="color:' + (isLocked ? '#475569' : ch.color) + '">' + done + '/' + total + '</div>' +
+      '<div class="flow-node ' + align + '" style="margin-top:' + (i === 0 ? '0' : '0') + '">' +
+        '<div class="node-card ' + state + '" onclick="' + (state === 'locked' ? "showToast('🔒 أكمل المستوى السابق أولاً','#64748B')" : 'openChapterMap(' + ch.id + ')') + '">' +
+          '<div class="node-orb ' + state + '">' + orbContent + '</div>' +
+          '<div class="node-info">' +
+            '<div class="node-title">L' + ch.id + ' · ' + ch.title + '</div>' +
+            '<div class="node-sub">' + flowNodeCopy(state, ch) + '</div>' +
+            '<div class="node-track"><div class="node-fill" style="width:' + fillPct + '%;background:' + fillGrad + '"></div></div>' +
+          '</div>' +
         '</div>' +
       '</div>'
     );
   }).join('');
+
+  wrap.innerHTML = svg + '<div style="position:relative;padding-top:10px">' + nodesHtml + '</div>';
 }
 
 var currentChapterId = null;
@@ -8659,7 +9007,7 @@ function onMapDotClick(stationId) {
 }
 
 function showMapTooltip(event, stationId) {
-  var s = TRAIN_STATIONS[stationId - 1];
+  var s = getStationById(stationId);
   var status = getStationStatus(stationId);
   var statusText = status === 'completed' ? '✅ Completed' : status === 'unlocked' ? '🚄 Available' : '🔒 Locked';
   var tooltip = document.getElementById('mapTooltip');
@@ -8722,7 +9070,7 @@ function renderJourneyList() {
 var currentTrainStation = null;
 
 function launchTrain(stationId) {
-  currentTrainStation = TRAIN_STATIONS[stationId - 1];
+  currentTrainStation = getStationById(stationId);
   closeJourney();
 
   // Create stars
@@ -8873,7 +9221,7 @@ var sqQuestions = [], sqCurrent = 0, sqCorrect = 0, sqStationId = 0;
 function startStationQuiz(stationId) {
   sqStationId = stationId;
   sqCurrent = 0; sqCorrect = 0;
-  var station = TRAIN_STATIONS[stationId - 1];
+  var station = getStationById(stationId);
   var numQ = station.req.quiz;
 
   // Build questions from student's own words
@@ -8957,9 +9305,10 @@ function showSQResult() {
   document.getElementById('stationQuizScreen').style.display = 'none';
   var rs = document.getElementById('stationQuizResult');
   rs.style.display = 'flex';
-  var station = TRAIN_STATIONS[sqStationId - 1];
+  var station = getStationById(sqStationId);
   var pct = sqCorrect / sqQuestions.length;
   var passed = pct >= (station.req.pass / 100);
+  logImprovement('stationQuiz', pct * 100);
 
   document.getElementById('sqrEmoji').textContent = passed ? '🏆' : '📚';
   document.getElementById('sqrTitle').textContent = passed ? 'أحسنت! اجتزت اختبار ' + station.name + '!' : 'القطار ينتظرك!';
@@ -9257,6 +9606,53 @@ function buildLearnerStory(name, totalWords, streakDays, rank, stationsDone, tot
     : 'On the Train Journey, ' + name + ' has explored ' + stationsDone + ' of ' + totalStations + ' stations, now in Chapter ' + chapterNum + '.';
 
   return { wordsLine: wordsLine, streakLine: streakLine, rankLine: rankLine, journeyLine: journeyLine };
+}
+
+// ══ ACHIEVEMENT COUNTER (motivational X/Y tally) ══
+// A fixed catalog, unlike the dynamic top-badges shown elsewhere — every
+// entry here is checkable against permanent data (word counts that only
+// grow, levels that stay completed, a longest-streak record that never
+// resets). Nothing here can become "un-true" later, so the count is always
+// something the learner can trust.
+function getAchievementCatalog() {
+  const totalWords = words.filter(w => !w.seeded).length;
+  const p = getTrainProgress();
+  const longestStreak = parseInt(localStorage.getItem('longestStreakEver') || '0');
+  const readingDone = (function() {
+    try { return JSON.parse(localStorage.getItem('readingCompleted') || '[]').length; }
+    catch(e) { return 0; }
+  })();
+  const pts = parseInt(localStorage.getItem('wsPoints') || '0');
+
+  const list = [];
+
+  [10, 25, 50, 100, 200].forEach(n => {
+    list.push({ cat:'words', icon:'📚', en:`Add ${n} words`, ar:`أضف ${n} كلمة`, done: totalWords >= n });
+  });
+
+  [3, 7, 15, 30, 60].forEach(n => {
+    list.push({ cat:'streak', icon:'🔥', en:`${n}-day streak`, ar:`استمرارية ${n} يوماً`, done: longestStreak >= n });
+  });
+
+  CHAPTERS.forEach(ch => {
+    list.push({ cat:'journey', icon:'🚂', en:`Complete Level ${ch.id}`, ar:`أكمل المستوى ${ch.id}`, done: isChapterComplete(ch, p) });
+  });
+
+  [5, 10, 15, 20, 25].forEach(n => {
+    list.push({ cat:'reading', icon:'📖', en:`Finish ${n} reading passages`, ar:`أكمل ${n} نصوص قراءة`, done: readingDone >= n });
+  });
+
+  [50, 150, 300, 500].forEach(n => {
+    list.push({ cat:'points', icon:'⭐', en:`Earn ${n} points`, ar:`اجمع ${n} نقطة`, done: pts >= n });
+  });
+
+  return list;
+}
+
+function getAchievementSummary() {
+  const list = getAchievementCatalog();
+  const done = list.filter(a => a.done).length;
+  return { done, total: list.length, list };
 }
 
 // ══ EARNED BADGES (for the Visual Report) ══
@@ -9707,7 +10103,7 @@ function openConv(key) {
       <div class="bubble ${line.who}">
         <div style="display:flex;align-items:center;gap:6px">
           <div class="bubble-en" style="flex:1">${line.en}</div>
-          <button class="speak-btn-sm" onclick="speakWord('${line.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+          <button class="speak-btn-sm" onclick="speakWord('${line.en.replace(/'/g,"\\'")}', this, false, 'conv${line.who === 'a' ? 'A' : 'B'}')" title="استمع">🔊</button>
         </div>
         <div class="bubble-ar">${line.ar}</div>
       </div>
@@ -10085,13 +10481,13 @@ function vbSpeak(text, retry) {
   synth.cancel();
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = 'en-US';
-  utter.rate = 0.9;
-  utter.pitch = 1.05;
+  utter.rate = naturalRate(0.9);
+  utter.pitch = naturalPitch(1.05);
   utter.volume = 1;
 
   const voices = synth.getVoices();
   if (voices && voices.length) {
-    const enVoice = voices.find(v => v.lang && v.lang.startsWith('en')) || voices[0];
+    const enVoice = pickEnglishVoice(voices, 'vbCompanion');
     if (enVoice) utter.voice = enVoice;
   }
 
@@ -10143,7 +10539,36 @@ function vbToggleListening() {
   }
   // Defensive cleanup in case a previous instance didn't fully release
   if (vbRecognition) { try { vbRecognition.abort(); } catch(e) {} }
-  vbStartListening();
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    showToast('⚠️ الجهاز أو المتصفح لا يدعم الوصول للميكروفون', '#FB7185');
+    return;
+  }
+
+  const micHint = document.getElementById('vbMicHint');
+  if (micHint) micHint.textContent = '⏳ جاري طلب إذن الميكروفون...';
+
+  // Explicitly request the microphone first — this triggers a clear, direct
+  // browser permission prompt. Relying on SpeechRecognition to request it
+  // implicitly is unreliable on several Android browsers and is what caused
+  // the stuck "please allow microphone" warning.
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then((stream) => {
+      stream.getTracks().forEach(t => t.stop());
+      vbStartListening();
+    })
+    .catch((err) => {
+      if (micHint) micHint.textContent = 'اضغط للتحدث';
+      let msg = '⚠️ تعذّر الوصول إلى الميكروفون. حاول مرة أخرى.';
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        msg = '🎙️ تم رفض إذن الميكروفون. افتح إعدادات الموقع في المتصفح واسمح بالوصول للميكروفون، ثم أعد المحاولة.';
+      } else if (err.name === 'NotFoundError') {
+        msg = '🎙️ لم يتم العثور على ميكروفون على هذا الجهاز.';
+      }
+      showToast(msg, '#FB7185');
+      const statusEl = document.getElementById('vbStatus');
+      if (statusEl) statusEl.textContent = '⚠️ لم يُسمح بالوصول للميكروفون — راجع الإعدادات';
+    });
 }
 
 function vbStartListening() {
@@ -11746,6 +12171,7 @@ function rlShowReadAloudResult(spokenText) {
     `💪 Score: ${score}% — Try reading slower and clearer.`;
   document.getElementById('rlRaCompare').innerHTML = compareHtml;
   document.getElementById('rlRaResult').style.display = '';
+  logImprovement('reading', score);
 
   if (score >= 50 && rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
 }
@@ -12012,13 +12438,15 @@ function podSpeakNextLine() {
   const line = ep.dialogue[podCurrentLineIdx];
   const utter = new SpeechSynthesisUtterance(line.en);
   utter.lang = 'en-US';
-  utter.rate = 0.92;
-  utter.pitch = line.who === 'a' ? 1.05 : 0.92; // slight pitch variation distinguishes the two speakers
+  utter.rate = naturalRate(0.92);
+  utter.pitch = naturalPitch(line.who === 'a' ? 1.08 : 0.9); // distinct base pitch per speaker + natural jitter
 
   const voices = synth.getVoices();
   if (voices && voices.length) {
-    const enVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
-    const pick = enVoices.length ? enVoices[podCurrentLineIdx % 2 % enVoices.length] : voices[0];
+    // Keyed by episode + speaker so the SAME character sounds consistent
+    // across their own lines, but distinct from the other speaker —
+    // regardless of line order or how many lines each person has.
+    const pick = pickEnglishVoice(voices, currentPodKey + '_' + line.who);
     if (pick) utter.voice = pick;
   }
 
@@ -12092,7 +12520,6 @@ function podCheckAnswer(qIdx, chosen, correct, btnEl) {
   } else {
     btnEl.classList.add('wrong-ans');
     opts.forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct-ans'); });
-    showToast('❌ الصواب: ' + correct, '#FB7185');
   }
 }
 
@@ -12456,6 +12883,8 @@ function showResultsTab(btn) {
   document.getElementById('resultsQRSection').style.display = 'none';
   document.getElementById('resultsScreen').style.display = 'block';
   renderSectionProgressGrid();
+  renderLevelProgressGrid();
+  renderImprovementGrid();
 }
 
 // ══ VISUAL REPORT (shareable infographic) ══
@@ -12475,7 +12904,7 @@ function openVisualReport() {
   var week_w  = words.filter(function(w){ return new Date(w.date) >= weekAgo; }).length;
 
   var currStationId = getCurrentStationId(p);
-  var currStation    = TRAIN_STATIONS[currStationId - 1];
+  var currStation    = getStationById(currStationId);
   var currChapter    = getChapterForStation(currStationId);
 
   document.getElementById('vrDate').textContent = new Date().toLocaleDateString('ar-SA');
@@ -12573,6 +13002,83 @@ async function downloadVisualReport() {
   } catch (e) {
     showToast('⚠️ Could not generate image · تعذّر إنشاء الصورة', '#FB7185');
   }
+}
+
+function renderLevelProgressGrid() {
+  const grid = document.getElementById('levelProgressGrid');
+  if (!grid) return;
+  const p = getTrainProgress();
+  const currentStationId = getCurrentStationId(p);
+
+  grid.innerHTML = CHAPTERS.map(ch => {
+    const total = ch.stations.length;
+    const done = ch.stations.filter(sid => p.completed.indexOf(sid) !== -1).length;
+    const pct = Math.round((done / total) * 100);
+    const isComplete = done === total;
+    const isLocked = !ch.stations.includes(currentStationId) && !isComplete && done === 0;
+    return `
+      <div class="lp-card ${isComplete ? 'complete' : ''} ${isLocked ? 'locked' : ''}">
+        <div class="lp-top">
+          <div class="lp-name">
+            <span class="lp-title">Level ${ch.id} · ${ch.title}</span>
+          </div>
+          <span class="lp-pct" style="color:${isComplete ? 'var(--teal)' : ch.color}">${isComplete ? '✓' : pct + '%'}</span>
+        </div>
+        <div class="lp-region">${ch.region} · ${done}/${total} محطة</div>
+        <div class="lp-track" style="margin-top:6px">
+          <div class="lp-fill" style="width:${pct}%;background:${ch.color}"></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderImprovementGrid() {
+  const grid = document.getElementById('improvementGrid');
+  if (!grid) return;
+
+  grid.innerHTML = Object.keys(IMPROVEMENT_TYPES).map(type => {
+    const info = IMPROVEMENT_TYPES[type];
+    const trend = getImprovementTrend(type);
+
+    if (!trend.hasEnoughData) {
+      return `
+        <div class="imp-card">
+          <div class="imp-top">
+            <span class="imp-icon">${info.icon}</span>
+            <span class="imp-title">${info.en} <span style="font-size:9.5px;color:var(--muted);font-weight:400">${info.ar}</span></span>
+          </div>
+          <div class="imp-empty">📊 ${trend.attemptsLogged}/${trend.needed} attempts logged · احتاج ${trend.needed - trend.attemptsLogged} محاولة أخرى لأظهر تحسّنك بدقة</div>
+        </div>`;
+    }
+
+    const arrow = trend.trend === 'up' ? '↗️' : trend.trend === 'down' ? '↘️' : '→';
+    const deltaText = trend.trend === 'up'
+      ? `+${trend.delta}% تحسّن حقيقي 🎉`
+      : trend.trend === 'down'
+        ? `${trend.delta}% — راجع هذا الجزء أكثر`
+        : `مستقر تقريباً`;
+
+    return `
+      <div class="imp-card">
+        <div class="imp-top">
+          <span class="imp-icon">${info.icon}</span>
+          <span class="imp-title">${info.en} <span style="font-size:9.5px;color:var(--muted);font-weight:400">${info.ar}</span></span>
+          <span class="imp-sub">${trend.attemptsLogged} محاولة</span>
+        </div>
+        <div class="imp-compare">
+          <div class="imp-stage">
+            <div class="imp-stage-val" style="color:var(--muted)">${trend.earlyAvg}%</div>
+            <div class="imp-stage-lbl">البداية</div>
+          </div>
+          <div class="imp-arrow">${arrow}</div>
+          <div class="imp-stage">
+            <div class="imp-stage-val" style="color:var(--teal)">${trend.recentAvg}%</div>
+            <div class="imp-stage-lbl">الآن</div>
+          </div>
+        </div>
+        <div class="imp-delta ${trend.trend}">${deltaText}</div>
+      </div>`;
+  }).join('');
 }
 
 function renderSectionProgressGrid() {
@@ -12779,6 +13285,16 @@ function saveQRImage() {
   printWin.document.close();
   printWin.focus();
   setTimeout(function(){ printWin.print(); }, 500);
+}
+
+// ══ PWA — enables "Add to Home Screen" / install prompt on Android/Chrome ══
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function() {
+      // Silent — if registration fails (e.g. opened as a local file), the
+      // app still works normally, it just won't be installable that way.
+    });
+  });
 }
 </script>
 </body>
