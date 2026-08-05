@@ -13,8 +13,8 @@
 <meta name="theme-color" content="#0D1117">
 <title>WordSpark ✨ | شرارة الكلمة v2.1</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -2566,6 +2566,34 @@
 .results-story b { color: var(--white); font-weight: 700; }
 
 /* ══ VISUAL REPORT (shareable infographic) ══ */
+/* ══ SMART INSTALL BANNER ══ */
+.install-banner {
+  position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 9997;
+  display: none; align-items: center; gap: 12px; padding: 12px 14px;
+  background: linear-gradient(135deg, #1A2332, #0F1C2E);
+  border: 1px solid rgba(245,200,66,.3); border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  animation: installBannerIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+.install-banner.show { display: flex; }
+@keyframes installBannerIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.install-banner-icon {
+  width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+  box-shadow: 0 0 14px rgba(245,200,66,.35);
+}
+.install-banner-text { flex: 1; min-width: 0; }
+.install-banner-title { font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 800; color: var(--white); }
+.install-banner-sub { font-size: 10.5px; color: var(--soft); margin-top: 1px; line-height: 1.5; }
+.install-banner-btn {
+  flex-shrink: 0; padding: 9px 14px; border-radius: 12px; border: none; cursor: pointer;
+  background: linear-gradient(135deg, var(--gold), #E8940F); color: #1a1200;
+  font-family: 'Tajawal', sans-serif; font-size: 11.5px; font-weight: 800;
+}
+.install-banner-close {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.06); border: none; color: var(--muted); font-size: 12px; cursor: pointer;
+}
+
 .ach-modal-overlay {
   display: none; position: fixed; inset: 0; z-index: 9999;
   background: rgba(5,8,14,.85); align-items: center; justify-content: center; padding: 14px;
@@ -2979,6 +3007,27 @@
 </div>
 
 <!-- ══ SPARK — THE OFFICIAL WORDSPARK COMPANION (Aurora Geode) ══ -->
+<!-- ══ SMART INSTALL BANNER ══ -->
+<div class="install-banner" id="installBanner">
+  <svg class="install-banner-icon" viewBox="0 0 140 140">
+    <defs>
+      <linearGradient id="ibBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient>
+      <linearGradient id="ibText" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient>
+      <linearGradient id="ibSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient>
+    </defs>
+    <rect width="140" height="140" rx="26" fill="url(#ibBg)"/>
+    <text x="48" y="90" font-family="Arial,sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3">WS</text>
+    <text x="48" y="90" font-family="Arial,sans-serif" font-size="58" font-weight="900" fill="url(#ibText)" text-anchor="middle" letter-spacing="-3">WS</text>
+    <path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#ibSpark)"/>
+  </svg>
+  <div class="install-banner-text">
+    <div class="install-banner-title" id="installBannerTitle">📲 ثبّت WordSpark كتطبيق</div>
+    <div class="install-banner-sub" id="installBannerSub">افتح أسرع، بدون متصفح، بأيقونة على شاشتك</div>
+  </div>
+  <button class="install-banner-btn" id="installBannerBtn" onclick="triggerInstall()">تثبيت</button>
+  <button class="install-banner-close" onclick="dismissInstallBanner()">✕</button>
+</div>
+
 <div class="spark-wrap" id="sparkWrap" onclick="hideSpark()">
   <div class="spark-bubble">
     <div class="spark-msg-en" id="sparkMsgEn">Hi!</div>
@@ -13296,6 +13345,85 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+// ══ SMART INSTALL BANNER ══
+// Detects the platform and invites installation with the right method for
+// each: Android/Chrome can be installed with one tap via the real native
+// prompt; iOS Safari has no install API at all (an Apple platform
+// restriction), so the best we can do there is clear visual instructions
+// for the manual Share → Add to Home Screen step.
+let deferredInstallPrompt = null;
+
+function isRunningStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches ||
+         window.navigator.standalone === true; // iOS-specific flag
+}
+
+function getInstallDismissedUntil() {
+  return parseInt(localStorage.getItem('installBannerDismissedUntil') || '0');
+}
+
+function dismissInstallBanner() {
+  document.getElementById('installBanner').classList.remove('show');
+  // Don't nag — stay quiet for 10 days after a dismissal.
+  localStorage.setItem('installBannerDismissedUntil', String(Date.now() + 10*86400000));
+}
+
+function triggerInstall() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    showToast('👆 اضغط زر المشاركة ⬆️ في أسفل الشاشة ← ثم "إضافة إلى الشاشة الرئيسية"', '#F5C842');
+    return;
+  }
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(function(choice) {
+      if (choice.outcome === 'accepted') {
+        document.getElementById('installBanner').classList.remove('show');
+        localStorage.setItem('installBannerDismissedUntil', String(Date.now() + 365*86400000));
+      }
+      deferredInstallPrompt = null;
+    });
+  } else {
+    showToast('👆 افتح قائمة المتصفح ⋮ ← "تثبيت التطبيق"', '#F5C842');
+  }
+}
+
+function maybeShowInstallBanner() {
+  if (isRunningStandalone()) return; // already installed — never nag
+  if (Date.now() < getInstallDismissedUntil()) return;
+
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const banner = document.getElementById('installBanner');
+  const titleEl = document.getElementById('installBannerTitle');
+  const subEl = document.getElementById('installBannerSub');
+  const btnEl = document.getElementById('installBannerBtn');
+
+  if (isIOS) {
+    titleEl.textContent = '📲 ثبّت WordSpark كتطبيق';
+    subEl.textContent = 'اضغط زر المشاركة ⬆️ ثم "إضافة إلى الشاشة الرئيسية"';
+    btnEl.textContent = 'كيف؟';
+    setTimeout(function() { banner.classList.add('show'); }, 2500);
+  } else {
+    // Android/Chrome — wait for the real browser signal that installation
+    // is actually possible before inviting the tap, so the button always works.
+    titleEl.textContent = '📲 ثبّت WordSpark كتطبيق';
+    subEl.textContent = 'افتح أسرع، بدون متصفح، بأيقونة على شاشتك';
+    btnEl.textContent = 'تثبيت';
+    window.addEventListener('beforeinstallprompt', function(e) {
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      setTimeout(function() { banner.classList.add('show'); }, 2500);
+    });
+  }
+}
+
+window.addEventListener('appinstalled', function() {
+  document.getElementById('installBanner').classList.remove('show');
+  localStorage.setItem('installBannerDismissedUntil', String(Date.now() + 365*86400000));
+});
+
+maybeShowInstallBanner();
 </script>
 </body>
 </html>
