@@ -127,7 +127,7 @@
     padding-top: calc(12px + var(--safe-top));
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 12px;
     position: sticky;
     top: 0;
@@ -975,6 +975,24 @@
   .journey-header {
     text-align:center;margin-bottom:12px;
   }
+  .journey-ctrl-row {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+  }
+  .journey-ctrl-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 8px 4px; border-radius: 12px; cursor: pointer;
+    background: var(--jc-bg, rgba(167,139,250,.1));
+    border: 1px solid var(--jc-border, rgba(167,139,250,.3));
+    color: var(--jc-color, #A78BFA);
+    font-family: 'Tajawal', sans-serif;
+    transition: all .2s;
+  }
+  .journey-ctrl-btn.active {
+    background: linear-gradient(135deg, var(--jc-color, #A78BFA), #2DD4BF);
+    color: #0C0E18;
+  }
+  .journey-ctrl-btn .jc-ico { font-size: 15px; }
+  .journey-ctrl-btn .jc-lbl { font-size: 9px; font-weight: 700; }
   .journey-title { font-size:20px;font-weight:900;color:#F5C842;font-family:'Space Grotesk',sans-serif; }
   .journey-subtitle { font-size:12px;color:#64748B;margin-top:4px; }
   .journey-station-row {
@@ -3281,27 +3299,30 @@
         </div>
       </div>
 
-      <!-- Next Station + Toggle Buttons Row -->
-      <div style="display:flex;align-items:center;gap:8px">
-        <!-- Next Station -->
-        <div id="jCurrentCard" style="flex:1;background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(14,165,233,.05));border:1px solid #2DD4BF33;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px">
-          <div style="font-size:26px" id="jCurrentFlag">🕌</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:9px;color:#2DD4BF;font-weight:700">Next · التالية</div>
-            <div style="font-size:13px;font-weight:900;color:#F1F5F9;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="jCurrentName">Makkah</div>
-          </div>
-          <button onclick="jumpToCurrentStation()" style="background:linear-gradient(135deg,#2DD4BF,#0EA5E9);border:none;border-radius:10px;padding:7px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:900;color:#0D1117;cursor:pointer;white-space:nowrap">Go! 🚄</button>
+      <!-- Next Station -->
+      <div id="jCurrentCard" style="background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(14,165,233,.05));border:1px solid #2DD4BF33;border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <div style="font-size:26px" id="jCurrentFlag">🕌</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:9px;color:#2DD4BF;font-weight:700">Next · التالية</div>
+          <div style="font-size:13px;font-weight:900;color:#F1F5F9;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="jCurrentName">Makkah</div>
         </div>
+        <button onclick="jumpToCurrentStation()" style="background:linear-gradient(135deg,#2DD4BF,#0EA5E9);border:none;border-radius:10px;padding:7px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:900;color:#0D1117;cursor:pointer;white-space:nowrap">Go! 🚄</button>
+      </div>
 
-        <!-- Toggle Buttons -->
-        <div style="display:flex;flex-direction:column;gap:5px">
-          <div style="display:flex;gap:5px">
-            <button id="btnMapView" onclick="setJourneyView('map')" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">🌍 Map</button>
-            <button id="btnListView" onclick="setJourneyView('list')" style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">📋 List</button>
-            <button onclick="rwOpen()" style="background:rgba(245,200,66,.1);border:1px solid #F5C84244;color:#F5C842;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer">🎡</button>
-          </div>
-          <button onclick="closeJourney()" style="background:rgba(251,113,133,.1);border:1px solid #FB718544;color:#FB7185;border-radius:9px;padding:6px 10px;font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;cursor:pointer;width:100%">✕ Exit</button>
-        </div>
+      <!-- Unified control row: equal-size icon tabs -->
+      <div class="journey-ctrl-row">
+        <button id="btnMapView" class="journey-ctrl-btn active" onclick="setJourneyView('map')" style="--jc-color:#A78BFA;--jc-bg:rgba(167,139,250,.1);--jc-border:rgba(167,139,250,.3)">
+          <span class="jc-ico">🌍</span><span class="jc-lbl">Map</span>
+        </button>
+        <button id="btnListView" class="journey-ctrl-btn" onclick="setJourneyView('list')" style="--jc-color:#A78BFA;--jc-bg:rgba(167,139,250,.1);--jc-border:rgba(167,139,250,.3)">
+          <span class="jc-ico">📋</span><span class="jc-lbl">List</span>
+        </button>
+        <button class="journey-ctrl-btn" onclick="rwOpen()" style="--jc-color:#F5C842;--jc-bg:rgba(245,200,66,.1);--jc-border:rgba(245,200,66,.3)">
+          <span class="jc-ico">🎡</span><span class="jc-lbl">Surprise</span>
+        </button>
+        <button class="journey-ctrl-btn" onclick="closeJourney()" style="--jc-color:#FB7185;--jc-bg:rgba(251,113,133,.1);--jc-border:rgba(251,113,133,.3)">
+          <span class="jc-ico">✕</span><span class="jc-lbl">Exit</span>
+        </button>
       </div>
     </div>
   </div>
@@ -7440,16 +7461,12 @@ function renderGrammar() {
             <span><span class="dot" style="background:var(--rose)"></span>Adverbial</span>
           </div>` : ''}
         </div>
-        <div class="grammar-quiz">
-          <div class="quiz-label">✏️ تمرين سريع</div>
-          <div style="display:flex;align-items:center;gap:6px">
-            <div class="quiz-q" style="flex:1">${g.quiz.q}</div>
-            <button class="speak-btn-sm" onclick="speakWord('${g.quiz.q.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
-          </div>
-          <div class="quiz-options">
-            ${g.quiz.opts.map(o=>`<button class="q-opt" id="go${i}${o.replace(/\W/g,'')}" onclick="checkGQ(${i},'${o.replace(/'/g,"\\'")}','${g.quiz.ans.replace(/'/g,"\\'")}','${g.quiz.fb.replace(/'/g,"\\'")}','${g.quiz.fbW.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
-          </div>
-          <div class="quiz-feedback" id="gfb${i}"></div>
+        <div class="grammar-quiz" id="gquiz${i}">
+          <div class="quiz-label">🎯 اختبار الدرس — ٣ أسئلة</div>
+          ${getGrammarCompleted().indexOf(i) !== -1
+            ? `<div class="quiz-feedback show ok" style="display:block">✅ أتقنت هذا الدرس</div><button class="btn-add" style="margin-top:6px;opacity:.7" onclick="startLessonTest(${i})">إعادة الاختبار 🔄</button>`
+            : `<button class="btn-add" style="margin-top:6px" onclick="startLessonTest(${i})" id="gtestBtn${i}">ابدأ الاختبار ✨</button>`}
+          <div id="gtestArea${i}"></div>
         </div>
       </div>
     </div>
@@ -7466,21 +7483,85 @@ function showAllGrammar() {
 
 function toggleG(i) { document.getElementById('gc'+i).classList.toggle('open'); }
 
-function checkGQ(i, chosen, correct, fb, fbW) {
-  document.querySelectorAll(`[id^="go${i}"]`).forEach(b => { b.disabled=true; b.style.pointerEvents='none'; });
-  const chosenEl  = document.getElementById('go'+i+chosen.replace(/\W/g,''));
-  const correctEl = document.getElementById('go'+i+correct.replace(/\W/g,''));
-  const fbEl = document.getElementById('gfb'+i);
-  if (chosen === correct) {
-    chosenEl && chosenEl.classList.add('correct');
-    fbEl.className = 'quiz-feedback show ok'; fbEl.textContent = fb;
-    showToast('✅ ممتاز!');
-    markGrammarLessonDone(i);
+// ══ LESSON TEST — 3 real questions, not one lucky guess ══
+// Two questions drawn from the lesson's own example sentences (comprehension
+// of what was just read), plus the lesson's targeted grammar question. A
+// lesson only counts as done once all three are answered correctly — a
+// single multiple-choice guess was never a fair measure of "learned it."
+let _lessonTestState = {};
+
+function buildLessonTestQuestions(i) {
+  const g = grammarLessons[i];
+  // Pull distractor translations from OTHER lessons' examples so wrong
+  // options are never accidentally plausible-correct.
+  const otherArs = [];
+  grammarLessons.forEach((other, oi) => {
+    if (oi !== i) other.examples.forEach(ex => otherArs.push(ex.ar));
+  });
+  const shuffledDistractors = shuffle(otherArs);
+
+  const exQuestions = g.examples.slice(0, 2).map((ex, idx) => {
+    const wrongOpts = shuffledDistractors.slice(idx*3, idx*3+3);
+    const opts = shuffle([ex.ar, ...wrongOpts]);
+    return { type: 'comprehension', en: ex.en, opts, ans: ex.ar };
+  });
+
+  const targeted = { type: 'targeted', q: g.quiz.q, opts: g.quiz.opts, ans: g.quiz.ans, fb: g.quiz.fb, fbW: g.quiz.fbW };
+
+  return [...exQuestions, targeted];
+}
+
+function startLessonTest(i) {
+  _lessonTestState[i] = { qIdx: 0, correct: 0, questions: buildLessonTestQuestions(i) };
+  document.getElementById('gtestBtn' + i).style.display = 'none';
+  renderTestQuestion(i);
+}
+
+function renderTestQuestion(i) {
+  const st = _lessonTestState[i];
+  const area = document.getElementById('gtestArea' + i);
+  if (st.qIdx >= st.questions.length) { finishLessonTest(i); return; }
+  const q = st.questions[st.qIdx];
+  const qText = q.type === 'comprehension' ? `ماذا تعني: "${q.en}"؟` : q.q;
+  area.innerHTML = `
+    <div style="font-size:10px;color:var(--muted);margin-bottom:6px">سؤال ${st.qIdx+1} من ${st.questions.length}</div>
+    <div class="quiz-q">${qText}</div>
+    <div class="quiz-options">
+      ${q.opts.map(o => `<button class="q-opt" onclick="answerTestQ(${i},'${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}
+    </div>
+    <div class="quiz-feedback" id="gtestFb${i}"></div>
+  `;
+}
+
+function answerTestQ(i, chosen) {
+  const st = _lessonTestState[i];
+  const q = st.questions[st.qIdx];
+  const fbEl = document.getElementById('gtestFb' + i);
+  document.querySelectorAll(`#gtestArea${i} .q-opt`).forEach(b => b.style.pointerEvents = 'none');
+  if (chosen === q.ans) {
+    st.correct++;
+    fbEl.className = 'quiz-feedback show ok';
+    fbEl.textContent = q.fb || '✅ صحيح!';
+    setTimeout(() => { st.qIdx++; renderTestQuestion(i); }, 900);
   } else {
-    chosenEl  && chosenEl.classList.add('wrong');
-    correctEl && correctEl.classList.add('correct');
     fbEl.className = 'quiz-feedback show no';
-    fbEl.innerHTML = '💡 ' + fbW + ` <button class="try-again" onclick="resetGQ(${i})">إعادة المحاولة</button>`;
+    fbEl.innerHTML = '💡 ' + (q.fbW || ('الصحيح: ' + q.ans));
+    setTimeout(() => { st.qIdx++; renderTestQuestion(i); }, 1400);
+  }
+}
+
+function finishLessonTest(i) {
+  const st = _lessonTestState[i];
+  const area = document.getElementById('gtestArea' + i);
+  const passed = st.correct === st.questions.length;
+  if (passed) {
+    markGrammarLessonDone(i);
+    area.innerHTML = `<div class="quiz-feedback show ok" style="display:block">🎉 ${st.correct}/${st.questions.length} — أتقنت هذا الدرس!</div>`;
+  } else {
+    area.innerHTML = `
+      <div class="quiz-feedback show no" style="display:block">حصلت على ${st.correct}/${st.questions.length} — راجع الأمثلة أعلاه وحاول مرة أخرى</div>
+      <button class="btn-add" style="margin-top:8px" onclick="startLessonTest(${i})">إعادة المحاولة 🔄</button>
+    `;
   }
 }
 
@@ -7531,11 +7612,6 @@ function openTodaysGrammarLesson() {
       card.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }, 150);
-}
-
-function resetGQ(i) {
-  document.getElementById('gfb'+i).className = 'quiz-feedback';
-  document.querySelectorAll(`[id^="go${i}"]`).forEach(b => { b.disabled=false; b.style.pointerEvents=''; b.className='q-opt'; });
 }
 
 // ══ FLASHCARDS ══
@@ -9466,10 +9542,8 @@ function setJourneyView(view) {
   currentJourneyView = view;
   document.getElementById('journeyMapView').style.display = view === 'map' ? 'block' : 'none';
   document.getElementById('journeyListView').style.display = view === 'list' ? 'block' : 'none';
-  document.getElementById('btnMapView').style.background = view === 'map' ? 'linear-gradient(135deg,#A78BFA,#2DD4BF)' : 'rgba(167,139,250,.1)';
-  document.getElementById('btnMapView').style.color = view === 'map' ? '#0C0E18' : '#A78BFA';
-  document.getElementById('btnListView').style.background = view === 'list' ? 'linear-gradient(135deg,#A78BFA,#2DD4BF)' : 'rgba(167,139,250,.1)';
-  document.getElementById('btnListView').style.color = view === 'list' ? '#0C0E18' : '#A78BFA';
+  document.getElementById('btnMapView').classList.toggle('active', view === 'map');
+  document.getElementById('btnListView').classList.toggle('active', view === 'list');
   if (view === 'map') renderChapterMap();
   if (view === 'list') renderJourneyList();
   updateJourneyDashboard();
