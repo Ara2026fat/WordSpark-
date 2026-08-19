@@ -28,7 +28,7 @@
     --rose:   #FB7185;
     --lavender:#A78BFA;
     --muted:  #64748B;
-    --soft:   #94A3B8;
+    --soft:   var(--muted);
     --white:  #F1F5F9;
     --radius: 16px;
     --safe-top: env(safe-area-inset-top, 0px);
@@ -53,10 +53,9 @@
     --soft:   #5B6B85;
     --white:  #1A2333;
   }
-  body.light-theme header {
-    background: rgba(255,255,255,.92);
-    box-shadow: 0 1px 8px rgba(0,0,0,.05);
-  }
+  /* Header is intentionally theme-independent (see header block below) —
+     it carries its own brand gradient in both light and dark mode, so no
+     light-theme override is needed here anymore. */
   body.light-theme .bottom-nav {
     background: rgba(255,255,255,.96);
     box-shadow: 0 -1px 8px rgba(0,0,0,.05);
@@ -77,22 +76,21 @@
     box-shadow: 0 2px 10px rgba(0,0,0,.06);
   }
 
-  /* ── THEME TOGGLE BUTTON ── */
+  /* ── SETTINGS GEAR BUTTON — glass style against the bright header ── */
   .theme-toggle {
-    background: rgba(255,255,255,.05);
-    border: 1px solid rgba(0,245,212,.2);
+    background: rgba(255,255,255,.22);
+    border: 1px solid rgba(255,255,255,.3);
+    backdrop-filter: blur(6px);
     border-radius: 20px;
     width: 34px; height: 34px;
     font-size: 15px;
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: background .2s, transform .15s;
+    position: relative; z-index: 1;
+    color: #1A1200;
   }
   .theme-toggle:active { transform: scale(.9); }
-  body.light-theme .theme-toggle {
-    background: rgba(0,0,0,.04);
-    border-color: rgba(0,0,0,.08);
-  }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -114,38 +112,56 @@
   /* Prevent iOS tap highlight */
   * { -webkit-tap-highlight-color: transparent; }
 
-  /* ── HEADER ── */
+  /* ── HEADER — glowing brand gradient seen through glass (Option 4) ──
+     Deliberately theme-independent: the header carries its own bright
+     brand gradient in both light and dark mode, the same way a colored
+     app toolbar stays branded regardless of the OS theme. Text/icon
+     colors are tuned once for contrast against that gradient, not
+     against --ink/--panel. */
   header {
-    background: var(--deep);
-    border-bottom: 1px solid var(--rim);
+    position: relative;
+    background: linear-gradient(100deg, rgba(184,134,11,.55) 0%, rgba(245,200,66,.6) 35%, rgba(45,212,191,.55) 100%);
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.15);
     padding: 12px 16px;
     padding-top: calc(12px + var(--safe-top));
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-start;
+    gap: 12px;
     position: sticky;
     top: 0;
     z-index: 100;
+    overflow: hidden;
   }
-  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  header::before {
+    content:''; position:absolute; top:-45px; right:-25px; width:140px; height:140px; border-radius:50%;
+    background:radial-gradient(circle,rgba(255,255,255,.35),transparent 70%); filter:blur(20px); pointer-events:none;
+  }
+  header::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(120deg,transparent 35%,rgba(255,255,255,.14) 48%,transparent 62%);
+    pointer-events:none;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; position: relative; z-index: 1; }
   .logo-icon {
     width: 36px; height: 36px;
     border-radius: 10px;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(180,148,255,.25);
+    box-shadow: 0 0 10px rgba(0,0,0,.2);
   }
-  .logo-text { font-size: 16px; font-weight: 700; }
-  .logo-sub  { font-size: 10px; color: var(--muted); font-family: 'Space Grotesk', sans-serif; }
+  .logo-text { font-size: 16px; font-weight: 800; color: #1A1200; text-shadow: 0 1px 1px rgba(255,255,255,.3); }
+  .logo-sub  { font-size: 10px; color: rgba(26,18,0,.65); font-family: 'Space Grotesk', sans-serif; }
 
   .stats-bar {
     display: flex; gap: 8px; align-items: center;
     overflow-x: auto; overflow-y: hidden;
+    position: relative; z-index: 1;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    flex-shrink: 1; min-width: 0; flex: 1;
+    flex-shrink: 0;
     padding: 2px 0;
   }
   .stats-bar::-webkit-scrollbar { display: none; }
@@ -851,44 +867,93 @@
   }
 
   /* Station Card */
-  .station-card {
-    background:linear-gradient(150deg,#1A2332,#0F1C2E);
-    border:1px solid #A78BFA44;border-radius:24px;
-    padding:20px;width:100%;max-width:360px;margin:0 auto 14px;
-    box-sizing:border-box;
-    opacity:0;animation:fadeUp .6s ease forwards;
+  /* ══ STATION CARD — TABBED REDESIGN ══ */
+  .station-fixed-header {
+    flex-shrink:0; padding:14px 16px 10px; text-align:center;
+    background:linear-gradient(150deg,var(--panel),var(--ink));
+    border-bottom:1px solid var(--rim);
   }
-  .station-flag { font-size:40px;text-align:center;margin-bottom:8px; }
-  .station-title { font-size:20px;font-weight:900;color:#F5C842;text-align:center;margin-bottom:4px; }
-  .station-subtitle { font-size:12px;color:#A78BFA;text-align:center;margin-bottom:14px; }
-  .station-info { font-size:13px;color:#94A3B8;line-height:1.8;margin-bottom:14px;text-align:center; }
-  .station-info-ar { font-size:12px;color:#64748B;line-height:1.7;margin-bottom:14px;text-align:center; }
-  .station-words { display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;justify-content:center; }
+  .station-close-btn {
+    background:var(--card); border:1px solid var(--rim); color:var(--soft);
+    border-radius:10px; padding:6px 16px; font-family:'Tajawal',sans-serif; font-size:12.5px; cursor:pointer;
+  }
+  .station-hero-flag { font-size:38px; margin:6px 0 2px; }
+  .station-hero-title { font-size:19px; font-weight:900; color:#F5C842; font-family:'Space Grotesk',sans-serif; }
+  .station-hero-sub { font-size:11.5px; color:#A78BFA; margin-top:2px; }
+
+  .station-tabbar {
+    flex-shrink:0; display:flex; gap:6px; padding:10px 12px;
+    background:var(--ink); border-bottom:1px solid var(--rim);
+    overflow-x:auto;
+  }
+  .station-tab-btn {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding:8px 4px; border-radius:12px; border:1px solid transparent;
+    background:transparent; cursor:pointer; transition:all .2s;
+    font-family:'Tajawal',sans-serif; white-space:nowrap;
+  }
+  .station-tab-btn .tico { font-size:16px; }
+  .station-tab-btn .ttxt { font-size:10px; font-weight:700; color:var(--muted); }
+  .station-tab-btn.active { background:var(--tab-color, #A78BFA)22; border-color:var(--tab-color, #A78BFA)66; }
+  .station-tab-btn.active .ttxt { color:var(--tab-color, #A78BFA); }
+
+  .station-tab-content { flex:1; overflow-y:auto; padding:18px 18px 10px; background:var(--ink); }
+  .station-tab-pane { display:none; animation:fadeUp .35s ease; }
+  .station-tab-pane.active { display:block; }
+
+  .station-img-wrap {
+    width:100%; height:150px; border-radius:16px; overflow:hidden; margin-bottom:16px;
+    background:linear-gradient(135deg,var(--panel),var(--ink)); display:flex; align-items:center; justify-content:center; position:relative;
+  }
+
+  .station-para-en {
+    background:rgba(45,212,191,.08); border:1px solid rgba(45,212,191,.3); border-radius:14px;
+    padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.85; direction:ltr; text-align:left;
+  }
+  .station-para-ar {
+    background:rgba(245,200,66,.08); border:1px solid rgba(245,200,66,.3); border-radius:14px;
+    padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.9; text-align:right;
+  }
+  .station-tab-label { font-size:10.5px; font-weight:800; letter-spacing:.5px; margin-bottom:8px; opacity:.8; }
+
+  .station-words-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .station-word-chip {
-    background:rgba(167,139,250,.15);border:1px solid #A78BFA44;
-    border-radius:20px;padding:4px 10px;font-size:11px;color:#A78BFA;
+    background:rgba(167,139,250,.1); border:1px solid rgba(167,139,250,.3);
+    border-radius:12px; padding:10px 12px; text-align:center;
   }
-  .station-landmarks { font-size:12px;color:#64748B;line-height:1.8;margin-bottom:14px;text-align:center; }
+  .station-word-chip b { display:block; color:#8B5CF6; font-size:13px; font-family:'Space Grotesk',sans-serif; }
+  .station-word-chip span { display:block; color:var(--muted); font-size:11px; margin-top:2px; }
+
+  .station-landmark-item {
+    display:flex; align-items:center; gap:10px; padding:11px 14px; margin-bottom:8px;
+    background:rgba(251,146,60,.09); border:1px solid rgba(251,146,60,.3); border-radius:12px;
+    font-size:13px; color:var(--white);
+  }
+
   .station-quote {
     background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.25);
-    padding:10px 14px;border-radius:10px;
-    font-size:13px;color:#F5C842;font-weight:700;text-align:center;
+    padding:10px 14px;border-radius:10px; margin-top:16px;
+    font-size:12.5px;color:#B8860B;font-weight:700;text-align:center;
   }
-  .station-req {
-    background:#0F1C2E;border-radius:14px;padding:12px;margin-top:12px;
+  body.light-theme .station-quote { color:#8A6400; }
+
+  .station-fixed-footer {
+    flex-shrink:0; padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));
+    background:var(--panel); border-top:1px solid var(--rim);
   }
-  .station-req-title { font-size:12px;color:#64748B;margin-bottom:8px;text-align:center; }
-  .station-req-row { display:flex;gap:8px;flex-wrap:wrap;justify-content:center; }
+  .station-req { background:var(--card); border-radius:14px; padding:10px; margin-bottom:10px; }
+  .station-req-title { font-size:11px;color:var(--muted);margin-bottom:8px;text-align:center; }
+  .station-req-row { display:flex;gap:6px;flex-wrap:wrap;justify-content:center; }
   .station-req-chip {
-    padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;
+    padding:4px 9px;border-radius:20px;font-size:10.5px;font-weight:700;
   }
-  .req-done { background:rgba(45,212,191,.2);color:#2DD4BF;border:1px solid #2DD4BF44; }
-  .req-pending { background:rgba(100,116,139,.1);color:#64748B;border:1px solid #64748B44; }
+  .req-done { background:rgba(45,212,191,.2);color:#0E9F8A;border:1px solid #2DD4BF44; }
+  .req-pending { background:rgba(100,116,139,.12);color:var(--muted);border:1px solid #64748B44; }
 
   /* Journey Map */
   .journey-screen {
     position:fixed;inset:0;z-index:400;
-    background:linear-gradient(160deg,#0C0E18,#0A1F2E);
+    background:linear-gradient(160deg,var(--ink),var(--deep));
     overflow:hidden;
     font-family:'Tajawal',sans-serif;
     display:none; flex-direction:column;
@@ -898,7 +963,7 @@
   }
   .journey-sticky {
     flex-shrink:0;
-    background:linear-gradient(160deg,#0C0E18,#0A1F2E);
+    background:linear-gradient(160deg,var(--ink),var(--deep));
     padding:20px 16px 12px;
     border-bottom:1px solid rgba(167,139,250,.15);
     z-index:10;
@@ -939,7 +1004,7 @@
   /* Station Quiz */
   .station-quiz-screen {
     position:fixed;inset:0;z-index:600;
-    background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);
+    background:linear-gradient(160deg,var(--ink),var(--deep),var(--ink));
     overflow-y:auto;padding:24px 16px 40px;
     font-family:'Tajawal',sans-serif;
     display:none;
@@ -1059,12 +1124,14 @@
   .home-hero {
     text-align: center; padding: 22px 16px 18px;
   }
+  .home-hero-compact { padding: 16px 16px 14px; }
   .home-hero-logo {
     width: 64px; height: 64px; margin: 0 auto 12px;
     border-radius: 18px; overflow: hidden;
     box-shadow: 0 0 28px rgba(180,148,255,.3), 0 0 28px rgba(45,212,191,.2);
   }
   .home-hero-greeting { font-size: 13px; color: var(--muted); margin-bottom: 2px; }
+  .home-hero-compact .home-hero-greeting { font-size: 17px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
   .home-hero-name { font-size: 19px; font-weight: 900; color: var(--gold); }
 
   /* ══ TODAY'S MISSION ══ */
@@ -1073,6 +1140,13 @@
     background: linear-gradient(150deg, var(--panel), var(--ink));
     border: 1px solid var(--rim); border-radius: 22px;
   }
+  .mission-station-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+    padding: 8px 12px; background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.2);
+    border-radius: 12px; font-size: 11.5px; color: var(--soft);
+  }
+  .mission-station-flag { font-size: 16px; }
+  .mission-station-text b { color: var(--teal); font-weight: 800; }
   .mission-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .mission-title-en { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; color: var(--white); }
   .mission-title-ar { font-size: 11px; color: var(--soft); margin-inline-start: 6px; }
@@ -1090,15 +1164,22 @@
   .journey-stat-value.time { color: var(--lavender); }
   .journey-stat-value.reward { color: var(--gold); }
   .journey-stat-label { font-size: 10px; color: var(--soft); margin-top: 2px; }
+  #missionList { position: relative; }
+  .mission-path-line {
+    position: absolute; top: 24px; bottom: 24px; right: 17px; width: 2px;
+    background: linear-gradient(to bottom, var(--teal), rgba(148,163,184,.15));
+    z-index: 0;
+  }
   .mission-item {
     display: flex; align-items: center; gap: 12px; padding: 10px 4px;
-    cursor: pointer; transition: opacity .2s;
+    cursor: pointer; transition: opacity .2s; position: relative; z-index: 1;
   }
-  .mission-item:not(:last-child) { border-bottom: 1px solid rgba(255,255,255,.05); }
   .mission-check {
     width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
     border: 2px solid var(--rim); display: flex; align-items: center; justify-content: center;
-    font-size: 13px; transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    font-size: 12px; font-weight: 800; color: var(--soft);
+    background: var(--card);
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
   }
   .mission-item.done .mission-check {
     background: var(--teal); border-color: var(--teal); color: #06251f;
@@ -1158,6 +1239,22 @@
     transition: transform .15s ease;
     -webkit-user-select: none; user-select: none;
   }
+
+  .library-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    margin-top: 18px;
+  }
+  .lib-tile {
+    aspect-ratio: 1 / 0.95; border-radius: 20px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+    background: linear-gradient(150deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.09);
+    transition: transform .15s ease; -webkit-user-select: none; user-select: none;
+  }
+  .lib-tile:active { transform: scale(.94); }
+  .lib-tile-ico { font-size: 30px; }
+  .lib-tile-en { font-size: 12.5px; font-weight: 800; color: var(--white); font-family: 'Space Grotesk', sans-serif; }
+  .lib-tile-ar { font-size: 9.5px; color: var(--muted); }
   .home-tile:active { transform: scale(.94); }
   .home-tile-icon {
     font-size: 36px; filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
@@ -2126,7 +2223,7 @@
 /* ══ CHAPTER MAP OVERLAY — مخطط الرحلة ══ */
 .chapter-map-overlay {
   position:fixed; inset:0; z-index:500;
-  background:#0A0C14;
+  background:var(--ink);
   display:none;
   flex-direction:column;
   overflow-y:auto;
@@ -2248,7 +2345,7 @@
 
 /* Card */
 .qr-box {
-  background:linear-gradient(160deg,#1A2332,#0D1117);
+  background:linear-gradient(160deg,var(--panel),var(--ink));
   border:2px solid #F5C84255;
   border-radius:28px;
   padding:22px 18px 18px;
@@ -2292,14 +2389,14 @@
   text-align:center;
 }
 .qr-stat-val { font-size:26px; font-weight:900; color:#2DD4BF; }
-.qr-stat-lbl { font-size:10px; color:#94A3B8; margin-top:3px; line-height:1.4; font-family:'Tajawal',sans-serif; }
+.qr-stat-lbl { font-size:10px; color:var(--muted); margin-top:3px; line-height:1.4; font-family:'Tajawal',sans-serif; }
 .qr-stat-lbl span { color:#64748B; font-size:9px; }
 
 /* Progress */
 .qr-progress-wrap { margin-bottom:14px; }
 .qr-progress-label {
   display:flex; justify-content:space-between;
-  font-size:11px; color:#94A3B8; margin-bottom:6px;
+  font-size:11px; color:var(--muted); margin-bottom:6px;
 }
 .qr-progress-track {
   height:8px; background:#1E2D45; border-radius:4px; overflow:hidden;
@@ -2330,7 +2427,7 @@
 }
 .qr-btn span { font-size:10px; opacity:.7; font-weight:400; }
 .qr-btn-save { background:linear-gradient(135deg,#2DD4BF,#0EA5E9); color:#0D1117; }
-.qr-btn-close { background:rgba(255,255,255,.06); border:1px solid #243550; color:#94A3B8; }
+.qr-btn-close { background:rgba(255,255,255,.06); border:1px solid #243550; color:var(--muted); }
 
 /* ══ FLOATING QR BUTTON ══ */
 /* ══ CELEBRATION ══ */
@@ -2341,7 +2438,7 @@
 }
 .celebrate-overlay.show { display:flex; animation:qrFadeIn .3s ease; }
 .celebrate-box {
-  background:linear-gradient(160deg,#1A2332,#0D1117);
+  background:linear-gradient(160deg,var(--panel),var(--ink));
   border:2px solid #F5C84266; border-radius:28px;
   padding:36px 28px; text-align:center;
   max-width:320px; width:90%;
@@ -2350,7 +2447,7 @@
 @keyframes celebPop { from{transform:scale(.6);opacity:0} to{transform:scale(1);opacity:1} }
 .celebrate-emoji { font-size:70px; margin-bottom:10px; }
 .celebrate-title { font-size:26px; font-weight:900; color:#F5C842; font-family:'Space Grotesk',sans-serif; }
-.celebrate-msg { font-size:14px; color:#94A3B8; margin:10px 0 20px; line-height:1.6; font-family:'Tajawal',sans-serif; white-space:pre-line; }
+.celebrate-msg { font-size:14px; color:var(--muted); margin:10px 0 20px; line-height:1.6; font-family:'Tajawal',sans-serif; white-space:pre-line; }
 .celebrate-btn {
   background:linear-gradient(135deg,#F5C842,#FB923C);
   border:none; border-radius:14px; padding:12px 28px;
@@ -2368,7 +2465,7 @@
 @keyframes spFadeIn { from{opacity:0} to{opacity:1} }
 .settings-panel {
   width:100%; max-width:480px;
-  background:linear-gradient(160deg,#141A2C,#0D1117);
+  background:linear-gradient(160deg,var(--panel),var(--ink));
   border-radius:28px 28px 0 0;
   border-top:2px solid #F5C84233;
   padding:0;
@@ -2379,8 +2476,8 @@
 }
 .sp-sticky {
   padding:0 18px 12px;
-  background:linear-gradient(160deg,#141A2C,#0D1117);
-  border-bottom:1px solid #1E2A40;
+  background:linear-gradient(160deg,var(--panel),var(--ink));
+  border-bottom:1px solid var(--rim);
   flex-shrink:0;
 }
 .sp-scroll {
@@ -2395,7 +2492,7 @@
 .sp-close {
   width:30px; height:30px; border-radius:50%;
   background:rgba(255,255,255,.06); border:1px solid #243550;
-  color:#94A3B8; font-size:13px; cursor:pointer;
+  color:var(--muted); font-size:13px; cursor:pointer;
   display:flex; align-items:center; justify-content:center;
 }
 .sp-student {
@@ -2410,7 +2507,7 @@
 .sp-stat-val { font-size:16px; font-weight:900; font-family:'Space Grotesk',sans-serif; }
 .sp-stat-lbl { font-size:9px; color:#64748B; }
 .sp-section-label {
-  font-size:10px; font-weight:700; color:#3D4F6B;
+  font-size:10px; font-weight:700; color:var(--muted);
   font-family:'Space Grotesk',sans-serif;
   text-transform:uppercase; letter-spacing:.8px;
   margin:14px 0 8px 2px;
@@ -2418,21 +2515,21 @@
 }
 .sp-row {
   display:flex; align-items:center; gap:12px;
-  background:rgba(255,255,255,.03); border:1px solid #1E2A40;
+  background:var(--card); border:1px solid var(--rim);
   border-radius:14px; padding:11px 13px;
   margin-bottom:8px; cursor:pointer; width:100%;
   transition:background .15s, transform .1s;
   direction:ltr; text-align:left;
 }
-.sp-row:active { background:rgba(255,255,255,.07); transform:scale(.98); }
+.sp-row:active { transform:scale(.98); filter:brightness(1.08); }
 .sp-row-icon {
   width:38px; height:38px; border-radius:11px;
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
 .sp-row-body { flex:1; min-width:0; }
-.sp-row-title { font-size:13px; font-weight:700; color:#F1F5F9; font-family:'Space Grotesk',sans-serif; }
-.sp-row-sub { font-size:10px; color:#64748B; margin-top:2px; font-family:'Tajawal',sans-serif; direction:rtl; }
-.sp-row-arrow { color:#2D3B52; font-size:13px; flex-shrink:0; }
+.sp-row-title { font-size:13px; font-weight:700; color:var(--white); font-family:'Space Grotesk',sans-serif; }
+.sp-row-sub { font-size:10px; color:var(--muted); margin-top:2px; font-family:'Tajawal',sans-serif; direction:rtl; }
+.sp-row-arrow { color:var(--muted); font-size:13px; flex-shrink:0; opacity:.5; }
 .sp-danger { border-color:#FB718522; }
 </style>
 
@@ -2507,7 +2604,7 @@
   padding:16px; margin-bottom:10px; text-align:center;
 }
 .wd-total { font-size:56px; font-weight:900; color:#2DD4BF; font-family:'Space Grotesk',sans-serif; line-height:1; }
-.wd-total-lbl { font-size:13px; font-weight:700; color:#94A3B8; margin:4px 0 14px; font-family:'Space Grotesk',sans-serif; }
+.wd-total-lbl { font-size:13px; font-weight:700; color:var(--muted); margin:4px 0 14px; font-family:'Space Grotesk',sans-serif; }
 .wd-total-lbl span { display:block; font-size:10px; color:#3D4F6B; font-family:'Tajawal',sans-serif; }
 .wd-levels { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
 .wd-level { background:rgba(255,255,255,.03); border:1px solid; border-radius:12px; padding:10px 4px; }
@@ -2530,7 +2627,7 @@
 
 .results-screen {
   position:fixed; inset:0; z-index:200;
-  background:#0A0C14; overflow-y:auto;
+  background:var(--ink); overflow-y:auto;
   padding:0 0 90px; direction:ltr;
   overflow-x:hidden;
 }
@@ -2545,7 +2642,7 @@
 }
 .results-student-card {
   text-align:center; padding:20px 16px 14px;
-  background:linear-gradient(160deg,#1A2332,#0D1117);
+  background:linear-gradient(160deg,var(--panel),var(--ink));
   margin:12px 16px; border-radius:20px;
   border:1px solid #F5C84233;
   min-width:0; box-sizing:border-box;
@@ -2751,7 +2848,7 @@
 }
 .results-progress-label {
   display:flex; justify-content:space-between;
-  font-size:11px; color:#94A3B8; margin-bottom:6px;
+  font-size:11px; color:var(--muted); margin-bottom:6px;
   font-family:'Space Grotesk',sans-serif;
 }
 .results-progress-track {
@@ -2762,7 +2859,7 @@
   border-radius:4px; transition:width .5s ease;
 }
 .results-section-title {
-  font-size:13px; font-weight:900; color:#94A3B8;
+  font-size:13px; font-weight:900; color:var(--muted);
   font-family:'Space Grotesk',sans-serif;
   padding:0 16px; margin-bottom:10px;
 }
@@ -3160,26 +3257,26 @@
     <!-- Journey Dashboard -->
     <div id="journeyDashboard">
       <!-- Progress Card -->
-      <div style="background:linear-gradient(135deg,#1A2332,#0D1117);border:1px solid #F5C84233;border-radius:16px;padding:12px;margin-bottom:10px">
+      <div style="background:linear-gradient(135deg,var(--panel),var(--ink));border:1px solid #F5C84233;border-radius:16px;padding:12px;margin-bottom:10px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
           <div style="font-size:12px;font-weight:900;color:#F5C842;font-family:'Space Grotesk',sans-serif">🚄 My Journey</div>
-          <div style="font-size:11px;color:#64748B" id="jProgressPct">0%</div>
+          <div style="font-size:11px;color:var(--muted)" id="jProgressPct">0%</div>
         </div>
-        <div style="height:6px;background:#1E2D45;border-radius:4px;overflow:hidden;margin-bottom:10px">
+        <div style="height:6px;background:var(--rim);border-radius:4px;overflow:hidden;margin-bottom:10px">
           <div id="jProgressBar" style="height:100%;background:linear-gradient(90deg,#2DD4BF,#F5C842);border-radius:4px;transition:width .5s ease;width:0%"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
           <div style="text-align:center;background:rgba(45,212,191,.08);border:1px solid #2DD4BF33;border-radius:10px;padding:8px 4px">
             <div style="font-size:20px;font-weight:900;color:#2DD4BF;font-family:'Space Grotesk',sans-serif" id="jCompleted">0</div>
-            <div style="font-size:8px;color:#64748B;margin-top:1px">Completed<br><span style="color:#3D4F6B">مكتملة</span></div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Completed<br><span style="color:var(--muted);opacity:.7">مكتملة</span></div>
           </div>
           <div style="text-align:center;background:rgba(167,139,250,.08);border:1px solid #A78BFA33;border-radius:10px;padding:8px 4px">
             <div style="font-size:20px;font-weight:900;color:#A78BFA;font-family:'Space Grotesk',sans-serif" id="jRemaining">42</div>
-            <div style="font-size:8px;color:#64748B;margin-top:1px">Remaining<br><span style="color:#3D4F6B">متبقية</span></div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Remaining<br><span style="color:var(--muted);opacity:.7">متبقية</span></div>
           </div>
           <div style="text-align:center;background:rgba(245,200,66,.08);border:1px solid #F5C84233;border-radius:10px;padding:8px 4px">
             <div style="font-size:20px;font-weight:900;color:#F5C842;font-family:'Space Grotesk',sans-serif" id="jChapter">1/6</div>
-            <div style="font-size:8px;color:#64748B;margin-top:1px">Chapter<br><span style="color:#3D4F6B">الفصل</span></div>
+            <div style="font-size:8px;color:var(--muted);margin-top:1px">Chapter<br><span style="color:var(--muted);opacity:.7">الفصل</span></div>
           </div>
         </div>
       </div>
@@ -3290,13 +3387,14 @@
 </div>
 
 <!-- ══ STATION CARD SCREEN ══ -->
-<div class="train-overlay" id="stationCardScreen" style="display:none;justify-content:flex-start;padding-top:20px;overflow-y:auto">
-  <div style="width:100%;max-width:420px;padding:0 0 40px">
-    <div style="text-align:center;margin-bottom:16px">
-      <button onclick="closeStationCard()" style="background:rgba(167,139,250,.1);border:1px solid #A78BFA44;color:#A78BFA;border-radius:12px;padding:8px 20px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer;">✕ إغلاق</button>
+<div class="train-overlay" id="stationCardScreen" style="display:none;justify-content:flex-start;padding-top:0;overflow:hidden">
+  <div style="width:100%;max-width:420px;height:100%;display:flex;flex-direction:column">
+    <div class="station-fixed-header" id="stationFixedHeader">
+      <button onclick="closeStationCard()" class="station-close-btn">✕</button>
     </div>
-    <div class="station-card" id="stationCardContent"></div>
-    <div style="padding:0 16px;margin-top:16px" id="stationActionArea"></div>
+    <div class="station-tabbar" id="stationTabbar"></div>
+    <div class="station-tab-content" id="stationCardContent"></div>
+    <div class="station-fixed-footer" id="stationActionArea"></div>
   </div>
 </div>
 
@@ -3314,7 +3412,7 @@
     <span id="sqQNum">سؤال 1</span>
     <span id="sqScore">⭐ 0</span>
   </div>
-  <div id="sqCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <div id="sqCard" style="background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
     <div id="sqType" style="font-size:11px;color:#A78BFA;margin-bottom:6px;font-weight:700"></div>
     <div style="display:flex;align-items:center;gap:8px">
       <div id="sqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
@@ -3326,18 +3424,18 @@
 </div>
 
 <!-- ══ STATION QUIZ RESULT ══ -->
-<div id="stationQuizResult" style="display:none;position:fixed;inset:0;z-index:700;background:linear-gradient(160deg,#0C0E18,#0A1F2E);align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
+<div id="stationQuizResult" style="display:none;position:fixed;inset:0;z-index:700;background:linear-gradient(160deg,var(--ink),var(--deep));align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
   <div style="text-align:center;max-width:340px;width:100%">
     <div id="sqrEmoji" style="font-size:72px;margin-bottom:12px"></div>
     <div id="sqrTitle" style="font-size:20px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
     <div id="sqrScore" style="font-size:28px;font-weight:900;color:#A78BFA;margin-bottom:8px"></div>
-    <div id="sqrMsg" style="font-size:13px;color:#94A3B8;margin-bottom:24px;line-height:1.7"></div>
+    <div id="sqrMsg" style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7"></div>
     <button id="sqrBtn" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px 40px;font-size:15px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%"></button>
   </div>
 </div>
 
 <!-- ══ PACK QUIZ SCREEN ══ -->
-<div id="packQuizScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
+<div id="packQuizScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--ink),var(--deep),var(--ink));overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
 
   <div style="text-align:center;margin-bottom:16px">
     <div style="font-size:32px;margin-bottom:6px">🏆</div>
@@ -3353,7 +3451,7 @@
     <span id="pqScore">⭐ 0</span>
   </div>
 
-  <div id="pqCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <div id="pqCard" style="background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid #A78BFA44;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center">
     <div id="pqType" style="font-size:11px;color:#A78BFA;margin-bottom:6px;font-weight:700"></div>
     <div id="pqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
   </div>
@@ -3363,18 +3461,18 @@
 </div>
 
 <!-- ══ PACK QUIZ RESULT ══ -->
-<div id="packQuizResult" style="display:none;position:fixed;inset:0;z-index:301;background:linear-gradient(160deg,#0C0E18,#0A1F2E);align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
+<div id="packQuizResult" style="display:none;position:fixed;inset:0;z-index:301;background:linear-gradient(160deg,var(--ink),var(--deep));align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
   <div style="text-align:center;max-width:340px;width:100%">
     <div id="pqrEmoji" style="font-size:72px;margin-bottom:12px"></div>
     <div id="pqrTitle" style="font-size:20px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
     <div id="pqrScore" style="font-size:28px;font-weight:900;color:#A78BFA;margin-bottom:8px"></div>
-    <div id="pqrMsg" style="font-size:13px;color:#94A3B8;margin-bottom:24px;line-height:1.7"></div>
+    <div id="pqrMsg" style="font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.7"></div>
     <button id="pqrBtn" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px 40px;font-size:15px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%"></button>
   </div>
 </div>
 
 <!-- ══ LEVEL TEST SCREEN ══ -->
-<div id="levelTestScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E,#061A1A);overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
+<div id="levelTestScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--ink),var(--deep),var(--ink));overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
 
   <!-- Header -->
   <div style="text-align:center;margin-bottom:20px">
@@ -3393,7 +3491,7 @@
   </div>
 
   <!-- Question Card -->
-  <div id="ltCard" style="background:linear-gradient(150deg,#1A2332,#0F1C2E);border:1px solid #243550;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .3s ease">
+  <div id="ltCard" style="background:linear-gradient(150deg,var(--panel),var(--ink));border:1px solid #243550;border-radius:20px;padding:24px 16px;text-align:center;margin-bottom:20px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .3s ease">
     <div id="ltQuestion" style="font-size:16px;font-weight:700;color:#F1F5F9;line-height:1.6"></div>
     <div id="ltSubQuestion" style="font-size:12px;color:#64748B;margin-top:6px"></div>
   </div>
@@ -3406,11 +3504,11 @@
 </div>
 
 <!-- ══ LEVEL RESULT SCREEN ══ -->
-<div id="levelResultScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,#0C0E18,#0A1F2E);display:none;align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
+<div id="levelResultScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--ink),var(--deep));display:none;align-items:center;justify-content:center;padding:24px;font-family:'Tajawal',sans-serif">
   <div style="text-align:center;max-width:340px;width:100%">
     <div id="lrEmoji" style="font-size:72px;margin-bottom:16px;animation:splashIn .6s ease both"></div>
     <div id="lrTitle" style="font-size:22px;font-weight:900;color:#F5C842;margin-bottom:8px"></div>
-    <div id="lrSubtitle" style="font-size:14px;color:#94A3B8;margin-bottom:24px;line-height:1.7"></div>
+    <div id="lrSubtitle" style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.7"></div>
     <div id="lrBadge" style="display:inline-block;padding:10px 28px;border-radius:30px;font-size:14px;font-weight:700;margin-bottom:28px"></div>
     <br>
     <button onclick="finishLevelTest()" style="background:linear-gradient(135deg,#FFD700,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px 40px;font-size:15px;font-weight:900;font-family:'Tajawal',sans-serif;cursor:pointer;width:100%">🚀 ابدأ رحلتك!</button>
@@ -3439,12 +3537,7 @@
     </div>
   </div>
   <div class="stats-bar">
-    <div class="stat-chip">🔥 <span id="streakCount">0</span></div>
-    <div class="stat-chip">📚 <span id="totalCount">0</span></div>
-    <button class="theme-toggle" id="fontSizeBtn" onclick="cycleFontSize()" title="تكبير الخط" style="font-weight:900;font-size:13px">A</button>
-    <button class="theme-toggle" id="helpBtn" onclick="openHelp()" title="دليل الاستخدام">📖</button>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Switch theme">🌙</button>
-    <button class="theme-toggle" onclick="openSettingsPanel()" title="Settings" style="font-size:16px">⚙️</button>
+    <button class="theme-toggle" onclick="openSettingsPanel()" title="Settings" style="font-size:18px">⚙️</button>
   </div>
 </header>
 
@@ -3465,10 +3558,8 @@
 <main id="mainContent">
   <!-- ══ HOME (Bento Grid) ══ -->
   <div id="tab-home" class="section active">
-    <div class="home-hero">
-      <div class="home-hero-logo"><svg width="64" height="64" viewBox="0 0 140 140"><defs><linearGradient id="homeBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient><radialGradient id="homeGlowA" cx="22%" cy="18%" r="55%"><stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/><stop offset="100%" stop-color="#B794FF" stop-opacity="0"/></radialGradient><radialGradient id="homeGlowB" cx="88%" cy="85%" r="60%"><stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/><stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/></radialGradient><linearGradient id="homeWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient><linearGradient id="homeSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient><filter id="homeGlow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><filter id="homeShadow" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.45"/></filter></defs><rect x="0" y="0" width="140" height="140" fill="url(#homeBg)"/><rect x="0" y="0" width="140" height="140" fill="url(#homeGlowA)"/><rect x="0" y="0" width="140" height="140" fill="url(#homeGlowB)"/><g filter="url(#homeShadow)"><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#homeWS)" text-anchor="middle" letter-spacing="-3">WS</text></g><g filter="url(#homeGlow)"><path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#homeSpark)"/></g></svg></div>
-      <div class="home-hero-greeting" id="homeGreeting">أهلاً بك في</div>
-      <div class="home-hero-name">WordSpark</div>
+    <div class="home-hero home-hero-compact">
+      <div class="home-hero-greeting" id="homeGreeting">أهلاً بك 👋</div>
       <div class="home-stats-row">
         <div class="home-stat-pill"><div class="v" id="homeTotalWords">0</div><div class="l">كلمة</div></div>
         <div class="home-stat-pill"><div class="v" id="homeStreak">0</div><div class="l">يوم متواصل 🔥</div></div>
@@ -3477,8 +3568,12 @@
     </div>
 
     <div class="mission-card" id="missionCard">
+      <div class="mission-station-row" id="missionStationRow">
+        <span class="mission-station-flag" id="missionStationFlag">🕌</span>
+        <span class="mission-station-text">On your way to <b id="missionStationName">—</b> · في طريقك إلى <b id="missionStationNameAr">—</b></span>
+      </div>
       <div class="mission-header">
-        <div><span class="mission-title-en">Today's Journey</span><span class="mission-title-ar">رحلة اليوم</span></div>
+        <div><span class="mission-title-en">Today's Lesson</span><span class="mission-title-ar">درس اليوم</span></div>
         <div class="mission-progress-badge" id="missionProgressBadge">0/3</div>
       </div>
       <div class="journey-stats-row">
@@ -3498,106 +3593,24 @@
       <span class="continue-btn-en" id="continueBtnEn">Continue Journey</span>
       <span class="continue-btn-ar" id="continueBtnAr">تابع رحلتك</span>
     </button>
-
-    <button class="explore-toggle" id="exploreToggle" onclick="toggleExploreSection()">
-      <span id="exploreToggleText">🧭 Explore All Skills · استكشف كل المهارات</span>
-      <span class="chevron">▾</span>
-    </button>
-
-    <div class="explore-section" id="exploreSection">
-    <div class="home-settings-row">
-      <button class="home-settings-btn" onclick="openTeacherPhoneModal()" style="flex:1">
-        <span class="home-settings-icon">👨‍🏫</span>
-        <span class="home-settings-text">
-          <span class="home-settings-title">Change Teacher Info <span style="font-size:10px;opacity:.6;font-weight:400">تغيير بيانات المعلم</span></span>
-          <span class="home-settings-sub" id="homeTeacherSub">Send results via WhatsApp</span>
-        </span>
-        <span class="home-settings-arrow">←</span>
-      </button>
-    </div>
-
-    <div class="home-settings-row">
-      <button class="home-settings-btn" onclick="rwOpenActivityPicker()" style="flex:1">
-        <span class="home-settings-icon">🎡</span>
-        <span class="home-settings-text">
-          <span class="home-settings-title">Surprise Me! <span style="font-size:10px;opacity:.6;font-weight:400">فاجئني بنشاط</span></span>
-          <span class="home-settings-sub">Spin the wheel and pick an activity</span>
-        </span>
-        <span class="home-settings-arrow">←</span>
-      </button>
-    </div>
-
-    <div class="home-grid">
-      <div class="home-tile t-words" onclick="showTab('words', null)">
-        <div class="home-tile-badge" id="homeWordsBadge">📚</div>
-        <div class="home-tile-icon">📚</div>
-        <div class="home-tile-label">Vocabulary</div>
-        <div class="home-tile-sub">الكلمات</div>
-      </div>
-      <div class="home-tile t-quiz" onclick="showTab('quiz', null)">
-        <div class="home-tile-icon">🎯</div>
-        <div class="home-tile-label">Quiz</div>
-        <div class="home-tile-sub">اختبار</div>
-      </div>
-      <div class="home-tile t-games" onclick="showTab('games', null)">
-        <div class="home-tile-icon">🎮</div>
-        <div class="home-tile-label">Games</div>
-        <div class="home-tile-sub">ألعاب</div>
-      </div>
-      <div class="home-tile t-conv" onclick="showTab('conv', null)">
-        <div class="home-tile-icon">💬</div>
-        <div class="home-tile-label">Conversations</div>
-        <div class="home-tile-sub">محادثات</div>
-      </div>
-      <div class="home-tile t-voice" onclick="showTab('voice', null)">
-        <div class="home-tile-icon">🎙️</div>
-        <div class="home-tile-label">Voice Coach</div>
-        <div class="home-tile-sub">المتحدّث</div>
-      </div>
-      <div class="home-tile t-grammar" onclick="showTab('grammar', null)">
-        <div class="home-tile-icon">📐</div>
-        <div class="home-tile-label">Grammar</div>
-        <div class="home-tile-sub">القواعد</div>
-      </div>
-      <div class="home-tile t-flash" onclick="showTab('flash', null)">
-        <div class="home-tile-icon">🃏</div>
-        <div class="home-tile-label">Flashcards</div>
-        <div class="home-tile-sub">البطاقات</div>
-      </div>
-      <div class="home-tile t-podcast" onclick="showTab('podcast', null)">
-        <div class="home-tile-icon">🎧</div>
-        <div class="home-tile-label">Podcast</div>
-        <div class="home-tile-sub">البودكاست</div>
-      </div>
-      <div class="home-tile t-reading" onclick="showTab('reading', null)">
-        <div class="home-tile-icon">📖</div>
-        <div class="home-tile-label">Reading Lab</div>
-        <div class="home-tile-sub">مختبر القراءة</div>
-      </div>
-    </div>
-    </div>
-
-    <div class="home-footer-link">
-      <button onclick="openHelp('start')">📖 دليل الاستخدام الكامل</button>
-    </div>
   </div>
 
   <!-- ══ WORDS ══ -->
   <div id="tab-words" class="section">
 
-    <!-- Student Banner -->
-    <div class="student-banner" id="studentBanner">
-      <div class="student-avatar">👤</div>
-      <div>
-        <div class="student-name-text" id="studentNameDisplay">—</div>
-        <div class="student-name-sub">Student · WordSpark</div>
-        <button class="btn-change-name" onclick="changeName()">Change Name</button>
-      </div>
-    </div>
-
     <input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importBackup(event)">
     <div class="backup-last-saved" id="backupLastSaved" style="text-align:center;margin-top:4px"></div>
 
+    <div class="station-tabbar" id="wordsTabbar" style="border-radius:14px;margin:10px 0 14px">
+      <button class="station-tab-btn active" style="--tab-color:#2DD4BF" onclick="switchWordsTab('add',this)">
+        <span class="tico">➕</span><span class="ttxt">إضافة</span></button>
+      <button class="station-tab-btn" style="--tab-color:#A78BFA" onclick="switchWordsTab('browse',this)">
+        <span class="tico">📚</span><span class="ttxt">كلماتي</span></button>
+      <button class="station-tab-btn" style="--tab-color:#F5C842" onclick="switchWordsTab('stats',this)">
+        <span class="tico">📊</span><span class="ttxt">تقدّمي</span></button>
+    </div>
+
+    <div class="station-tab-pane active" data-wpane="add">
     <div class="add-form">
       <div class="form-title">
         ➕ Add Today's Words <span style="font-size:11px;opacity:.6;font-weight:400">إضافة كلمات اليوم</span>
@@ -3631,12 +3644,9 @@
       </div>
       <button class="btn-add" onclick="addWord()">Add Word ✨</button>
     </div>
+    </div>
 
-    <button class="explore-toggle" id="wordsStatsToggle" onclick="toggleWordsStats()">
-      <span id="wordsStatsToggleText">📊 My Progress · تقدّمي التفصيلي</span>
-      <span class="chevron">▾</span>
-    </button>
-    <div class="explore-section" id="wordsStatsSection">
+    <div class="station-tab-pane" data-wpane="stats">
     <div class="counter-hero">
       <div class="big-count" id="heroCount">0</div>
       <div class="count-label">Total Words Learned</div>
@@ -3731,10 +3741,9 @@
         <span>اقتراح كلمة مناسبة لمستواك</span>
       </button>
     </div>
+    </div><!-- end stats pane -->
 
-    </div>
-
-
+    <div class="station-tab-pane" data-wpane="browse">
     <!-- Word Packs -->
     <div id="packSelectorArea"></div>
 
@@ -3769,6 +3778,7 @@
       <div class="e-icon">📝</div>
       <p>لا توجد كلمات بعد.<br>أضف أول كلمة لتبدأ رحلتك!</p>
     </div>
+    </div><!-- end browse pane -->
   </div>
 
   <!-- ══ QUIZ ══ -->
@@ -3787,6 +3797,65 @@
       <div class="quiz-progress-text" id="quizProgressText">0 / 0</div>
     </div>
     <div id="quizArea"></div>
+  </div>
+
+  <!-- ══ LIBRARY (single entry point for all practice activities) ══ -->
+  <div id="tab-library" class="section">
+    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
+    <div class="sec-title">📖 Library <span style="font-size:10px;font-weight:400;color:var(--muted)">المكتبة</span></div>
+    <div class="sec-sub">كل أنشطة التدريب في مكان واحد</div>
+    <div class="home-settings-row">
+      <button class="home-settings-btn" onclick="rwOpenActivityPicker()" style="flex:1">
+        <span class="home-settings-icon">🎡</span>
+        <span class="home-settings-text">
+          <span class="home-settings-title">Surprise Me! <span style="font-size:10px;opacity:.6;font-weight:400">فاجئني بنشاط</span></span>
+          <span class="home-settings-sub">Spin the wheel and pick an activity</span>
+        </span>
+        <span class="home-settings-arrow">←</span>
+      </button>
+    </div>
+    <div class="library-grid">
+      <button class="lib-tile" onclick="showTab('grammar',null)">
+        <span class="lib-tile-ico">📐</span>
+        <span class="lib-tile-en">Grammar</span>
+        <span class="lib-tile-ar">القواعد</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('reading',null)">
+        <span class="lib-tile-ico">📖</span>
+        <span class="lib-tile-en">Reading</span>
+        <span class="lib-tile-ar">القراءة</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('podcast',null)">
+        <span class="lib-tile-ico">🎧</span>
+        <span class="lib-tile-en">Podcast</span>
+        <span class="lib-tile-ar">بودكاست</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('conv',null)">
+        <span class="lib-tile-ico">💬</span>
+        <span class="lib-tile-en">Conversations</span>
+        <span class="lib-tile-ar">محادثات</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('games',null)">
+        <span class="lib-tile-ico">🎮</span>
+        <span class="lib-tile-en">Games</span>
+        <span class="lib-tile-ar">ألعاب</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('quiz',null)">
+        <span class="lib-tile-ico">🎯</span>
+        <span class="lib-tile-en">Quiz</span>
+        <span class="lib-tile-ar">اختبار</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('voice',null)">
+        <span class="lib-tile-ico">🎙️</span>
+        <span class="lib-tile-en">Speak</span>
+        <span class="lib-tile-ar">تحدّث</span>
+      </button>
+      <button class="lib-tile" onclick="showTab('flash',null)">
+        <span class="lib-tile-ico">🃏</span>
+        <span class="lib-tile-en">Flashcards</span>
+        <span class="lib-tile-ar">البطاقات</span>
+      </button>
+    </div>
   </div>
 
   <!-- ══ GAMES ══ -->
@@ -3911,6 +3980,8 @@
     <!-- Scenario Detail View -->
     <div id="convDetail" style="display:none">
       <button class="back-btn" onclick="backToConvMenu()">← العودة للمحادثات</button>
+      <div id="convHeroArea"></div>
+      <div class="station-tabbar" id="convTabbar" style="border-radius:14px;margin-bottom:14px"></div>
       <div id="convDetailArea"></div>
     </div>
   </div>
@@ -4047,20 +4118,6 @@
         <span>Back to Reading Lab</span>
         <span class="ar">العودة إلى مختبر القراءة</span>
       </button>
-    </div>
-  </div>
-
-  <!-- ══ FOOTER SIGNATURE ══ -->
-  <div class="sig-footer">
-    <div class="sig-label">💡 Developed by</div>
-    <div class="sig-name">ARAFAT ALRAJHI</div>
-    <div class="sig-year">© 2026 · WordSpark</div>
-    <div class="sig-legal">
-      <div class="sig-legal-row">
-        <span class="sig-legal-ar">جميع الحقوق محفوظة لعرفات الراجحي</span>
-        <span class="sig-legal-en">All Rights Reserved — WordSpark™</span>
-      </div>
-      <div class="sig-legal-note">يُحظر النسخ أو التوزيع بدون إذن مسبق</div>
     </div>
   </div>
 
@@ -4705,7 +4762,7 @@
 
   <!-- Header -->
   <div class="results-header">
-    <button onclick="closeResultsTab()" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.06);border:1px solid #243550;border-radius:20px;padding:6px 14px;color:#94A3B8;font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">← Back</button>
+    <button onclick="closeResultsTab()" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,.06);border:1px solid #243550;border-radius:20px;padding:6px 14px;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif">← Back</button>
     <div class="results-header-title">📊 My Results <span style="font-size:11px;opacity:.6;font-weight:400">نتائجي</span></div>
   </div>
 
@@ -4714,6 +4771,7 @@
     <div class="results-avatar" id="resAvatar">🌱</div>
     <div class="results-name" id="resName">—</div>
     <div class="results-rank" id="resRank">—</div>
+    <button class="btn-change-name" onclick="changeName()" style="margin-top:8px">Change Name</button>
   </div>
 
   <!-- Story Summary -->
@@ -5008,6 +5066,36 @@
     <!-- ══ SCROLLABLE CONTENT ══ -->
     <div class="sp-scroll">
 
+    <!-- 0. Preferences (moved from header for a cleaner top bar) -->
+    <div class="sp-section-label">🎛️ Preferences · التفضيلات</div>
+
+    <button class="sp-row" id="themeToggle" onclick="toggleTheme()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#6366F1,#4338CA)">🌙</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Dark / Light Mode</div>
+        <div class="sp-row-sub">الوضع الداكن / الفاتح</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" id="fontSizeBtn" onclick="cycleFontSize()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#E8940F)">A</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Text Size</div>
+        <div class="sp-row-sub">حجم الخط</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" id="helpBtn" onclick="closeSettingsPanel();openHelp()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#2DD4BF,#0E9F8A)">📖</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Usage Guide</div>
+        <div class="sp-row-sub">دليل الاستخدام</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
     <!-- 1. Send Results -->
     <div class="sp-section-label">📤 Send Results · إرسال النتائج</div>
 
@@ -5144,8 +5232,17 @@
       <div class="sp-row-arrow" style="color:#FB718555">→</div>
     </button>
 
-    <div style="text-align:center;font-size:10px;color:#1E2A40;margin-top:16px;font-family:'Space Grotesk',sans-serif">
-      ⚡ WordSpark v2.1 · Developed by ARAFAT ALRAJHI
+    <div class="sig-footer" style="margin-top:16px;border-top:1px solid var(--rim);padding-top:14px">
+      <div class="sig-label">💡 Developed by</div>
+      <div class="sig-name">ARAFAT ALRAJHI</div>
+      <div class="sig-year">© 2026 · WordSpark v2.1</div>
+      <div class="sig-legal">
+        <div class="sig-legal-row">
+          <span class="sig-legal-ar">جميع الحقوق محفوظة لعرفات الراجحي</span>
+          <span class="sig-legal-en">All Rights Reserved — WordSpark™</span>
+        </div>
+        <div class="sig-legal-note">يُحظر النسخ أو التوزيع بدون إذن مسبق</div>
+      </div>
     </div>
     </div><!-- end sp-scroll -->
   </div><!-- end settings-panel -->
@@ -5154,9 +5251,6 @@
 <nav class="bottom-nav">
   <button class="bnav-btn active" id="bn-home" onclick="showTab('home',this,'bn')">
     <span class="icon">🏠</span><span style="font-size:9px">Home</span>
-  </button>
-  <button class="bnav-btn" id="bn-words" onclick="showTab('words',this,'bn')">
-    <span class="icon">📚</span><span style="font-size:9px">Words</span>
   </button>
   <button class="bnav-btn" id="bn-train" onclick="openTrainJourney()">
     <span class="icon">
@@ -5180,14 +5274,14 @@
         </svg>
       </span><span style="font-size:9px">Journey</span>
   </button>
-  <button class="bnav-btn" id="bn-quiz" onclick="showTab('quiz',this,'bn')">
-    <span class="icon">🎯</span><span style="font-size:9px">Quiz</span>
+  <button class="bnav-btn" id="bn-library" onclick="showTab('library',this,'bn')">
+    <span class="icon">📖</span><span style="font-size:9px">Library</span>
   </button>
-  <button class="bnav-btn" id="bn-results" onclick="showResultsTab(this)">
-    <span class="icon">📊</span><span style="font-size:9px">Results</span>
+  <button class="bnav-btn" id="bn-words" onclick="showTab('words',this,'bn')">
+    <span class="icon">📚</span><span style="font-size:9px">Words</span>
   </button>
-  <button class="bnav-btn" id="bn-voice" onclick="showTab('voice',this,'bn')">
-    <span class="icon">🎙️</span><span style="font-size:9px">Speak</span>
+  <button class="bnav-btn" id="bn-account" onclick="showResultsTab(this)">
+    <span class="icon">👤</span><span style="font-size:9px">Account</span>
   </button>
 </nav>
 
@@ -5906,6 +6000,7 @@ let words   = JSON.parse(localStorage.getItem('mywords') || '[]');
 let streak  = parseInt(localStorage.getItem('streak') || '0');
 let lastDay = localStorage.getItem('lastDay') || '';
 let quizScore = 0, quizIdx = 0, quizList = [];
+let currentQuizQType = null;
 let selectedLevel = 'beginner';
 let currentFlash  = 0;
 let touchStartX   = 0;
@@ -5955,7 +6050,8 @@ function updateStreak() {
     }
   }
 
-  document.getElementById('streakCount').textContent   = streak;
+  var streakCountEl = document.getElementById('streakCount');
+  if (streakCountEl) streakCountEl.textContent = streak;
   document.getElementById('streakDisplay').textContent = streak;
   renderStreakDots();
 
@@ -6083,6 +6179,319 @@ function getImprovementTrend(type) {
   } catch(e) { return { hasEnoughData: false, attemptsLogged: 0, needed: 6 }; }
 }
 
+// ══════════════════════════════════════════════════════════════════
+// ══ DEVELOPMENT PROFILE (INTERNAL — NOT USER-FACING YET) ══
+// ══════════════════════════════════════════════════════════════════
+// Foundation for measuring real skill growth, not just word count. Every
+// function in this block runs silently in the background. Nothing here is
+// wired to any visible button, menu, or screen — it only collects honest
+// signals so a future phase can build real features on top of real data
+// instead of starting from zero. Do not surface any of this without
+// explicit product sign-off; premature exposure (e.g. an empty or noisy
+// dashboard) would do more harm than waiting until there's enough data to
+// say something true.
+
+// Six dimensions are measured directly from real interactions. The other
+// three (confidence, consistency, journey progress) are *derived* from
+// data the platform already tracks elsewhere, computed fresh each time —
+// no separate log needed for those.
+const DEV_DIMENSIONS = {
+  reading:         { en: 'Reading Comprehension',   ar: 'الفهم القرائي' },
+  listening:       { en: 'Listening Comprehension', ar: 'الفهم السمعي' },
+  pronunciation:   { en: 'Pronunciation',            ar: 'النطق' },
+  comprehension:   { en: 'General Comprehension',    ar: 'الفهم والاستيعاب العام' },
+  responseSpeed:   { en: 'Response Speed',           ar: 'سرعة الإجابة' },
+  contextualUsage: { en: 'Contextual Word Usage',    ar: 'استخدام الكلمات في السياق' }
+};
+
+// Generic append-only signal log, one array per dimension. Mirrors the
+// pattern already proven by logImprovement()/getImprovementTrend() — same
+// honesty rule applies: never report a dimension without enough real
+// attempts behind it.
+function logDevSignal(dimension, value, meta) {
+  if (!DEV_DIMENSIONS[dimension]) return;
+  try {
+    const key = 'devLog_' + dimension;
+    const log = JSON.parse(localStorage.getItem(key) || '[]');
+    log.push({ value: Math.round(value), date: today, meta: meta || null, ts: Date.now() });
+    if (log.length > 100) log.shift(); // bounded — most recent 100 signals per dimension
+    localStorage.setItem(key, JSON.stringify(log));
+  } catch(e) {}
+}
+
+function getDevSignals(dimension) {
+  try { return JSON.parse(localStorage.getItem('devLog_' + dimension) || '[]'); }
+  catch(e) { return []; }
+}
+
+// Response-speed timing helper — call devSpeedStart() when a question is
+// shown, devSpeedEnd(dimension) when it's answered. Keeps the timing logic
+// in one place instead of scattering Date.now() math across every quiz type.
+let _devSpeedStartTs = null;
+function devSpeedStart() { _devSpeedStartTs = Date.now(); }
+function devSpeedEnd(correct) {
+  if (_devSpeedStartTs === null) return;
+  const elapsedSec = (Date.now() - _devSpeedStartTs) / 1000;
+  _devSpeedStartTs = null;
+  // Score speed generously (this rewards decisiveness, not just raw speed —
+  // a correct answer in 3s scores the same as one in 1s; being correct but
+  // slow still scores reasonably, since guessing fast isn't the goal).
+  let score;
+  if (!correct) score = 30;
+  else if (elapsedSec <= 4) score = 100;
+  else if (elapsedSec <= 8) score = 85;
+  else if (elapsedSec <= 15) score = 65;
+  else score = 45;
+  logDevSignal('responseSpeed', score, { elapsedSec: Math.round(elapsedSec), correct });
+}
+
+const DEV_MIN_SIGNALS = 6; // same honesty threshold used by getImprovementTrend()
+
+function _devScoreFromLog(dimension) {
+  const log = getDevSignals(dimension);
+  if (log.length < DEV_MIN_SIGNALS) {
+    return { score: null, hasEnoughData: false, sampleSize: log.length, needed: DEV_MIN_SIGNALS };
+  }
+  const avg = log.reduce((s, e) => s + e.value, 0) / log.length;
+  // Recent-weighted: last 10 attempts count double, so the score reflects
+  // where the learner is now, not an average that's stuck in the past.
+  const recent = log.slice(-10);
+  const recentAvg = recent.reduce((s, e) => s + e.value, 0) / recent.length;
+  const blended = Math.round(avg * 0.4 + recentAvg * 0.6);
+  return { score: blended, hasEnoughData: true, sampleSize: log.length, needed: DEV_MIN_SIGNALS };
+}
+
+function _devConsistencyScore() {
+  const longest = parseInt(localStorage.getItem('longestStreakEver') || '0');
+  const activeDayCounts = Object.keys(ACTIVITY_SECTIONS || {}).map(sec => {
+    try { return JSON.parse(localStorage.getItem('activity_' + sec) || '[]').length; }
+    catch(e) { return 0; }
+  });
+  const totalActiveDayMarks = activeDayCounts.reduce((a,b) => a+b, 0);
+  if (longest < 3 && totalActiveDayMarks < 5) {
+    return { score: null, hasEnoughData: false, sampleSize: totalActiveDayMarks, needed: 5 };
+  }
+  // Streak contributes up to 60 points (capped at a 30-day streak), active
+  // breadth across sections contributes up to 40.
+  const streakPart = Math.min(60, longest * 2);
+  const breadthPart = Math.min(40, totalActiveDayMarks);
+  return { score: Math.round(streakPart + breadthPart), hasEnoughData: true, sampleSize: totalActiveDayMarks, needed: 5 };
+}
+
+function _devConfidenceScore() {
+  // Confidence ≈ getting it right without hesitating. Built from the
+  // responseSpeed log, but isolates *correct* answers specifically — a
+  // learner who's fast only when guessing isn't confident, they're lucky.
+  const log = getDevSignals('responseSpeed');
+  const correctOnes = log.filter(e => e.meta && e.meta.correct);
+  if (correctOnes.length < DEV_MIN_SIGNALS) {
+    return { score: null, hasEnoughData: false, sampleSize: correctOnes.length, needed: DEV_MIN_SIGNALS };
+  }
+  const accuracyRate = log.length ? correctOnes.length / log.length : 0;
+  const avgSpeedScoreWhenRight = correctOnes.reduce((s,e) => s + e.value, 0) / correctOnes.length;
+  const blended = Math.round(accuracyRate * 100 * 0.5 + avgSpeedScoreWhenRight * 0.5);
+  return { score: blended, hasEnoughData: true, sampleSize: correctOnes.length, needed: DEV_MIN_SIGNALS };
+}
+
+function _devJourneyProgressScore() {
+  const p = getTrainProgress();
+  const total = TRAIN_STATIONS.length;
+  const done = (p.completed || []).length;
+  return { score: Math.round((done/total)*100), hasEnoughData: done > 0, sampleSize: done, needed: 1 };
+}
+
+// The single entry point the next phase will read from. Returns all 9
+// dimensions uniformly shaped: { score: 0-100|null, hasEnoughData, sampleSize, needed }.
+// A null score means "not enough real attempts yet" — never fabricate a
+// number to fill the gap, the same rule this platform already follows
+// everywhere else (spark growth, achievements, improvement trends).
+function computeDevelopmentProfile() {
+  return {
+    reading:         _devScoreFromLog('reading'),
+    listening:       _devScoreFromLog('listening'),
+    pronunciation:   _devScoreFromLog('pronunciation'),
+    comprehension:   _devScoreFromLog('comprehension'),
+    responseSpeed:   _devScoreFromLog('responseSpeed'),
+    contextualUsage: _devScoreFromLog('contextualUsage'),
+    confidence:      _devConfidenceScore(),
+    consistency:     _devConsistencyScore(),
+    journeyProgress: _devJourneyProgressScore(),
+    computedAt: Date.now()
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ══ HIDDEN PLACEMENT-TEST ELIGIBILITY (LOGIC ONLY — NO UI TRIGGER) ══
+// ══════════════════════════════════════════════════════════════════
+// This function is intentionally never called from any button, menu, or
+// screen in the current build. It exists so the next phase can wire a
+// real invitation to it without having to first figure out what
+// "deserving" means — that decision is made here, once, in one auditable
+// place. Calling this function has zero side effects and shows nothing.
+//
+// A student qualifies only once ALL of these are true — not just one:
+//  1. Meaningful journey progress (not a student who just started)
+//  2. Proven long-term consistency (not a one-week burst)
+//  3. Real personal vocabulary effort (not just the free starter pack)
+//  4. A measurable positive trend in at least half of the tracked skills —
+//     the whole point of the real placement test is to reward someone who
+//     is *actually improving*, not just someone who has been present.
+function _devHasPositiveTrend(dimension) {
+  const log = getDevSignals(dimension);
+  if (log.length < DEV_MIN_SIGNALS) return false;
+  const chunk = Math.max(3, Math.floor(log.length / 3));
+  const early = log.slice(0, chunk);
+  const recent = log.slice(-chunk);
+  const earlyAvg = early.reduce((s,e) => s+e.value, 0) / early.length;
+  const recentAvg = recent.reduce((s,e) => s+e.value, 0) / recent.length;
+  return (recentAvg - earlyAvg) > 3; // same "real trend" bar as getImprovementTrend()
+}
+
+function checkPlacementTestEligibility() {
+  const profile = computeDevelopmentProfile();
+  const selfAddedWords = words.filter(w => !w.seeded).length;
+  const longestStreak = parseInt(localStorage.getItem('longestStreakEver') || '0');
+
+  const journeyOk    = profile.journeyProgress.score >= 40;
+  const streakOk      = longestStreak >= 14;
+  const effortOk       = selfAddedWords >= 30;
+
+  const trendedDimensions = ['reading','listening','pronunciation','comprehension','responseSpeed','contextualUsage']
+    .filter(dim => _devHasPositiveTrend(dim));
+  const improvementOk = trendedDimensions.length >= 3;
+
+  const eligible = journeyOk && streakOk && effortOk && improvementOk;
+
+  return {
+    eligible,
+    reasons: {
+      journeyProgress: { ok: journeyOk, value: profile.journeyProgress.score, needed: 40 },
+      consistency:     { ok: streakOk, value: longestStreak, needed: 14 },
+      personalEffort:  { ok: effortOk, value: selfAddedWords, needed: 30 },
+      skillImprovement:{ ok: improvementOk, value: trendedDimensions.length, needed: 3, dimensions: trendedDimensions }
+    }
+  };
+}
+
+// ══════════════════════════════════════════════════════════════════
+// ══ REAL PLACEMENT TEST (HIDDEN — BUILT, NOT LINKED FROM ANY UI) ══
+// ══════════════════════════════════════════════════════════════════
+// A genuine multi-skill assessment engine, not a vocabulary quiz relabeled.
+// Four skills, each scored independently so the result can honestly say
+// "strong reader, weak listener" instead of one flattened number. This is
+// a real, runnable engine with a starter content set — small enough to
+// build in one pass, structured so content can grow later without
+// touching the scoring logic. No button, menu entry, or automatic trigger
+// anywhere calls startRealPlacementTest() yet; it is reachable only from
+// the developer panel, deliberately, until product sign-off.
+
+const REAL_PLACEMENT_TEST = {
+  reading: [
+    {
+      passage: "Sarah works at a small coffee shop near the university. Every morning, she arrives early to prepare the machines before customers come in. She enjoys talking to students who visit daily, and she has learned to remember their favorite drinks. Last week, a regular customer told her he was moving to another city for a new job. Sarah felt a little sad, but she wished him good luck.",
+      question: "Why did Sarah feel a little sad?",
+      questionAr: "لماذا شعرت سارة بالحزن قليلاً؟",
+      options: ["A regular customer was leaving the city", "The coffee shop was closing", "She lost her job", "A machine broke down"],
+      correct: 0
+    },
+    {
+      passage: "Ahmed had never traveled outside his country before. When his company offered him a project in another city, he felt both excited and nervous. He spent the weekend before the trip researching the weather, the local food, and how to get from the airport to his hotel. By the time he boarded the plane, he felt much more prepared than he had a few days earlier.",
+      question: "What helped Ahmed feel more prepared?",
+      questionAr: "ما الذي ساعد أحمد على الشعور بجاهزية أكبر؟",
+      options: ["Talking to his manager", "Researching before the trip", "Buying new clothes", "Cancelling the project"],
+      correct: 1
+    },
+    {
+      passage: "The city council announced a new plan to add more green spaces downtown. Officials said the project would take two years and include several small parks connected by walking paths. Some residents welcomed the idea, saying the area needed more places to relax. Others worried about the cost and asked the council to explain how it would be paid for.",
+      question: "What was one concern some residents had?",
+      questionAr: "ما هو أحد مخاوف بعض السكان؟",
+      options: ["The parks were too small", "The walking paths were unsafe", "How the project would be funded", "The project would take too long"],
+      correct: 2
+    }
+  ],
+  listening: [
+    {
+      script: "Hi, this is a reminder that your dentist appointment is tomorrow at three thirty in the afternoon. Please arrive fifteen minutes early to complete some paperwork. If you need to reschedule, call the clinic before nine tomorrow morning.",
+      question: "What time is the appointment?",
+      questionAr: "متى الموعد؟",
+      options: ["9:00 morning", "3:30 afternoon", "3:15 afternoon", "9:30 morning"],
+      correct: 1
+    },
+    {
+      script: "Attention passengers, the train to the central station has been delayed by twenty minutes due to a technical issue. We apologize for the inconvenience. The next update will be announced in ten minutes.",
+      question: "Why is the train delayed?",
+      questionAr: "لماذا تأخر القطار؟",
+      options: ["Bad weather", "A technical issue", "Too many passengers", "A staff shortage"],
+      correct: 1
+    },
+    {
+      script: "Welcome to the museum. Guided tours start every hour on the hour from the main entrance. Photography is allowed everywhere except the ancient manuscripts room on the second floor.",
+      question: "Where is photography NOT allowed?",
+      questionAr: "أين لا يُسمح بالتصوير؟",
+      options: ["The main entrance", "The gift shop", "The manuscripts room", "The whole museum"],
+      correct: 2
+    }
+  ],
+  pronunciation: [
+    { text: "I would like to schedule an appointment for next Thursday." },
+    { text: "The weather has been unusually warm this week." },
+    { text: "Could you please explain that instruction one more time?" }
+  ],
+  contextualUsage: [
+    { sentence: "After studying all night, she felt too _____ to focus on the exam.", options: ["exhausted","excited","organized","confused"], correct: 0 },
+    { sentence: "The manager asked the team to _____ the report before Friday.", options: ["forget","submit","ignore","waste"], correct: 1 },
+    { sentence: "He was _____ when he found out he got the scholarship.", options: ["disappointed","thrilled","bored","nervous"], correct: 1 },
+    { sentence: "The instructions were so _____ that nobody understood the task.", options: ["clear","simple","confusing","short"], correct: 2 }
+  ]
+};
+
+let _placementTestState = null;
+
+// Not called from anywhere in the current build. Reachable only through
+// the developer panel during internal testing.
+function startRealPlacementTest() {
+  _placementTestState = {
+    startedAt: Date.now(),
+    results: { reading: [], listening: [], pronunciation: [], contextualUsage: [] }
+  };
+  return _placementTestState;
+}
+
+function recordPlacementAnswer(skill, correct, meta) {
+  if (!_placementTestState) return;
+  _placementTestState.results[skill].push({ correct, meta: meta || null });
+}
+
+function finishRealPlacementTest() {
+  if (!_placementTestState) return null;
+  const r = _placementTestState.results;
+  const scoreOf = (arr) => arr.length ? Math.round((arr.filter(x => x.correct).length / arr.length) * 100) : null;
+
+  const skillScores = {
+    reading:         scoreOf(r.reading),
+    listening:       scoreOf(r.listening),
+    pronunciation:   scoreOf(r.pronunciation),
+    contextualUsage: scoreOf(r.contextualUsage)
+  };
+
+  const valid = Object.entries(skillScores).filter(([,v]) => v !== null);
+  const overall = valid.length ? Math.round(valid.reduce((s,[,v]) => s+v, 0) / valid.length) : null;
+
+  const sorted = valid.slice().sort((a,b) => b[1] - a[1]);
+  const strength = sorted.length ? sorted[0][0] : null;
+  const weakness = sorted.length ? sorted[sorted.length-1][0] : null;
+
+  const result = {
+    skillScores, overall, strength, weakness,
+    finishedAt: Date.now(),
+    durationSec: Math.round((Date.now() - _placementTestState.startedAt) / 1000)
+  };
+  localStorage.setItem('realPlacementTestResult', JSON.stringify(result));
+  _placementTestState = null;
+  return result;
+}
+
+
 function getSparkGrowthTier() {
   // Only words the learner added themselves count toward growth — the free
   // starter pack gives everyone a head start, but Spark should grow with
@@ -6139,7 +6548,8 @@ function renderStreakDots() {
 function updateCounters() {
   const total = words.length;
   document.getElementById('heroCount').textContent  = total;
-  document.getElementById('totalCount').textContent = total;
+  var totalCountEl = document.getElementById('totalCount');
+  if (totalCountEl) totalCountEl.textContent = total;
   document.getElementById('todayCount').textContent = words.filter(w => w.date === today && !w.seeded).length;
   const weekAgo = new Date(Date.now() - 7*86400000);
   document.getElementById('weekCount').textContent  = words.filter(w => new Date(w.date) >= weekAgo).length;
@@ -6578,13 +6988,59 @@ function deleteWord(id, e) {
 }
 
 // ══ QUIZ ══
+// ══ RESUME WHERE YOU LEFT OFF ══
+// A half-hour lesson WILL get interrupted sometimes — a call, a chore, a
+// child needing something. That should cost the student zero progress.
+// Quiz state is persisted after every answer and restored on return,
+// scoped to today only (a quiz from three days ago isn't worth resuming).
+function saveQuizProgress() {
+  try {
+    localStorage.setItem('quizResume', JSON.stringify({
+      date: today, idx: quizIdx, score: quizScore,
+      wordIds: quizList.map(w => w.id)
+    }));
+  } catch(e) {}
+}
+function clearQuizProgress() { localStorage.removeItem('quizResume'); }
+function getResumableQuiz() {
+  try {
+    const r = JSON.parse(localStorage.getItem('quizResume') || 'null');
+    if (!r || r.date !== today) return null;
+    const restoredList = r.wordIds.map(id => words.find(w => w.id === id)).filter(Boolean);
+    if (restoredList.length === 0 || r.idx >= restoredList.length) return null;
+    return { idx: r.idx, score: r.score, list: restoredList };
+  } catch(e) { return null; }
+}
+
 function initQuiz() {
   const area = document.getElementById('quizArea');
   if (words.length < 2) {
     area.innerHTML = `<div class="no-words-msg"><div class="icon">🎯</div><p>أضف على الأقل كلمتين!</p></div>`;
     return;
   }
-  area.innerHTML = `<button class="btn-start-quiz" onclick="startQuiz()" style="display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3"><span dir="ltr">🚀 Start Random Quiz</span><span style="font-size:11px;opacity:.7;font-weight:400">ابدأ الاختبار العشوائي</span></button>`;
+  const resume = getResumableQuiz();
+  if (resume) {
+    area.innerHTML = `
+      <button class="btn-start-quiz" onclick="resumeQuiz()" style="display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3">
+        <span dir="ltr">▶️ Continue — Question ${resume.idx+1} of ${resume.list.length}</span>
+        <span style="font-size:11px;opacity:.7;font-weight:400">تابع من حيث توقفت</span>
+      </button>
+      <button class="btn-start-quiz" onclick="clearQuizProgress();startQuiz()" style="margin-top:10px;opacity:.6;background:transparent;border:1px solid var(--rim)">
+        <span dir="ltr" style="font-size:12px">🔄 Start a new quiz instead</span>
+      </button>`;
+  } else {
+    area.innerHTML = `<button class="btn-start-quiz" onclick="startQuiz()" style="display:flex;flex-direction:column;align-items:center;gap:4px;line-height:1.3"><span dir="ltr">🚀 Start Random Quiz</span><span style="font-size:11px;opacity:.7;font-weight:400">ابدأ الاختبار العشوائي</span></button>`;
+  }
+}
+
+function resumeQuiz() {
+  const resume = getResumableQuiz();
+  if (!resume) { startQuiz(); return; }
+  quizList = resume.list;
+  quizIdx = resume.idx;
+  quizScore = resume.score;
+  document.getElementById('quizScoreDisplay').textContent = quizScore;
+  renderQuizQ();
 }
 
 function startQuiz() {
@@ -6593,6 +7049,7 @@ function startQuiz() {
   document.getElementById('quizScoreDisplay').textContent = '0';
   document.getElementById('quizProgressFill').style.width = '0%';
   document.getElementById('quizProgressText').textContent = `0 / ${quizList.length}`;
+  saveQuizProgress();
   renderQuizQ();
 }
 
@@ -6632,6 +7089,7 @@ function renderQuizQ() {
   const pct = (quizIdx / quizList.length) * 100;
   document.getElementById('quizProgressFill').style.width = pct + '%';
   document.getElementById('quizProgressText').textContent = `${quizIdx} / ${quizList.length}`;
+  devSpeedStart();
 
   // Three question types: en2ar (multiple choice), ar2en (multiple choice),
   // type2ar (free typing — only used once student has at least 6 words, so
@@ -6641,6 +7099,7 @@ function renderQuizQ() {
   if (words.length >= 6 && rand < 0.25) qType = 'type2ar';
   else if (rand < 0.625) qType = 'en2ar';
   else qType = 'ar2en';
+  currentQuizQType = qType;
 
   let cardHTML, optsHTML;
 
@@ -6715,6 +7174,15 @@ function afterAnswer(btn, isRight, correctText, typedText) {
   const currentWord = quizList[quizIdx];
   if (currentWord) recordAnswer(currentWord.id, isRight);
 
+  devSpeedEnd(isRight);
+  // The typed-translation question type is the one place the student
+  // produces the meaning from memory instead of recognizing it among
+  // options — the clearest signal available today for real contextual/
+  // productive word knowledge versus passive recognition.
+  if (currentQuizQType === 'type2ar') {
+    logDevSignal('contextualUsage', isRight ? 100 : 0, { word: currentWord ? currentWord.en : null });
+  }
+
   if (btn) {
     // Multiple-choice path
     if (isRight) {
@@ -6748,6 +7216,7 @@ function afterAnswer(btn, isRight, correctText, typedText) {
   }
   document.getElementById('btnNext').classList.add('show');
   quizIdx++;
+  saveQuizProgress();
 }
 
 function checkAns(btn, chosen, correct)   { afterAnswer(btn, arMatches(chosen, correct), correct); }
@@ -6755,6 +7224,7 @@ function checkAnsEn(btn, chosen, correct) { afterAnswer(btn, enMatches(chosen, c
 function nextQ() { renderQuizQ(); }
 
 function renderQuizResult() {
+  clearQuizProgress();
   document.getElementById('quizProgressFill').style.width = '100%';
   document.getElementById('quizProgressText').textContent = `${quizList.length} / ${quizList.length}`;
   const pct = Math.round((quizScore / (quizList.length * 10)) * 100);
@@ -7005,12 +7475,62 @@ function checkGQ(i, chosen, correct, fb, fbW) {
     chosenEl && chosenEl.classList.add('correct');
     fbEl.className = 'quiz-feedback show ok'; fbEl.textContent = fb;
     showToast('✅ ممتاز!');
+    markGrammarLessonDone(i);
   } else {
     chosenEl  && chosenEl.classList.add('wrong');
     correctEl && correctEl.classList.add('correct');
     fbEl.className = 'quiz-feedback show no';
     fbEl.innerHTML = '💡 ' + fbW + ` <button class="try-again" onclick="resetGQ(${i})">إعادة المحاولة</button>`;
   }
+}
+
+// ══ SEQUENTIAL GRAMMAR CURRICULUM ══
+// The 15 lessons are already ordered pedagogically (building blocks first,
+// then tenses by complexity). This turns that order into an actual
+// building path: one "current" lesson at a time, permanently marked once
+// answered correctly — never re-randomized, so the student's sense of
+// "lesson 4 of 15" is always real and never resets.
+function markGrammarLessonDone(i) {
+  try {
+    const done = JSON.parse(localStorage.getItem('grammarCompleted') || '[]');
+    if (done.indexOf(i) === -1) {
+      done.push(i);
+      localStorage.setItem('grammarCompleted', JSON.stringify(done));
+      logSectionActivity('grammar');
+    }
+  } catch(e) {}
+  if (typeof renderMissionCard === 'function') renderMissionCard();
+}
+
+function getGrammarCompleted() {
+  try { return JSON.parse(localStorage.getItem('grammarCompleted') || '[]'); }
+  catch(e) { return []; }
+}
+
+// Today's single lesson focus — the next one the student hasn't finished
+// yet, in order. Returns null once all 15 are done (curriculum complete).
+function getTodaysGrammarLesson() {
+  const done = getGrammarCompleted();
+  for (let i = 0; i < grammarLessons.length; i++) {
+    if (done.indexOf(i) === -1) return i;
+  }
+  return null;
+}
+
+// Opens the Library → Grammar screen already scrolled to and expanded on
+// today's specific lesson, instead of dropping the student into a generic
+// list they have to search through themselves.
+function openTodaysGrammarLesson() {
+  const i = getTodaysGrammarLesson();
+  if (i === null) { showTab('grammar', null); return; }
+  showTab('grammar', null);
+  setTimeout(() => {
+    const card = document.getElementById('gc' + i);
+    if (card) {
+      if (!card.classList.contains('open')) toggleG(i);
+      card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, 150);
 }
 
 function resetGQ(i) {
@@ -7076,9 +7596,10 @@ function showTab(name, btn, navType) {
   document.getElementById('tab-' + name).classList.add('active');
   logSectionActivity(name);
 
-  // Bottom nav only has 4 items: home, words, quiz, voice. Other tabs (games, conv, grammar, flash)
-  // are reached via the home grid, so we just clear bottom-nav active state for those.
-  const bnMap = {home:'bn-home', words:'bn-words', quiz:'bn-quiz', voice:'bn-voice'};
+  // Bottom nav now has 5 items: home, journey(train), library, words, account.
+  // Practice screens (quiz, voice, games, grammar, etc.) are reached via the
+  // Library tile grid, so they have no direct bottom-nav equivalent.
+  const bnMap = {home:'bn-home', words:'bn-words', library:'bn-library'};
 
   if (navType === 'bn') {
     document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
@@ -7115,7 +7636,7 @@ function updateHomeStats() {
   const greetEl = document.getElementById('homeGreeting');
   if (greetEl) {
     const name = localStorage.getItem('studentName');
-    greetEl.textContent = name ? `أهلاً بك يا ${name.split(' ')[0]} 👋` : 'أهلاً بك في';
+    greetEl.textContent = name ? `أهلاً بك يا ${name.split(' ')[0]} 👋` : 'أهلاً بك 👋';
   }
 
   renderMissionCard();
@@ -7161,28 +7682,65 @@ function getNextFlowStep() {
   return DAILY_FLOW.find(step => getSectionActivityDays(step.section).indexOf(today) === -1) || null;
 }
 
+// ══ JOURNEY-AWARE DAILY LESSON ══
+// "English is a journey, not a station" — the daily lesson must be the same
+// thing as journey progress, not a parallel checklist that happens to
+// overlap with it. This resolves what the CURRENT station still needs
+// (game / conversation / podcast) and turns that into today's practice
+// step, so finishing the lesson is literally what carries the student to
+// the next city — not a coincidence between two separate systems.
+function getStationPracticeStep() {
+  var p = getTrainProgress();
+  var stationId = getCurrentStationId(p);
+  var station = getStationById(stationId);
+  var reqCheck = checkStationRequirements(stationId);
+
+  var need = null;
+  if (reqCheck.game.need && !reqCheck.game.done) need = { section:'games', iconEn:'🎮', en:'Play a learning game', ar:'العب لعبة تعليمية' };
+  else if (reqCheck.conv.need && !reqCheck.conv.done) need = { section:'conv', iconEn:'💬', en:'Finish a conversation', ar:'أكمل محادثة' };
+  else if (reqCheck.podcast.need && !reqCheck.podcast.done) need = { section:'podcast', iconEn:'🎧', en:'Listen to a podcast', ar:'استمع لحلقة بودكاست' };
+
+  return { station: station, stationId: stationId, reqCheck: reqCheck, need: need };
+}
+
 function getMissionItems() {
   const goal = getDailyGoal();
   const wordsToday = words.filter(w => w.date === today && !w.seeded).length;
   const wordsDone = wordsToday >= goal;
 
-  const nextStep = getNextFlowStep();
-  const completedSteps = DAILY_FLOW.filter(s => getSectionActivityDays(s.section).indexOf(today) !== -1).length;
+  const grammarDoneToday = getSectionActivityDays('grammar').indexOf(today) !== -1;
+  const lessonIdx = getTodaysGrammarLesson();
+  const lesson = lessonIdx !== null ? grammarLessons[lessonIdx] : null;
+
+  const sp = getStationPracticeStep();
+  const stationWordsOk = sp.reqCheck.words.done;
+  const stationReadyForQuiz = sp.reqCheck.allDone;
 
   return [
+    {
+      icon: '📖',
+      en: lesson ? `Learn: ${lesson.titleEn}` : 'All grammar lessons mastered!',
+      ar: lesson ? lesson.title : 'أتقنت كل دروس القواعد',
+      done: lesson ? grammarDoneToday : true,
+      progress: `${getGrammarCompleted().length}/${grammarLessons.length}`,
+      go: lesson ? () => openTodaysGrammarLesson() : null
+    },
     {
       icon: '📚', en: `Add ${goal} words`, ar: `أضف ${goal} كلمات`,
       done: wordsDone, progress: `${Math.min(wordsToday, goal)}/${goal}`,
       go: () => showTab('words', null)
     },
-    nextStep ? {
-      icon: nextStep.iconEn, en: nextStep.en, ar: nextStep.ar,
-      done: false, progress: `${completedSteps}/${DAILY_FLOW.length}`,
-      go: () => showTab(nextStep.section, null)
+    sp.need ? {
+      icon: sp.need.iconEn, en: sp.need.en + ` (for ${sp.station.nameEn})`, ar: sp.need.ar + ` (لمحطة ${sp.station.name})`,
+      done: false, progress: '',
+      go: () => showTab(sp.need.section, null)
     } : {
-      icon: '🎯', en: 'Practice complete', ar: 'اكتملت الممارسة',
-      done: true, progress: `${DAILY_FLOW.length}/${DAILY_FLOW.length}`,
-      go: null
+      icon: '🚉',
+      en: stationReadyForQuiz ? `Arrive at ${sp.station.nameEn}!` : `Reach ${sp.station.nameEn}`,
+      ar: stationReadyForQuiz ? `صل إلى ${sp.station.name}!` : `اقترب من ${sp.station.name}`,
+      done: stationReadyForQuiz && stationWordsOk,
+      progress: stationReadyForQuiz ? '✓' : '',
+      go: stationReadyForQuiz ? () => startStationQuiz(sp.stationId) : () => showTab('words', null)
     },
     {
       icon: '🔥', en: 'Keep your streak alive', ar: 'حافظ على سلسلتك',
@@ -7199,13 +7757,27 @@ function renderMissionCard() {
   const badge = document.getElementById('missionProgressBadge');
   if (!list || !badge) return;
 
+  const sp = getStationPracticeStep();
+  const flagEl = document.getElementById('missionStationFlag');
+  const nameEl = document.getElementById('missionStationName');
+  const nameArEl = document.getElementById('missionStationNameAr');
+  if (flagEl && sp.station) {
+    flagEl.textContent = sp.station.flag || '🕌';
+    nameEl.textContent = sp.station.nameEn;
+    nameArEl.textContent = sp.station.name;
+  }
+
   const items = getMissionItems();
   const doneCount = items.filter(i => i.done).length;
   badge.textContent = doneCount + '/' + items.length;
 
-  list.innerHTML = items.map((item, i) => `
+  // Rendered as a connected path — a line runs behind the step dots so the
+  // student sees one lesson flowing into the next, not a checklist of
+  // unrelated chores. The first step (today's grammar focus) anchors the
+  // whole day; everything after it is practice around the same ground.
+  list.innerHTML = `<div class="mission-path-line"></div>` + items.map((item, i) => `
     <div class="mission-item ${item.done ? 'done' : ''}" onclick="missionItemClick(${i})">
-      <div class="mission-check">${item.done ? '✓' : ''}</div>
+      <div class="mission-check">${item.done ? '✓' : (i+1)}</div>
       <div class="mission-item-text">
         <div class="mission-item-en">${item.icon} ${item.en}</div>
         <div class="mission-item-ar">${item.ar}</div>
@@ -7301,15 +7873,11 @@ function toggleExploreSection() {
     : '🧭 Explore All Skills · استكشف كل المهارات';
 }
 
-function toggleWordsStats() {
-  const section = document.getElementById('wordsStatsSection');
-  const toggle = document.getElementById('wordsStatsToggle');
-  const text = document.getElementById('wordsStatsToggleText');
-  const isOpen = section.classList.toggle('open');
-  toggle.classList.toggle('open', isOpen);
-  text.textContent = isOpen
-    ? '📊 Hide Progress · إخفاء التفاصيل'
-    : '📊 My Progress · تقدّمي التفصيلي';
+function switchWordsTab(paneId, btn) {
+  document.querySelectorAll('#tab-words .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.wpane === paneId));
+  document.querySelectorAll('#wordsTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (paneId === 'browse') { renderWords(); }
 }
 
 // ══ UNIVERSAL TEXT-TO-SPEECH ══
@@ -7461,7 +8029,7 @@ function guessLetter(letter, btn) {
     btn.classList.add('miss');
     document.getElementById(hmParts[hmWrong]).setAttribute('opacity','1');
     hmWrong++;
-    showToast('🎯 حاول حرفاً آخر', '#94A3B8');
+    showToast('🎯 حاول حرفاً آخر', 'var(--muted)');
   }
   renderHangman();
 }
@@ -7611,7 +8179,7 @@ function checkDaily(btn, chosen, correct, word, meaning) {
   else {
     btn.classList.add('wrong');
     document.querySelectorAll('.daily-opt').forEach(b=>{ if(b.textContent.trim()===correct) b.classList.add('correct'); });
-    showToast('📚 شاهد الإجابة الصحيحة أعلاه — نراك غداً بكلمة جديدة!','#94A3B8');
+    showToast('📚 شاهد الإجابة الصحيحة أعلاه — نراك غداً بكلمة جديدة!','var(--muted)');
   }
   localStorage.setItem('daily_'+new Date().toDateString(), JSON.stringify({won,word,meaning}));
   setTimeout(()=>initDaily(), 1500);
@@ -8071,7 +8639,8 @@ function retakeLevelTest() {
 function renderStudentBanner(name) {
   const isTeacher = localStorage.getItem('isTeacher') === '1';
   const displayName = isTeacher ? `👨‍🏫 ${name} — Teacher` : name;
-  document.getElementById('studentNameDisplay').textContent = displayName;
+  const nameEl = document.getElementById('studentNameDisplay');
+  if (nameEl) nameEl.textContent = displayName;
   const subEl = document.querySelector('.student-name-sub');
   if (subEl) subEl.textContent = isTeacher ? 'Teacher · WordSpark' : 'Student · WordSpark';
 }
@@ -9151,14 +9720,77 @@ function showStationCard() {
   var reqs = checkStationRequirements(s.id);
   var status = getStationStatus(s.id);
 
-  // Build card
+  document.getElementById('stationFixedHeader').innerHTML =
+    '<button onclick="closeStationCard()" class="station-close-btn">✕ إغلاق</button>' +
+    '<div class="station-img-wrap" id="stationImgWrap"><div style="font-size:44px">' + s.flag + '</div></div>' +
+    '<div class="station-hero-title">' + s.name + '</div>' +
+    '<div class="station-hero-sub">' + s.nameEn + '</div>';
+
+  var wikiTerms = {
+    1:'Masjid al-Haram',2:'Al-Masjid an-Nabawi',3:'Al-Balad Jeddah',
+    4:'Taif Saudi Arabia',5:'AlUla',6:'Yanbu Saudi Arabia',
+    7:'Jazan Region',8:'Farasan Islands',9:'Abha Saudi Arabia',
+    10:'Tabuk Castle',11:'Masmak Fortress',12:'Al-Ahsa oasis',
+    13:'Dammam',14:'Jubail Industrial City',15:'Kuwait Towers',
+    16:'Bahrain Fort',17:'Museum of Islamic Art Doha',
+    18:'Sheikh Zayed Grand Mosque',19:'Burj Khalifa',
+    20:'Sultan Qaboos Grand Mosque',21:'Umayyad Mosque',
+    22:'Al-Mustansiriya School',23:'Dome of the Rock',
+    24:'Hagia Sophia',25:'Konya',26:'Mosque-Cathedral of Córdoba',
+    27:'Alhambra',28:'Registan',29:'Kalyan minaret',
+    30:'Cairo Citadel',31:'Zitouna Mosque',32:'University of al-Qarawiyyin',
+    33:'Stone Town Zanzibar',34:'Petronas Towers',
+    35:'Istiqlal Mosque Jakarta',36:'Green Mosque Bursa',37:'Islamic world',
+    38:'Al-Khobar',39:'Buraidah',40:'Unaizah',41:'Al-Baha Saudi Arabia',42:'Najran'
+  };
+  var term = wikiTerms[s.id] || s.nameEn;
+  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(term))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      var wrap = document.getElementById('stationImgWrap');
+      if (wrap && d.thumbnail && d.thumbnail.source) {
+        wrap.innerHTML = '<img src="' + d.thumbnail.source + '" style="width:100%;height:100%;object-fit:cover;opacity:.85">' +
+          '<div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,#0F1C2E)"></div>';
+      }
+    }).catch(function(){});
+
+  var tabs = [
+    { id:'en',    icon:'🇬🇧', label:'English',  color:'#2DD4BF' },
+    { id:'ar',    icon:'🇸🇦', label:'العربية',  color:'#F5C842' },
+    { id:'words', icon:'📚', label:'كلمات',    color:'#A78BFA' },
+    { id:'sites', icon:'🏛️', label:'معالم',    color:'#FB923C' }
+  ];
+  document.getElementById('stationTabbar').innerHTML = tabs.map(function(t, i){
+    return '<button class="station-tab-btn' + (i===0?' active':'') + '" style="--tab-color:' + t.color + '" onclick="switchStationTab(\'' + t.id + '\', this)">' +
+      '<span class="tico">' + t.icon + '</span><span class="ttxt">' + t.label + '</span></button>';
+  }).join('');
+
   var wordsHtml = s.words.map(function(w) {
-    return '<div class="station-word-chip"><b>' + w.en + '</b> = ' + w.ar + '</div>';
+    return '<div class="station-word-chip"><b>' + w.en + '</b><span>' + w.ar + '</span></div>';
   }).join('');
 
   var landmarksHtml = s.landmarks.map(function(l) {
-    return '<div>' + l + '</div>';
+    return '<div class="station-landmark-item">📍 ' + l + '</div>';
   }).join('');
+
+  document.getElementById('stationCardContent').innerHTML =
+    '<div class="station-tab-pane active" data-pane="en">' +
+      '<div class="station-tab-label" style="color:#2DD4BF">ABOUT · بالإنجليزية</div>' +
+      '<div class="station-para-en">' + s.info + '</div>' +
+    '</div>' +
+    '<div class="station-tab-pane" data-pane="ar">' +
+      '<div class="station-tab-label" style="color:#F5C842">نبذة بالعربية</div>' +
+      '<div class="station-para-ar">' + s.infoAr + '</div>' +
+      '<div class="station-quote">' + s.quote + '</div>' +
+    '</div>' +
+    '<div class="station-tab-pane" data-pane="words">' +
+      '<div class="station-tab-label" style="color:#A78BFA">📚 كلمات هذه المحطة</div>' +
+      '<div class="station-words-grid">' + wordsHtml + '</div>' +
+    '</div>' +
+    '<div class="station-tab-pane" data-pane="sites">' +
+      '<div class="station-tab-label" style="color:#FB923C">🏛️ معالم سياحية</div>' +
+      landmarksHtml +
+    '</div>';
 
   var reqHtml = '';
   if (status !== 'completed') {
@@ -9174,90 +9806,23 @@ function showStationCard() {
     reqHtml += '</div></div>';
   }
 
-  // Fetch image from Wikipedia API
-  var wikiSearchTerms = {
-    1:'Masjid al-Haram',2:'Al-Masjid an-Nabawi',3:'Al-Balad Jeddah',
-    4:'Taif Saudi Arabia',5:'AlUla Saudi Arabia',6:'Yanbu Saudi Arabia',
-    7:'Jazan Saudi Arabia',8:'Farasan Islands',9:'Abha Saudi Arabia',
-    10:'Tabuk Castle',11:'Masmak Fortress',12:'Al-Ahsa oasis',
-    13:'Dammam Saudi Arabia',14:'Jubail Industrial City',15:'Kuwait Towers',
-    16:'Bahrain Fort',17:'Museum of Islamic Art Doha',18:'Sheikh Zayed Grand Mosque',
-    19:'Burj Khalifa',20:'Sultan Qaboos Grand Mosque',21:'Umayyad Mosque',
-    22:'Al-Mustansiriya School',23:'Dome of the Rock',24:'Hagia Sophia',
-    25:'Konya Turkey',26:'Mosque-Cathedral of Córdoba',27:'Alhambra',
-    28:'Registan',29:'Kalyan minaret',30:'Cairo Citadel',
-    31:'Zitouna Mosque',32:'University of al-Qarawiyyin',33:'Stone Town Zanzibar',
-    34:'Petronas Towers',35:'Istiqlal Mosque Jakarta',36:'Green Mosque Bursa',
-    37:'World map'
-  };
-
-  var imgContainer = document.createElement('div');
-  imgContainer.style.cssText = 'width:100%;height:180px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:linear-gradient(135deg,#1A2332,#0F1C2E);display:flex;align-items:center;justify-content:center;position:relative';
-  imgContainer.innerHTML = '<div style="font-size:48px">' + s.flag + '</div>';
-
-  var searchTerm = wikiSearchTerms[s.id] || s.nameEn;
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(searchTerm))
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if (data.thumbnail && data.thumbnail.source) {
-        imgContainer.innerHTML =
-          '<img src="' + data.thumbnail.source + '" style="width:100%;height:100%;object-fit:cover;opacity:.85">' +
-          '<div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,#0F1C2E)"></div>';
-      }
-    }).catch(function(){});
-
-  document.getElementById('stationCardContent').innerHTML =
-    '<div class="station-flag">' + s.flag + '</div>' +
-    '<div class="station-title">' + s.name + '</div>' +
-    '<div class="station-subtitle">' + s.nameEn + '</div>' +
-    '<div class="station-info">' + s.info + '</div>' +
-    '<div class="station-info-ar">' + s.infoAr + '</div>' +
-    '<div style="font-size:12px;color:#A78BFA;font-weight:700;margin-bottom:6px">📚 كلمات المحطة:</div>' +
-    '<div class="station-words">' + wordsHtml + '</div>' +
-    '<div style="font-size:12px;color:#64748B;font-weight:700;margin-bottom:6px">🏛️ المعالم:</div>' +
-    '<div class="station-landmarks">' + landmarksHtml + '</div>' +
-    '<div class="station-quote">' + s.quote + '</div>' +
-    reqHtml;
-
-  // Fetch image from Wikipedia API
-  var wikiTerms = {
-    1:'Masjid al-Haram',2:'Al-Masjid an-Nabawi',3:'Al-Balad Jeddah',
-    4:'Taif Saudi Arabia',5:'AlUla',6:'Yanbu Saudi Arabia',
-    7:'Jazan Region',8:'Farasan Islands',9:'Abha Saudi Arabia',
-    10:'Tabuk Castle',11:'Masmak Fortress',12:'Al-Ahsa oasis',
-    13:'Dammam',14:'Jubail Industrial City',15:'Kuwait Towers',
-    16:'Bahrain Fort',17:'Museum of Islamic Art Doha',
-    18:'Sheikh Zayed Grand Mosque',19:'Burj Khalifa',
-    20:'Sultan Qaboos Grand Mosque',21:'Umayyad Mosque',
-    22:'Al-Mustansiriya School',23:'Dome of the Rock',
-    24:'Hagia Sophia',25:'Konya',26:'Mosque-Cathedral of Córdoba',
-    27:'Alhambra',28:'Registan',29:'Kalyan minaret',
-    30:'Cairo Citadel',31:'Zitouna Mosque',32:'University of al-Qarawiyyin',
-    33:'Stone Town Zanzibar',34:'Petronas Towers',
-    35:'Istiqlal Mosque Jakarta',36:'Green Mosque Bursa',37:'Islamic world'
-  };
-  var term = wikiTerms[s.id] || s.nameEn;
-  fetch('https://en.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(term))
-    .then(function(r){return r.json();})
-    .then(function(d){
-      var wrap = document.getElementById('stationImgWrap');
-      if (wrap && d.thumbnail && d.thumbnail.source) {
-        wrap.innerHTML = '<img src="' + d.thumbnail.source + '" style="width:100%;height:100%;object-fit:cover;opacity:.85">' +
-          '<div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,#0F1C2E)"></div>';
-      }
-    }).catch(function(){});
-
-  // Action button
   var actionHtml = '';
   if (status === 'completed') {
-    actionHtml = '<div style="text-align:center;padding:16px;background:rgba(45,212,191,.1);border-radius:16px;color:#2DD4BF;font-weight:700">✅ أكملت هذه المحطة!</div>';
+    actionHtml = '<div style="text-align:center;padding:14px;background:rgba(45,212,191,.1);border-radius:16px;color:#2DD4BF;font-weight:700;font-size:13px">✅ أكملت هذه المحطة!</div>';
   } else if (reqs.allDone) {
-    actionHtml = '<button onclick="startStationQuiz(' + s.id + ')" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:20px;padding:16px;font-size:16px;font-weight:900;font-family:Tajawal,sans-serif;cursor:pointer;width:100%">🎯 ابدأ اختبار المحطة</button>';
+    actionHtml = '<button onclick="startStationQuiz(' + s.id + ')" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF);color:#0C0E18;border:none;border-radius:16px;padding:14px;font-size:15px;font-weight:900;font-family:Tajawal,sans-serif;cursor:pointer;width:100%">🎯 ابدأ اختبار المحطة</button>';
   } else {
-    actionHtml = '<div style="text-align:center;padding:16px;background:rgba(100,116,139,.1);border-radius:16px;color:#64748B;font-size:13px">أكمل المتطلبات أعلاه للوصول للاختبار 💪</div>';
+    actionHtml = '<div style="text-align:center;padding:14px;background:rgba(100,116,139,.1);border-radius:16px;color:#64748B;font-size:12.5px">أكمل المتطلبات أعلاه للوصول للاختبار 💪</div>';
   }
-  document.getElementById('stationActionArea').innerHTML = actionHtml;
+  document.getElementById('stationActionArea').innerHTML = reqHtml + actionHtml;
   document.getElementById('stationCardScreen').style.display = 'flex';
+}
+
+function switchStationTab(paneId, btn) {
+  document.querySelectorAll('.station-tab-pane').forEach(function(p){ p.classList.toggle('active', p.dataset.pane === paneId); });
+  document.querySelectorAll('.station-tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.getElementById('stationCardContent').scrollTop = 0;
 }
 
 function closeStationCard() {
@@ -9267,7 +9832,42 @@ function closeStationCard() {
 // ══ STATION QUIZ ══
 var sqQuestions = [], sqCurrent = 0, sqCorrect = 0, sqStationId = 0;
 
+// ══ STATION QUIZ RESUME ══
+// This quiz is the "arrival gate" to a city — losing it to an interruption
+// would be the most deflating possible moment to lose progress. The full
+// generated question set is saved (not just word ids) so resuming shows
+// the exact same questions and options, not a freshly-shuffled set.
+function saveSQProgress() {
+  try {
+    localStorage.setItem('sqResume', JSON.stringify({
+      date: today, stationId: sqStationId, current: sqCurrent, correct: sqCorrect, questions: sqQuestions
+    }));
+  } catch(e) {}
+}
+function clearSQProgress() { localStorage.removeItem('sqResume'); }
+function getResumableSQ(stationId) {
+  try {
+    const r = JSON.parse(localStorage.getItem('sqResume') || 'null');
+    if (!r || r.date !== today || r.stationId !== stationId) return null;
+    if (r.current >= r.questions.length) return null;
+    return r;
+  } catch(e) { return null; }
+}
+
 function startStationQuiz(stationId) {
+  var resume = getResumableSQ(stationId);
+  if (resume) {
+    sqStationId = stationId; sqCurrent = resume.current; sqCorrect = resume.correct; sqQuestions = resume.questions;
+    var rStation = getStationById(stationId);
+    document.getElementById('sqTitle').textContent = '🎯 اختبار: ' + rStation.name;
+    document.getElementById('stationCardScreen').style.display = 'none';
+    document.getElementById('stationQuizResult').style.display = 'none';
+    document.getElementById('stationQuizScreen').style.display = 'block';
+    renderSQ();
+    showToast('▶️ تابعنا من حيث توقفت');
+    return;
+  }
+
   sqStationId = stationId;
   sqCurrent = 0; sqCorrect = 0;
   var station = getStationById(stationId);
@@ -9302,11 +9902,13 @@ function startStationQuiz(stationId) {
   document.getElementById('stationCardScreen').style.display = 'none';
   document.getElementById('stationQuizResult').style.display = 'none';
   document.getElementById('stationQuizScreen').style.display = 'block';
+  saveSQProgress();
   renderSQ();
 }
 
 function renderSQ() {
   var q = sqQuestions[sqCurrent];
+  devSpeedStart();
   var pct = (sqCurrent / sqQuestions.length) * 100;
   document.getElementById('sqProgressBar').style.width = pct + '%';
   document.getElementById('sqQNum').textContent = 'سؤال ' + (sqCurrent+1) + ' من ' + sqQuestions.length;
@@ -9331,6 +9933,7 @@ function answerSQ(idx, btn) {
   var btns = document.getElementById('sqOptions').querySelectorAll('button');
   btns.forEach(function(b){b.onclick=null;b.style.opacity='.6';});
   var fb = document.getElementById('sqFeedback');
+  devSpeedEnd(idx === q.ans);
   if (idx === q.ans) {
     btn.style.background='rgba(167,139,250,.2)';btn.style.borderColor='#A78BFA';btn.style.opacity='1';
     sqCorrect++;
@@ -9345,12 +9948,14 @@ function answerSQ(idx, btn) {
   }
   setTimeout(function(){
     sqCurrent++;
+    saveSQProgress();
     if (sqCurrent < sqQuestions.length) { renderSQ(); }
     else { showSQResult(); }
   }, 900);
 }
 
 function showSQResult() {
+  clearSQProgress();
   document.getElementById('stationQuizScreen').style.display = 'none';
   var rs = document.getElementById('stationQuizResult');
   rs.style.display = 'flex';
@@ -9426,7 +10031,7 @@ function trackTrainPodcast() {
 // ══ RANKS & STARS SYSTEM ══
 var RANKS = [
   { id:'r0',  icon:'🌱', title:'The Spark Begins', titleAr:'بدأت الشرارة', points:0,   color:'#64748B' },
-  { id:'r1',  icon:'⭐', title:'Starter',     titleAr:'بدأت',           points:5,   color:'#94A3B8' },
+  { id:'r1',  icon:'⭐', title:'Starter',     titleAr:'بدأت',           points:5,   color:'var(--muted)' },
   { id:'r2',  icon:'🌟', title:'Active',      titleAr:'نشيط',           points:15,  color:'#F5C842' },
   { id:'r3',  icon:'💫', title:'Diligent',    titleAr:'مجتهد',          points:30,  color:'#F5C842' },
   { id:'r4',  icon:'🏅', title:'Consistent',  titleAr:'منتظم',          points:50,  color:'#F5C842' },
@@ -10172,29 +10777,50 @@ function openConv(key) {
     </div>`;
   }).join('');
 
-  document.getElementById('convDetailArea').innerHTML = `
+  document.getElementById('convHeroArea').innerHTML = `
     <div class="conv-hero" style="background:linear-gradient(135deg,${c.bg},var(--panel))">
       <div class="conv-hero-icon">${c.nameAr.split(' ')[0]}</div>
       <div class="conv-hero-title" style="color:${c.color}">${c.nameAr.split(' ').slice(1).join(' ')}</div>
       <div class="conv-hero-sub">${c.nameEn}</div>
+    </div>`;
+
+  const convTabs = [
+    { id:'dialogue', icon:'💬', label:'محادثة', color:c.color || '#A78BFA' },
+    { id:'phrases',  icon:'📌', label:'عبارات',  color:'#2DD4BF' },
+    { id:'practice', icon:'🧩', label:'تمرين',   color:'#F5C842' }
+  ];
+  document.getElementById('convTabbar').innerHTML = convTabs.map((t,i) =>
+    `<button class="station-tab-btn${i===0?' active':''}" style="--tab-color:${t.color}" onclick="switchConvTab('${t.id}',this)">
+      <span class="tico">${t.icon}</span><span class="ttxt">${t.label}</span></button>`
+  ).join('');
+
+  document.getElementById('convDetailArea').innerHTML = `
+    <div class="station-tab-pane active" data-cpane="dialogue">
+      <div class="conv-section-label">💬 محادثة نموذجية</div>
+      <div class="dialogue-wrap">${dialogueHtml}</div>
     </div>
-
-    <div class="conv-section-label">💬 محادثة نموذجية</div>
-    <div class="dialogue-wrap">${dialogueHtml}</div>
-
-    <div class="conv-section-label">📌 عبارات مفيدة إضافية</div>
-    ${phrasesHtml}
-
-    <div class="conv-quiz-card">
-      <div class="conv-quiz-title">🧩 رتّب المحادثة بالترتيب الصحيح</div>
-      <div class="order-slots" id="orderSlots"></div>
-      <div class="order-pool" id="orderPool"></div>
-      <button class="conv-complete-btn" onclick="markConvMastered('${key}')">🏆 أتقنت هذه المحادثة</button>
-      ${mastered ? '<div class="conv-mastered-badge">🏆 لقد أتقنت هذه المحادثة بالفعل!</div>' : ''}
+    <div class="station-tab-pane" data-cpane="phrases">
+      <div class="conv-section-label">📌 عبارات مفيدة إضافية</div>
+      ${phrasesHtml}
+    </div>
+    <div class="station-tab-pane" data-cpane="practice">
+      <div class="conv-quiz-card">
+        <div class="conv-quiz-title">🧩 رتّب المحادثة بالترتيب الصحيح</div>
+        <div class="order-slots" id="orderSlots"></div>
+        <div class="order-pool" id="orderPool"></div>
+        <button class="conv-complete-btn" onclick="markConvMastered('${key}')">🏆 أتقنت هذه المحادثة</button>
+        ${mastered ? '<div class="conv-mastered-badge">🏆 لقد أتقنت هذه المحادثة بالفعل!</div>' : ''}
+      </div>
     </div>
   `;
 
   initConvOrderQuiz(key);
+}
+
+function switchConvTab(paneId, btn) {
+  document.querySelectorAll('#convDetailArea .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.cpane === paneId));
+  document.querySelectorAll('#convTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 function backToConvMenu() {
@@ -10211,7 +10837,13 @@ function addPhraseAsWord(convKey, idx) {
   words.unshift({ en: p.en, ar: p.ar, ex: p.en, exar: p.ar, level: 'medium', date: today, id: Date.now() });
   save(); updateCounters(); renderWords(); renderFlashcards();
   localStorage.setItem(wordKey, '1');
+  const activePane = document.querySelector('#convDetailArea .station-tab-pane.active');
+  const activeId = activePane ? activePane.dataset.cpane : 'dialogue';
   openConv(convKey); // re-render to show checkmark
+  if (activeId !== 'dialogue') {
+    const targetBtn = [...document.querySelectorAll('#convTabbar .station-tab-btn')].find((b,i) => ['dialogue','phrases','practice'][i] === activeId);
+    if (targetBtn) switchConvTab(activeId, targetBtn);
+  }
   showToast('✨ تمت إضافة العبارة لكلماتك!');
 }
 
@@ -12031,12 +12663,15 @@ function rlListenPassage() {
 function rlSelectOpt(el, chosen, correct) {
   const group = el.parentElement.querySelectorAll('.rl-quiz-opt');
   group.forEach(o => o.style.pointerEvents = 'none');
-  if (chosen === correct) {
+  const isCorrect = chosen === correct;
+  if (isCorrect) {
     el.classList.add('rl-correct');
   } else {
     el.classList.add('rl-wrong');
     group.forEach(o => { if (o.textContent.trim() === correct) o.classList.add('rl-correct'); });
   }
+  logDevSignal('reading', isCorrect ? 100 : 0, { passageId: rlCurrentPassage ? rlCurrentPassage.id : null });
+  logDevSignal('comprehension', isCorrect ? 100 : 0, { source: 'reading' });
   if (rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
 }
 
@@ -12221,6 +12856,7 @@ function rlShowReadAloudResult(spokenText) {
   document.getElementById('rlRaCompare').innerHTML = compareHtml;
   document.getElementById('rlRaResult').style.display = '';
   logImprovement('reading', score);
+  logDevSignal('pronunciation', score, { passageId: rlCurrentPassage ? rlCurrentPassage.id : null });
 
   if (score >= 50 && rlCurrentPassage) rlMarkCompleted(rlCurrentPassage.id);
 }
@@ -12563,13 +13199,16 @@ function podRenderQuiz() {
 function podCheckAnswer(qIdx, chosen, correct, btnEl) {
   const opts = document.getElementById('podQOpts' + qIdx).querySelectorAll('.pod-quiz-opt');
   opts.forEach(b => b.disabled = true);
-  if (chosen === correct) {
+  const isCorrect = chosen === correct;
+  if (isCorrect) {
     btnEl.classList.add('correct-ans');
     showToast('✅ إجابة صحيحة!');
   } else {
     btnEl.classList.add('wrong-ans');
     opts.forEach(b => { if (b.textContent.trim() === correct) b.classList.add('correct-ans'); });
   }
+  logDevSignal('listening', isCorrect ? 100 : 0, { episodeKey: currentPodKey || null });
+  logDevSignal('comprehension', isCorrect ? 100 : 0, { source: 'podcast' });
 }
 
 function podMarkDone() {
@@ -12769,7 +13408,7 @@ function devSkipName() {
       <button onclick="devAutoLogin()" style="background:linear-gradient(135deg,#F5C842,#FF9500);color:#0C0E18;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">⚡ دخول تلقائي كمطور</button>
       <button onclick="devUnlockAll()" style="background:linear-gradient(135deg,#A78BFA,#7C3AED);color:#fff;border:none;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🔓 فتح أول 6 محطات</button>
       <button onclick="devResetProgress()" style="background:rgba(239,68,68,.15);color:#EF4444;border:1px solid #EF444444;border-radius:12px;padding:12px;font-family:Tajawal,sans-serif;font-size:14px;font-weight:900;cursor:pointer">🗑️ إعادة ضبط التقدم</button>
-      <button onclick="closeDevPanel()" style="background:rgba(255,255,255,.05);color:#94A3B8;border:1px solid #1E2D45;border-radius:12px;padding:10px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer">✕ إغلاق</button>
+      <button onclick="closeDevPanel()" style="background:rgba(255,255,255,.05);color:var(--muted);border:1px solid #1E2D45;border-radius:12px;padding:10px;font-family:Tajawal,sans-serif;font-size:13px;cursor:pointer">✕ إغلاق</button>
     </div>
   </div>
 </div>
