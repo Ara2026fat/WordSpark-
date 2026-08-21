@@ -127,7 +127,7 @@
     padding-top: calc(12px + var(--safe-top));
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 12px;
     position: sticky;
     top: 0;
@@ -152,6 +152,51 @@
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0,0,0,.2);
   }
+
+  /* ══ CREATIVE CENTERED BRAND MARK ══ */
+  .logo-centered { position: relative; display: flex; align-items: center; gap: 10px; }
+
+  .logo-spark-ring {
+    position: absolute; left: 50%; top: 18px; transform: translate(-50%,-50%);
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,.5);
+    opacity: 0; pointer-events: none;
+    animation: logoRingPulse 3.2s ease-out infinite;
+  }
+  @keyframes logoRingPulse {
+    0%   { transform: translate(-50%,-50%) scale(.72); opacity: .55; }
+    70%  { transform: translate(-50%,-50%) scale(1.28); opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  .logo-text-shine {
+    font-size: 16px; font-weight: 800;
+    background: linear-gradient(100deg, #1A1200 40%, #FFFDF5 50%, #1A1200 60%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: logoShine 3.8s ease-in-out infinite;
+  }
+  @keyframes logoShine {
+    0%   { background-position: 130% 0; }
+    45%  { background-position: -30% 0; }
+    100% { background-position: -30% 0; }
+  }
+  .logo-sub-ar { font-size: 9.5px; color: rgba(26,18,0,.7); font-weight: 700; margin-top: 1px; }
+
+  .logo-mote {
+    position: absolute; width: 3px; height: 3px; border-radius: 50%;
+    background: #FFFDE7; box-shadow: 0 0 4px 1px rgba(255,253,231,.8);
+    opacity: 0; pointer-events: none;
+  }
+  .logo-mote.m1 { right: -2px; top: 8px;  animation: moteFloat 2.6s ease-in .1s infinite; }
+  .logo-mote.m2 { right: 6px;  top: 4px;  animation: moteFloat 2.6s ease-in .9s infinite; }
+  .logo-mote.m3 { right: -6px; top: 20px; animation: moteFloat 2.6s ease-in 1.7s infinite; }
+  @keyframes moteFloat {
+    0%   { opacity: 0; transform: translate(0,0) scale(.6); }
+    15%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(6px,-16px) scale(1.1); }
+  }
+
   .logo-text { font-size: 16px; font-weight: 800; color: #1A1200; text-shadow: 0 1px 1px rgba(255,255,255,.3); }
   .logo-sub  { font-size: 10px; color: rgba(26,18,0,.65); font-family: 'Space Grotesk', sans-serif; }
 
@@ -2276,16 +2321,16 @@
 }
 
 .city-grid {
-  display:grid; grid-template-columns:repeat(3, 1fr); gap:20px 8px;
-  max-width:520px; width:100%; margin:14px auto 0;
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 4px;
+  max-width:420px; width:100%; margin:10px auto 0;
 }
 .city-grid:has(.single-city) {
   display:flex; justify-content:center; align-items:center;
-  min-height:300px;
+  min-height:220px;
 }
 .city-grid-node {
   position:relative;
-  display:flex; flex-direction:column; align-items:center; gap:8px;
+  display:flex; flex-direction:column; align-items:center; gap:5px;
   cursor:pointer;
   animation: cityGridPop .4s ease backwards;
 }
@@ -2294,41 +2339,41 @@
   to   { opacity:1; transform:scale(1); }
 }
 .city-grid-num {
-  position:absolute; top:-8px; right:14%;
-  width:22px; height:22px; border-radius:50%;
+  position:absolute; top:-4px; right:8%;
+  width:17px; height:17px; border-radius:50%;
   background:rgba(0,0,0,.5);
   display:flex; align-items:center; justify-content:center;
-  font-size:11px; font-weight:900; z-index:3;
+  font-size:9px; font-weight:900; z-index:3;
 }
 .city-dot {
-  width:100px; height:100px; border-radius:50%;
+  width:64px; height:64px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  font-size:44px;
-  border:3px solid;
+  font-size:27px;
+  border:2.5px solid;
   position:relative;
   transition:transform .2s;
 }
 .city-grid-node:active .city-dot { transform:scale(.92); }
 .city-dot.big {
-  width:140px; height:140px; font-size:60px;
+  width:120px; height:120px; font-size:52px;
   box-shadow:0 0 60px rgba(245,200,66,.6), inset 0 0 28px rgba(245,200,66,.3) !important;
 }
-.city-label.big { font-size:20px; margin-top:6px; }
+.city-label.big { font-size:18px; margin-top:6px; }
 
 .city-dot.available {
   background:radial-gradient(circle at 35% 30%, rgba(45,212,191,.35), rgba(45,212,191,.08));
   border-color:#2DD4BF;
-  box-shadow:0 0 28px rgba(45,212,191,.5), inset 0 0 14px rgba(45,212,191,.2);
+  box-shadow:0 0 16px rgba(45,212,191,.5), inset 0 0 8px rgba(45,212,191,.2);
   animation: cityPulseAvail 2.2s ease-in-out infinite;
 }
 @keyframes cityPulseAvail {
-  0%,100% { box-shadow:0 0 28px rgba(45,212,191,.5), inset 0 0 14px rgba(45,212,191,.2); }
-  50%     { box-shadow:0 0 40px rgba(45,212,191,.75), inset 0 0 18px rgba(45,212,191,.3); }
+  0%,100% { box-shadow:0 0 16px rgba(45,212,191,.5), inset 0 0 8px rgba(45,212,191,.2); }
+  50%     { box-shadow:0 0 24px rgba(45,212,191,.75), inset 0 0 10px rgba(45,212,191,.3); }
 }
 .city-dot.completed {
   background:radial-gradient(circle at 35% 30%, rgba(245,200,66,.3), rgba(245,200,66,.06));
   border-color:#F5C842;
-  box-shadow:0 0 16px rgba(245,200,66,.35);
+  box-shadow:0 0 10px rgba(245,200,66,.35);
 }
 .city-dot.locked {
   background:rgba(255,255,255,.03);
@@ -2337,14 +2382,14 @@
   opacity:.55;
 }
 .city-label {
-  font-size:14px; font-weight:900; color:#F1F5F9; text-align:center; line-height:1.3;
+  font-size:10.5px; font-weight:900; color:#F1F5F9; text-align:center; line-height:1.25;
   text-shadow:0 1px 3px rgba(0,0,0,.5);
-  max-width:100px; min-height:36px;
+  max-width:70px; min-height:26px;
   display:flex; align-items:center; justify-content:center;
 }
 .city-label.locked-label { color:#64748B; }
 .city-status-chip {
-  font-size:10px; padding:2px 10px; border-radius:9px; font-weight:700;
+  font-size:8px; padding:1px 6px; border-radius:8px; font-weight:700;
 }
 .city-status-chip.available { background:rgba(45,212,191,.18); color:#2DD4BF; }
 .city-status-chip.completed { background:rgba(245,200,66,.18); color:#F5C842; }
@@ -3550,15 +3595,25 @@
 </div>
 
 <header>
-  <div class="logo">
+  <button class="theme-toggle" onclick="openSettingsPanel()" title="Settings" style="padding:0;position:absolute;left:16px;top:50%;transform:translateY(-50%);z-index:5">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="15" cy="7" r="2.5" fill="currentColor"/>
+      <line x1="4" y1="17" x2="20" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="9" cy="17" r="2.5" fill="currentColor"/>
+    </svg>
+  </button>
+
+  <div class="logo logo-centered">
+    <div class="logo-spark-ring"></div>
     <div class="logo-icon" onclick="devModeClick()" style="cursor:pointer"><svg width="36" height="36" viewBox="0 0 140 140"><defs><linearGradient id="hdrBg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2A1B5E"/><stop offset="35%" stop-color="#142845"/><stop offset="70%" stop-color="#0C3A35"/><stop offset="100%" stop-color="#070B12"/></linearGradient><radialGradient id="hdrGlowA" cx="22%" cy="18%" r="55%"><stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/><stop offset="100%" stop-color="#B794FF" stop-opacity="0"/></radialGradient><radialGradient id="hdrGlowB" cx="88%" cy="85%" r="60%"><stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/><stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/></radialGradient><linearGradient id="hdrWS" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#5EEAD4"/></linearGradient><linearGradient id="hdrSpark" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FFE066"/><stop offset="100%" stop-color="#FFD700"/></linearGradient></defs><rect x="0" y="0" width="140" height="140" fill="url(#hdrBg)"/><rect x="0" y="0" width="140" height="140" fill="url(#hdrGlowA)"/><rect x="0" y="0" width="140" height="140" fill="url(#hdrGlowB)"/><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text><text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#hdrWS)" text-anchor="middle" letter-spacing="-3">WS</text><path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#hdrSpark)"/></svg></div>
     <div>
-      <div class="logo-text">WordSpark</div>
-      <div class="logo-sub"></div>
+      <div class="logo-text logo-text-shine">WordSpark</div>
+      <div class="logo-sub-ar">شرارة الكلمة</div>
     </div>
-  </div>
-  <div class="stats-bar">
-    <button class="theme-toggle" onclick="openSettingsPanel()" title="Settings" style="font-size:18px">⚙️</button>
+    <span class="logo-mote m1"></span>
+    <span class="logo-mote m2"></span>
+    <span class="logo-mote m3"></span>
   </div>
 </header>
 
@@ -4787,6 +4842,14 @@
     <div class="results-header-title">📊 My Results <span style="font-size:11px;opacity:.6;font-weight:400">نتائجي</span></div>
   </div>
 
+  <div class="station-tabbar" id="acctTabbar" style="border-radius:14px;margin:10px 16px 14px">
+    <button class="station-tab-btn active" style="--tab-color:#2DD4BF" onclick="switchAcctTab('overview',this)">
+      <span class="tico">🌱</span><span class="ttxt">نظرة عامة</span></button>
+    <button class="station-tab-btn" style="--tab-color:#A78BFA" onclick="switchAcctTab('progress',this)">
+      <span class="tico">📈</span><span class="ttxt">تقدّمي</span></button>
+  </div>
+
+  <div class="station-tab-pane active" data-apane="overview">
   <!-- Student Card -->
   <div class="results-student-card">
     <div class="results-avatar" id="resAvatar">🌱</div>
@@ -4836,6 +4899,20 @@
     </div>
   </div>
 
+  <!-- All sending (Telegram/WhatsApp/QR) now lives in one place: Settings -->
+  <button onclick="openSettingsPanel()" style="width:100%;margin-top:14px;padding:13px;border-radius:14px;border:1px solid rgba(245,200,66,.25);background:rgba(245,200,66,.06);color:#F5C842;font-family:'Tajawal',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+    <span>📤 إرسال نتائجي (تيليجرام / واتساب / QR)</span><span style="opacity:.6">← الإعدادات</span>
+  </button>
+
+  <!-- QR Section (hidden by default; shown when triggered from Settings) -->
+  <div id="resultsQRSection" style="display:none;text-align:center;margin-top:16px">
+    <div style="font-size:12px;color:#64748B;margin-bottom:8px">📲 Show this to your teacher!</div>
+    <div id="resultsQRCanvas" style="display:inline-block"></div>
+    <div style="font-size:10px;color:#3D4F6B;margin-top:6px" id="resultsQRDate">—</div>
+  </div>
+  </div><!-- end overview pane -->
+
+  <div class="station-tab-pane" data-apane="progress">
   <!-- Progress by Section -->
   <div class="results-section-title">Progress by Section <span>التقدّم في كل قسم</span></div>
   <div id="sectionProgressGrid" class="section-progress-grid"></div>
@@ -4847,74 +4924,7 @@
   <!-- My Improvement — quality over time, not just quantity -->
   <div class="results-section-title">My Improvement <span>تحسّني الحقيقي</span></div>
   <div id="improvementGrid" class="improvement-grid"></div>
-
-  <!-- Send Options -->
-  <div class="results-section-title">Send to Teacher <span>أرسل لمعلمك</span></div>
-  <div class="results-options">
-
-    <!-- Telegram -->
-    <button class="results-opt-btn results-opt-tg" onclick="sendByTelegram()">
-      <span class="results-opt-icon">
-        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="24" fill="#26AAF0"/>
-          <path d="M10.5 23.5l6.5 2.5 2.5 8 3.5-4 7 5 6-17-25.5 5.5z" fill="white"/>
-          <path d="M17 26l1 7 3-4" fill="#B0D9F5"/>
-        </svg>
-      </span>
-      <div class="results-opt-text">
-        <div class="results-opt-title">Send Now via Telegram</div>
-        <div class="results-opt-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
-      </div>
-      <span class="results-opt-arrow">←</span>
-    </button>
-
-    <!-- WhatsApp -->
-    <button class="results-opt-btn results-opt-wa" onclick="sendByWhatsApp()">
-      <span class="results-opt-icon">
-        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="24" fill="#25D366"/>
-          <path d="M33 15a13 13 0 00-21.9 14.1L9 39l10.1-2.6A13 13 0 0033 15z" fill="white"/>
-          <path d="M19.5 22c.3.6 1.5 2.5 3 3.5s2.8.8 3.2.5l1-.8c.3-.3.8-.4 1.2-.1l2.5 1.5c.4.2.5.7.2 1-.5.7-1.5 1.7-2.8 1.7-2 0-4.5-1-7-4.5-1.5-2-1.8-3.8-1.5-4.8.2-.8 1-.5 1 0z" fill="#25D366"/>
-        </svg>
-      </span>
-      <div class="results-opt-text">
-        <div class="results-opt-title">Send via WhatsApp</div>
-        <div class="results-opt-sub">أرسل عبر واتساب 📱</div>
-      </div>
-      <span class="results-opt-arrow">←</span>
-    </button>
-
-    <!-- QR Code -->
-    <button class="results-opt-btn results-opt-qr" onclick="showResultsQR()">
-      <span class="results-opt-icon" style="font-size:32px">📲</span>
-      <div class="results-opt-text">
-        <div class="results-opt-title">Show QR Code</div>
-        <div class="results-opt-sub">اعرض الرمز لمعلمك وجهاً لوجه</div>
-      </div>
-      <span class="results-opt-arrow">←</span>
-    </button>
-
-  </div>
-
-  <!-- Send to Parent -->
-  <div class="results-section-title">Send to Parent <span>أرسل لوالدك</span></div>
-  <div class="results-options">
-    <button class="results-opt-btn results-opt-parent" onclick="exportToParent()">
-      <span class="results-opt-icon" style="background:linear-gradient(135deg,#F5C842,#2DD4BF);width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px">👨‍👩‍👦</span>
-      <div class="results-opt-text">
-        <div class="results-opt-title">Send via WhatsApp</div>
-        <div class="results-opt-sub">أرسل تقريرك لوالدك عبر واتساب 📱</div>
-      </div>
-      <span class="results-opt-arrow">←</span>
-    </button>
-  </div>
-
-  <!-- QR Section (hidden by default) -->
-  <div id="resultsQRSection" style="display:none;text-align:center;margin-top:16px">
-    <div style="font-size:12px;color:#64748B;margin-bottom:8px">📲 Show this to your teacher!</div>
-    <div id="resultsQRCanvas" style="display:inline-block"></div>
-    <div style="font-size:10px;color:#3D4F6B;margin-top:6px" id="resultsQRDate">—</div>
-  </div>
+  </div><!-- end progress pane -->
 
 </div>
 
@@ -5084,9 +5094,19 @@
         </div>
       </div>
     </div>
+    <!-- ══ TABBAR ══ -->
+    <div class="station-tabbar" id="spTabbar" style="border-radius:14px;margin:10px 18px 0">
+      <button class="station-tab-btn active" style="--tab-color:#2DD4BF" onclick="switchSpTab('general',this)">
+        <span class="tico">🎛️</span><span class="ttxt">عام</span></button>
+      <button class="station-tab-btn" style="--tab-color:#26AAF0" onclick="switchSpTab('send',this)">
+        <span class="tico">📤</span><span class="ttxt">إرسال</span></button>
+      <button class="station-tab-btn" style="--tab-color:#FB7185" onclick="switchSpTab('advanced',this)">
+        <span class="tico">🛡️</span><span class="ttxt">متقدّم</span></button>
+    </div>
     <!-- ══ SCROLLABLE CONTENT ══ -->
     <div class="sp-scroll">
 
+    <div class="station-tab-pane active" data-spane="general">
     <!-- 0. Preferences (moved from header for a cleaner top bar) -->
     <div class="sp-section-label">🎛️ Preferences · التفضيلات</div>
 
@@ -5117,6 +5137,24 @@
       <div class="sp-row-arrow">→</div>
     </button>
 
+    <!-- 3. Learning -->
+    <div class="sp-section-label">📚 Learning · التعلّم</div>
+
+    <button class="sp-row" onclick="closeSettingsPanel();retakeLevelTest()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#FB923C)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none" opacity=".4"/><path d="M24 14v10l7 4" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M10 10l4 5-5 3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Retake Level Test</div>
+        <div class="sp-row-sub">إعادة اختبار تحديد المستوى</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+
+    </div><!-- end general pane -->
+
+    <div class="station-tab-pane" data-spane="send">
     <!-- 1. Send Results -->
     <div class="sp-section-label">📤 Send Results · إرسال النتائج</div>
 
@@ -5153,7 +5191,7 @@
       <div class="sp-row-arrow">→</div>
     </button>
 
-    <button class="sp-row" onclick="closeSettingsPanel();showResultsQR()">
+    <button class="sp-row" onclick="closeSettingsPanel();showResultsTab(null);showResultsQR()">
       <div class="sp-row-icon" style="background:linear-gradient(135deg,#A78BFA,#7C3AED)">
         <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><rect x="8" y="8" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="26" y="8" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="8" y="26" width="14" height="14" rx="2" stroke="white" stroke-width="2.5" fill="none"/><rect x="12" y="12" width="6" height="6" rx="1" fill="white"/><rect x="30" y="12" width="6" height="6" rx="1" fill="white"/><rect x="12" y="30" width="6" height="6" rx="1" fill="white"/></svg>
       </div>
@@ -5189,20 +5227,9 @@
       <div class="sp-row-arrow">→</div>
     </button>
 
-    <!-- 3. Learning -->
-    <div class="sp-section-label">📚 Learning · التعلّم</div>
+    </div><!-- end send pane -->
 
-    <button class="sp-row" onclick="closeSettingsPanel();retakeLevelTest()">
-      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#FB923C)">
-        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none" opacity=".4"/><path d="M24 14v10l7 4" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M10 10l4 5-5 3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-      </div>
-      <div class="sp-row-body">
-        <div class="sp-row-title">Retake Level Test</div>
-        <div class="sp-row-sub">إعادة اختبار تحديد المستوى</div>
-      </div>
-      <div class="sp-row-arrow">→</div>
-    </button>
-
+    <div class="station-tab-pane" data-spane="advanced">
     <!-- 4. Backup -->
     <div class="sp-section-label">🛡️ Backup · النسخ الاحتياطي</div>
 
@@ -5252,6 +5279,7 @@
       </div>
       <div class="sp-row-arrow" style="color:#FB718555">→</div>
     </button>
+    </div><!-- end advanced pane -->
 
     <div class="sig-footer" style="margin-top:16px;border-top:1px solid var(--rim);padding-top:14px">
       <div class="sig-label">💡 Developed by</div>
@@ -10895,6 +10923,20 @@ function switchConvTab(paneId, btn) {
   document.querySelectorAll('#convDetailArea .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.cpane === paneId));
   document.querySelectorAll('#convTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+}
+
+function switchAcctTab(paneId, btn) {
+  document.querySelectorAll('#resultsScreen .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.apane === paneId));
+  document.querySelectorAll('#acctTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('resultsScreen').scrollTop = 0;
+}
+
+function switchSpTab(paneId, btn) {
+  document.querySelectorAll('.sp-scroll .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.spane === paneId));
+  document.querySelectorAll('#spTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelector('.sp-scroll').scrollTop = 0;
 }
 
 function backToConvMenu() {
