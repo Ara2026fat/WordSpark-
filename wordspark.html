@@ -669,6 +669,56 @@
   }
 
   /* ── ADD FORM ── */
+  /* ── WORD HINT ────────────────────────────────────────
+     A quiet offer, not an interruption. The gradient rim and
+     slow sweep mark it as something the app is giving you,
+     while the two plain buttons keep the choice yours. */
+  .word-hint {
+    margin-top: 10px; border-radius: 14px; position: relative; overflow: hidden;
+    /* Gradient border via a padded background layer — cheaper and
+       smoother on mobile than an animated box-shadow. */
+    background:
+      linear-gradient(var(--panel), var(--panel)) padding-box,
+      linear-gradient(120deg, rgba(245,200,66,.55), rgba(45,212,191,.45)) border-box;
+    border: 1px solid transparent;
+    animation: whRise .42s cubic-bezier(.2,.8,.3,1.1);
+  }
+  .word-hint::after {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.07), transparent);
+    inset-inline-start: -45%; animation: whSweep 5.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes whRise { from { opacity: 0; transform: translateY(-6px); } }
+  @keyframes whSweep { 0%, 68% { inset-inline-start: -45%; } 100% { inset-inline-start: 115%; } }
+
+  .wh-head {
+    display: flex; align-items: center; gap: 7px;
+    padding: 9px 12px 0; font-size: 11.5px; font-weight: 700; color: var(--gold);
+  }
+  .wh-spark { filter: drop-shadow(0 0 6px rgba(245,200,66,.8)); }
+  .wh-body { padding: 7px 12px 9px; }
+  .wh-line { display: flex; gap: 8px; align-items: baseline; margin-bottom: 3px; }
+  .wh-k {
+    font-size: 9.5px; color: var(--muted); min-width: 38px; flex: 0 0 38px;
+    letter-spacing: .3px;
+  }
+  .wh-v { font-size: 12.5px; color: var(--white); line-height: 1.55; }
+  .wh-v.en { font-family: 'Space Grotesk', sans-serif; direction: ltr; text-align: start; }
+  .wh-actions { display: flex; gap: 7px; padding: 0 12px 11px; }
+  .wh-btn {
+    flex: 1; border-radius: 9px; padding: 7px 8px; cursor: pointer;
+    font-family: 'Tajawal', sans-serif; font-size: 11.5px; font-weight: 700;
+    border: 1px solid var(--rim); transition: transform .16s, border-color .2s;
+  }
+  .wh-btn:active { transform: scale(.95); }
+  .wh-btn.use { background: linear-gradient(100deg, var(--gold), #FB923C); border-color: transparent; color: #0D1117; }
+  .wh-btn.skip { background: transparent; color: var(--muted); }
+  .wh-btn.skip:active { border-color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) {
+    .word-hint, .word-hint::after { animation: none; }
+  }
+
   .add-form {
     background: var(--panel);
     border: 1px solid var(--rim);
@@ -889,13 +939,23 @@
     70%{left:calc(50% - 40px);opacity:1;}
     100%{left:calc(50% - 40px);opacity:1;}
   }
+  /* "Now arriving at" — set like a platform announcement board:
+     spaced, small, unemphatic, so the city name still lands as the
+     headline while the English phrase is absorbed almost passively. */
+  .train-arrival-line {
+    font-family:'Space Grotesk',sans-serif;
+    font-size:11px;font-weight:600;letter-spacing:3.5px;text-transform:uppercase;
+    color:#2DD4BF;text-align:center;margin-bottom:8px;
+    opacity:0;animation:fadeUp .6s ease forwards;animation-delay:2.1s;
+  }
   .train-city-name {
+    font-family:'Space Grotesk',sans-serif;
     font-size:28px;font-weight:900;color:#F5C842;
-    text-align:center;margin-bottom:6px;
+    text-align:center;margin-bottom:6px;letter-spacing:-.5px;
     opacity:0;animation:fadeUp .6s ease forwards;animation-delay:2.3s;
   }
   .train-city-sub {
-    font-size:14px;color:#A78BFA;margin-bottom:24px;
+    font-size:14px;color:#A78BFA;margin-bottom:24px;text-align:center;
     opacity:0;animation:fadeUp .6s ease forwards;animation-delay:2.6s;
   }
   .train-enter-btn {
@@ -955,6 +1015,34 @@
     background:rgba(45,212,191,.08); border:1px solid rgba(45,212,191,.3); border-radius:14px;
     padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.85; direction:ltr; text-align:left;
   }
+  /* ── TRANSLATION VEIL ─────────────────────────────────
+     Not a lock — the translation is right there and opens on a
+     single tap. The blur only makes taking it a decision rather
+     than a reflex, so the learner reads the English first. */
+  .ar-veil { position: relative; border-radius: 12px; overflow: hidden; }
+  .ar-veil > .station-para-ar {
+    filter: blur(7px); opacity: .32; user-select: none;
+    transition: filter .45s ease, opacity .45s ease;
+  }
+  .ar-veil-cover {
+    position: absolute; inset: 0; z-index: 2; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; text-align: center; padding: 8px;
+    background: linear-gradient(160deg, rgba(30,45,66,.55), rgba(13,17,23,.65));
+    transition: opacity .35s ease;
+  }
+  .ar-veil-icon { font-size: 19px; opacity: .85; }
+  .ar-veil-en {
+    font-family: 'Space Grotesk', sans-serif; font-size: 12.5px; font-weight: 700;
+    color: var(--teal); letter-spacing: .3px;
+  }
+  .ar-veil-hint { font-size: 10px; color: var(--muted); }
+  .ar-veil.open > .station-para-ar { filter: none; opacity: 1; user-select: auto; }
+  .ar-veil.open .ar-veil-cover { opacity: 0; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .ar-veil > .station-para-ar, .ar-veil-cover { transition: none; }
+  }
+
   .station-para-ar {
     background:rgba(245,200,66,.08); border:1px solid rgba(245,200,66,.3); border-radius:14px;
     padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.9; text-align:right;
@@ -1198,15 +1286,48 @@
   .home-hero-name { font-size: 19px; font-weight: 900; color: var(--gold); }
 
   /* ══ TODAY'S MISSION ══ */
+  /* ── TODAY'S LESSON ───────────────────────────────────
+     This card answers "what do I do now?", so it should read
+     as the brightest object on the screen. The dawn glow at
+     its base and the rail beneath the station row give it the
+     feeling of a train window at first light — the same world
+     the journey lives in, rather than a generic panel. */
   .mission-card {
     margin: 0 16px 18px; padding: 20px;
-    background: linear-gradient(150deg, var(--panel), var(--ink));
+    background:
+      radial-gradient(120% 70% at 50% 118%, rgba(251,146,60,.14), transparent 60%),
+      linear-gradient(150deg, var(--panel), var(--ink));
     border: 1px solid var(--rim); border-radius: 22px;
+    position: relative; overflow: hidden;
+    box-shadow: 0 14px 34px rgba(0,0,0,.28);
+  }
+  /* Hairline of light along the top edge — reads as depth without
+     adding a second border colour. */
+  .mission-card::before {
+    content: ''; position: absolute; top: 0; inset-inline: 14%; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(245,200,66,.5), transparent);
   }
   .mission-station-row {
     display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
     padding: 8px 12px; background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.2);
     border-radius: 12px; font-size: 11.5px; color: var(--soft);
+    position: relative; overflow: hidden;
+  }
+  /* The rail: a track under the destination, with a signal light
+     travelling it. Slow on purpose — it should be noticed once, then
+     forgotten, never competing with the steps below. */
+  .mission-station-row::after {
+    content: ''; position: absolute; bottom: 0; inset-inline-start: 0;
+    width: 34%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--teal), transparent);
+    animation: railRun 4.8s linear infinite; opacity: .65;
+  }
+  @keyframes railRun {
+    0%   { inset-inline-start: -34%; }
+    100% { inset-inline-start: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mission-station-row::after { animation: none; opacity: .3; }
   }
   .mission-station-flag { font-size: 16px; }
   .mission-station-text b { color: var(--teal); font-weight: 800; }
@@ -1223,8 +1344,13 @@
     border-bottom: 1px solid rgba(255,255,255,.06);
   }
   .journey-stat { flex: 1; text-align: center; }
-  .journey-stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800; }
-  .journey-stat-value.time { color: var(--lavender); }
+  .journey-stat-value {
+    font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Steps remaining reads as the teal signal — the same colour as the
+     destination row above it, since both answer "how far to go". */
+  .journey-stat-value.time { color: var(--teal); }
   .journey-stat-value.reward { color: var(--gold); }
   .journey-stat-label { font-size: 10px; color: var(--soft); margin-top: 2px; }
   #missionList { position: relative; }
@@ -2132,23 +2258,34 @@
 .help-tip-body { font-size: 13px; color: var(--soft); line-height: 1.7; }
 
 /* ── GUIDE TABS ── */
+/* Five pages sit in one row: a 3-column grid would leave a ragged
+   second row of two, and the row also mirrors the app's own 5-item
+   bottom nav, so the guide feels like part of the same object. */
 .guide-tabs {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 8px; margin-bottom: 16px;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 6px; margin-bottom: 16px;
 }
 .guide-tab-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 4px; aspect-ratio: 1 / 0.82; border-radius: 16px;
+  gap: 4px; aspect-ratio: 1 / 1.02; border-radius: 14px;
   border: 1px solid rgba(255,255,255,.08);
   cursor: pointer; transition: transform .15s ease;
   -webkit-user-select: none; user-select: none;
   background: rgba(255,255,255,.04);
 }
 .guide-tab-btn:active { transform: scale(.93); }
-.guide-tab-icon { font-size: 24px; filter: drop-shadow(0 2px 5px rgba(0,0,0,.2)); }
+.guide-tab-icon { font-size: 21px; filter: drop-shadow(0 2px 5px rgba(0,0,0,.2)); }
 .guide-tab-label {
-  font-family: 'Tajawal', sans-serif; font-size: 10.5px; font-weight: 800;
-  color: var(--soft);
+  font-family: 'Tajawal', sans-serif; font-size: 9px; font-weight: 800;
+  color: var(--soft); line-height: 1.25; text-align: center;
+  /* Labels must not wrap into two lines at a fifth of the width,
+     which would push the icons out of alignment across the row. */
+  white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+  padding: 0 2px;
+}
+@media (max-width: 340px) {
+  .guide-tab-label { font-size: 8px; }
+  .guide-tab-icon  { font-size: 19px; }
 }
 .guide-tab-btn.gt1 { background: linear-gradient(150deg, #5C4A1E, #2D2310); }
 .guide-tab-btn.gt2 { background: linear-gradient(150deg, #0E3B36, #0A2230); }
@@ -2156,6 +2293,9 @@
 .guide-tab-btn.gt4 { background: linear-gradient(150deg, #2E4A2E, #16241A); }
 .guide-tab-btn.gt5 { background: linear-gradient(150deg, #1E4A5C, #0F242D); }
 .guide-tab-btn.gt6 { background: linear-gradient(150deg, #3B2E5C, #211735); }
+.guide-tab-btn.gt7 { background: linear-gradient(150deg, #1E3A5C, #0E1C2D); }
+.guide-tab-btn.gt8 { background: linear-gradient(150deg, #5C3A1E, #2D1C0F); }
+.guide-tab-btn.gt9 { background: linear-gradient(150deg, #1E5C4A, #0F2D24); }
 .guide-tab-btn.active { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(0,245,212,.25); }
 .guide-tab-btn.active .guide-tab-label { color: var(--teal); }
 .guide-section { display: none; }
@@ -3444,10 +3584,15 @@
     </svg>
   </div>
   <div style="position:relative;z-index:2;text-align:center;padding:0 24px">
+    <!-- English leads at arrival. This moment is short, repeated 42 times,
+         and fully explained by the picture around it — a train pulling in —
+         so it teaches the phrase for free. The Arabic name stays underneath
+         as a quiet anchor, and fades out entirely in later chapters. -->
+    <div class="train-arrival-line" id="trainArrivalLine">Now arriving at</div>
     <div class="train-city-name" id="trainCityName"></div>
     <div class="train-city-sub" id="trainCitySub"></div>
     <button class="train-enter-btn" id="trainEnterBtn" onclick="showStationCard()">
-      🚪 ادخل المحطة
+      🚪 <span id="trainEnterLabel">Enter the station</span>
     </button>
   </div>
 </div>
@@ -3654,8 +3799,8 @@
       </div>
       <div class="journey-stats-row">
         <div class="journey-stat">
-          <div class="journey-stat-value time" id="journeyTimeValue">~10 min</div>
-          <div class="journey-stat-label">Time left · الوقت المتبقي</div>
+          <div class="journey-stat-value time" id="journeyTimeValue">3 steps</div>
+          <div class="journey-stat-label">Steps left · الخطوات المتبقية</div>
         </div>
         <div class="journey-stat">
           <div class="journey-stat-value reward" id="journeyRewardValue">+0 ⭐</div>
@@ -3678,11 +3823,11 @@
     <div class="backup-last-saved" id="backupLastSaved" style="text-align:center;margin-top:4px"></div>
 
     <div class="station-tabbar" id="wordsTabbar" style="border-radius:14px;margin:10px 0 14px">
-      <button class="station-tab-btn active" style="--tab-color:#2DD4BF" onclick="switchWordsTab('add',this)">
+      <button class="station-tab-btn active" style="--tab-color:#2DD4BF" data-wtab="add" onclick="switchWordsTab('add',this)">
         <span class="tico">➕</span><span class="ttxt">إضافة</span></button>
-      <button class="station-tab-btn" style="--tab-color:#A78BFA" onclick="switchWordsTab('browse',this)">
+      <button class="station-tab-btn" style="--tab-color:#A78BFA" data-wtab="browse" onclick="switchWordsTab('browse',this)">
         <span class="tico">📚</span><span class="ttxt">كلماتي</span></button>
-      <button class="station-tab-btn" style="--tab-color:#F5C842" onclick="switchWordsTab('stats',this)">
+      <button class="station-tab-btn" style="--tab-color:#F5C842" data-wtab="stats" onclick="switchWordsTab('stats',this)">
         <span class="tico">📊</span><span class="ttxt">تقدّمي</span></button>
     </div>
 
@@ -3698,6 +3843,24 @@
           <div class="input-label">English Word <span style="font-size:9px;opacity:.6">بالإنجليزية</span></div>
           <input class="inp en" id="inp-en" placeholder="e.g. Ambitious" autocomplete="off" autocorrect="off" spellcheck="false" oninput="checkDuplicateWordLive()">
           <div id="dupWarning" style="display:none;font-size:11px;color:#FB7185;margin-top:4px">⚠️ هذه الكلمة موجودة لديك مسبقاً</div>
+          <!-- Offline suggestion: when the typed word matches one of the
+               curated entries, we offer its meaning and example as a hint the
+               learner may take or ignore. Never auto-filled — writing the
+               sentence yourself is the part that makes it stick. -->
+          <div id="wordHint" class="word-hint" style="display:none">
+            <div class="wh-head">
+              <span class="wh-spark">✦</span>
+              <span class="wh-title">نعرف هذه الكلمة — هل تريد الاستئناس؟</span>
+            </div>
+            <div class="wh-body">
+              <div class="wh-line"><span class="wh-k">المعنى</span><span id="whAr" class="wh-v"></span></div>
+              <div class="wh-line"><span class="wh-k">مثال</span><span id="whEx" class="wh-v en"></span></div>
+            </div>
+            <div class="wh-actions">
+              <button type="button" class="wh-btn use" onclick="useWordHint()">✓ استخدمه</button>
+              <button type="button" class="wh-btn skip" onclick="dismissWordHint()">أكتبه بنفسي</button>
+            </div>
+          </div>
         </div>
         <div class="word-input-group">
           <div class="input-label">المعنى بالعربية</div>
@@ -3851,8 +4014,12 @@
       <p>لا توجد كلمات مطابقة لبحثك.<br>جرّب كلمة أخرى أو امسح الفلتر.</p>
     </div>
     <div id="emptyWords" class="empty-state">
-      <div class="e-icon">📝</div>
-      <p>لا توجد كلمات بعد.<br>أضف أول كلمة لتبدأ رحلتك!</p>
+      <div class="e-icon">📖</div>
+      <p style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px">Your dictionary starts empty</p>
+      <p style="margin-bottom:12px">قاموسك يبدأ فارغًا — <b>وهذا مقصود</b>.<br>كل كلمة هنا ستكون كلمة اخترتها أنت بنفسك.</p>
+      <button class="pack-add-btn" style="background:linear-gradient(135deg,#0EA5E9,#2DD4BF);max-width:260px;margin:0 auto"
+              onclick="switchWordsTab('add')">✏️ Add Your First Word · أضف أول كلمة</button>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px">💡 لست مضطرًا للبدء من الصفر — تحت هذه الصفحة <b>Starter Pack</b> فيه ٥٠ كلمة جاهزة يمكنك تبنّيها متى شئت.</p>
     </div>
     </div><!-- end browse pane -->
   </div>
@@ -4283,6 +4450,23 @@
 </div>
 
 <!-- ══ TEACHER PHONE MODAL ══ -->
+<!-- ══ NEED WORDS GATE ══ -->
+<!-- Shown when a learner opens an activity before their dictionary can fuel
+     it. Never a dead end: it names the exact shortfall and offers both paths
+     — write your own words, or adopt the Starter Pack. -->
+<div class="confirm-overlay" id="needWordsOverlay">
+  <div class="confirm-box">
+    <div class="cb-icon">🌱</div>
+    <div class="cb-title" id="nwTitle">Almost there!</div>
+    <div class="cb-msg" id="nwMsg"></div>
+    <div class="cb-row" style="flex-direction:column;gap:8px">
+      <button class="cb-btn cb-confirm" style="width:100%" onclick="nwGoAddWords()">✏️ أضيف كلماتي بنفسي</button>
+      <button class="cb-btn cb-confirm" id="nwStarterBtn" style="width:100%;background:linear-gradient(135deg,#F5C842,#FB923C)" onclick="nwAdoptStarter()">🌱 تبنَّ حزمة البداية</button>
+      <button class="cb-btn cb-cancel" style="width:100%" onclick="closeNeedWords()">لاحقًا</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ PACK DUPLICATE CONFIRM ══ -->
 <div class="confirm-overlay" id="packDupOverlay">
   <div class="confirm-box">
@@ -4357,471 +4541,243 @@
     </div>
 
     <div class="guide-tabs" id="guideTabs">
-      <button class="guide-tab-btn gt1 active" onclick="showGuideTab('start',this)">
-        <span class="guide-tab-icon">🏁</span><span class="guide-tab-label">البداية</span>
+      <button class="guide-tab-btn gt1 active" onclick="showGuideTab('what',this)">
+        <span class="guide-tab-icon">🚄</span><span class="guide-tab-label">ما هذا؟</span>
+      </button>
+      <button class="guide-tab-btn gt7" onclick="showGuideTab('daily',this)">
+        <span class="guide-tab-icon">📅</span><span class="guide-tab-label">يومي</span>
+      </button>
+      <button class="guide-tab-btn gt8" onclick="showGuideTab('library',this)">
+        <span class="guide-tab-icon">📖</span><span class="guide-tab-label">المكتبة</span>
       </button>
       <button class="guide-tab-btn gt2" onclick="showGuideTab('words',this)">
-        <span class="guide-tab-icon">📚</span><span class="guide-tab-label">الكلمات</span>
+        <span class="guide-tab-icon">📚</span><span class="guide-tab-label">كلماتي</span>
       </button>
-      <button class="guide-tab-btn gt3" onclick="showGuideTab('practice',this)">
-        <span class="guide-tab-icon">🎯</span><span class="guide-tab-label">التدريب</span>
-      </button>
-      <button class="guide-tab-btn gt4" onclick="showGuideTab('learn',this)">
-        <span class="guide-tab-icon">📐</span><span class="guide-tab-label">التعلّم</span>
-      </button>
-      <button class="guide-tab-btn gt5" onclick="showGuideTab('settings',this)">
-        <span class="guide-tab-icon">⚙️</span><span class="guide-tab-label">الإعدادات</span>
-      </button>
-      <button class="guide-tab-btn gt6" onclick="showGuideTab('tips',this)">
-        <span class="guide-tab-icon">💡</span><span class="guide-tab-label">نصائح</span>
+      <button class="guide-tab-btn gt9" onclick="showGuideTab('protect',this)">
+        <span class="guide-tab-icon">💾</span><span class="guide-tab-label">الحماية</span>
       </button>
     </div>
 
-    <!-- 🏁 البداية -->
-    <div class="guide-section active" id="guide-start">
+    <!-- 🚄 ما هذا؟ -->
+    <div class="guide-section active" id="guide-what">
       <div class="guide-card open">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">⚡</span>
-          <span class="guide-card-title">ما هو WordSpark؟</span>
+          <span class="guide-card-icon">🚄</span>
+          <span class="guide-card-title">رحلة عبر ٤٢ محطة</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          منصة تفاعلية لتعلّم اللغة الإنجليزية مع الترجمة العربية، تجمع بين <b>الكلمات اليومية</b>، <b>الاختبارات</b>، <b>الألعاب</b>، <b>القواعد</b>، و<b>البطاقات التعليمية</b> — كل ذلك في ملف واحد يعمل على أي هاتف.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">👤</span>
-          <span class="guide-card-title">تسجيل الاسم لأول مرة</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          عند فتح التطبيق لأول مرة، تظهر شاشة ترحيب تطلب كتابة اسمك. هذا الاسم يُستخدم لاحقاً عند إرسال نتائجك للمعلم عبر واتساب. يمكنك تغييره في أي وقت من زر "Change Name" أعلى صفحة الكلمات.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">📲</span>
-          <span class="guide-card-title">إضافة WordSpark على شاشتك الرئيسية</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          <b>على آيفون:</b> افتح الملف من Safari ← اضغط زر المشاركة ↑ ← "إضافة إلى الشاشة الرئيسية".<br><br>
-          <b>على أندرويد:</b> افتح من Chrome ← اضغط النقاط الثلاث ⋮ ← "إضافة إلى الشاشة الرئيسية".<br><br>
-          بعد ذلك ستظهر أيقونة WordSpark على هاتفك مثل أي تطبيق حقيقي ⚡
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🏠</span>
-          <span class="guide-card-title">الشاشة الرئيسية وطريقة التنقّل</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          عند فتح WordSpark، تستقبلك <b>الشاشة الرئيسية</b> بشبكة أيقونات كبيرة وواضحة لكل الأقسام:
-          <ul>
-            <li>📚 <b>الكلمات</b> — كلماتك المحفوظة والعداد</li>
-            <li>🎯 <b>اختبار</b> — اختبار عشوائي للكلمات</li>
-            <li>🎮 <b>ألعاب</b> — Hangman، السباق، تحدي اليوم، تحدي التهجئة</li>
-            <li>💬 <b>محادثات</b> — ١٠ مواقف حياتية واقعية للتدرّب على المحادثة</li>
-            <li>🎙️ <b>المتحدّث</b> — رفيق محادثة صوتي بالذكاء الاصطناعي</li>
-            <li>📐 <b>قواعد</b> — دروس قواعد من الصفر</li>
-            <li>🃏 <b>البطاقات التعليمية</b> — مراجعة سريعة بالتقليب</li>
-            <li>🎧 <b>البودكاست</b> — ١٠ حلقات استماع قصيرة لتدريب الفهم السمعي</li>
-          </ul>
-          <b>🧭 شريط التنقّل السفلي</b> يحتوي على أهم ٤ أقسام للوصول السريع: <b>الرئيسية، الكلمات، اختبار، المتحدّث</b>.
+          WordSpark يعلّمك الإنجليزية على شكل <b>رحلة قطار عبر ٤٢ محطة</b> في مدن العالم الإسلامي. تبدأ من <b>مكة المكرمة</b>، ولا تنتقل لمحطة حتى تُتقن التي قبلها.
           <br><br>
-          بقية الأقسام (الألعاب، المحادثات، القواعد، البطاقات، البودكاست) تُفتح من الشاشة الرئيسية، وبداخل كل قسم منها يوجد زر <b>"🏠 الرئيسية"</b> أعلى الصفحة للعودة بضغطة واحدة.
+          هكذا يصير تقدّمك شيئًا <b>تقطعه</b>، لا رقمًا يرتفع.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🧭</span>
+          <span class="guide-card-title">خمسة أقسام فقط</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          <ul>
+            <li>🏠 <b>Home</b> — درس اليوم وعدّاداتك</li>
+            <li>🚄 <b>Journey</b> — الرحلة والمحطات</li>
+            <li>📖 <b>Library</b> — كل أنشطة التدريب</li>
+            <li>📚 <b>Words</b> — قاموسك الذي تبنيه</li>
+            <li>👤 <b>Account</b> — نتائجك والإعدادات</li>
+          </ul>
+          💡 كل الأنشطة داخل <b>المكتبة</b>، وفي كل نشاط زر <b>🏠</b> للعودة بضغطة واحدة.
         </div>
       </div>
     </div>
 
-    <!-- 📚 الكلمات -->
+    <!-- 📅 يومي -->
+    <div class="guide-section" id="guide-daily">
+      <div class="guide-card open">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">📅</span>
+          <span class="guide-card-title">ماذا أفعل اليوم؟</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          لا تفكّر كثيرًا. افتح <b>🏠 الرئيسية</b> واقرأ بطاقة <b>درس اليوم</b> — تخبرك بالضبط بما تفعله، وتعرض <b>الخطوات المتبقية</b> أمامك.
+          <ul>
+            <li>١️⃣ <b>أضف كلماتك</b> من 📚 كلماتي</li>
+            <li>٢️⃣ <b>مارس نشاطًا واحدًا</b> من 📖 المكتبة</li>
+            <li>٣️⃣ <b>اعبر المحطة</b> من 🚄 الرحلة</li>
+          </ul>
+          ⏱️ لا يهمّ كم تستغرق — <b>يهمّ ألّا تنقطع</b>. بعض الأيام تمضي سريعًا وبعضها يحتاج وقتًا أطول، وكلاهما تقدّم.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🎯</span>
+          <span class="guide-card-title">اختبار المحطة</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          لكل محطة متطلبات تُنجزها أولًا، ثم يُفتح الاختبار. إذا نجحت انطلق القطار 🚄.
+          <br><br>
+          وإذا لم تنجح <b>لا تخسر شيئًا</b> — تراجع وتعيد بلا حدود. الهدف الإتقان، لا العقاب.
+          <br><br>
+          🔄 وإن انقطعت في منتصفه — جرس، مكالمة، انقطاع نت — تعود إلى <b>نفس السؤال ونفس النقطة</b>.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🔥</span>
+          <span class="guide-card-title">السلسلة المتواصلة</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          كل يوم تفتح فيه التطبيق وتضيف كلمة تزيد سلسلتك 🔥 بمقدار ١. إذا فوّت يومًا كاملًا عادت إلى الصفر.
+          <br><br>
+          🕊️ <b>يوم الجمعة يوم راحة</b> — لا يكسر سلسلتك. الانتظام لا يعني الإرهاق.
+        </div>
+      </div>
+    </div>
+
+    <!-- 📖 المكتبة -->
+    <div class="guide-section" id="guide-library">
+      <div class="guide-card open">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">📖</span>
+          <span class="guide-card-title">ثمانية أنشطة — واحد في اليوم يكفي</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          <ul>
+            <li>📐 <b>Grammar</b> — ١٥ درسًا متسلسلًا، درس واحد كل مرة</li>
+            <li>📖 <b>Reading</b> — نصوص بثلاثة مستويات مع تصحيح نطقك</li>
+            <li>🎧 <b>Podcast</b> — استماع بلا نصّ لتدريب الأذن</li>
+            <li>💬 <b>Conversations</b> — مواقف حياتية واقعية</li>
+            <li>🎮 <b>Games</b> — أربع ألعاب لتثبيت الكلمات</li>
+            <li>🎯 <b>Quiz</b> — اختبار من كلماتك أنت</li>
+            <li>🎙️ <b>Speak</b> — تدريب النطق مع رفيق صوتي</li>
+            <li>🃏 <b>Flashcards</b> — مراجعة سريعة بالتقليب</li>
+          </ul>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">📖</span>
+          <span class="guide-card-title">القراءة — ومعلّم يستمع إليك</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          اضغط أي <b>كلمة مسطّرة</b> داخل النص لتعرف معناها فورًا، واستمع للنصّ كاملًا بالنطق الصحيح.
+          <br><br>
+          🎙️ ثم استخدم <b>Read Aloud &amp; Check</b> — تقرأ بصوتك، فيعطيك درجة على نطقك.
+          <br><br>
+          💡 هذه أقرب ميزة لمحاكاة معلّم يصحّح لك — ومريحة لمن يخجل من القراءة أمام زملائه.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🎡</span>
+          <span class="guide-card-title">إن ترددتَ في الاختيار</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          اضغط <b>🎡 Surprise Me</b> فتدور العجلة وتختار لك نشاطًا.
+          <br><br>
+          💡 البدء بأيّ نشاط خير من الوقوف عند الاختيار — وكثيرًا ما يكون هذا الفرق بين يوم متواصل ويوم ضائع.
+        </div>
+      </div>
+    </div>
+
+    <!-- 📚 كلماتي -->
     <div class="guide-section" id="guide-words">
       <div class="guide-card open">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🔢</span>
-          <span class="guide-card-title">عداد الكلمات</span>
+          <span class="guide-card-icon">📚</span>
+          <span class="guide-card-title">قاموسك يبدأ فارغًا — وهذا مقصود</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          الرقم الكبير في الأعلى يعرض <b>إجمالي الكلمات المتعلَّمة</b>. أسفله ثلاث بطاقات صغيرة: كلمات <b>اليوم</b>، كلمات <b>الأسبوع</b>، وعدد كلمات المستوى <b>المبتدئ</b>.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">➕</span>
-          <span class="guide-card-title">إضافة كلمة جديدة</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          املأ الحقول: <b>الكلمة بالإنجليزية</b>، <b>المعنى بالعربية</b>، <b>مثال بالإنجليزية</b>، <b>ترجمة المثال</b>، واختر <b>المستوى</b> (مبتدئ / متوسط / متقدم) ثم اضغط "إضافة الكلمة ✨".
+          كل كلمة في قائمتك كلمة اخترتَها <b>أنت</b>. لن نملأها بمفردات جاهزة لتبدو ممتلئة — لأن القائمة التي بناها غيرك لا تُشعرك بشيء، والتي بنيتَها بيدك <b>تصير ملكك</b>.
           <br><br>
-          ⚠️ <b>الهدف اليومي قابل للتعديل (٣-٥ كلمات)</b> — يبدأ بـ٣ كلمات (الموصى به للمبتدئين)، ويمكن تغييره بالضغط على الشارة الصفراء أعلى الفورم. هذا مقصود لتشجيع التعلّم التدريجي الثابت.
-          <br><br>
-          🕊️ <b>يوم الجمعة يوم راحة</b> — لا يكسر السلسلة المتواصلة 🔥 إذا لم تفتح التطبيق فيه.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🎨</span>
-          <span class="guide-card-title">بطاقات الكلمات الملوّنة</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          كل كلمة تظهر في بطاقة بإطار مختلف الألوان (تيفاني، وردي، ذهبي، بنفسجي...) — هذا فقط لجعل القائمة أكثر حيوية، ولا يرتبط بالمستوى. يمكن حذف أي كلمة بالضغط على ✕ على يمين البطاقة.
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(0,245,212,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🔊</span>
-          <span class="guide-card-title">الاستماع لنطق الكلمات</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          بجانب كل كلمة زر <b>🔊</b> — اضغطه لتسمع النطق الصحيح بصوت إنجليزي حقيقي من المتصفح (مجاناً، بدون إنترنت في معظم الأجهزة بعد أول استخدام).
-          <br><br>
-          هذا الزر متوفر في:
-          <ul>
-            <li>📚 بطاقات الكلمات في الصفحة الرئيسية</li>
-            <li>🃏 البطاقات التعليمية (الوجه الأمامي)</li>
-            <li>📐 أمثلة دروس القواعد</li>
-            <li>🎯 سؤال الاختبار (عند ظهور الكلمة الإنجليزية)</li>
-            <li>💬 جمل المحادثات والعبارات المفيدة</li>
-            <li>🌟 تحدي اليوم</li>
-          </ul>
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(167,139,250,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">📊</span>
-          <span class="guide-card-title">نظام الإتقان الذكي (Mastery)</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          يتتبّع WordSpark مدى إتقانك لكل كلمة تلقائياً بناءً على إجاباتك في الاختبار، السباق، وتحدي اليوم.
-          <br><br>
-          <b>📊 لوحة الإتقان</b> أعلى صفحة الكلمات تعرض شريطاً ملوّناً:
-          <ul>
-            <li>🟢 <b>متقَنة</b> — أجبت عليها بشكل صحيح عدة مرات</li>
-            <li>🟡 <b>قيد التعلّم</b> — بدأت تتعرّف عليها</li>
-            <li>⚪ <b>جديدة</b> — لم تُختبر بعد</li>
-          </ul>
-          <b>☆ زر "أعرف هذه الكلمة"</b> بجانب كل كلمة — اضغطه يدوياً لو كنت تعرف الكلمة مسبقاً (مثلاً من كلمات الحِزم)، فتتحوّل لـ✓ أخضر فوراً.
-          <br><br>
-          <div style="background:rgba(0,245,212,.08);border:1px solid rgba(0,245,212,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--teal)">
-            💡 <b>الكلمات المتقَنة لا تختفي أبداً</b> من الاختبارات — فقط يقلّ ظهورها لإفساح المجال للكلمات الجديدة، مع مراجعة خفيفة بين الحين والآخر حتى لا تُنسى.
-          </div>
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(255,159,67,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">📈</span>
-          <span class="guide-card-title">الرسم البياني الأسبوعي</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          أسفل لوحة الإتقان مباشرة، يظهر رسم بياني بأعمدة يوضّح عدد الكلمات التي أضفتها في <b>كل يوم من آخر ٧ أيام</b>.
-          <ul>
-            <li>🟠 الأعمدة البرتقالية: أيام عادية</li>
-            <li>🟢 العمود الفيروزي: <b>اليوم الحالي</b></li>
-            <li>🕊️ يوم الجمعة يظهر برمز الراحة بدلاً من اسم اليوم</li>
-          </ul>
-          الرقم أعلى كل عمود = عدد الكلمات المضافة ذلك اليوم. يظهر أيضاً <b>إجمالي كلمات الأسبوع</b> في الأعلى.
-          <br><br>
-          هذا الرسم يساعدك (ومعلمك إن أرسلت له لقطة شاشة) على رؤية مدى انتظامك بنظرة واحدة — هل تتعلّم بثبات كل يوم أم تتوقف ثم تتدارك لاحقاً؟
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(0,245,212,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🔍</span>
-          <span class="guide-card-title">البحث والتصفية</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          عند تجاوز كلماتك ٨ كلمات، يظهر زر <b>"🔍 البحث والتصفية في كلماتك"</b> أعلى قائمة الكلمات.
-          <br><br>
-          <b>كيف تستخدمه:</b>
-          <ul>
-            <li>اكتب أي جزء من كلمة إنجليزية أو عربية في خانة البحث ليُفلتر فوراً</li>
-            <li>استخدم الفلاتر السريعة: الكل، 🟢 مبتدئ، 🟡 متوسط، 🔵 متقدم، 🏆 متقَنة، 📖 قيد التعلّم</li>
-            <li>يظهر عدد النتائج المطابقة أسفل الفلاتر</li>
-          </ul>
-          💡 مفيد جداً بعد إضافة عدة حِزَم كلمات (٣٠٠+ كلمة) لإيجاد كلمة معينة بسرعة بدلاً من التمرير الطويل.
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(167,139,250,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🎧</span>
-          <span class="guide-card-title">البودكاست — تدريب الاستماع</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          قسم جديد كلياً مخصص لتدريب **مهارة الاستماع** الحقيقية — وليس فقط نطق كلمة مفردة.
-          <br><br>
-          <b>١٠ حلقات قصيرة</b> (مواضيع متنوعة: أول يوم عمل، الطقس، فيلم، رياضة، فقدان الهاتف، الطبخ، خطط نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان).
-          <br><br>
-          <b>كيف تعمل كل حلقة:</b>
-          <ul>
-            <li>🎙️ اضغط ▶️ لتشغيل الحوار كاملاً بصوتين مختلفين (A وB)، <b>بدون رؤية النص إطلاقاً</b> في البداية</li>
-            <li>🔁 يمكنك إعادة الاستماع من البداية حتى مرتين فقط (لمحاكاة اختبارات الاستماع الحقيقية)</li>
-            <li>📜 بعد المحاولة، اضغط "إظهار النص" لمراجعة ما سمعته</li>
-            <li>🧠 أجب عن ٣ أسئلة فهم استماع لكل حلقة</li>
-            <li>🏆 اضغط "أنهيت هذه الحلقة" لتمييزها كمكتملة</li>
-          </ul>
-          <div style="background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--lavender)">
-            💡 <b>هذا القسم مختلف تماماً</b> عن "محادثات حياتية" — هناك تقرأ وتسمع معاً، وهنا تستمع فقط أولاً لتتدرّب على الفهم السمعي الحقيقي، تماماً كما في الاختبارات الدولية.
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 🎯 التدريب (Quiz + Games) -->
-    <div class="guide-section" id="guide-practice">
-      <div class="guide-card open">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🎯</span>
-          <span class="guide-card-title">الاختبار العشوائي</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          اضغط "ابدأ الاختبار العشوائي" — يعرض ١٠ أسئلة عشوائية بثلاثة أنواع: <b>إنجليزي ← عربي</b>، <b>عربي ← إنجليزي</b> (اختيار من متعدد)، و<b>✍️ اكتب الترجمة</b> (تكتب المعنى العربي بنفسك من الذاكرة).
-          <br><br>
-          💡 نوع "اكتب الترجمة" يظهر فقط بعد امتلاك ٦ كلمات على الأقل، ويتقبّل اختلافات بسيطة في الكتابة (مثل التشكيل أو الألف بأشكاله المختلفة) حتى لا يُحرَم الطالب من إجابة صحيحة بسبب خطأ إملائي بسيط. كل إجابة صحيحة = ١٠ نقاط. في النهاية تظهر نسبة دقتك مع تقييم تشجيعي.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🎯</span>
-          <span class="guide-card-title">لعبة Hangman (المشنقة)</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          تظهر كلمة عشوائية من كلماتك مع <b>معناها بالعربية كتلميح</b>. اضغط الحروف لتخمين الكلمة. لديك <b>٦ محاولات خاطئة</b> فقط قبل أن تظهر الرسمة كاملة.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">⚡</span>
-          <span class="guide-card-title">سباق ٦٠ ثانية</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          أجب على أكبر عدد من أسئلة معاني الكلمات في دقيقة واحدة فقط! يظهر عدّاد تنازلي ونقاطك مباشرة. في النهاية تحصل على نسبة الدقة وعدد الإجابات الصحيحة والخاطئة.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🌟</span>
-          <span class="guide-card-title">تحدي اليوم</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          سؤال واحد <b>يتغيّر كل يوم</b> ويمكن الإجابة عليه مرة واحدة فقط يومياً. النتيجة تُحفظ ويظهر لك "عاد التحدي غداً 🌅" بعد الإجابة.
+          والعدّاد يعدّ اجتهادك وحده.
         </div>
       </div>
       <div class="guide-card">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
           <span class="guide-card-icon">✍️</span>
-          <span class="guide-card-title">تحدي التهجئة</span>
+          <span class="guide-card-title">كيف تضيف كلمة</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          يعرض لك <b>المعنى بالعربية</b> ومثالاً، وعليك كتابة <b>الكلمة الإنجليزية</b> بحروفها الصحيحة في الصناديق الفارغة. الحرف الأول يُعرض مجاناً كبداية.
+          من <b>📚 كلماتي ← تبويب «إضافة»</b>: اكتب الكلمة الإنجليزية ومعناها العربي، ويمكنك إضافة مثال وترجمته.
           <br><br>
-          🔹 إجابة صحيحة = <b>+10 نقاط</b> وتزيد "المتتالية 🔥".
-          <br>
-          🔹 زر <b>"تلميح حرف"</b> يكشف الحرف التالي بمقابل <b>-2 نقاط</b>.
-          <br>
-          🔹 إذا أخطأت، تظهر الكلمة الصحيحة كاملة وتعود "المتتالية" للصفر.
-        </div>
-      </div>
-    </div>
-
-    <!-- 📐 التعلّم (Grammar + Flashcards + Packs) -->
-    <div class="guide-section" id="guide-learn">
-      <div class="guide-card open">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">📐</span>
-          <span class="guide-card-title">دروس القواعد</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          ١٥ درساً قواعدياً متكاملاً من الصفر — يغطي الأزمنة (المضارع، الماضي، المستقبل، التام)، المقارنة والتفضيل، الأفعال الناقصة، أدوات التعريف، الجموع، حروف الجر، تكوين الأسئلة، أدوات الربط، صفات الملكية، وصيغة الأمر — مع شرح بالعربية، صيغة القاعدة، أمثلة، وتمرين تفاعلي لكل درس.
-          <br><br>
-          🎨 اضغط <b>"Show Structure"</b> أسفل أي مثال لرؤية تحليل الجملة بالألوان: <b>أخضر = الفاعل</b>، <b>ذهبي = الفعل</b>، <b>بنفسجي = المفعول به</b>، <b>أحمر = ظرف</b>.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🃏</span>
-          <span class="guide-card-title">البطاقات التعليمية (Flashcards)</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          اضغط على البطاقة لتقلبها وترى المعنى والمثال. استخدم الأسهم "السابقة / التالية" للتنقل بين كل كلماتك بسرعة — طريقة سريعة للمراجعة قبل الاختبار.
+          💡 التطبيق ينبّهك إذا كانت الكلمة موجودة مسبقًا، فلا تتكرّر في قاموسك.
         </div>
       </div>
       <div class="guide-card">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
           <span class="guide-card-icon">📦</span>
-          <span class="guide-card-title">حِزَم الكلمات الجاهزة</span>
+          <span class="guide-card-title">الحِزَم — اختصار متاح لا مفروض</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          أسفل قسم إضافة الكلمات تجد <b>٥ حِزَم جاهزة (٥٠ كلمة لكل واحدة)</b>: المنزل، العمل، السفر، المحادثة، والأكاديمية. اضغط "+ إضافة الحزمة" لإضافة ٥٠ كلمة فوراً لمكتبتك.
+          <b>حزمة البداية 🌱</b> متاحة دائمًا، تتبنّاها بقرارك فتنتقل كلماتها إلى قاموسك. وإلى جانبها <b>٥ حِزَم موضوعية</b> فيها <b>٢٥٠ كلمة</b> تُفتح بالتتابع.
           <br><br>
-          🔒 <b>نظام الفتح التدريجي:</b> كل حزمة جديدة تكون <b>مقفلة</b> حتى تُكمل الحزمة السابقة. بعد إضافة حزمة والانتهاء من تعلّمها، اضغط <b>"🏁 تمييز كمكتملة"</b> لتفتح الحزمة التالية تلقائياً.
-          <br><br>
-          ⚠️ هذا النظام يضمن عدم الاستعجال — راجع تبويب "نصائح" لمعرفة السبب.
+          ⚠️ لا تضفها كلها دفعة واحدة. حزمة كل أسبوع أو أسبوعين أنفع بكثير من ٢٥٠ كلمة في يوم.
         </div>
       </div>
       <div class="guide-card">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">💬</span>
-          <span class="guide-card-title">محادثات حياتية</span>
+          <span class="guide-card-icon">🌱</span>
+          <span class="guide-card-title">رتبتك ترتفع بعملك</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          قسم كامل من <b>١٠ مواقف حياتية واقعية</b>: المستشفى، السوق، المطعم، المدرسة، المطار، البنك، التاكسي، العمل، المكالمة الهاتفية، والطوارئ.
+          <b>١٥ رتبة</b> و<b>٢٥ إنجازًا</b> تُفتح تلقائيًا كلما تقدّمت — تراها في <b>👤 حسابي</b>.
           <br><br>
-          كل موقف يحتوي على:
-          <ul>
-            <li>💬 <b>محادثة نموذجية</b> بين شخصين (A و B) بالإنجليزية مع الترجمة العربية</li>
-            <li>📌 <b>عبارات مفيدة إضافية</b> — اضغط "+" لإضافة أي عبارة مباشرة لبنك كلماتك</li>
-            <li>🧩 <b>تمرين ترتيب الجمل</b> — رتّب أول ٤ جمل من المحادثة بالترتيب الصحيح</li>
-            <li>🏆 زر <b>"أتقنت هذه المحادثة"</b> لتمييزها كمكتملة</li>
-          </ul>
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🎙️</span>
-          <span class="guide-card-title">المتحدّث الصوتي (Buddy)</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          رفيق محادثة صوتي بالذكاء الاصطناعي اسمه <b>Buddy</b> — صبور ومشجّع دائماً، لا ينتقد أبداً!
-          <br><br>
-          <b>كيف يعمل:</b>
-          <ul>
-            <li>اختر موضوعاً (تعارف، الروتين اليومي، الطعام، الهوايات، السفر، أحلامك)</li>
-            <li>🔊 يسأل Buddy سؤالاً بصوته — استمع جيداً</li>
-            <li>🎤 اضغط زر الميكروفون وتحدّث بإجابتك بالإنجليزية</li>
-            <li>سيتعرّف المتصفح على كلامك ويظهر كنص، ثم يردّ Buddy بتشجيع دائماً</li>
-          </ul>
-          <b>أزرار مساعدة:</b>
-          <ul>
-            <li>🔊 <b>إعادة الاستماع</b> — يكرّر السؤال الأخير</li>
-            <li>💡 <b>ساعدني بجملة</b> — يعطيك بداية جملة للمساعدة</li>
-            <li>➡️ <b>سؤال آخر</b> — ينتقل لسؤال جديد بنفس الموضوع</li>
-          </ul>
-          <div style="background:rgba(255,159,67,.08);border:1px solid rgba(255,159,67,.2);border-radius:10px;padding:10px;margin-top:10px;font-size:12px;color:var(--orange)">
-            ⚠️ <b>يحتاج هذا القسم اتصالاً بالإنترنت</b> لميزة التعرّف على الصوت، ويعمل بشكل أفضل على متصفح <b>Chrome</b> (أندرويد) أو <b>Safari</b> (آيفون). يجب السماح بالوصول للميكروفون عند الطلب.
-          </div>
+          🖼️ ويمكنك صنع <b>تقرير مرئي</b> فيه رتبتك وكلماتك ومحطاتك مع رمز QR، ترسله لمعلّمك أو والدك.
         </div>
       </div>
     </div>
 
-    <!-- ⚙️ الإعدادات -->
-    <div class="guide-section" id="guide-settings">
+    <!-- 💾 احمِ تقدّمي -->
+    <div class="guide-section" id="guide-protect">
       <div class="guide-card open">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🔥</span>
-          <span class="guide-card-title">السلسلة المتواصلة (Streak)</span>
+          <span class="guide-card-icon">⚠️</span>
+          <span class="guide-card-title">أهمّ شيء في هذا الدليل</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
-          كل يوم تفتح فيه WordSpark، تزيد السلسلة 🔥 بمقدار ١. إذا فوّت يوماً كاملاً بدون فتح التطبيق، تعود السلسلة إلى الصفر. تظهر سلسلتك في الأعلى وفي بطاقة خاصة بأعلى صفحة الكلمات.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">💬</span>
-          <span class="guide-card-title">إرسال النتائج للمعلم</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          اضغط الزر الأخضر <b>"Send My Results to [اسم المعلم] via WhatsApp"</b> ليُفتح واتساب برسالة جاهزة تحتوي: اسمك، إجمالي الكلمات، كلمات اليوم والأسبوع، السلسلة المتواصلة، وآخر ٥ كلمات تعلّمتها.
-          <br><br>
-          🔧 <b>تغيير بيانات المعلم/المعلمة:</b> اذهب إلى <b>🏠 الشاشة الرئيسية</b> واضغط بطاقة "👨‍🏫 بيانات المعلم/المعلمة"، ثم أدخل اسم ورقم واتساب معلمك الخاص — مفيد إذا كان لديك معلم أو معلمة مختلفة عن الإعداد الافتراضي.
-        </div>
-      </div>
-      <div class="guide-card open" style="border-color:rgba(0,245,212,.3)">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🛡️</span>
-          <span class="guide-card-title">النسخ الاحتياطي (مهم جداً!)</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          أهم ميزة لحماية تقدّمك! كما تعلم، بياناتك محفوظة في متصفحك فقط، وقد تُفقد عند مسح بيانات المتصفح أو تغيير الجهاز.
-          <br><br>
-          <b>⬇️ تنزيل نسخة احتياطية:</b> يحمّل ملفاً صغيراً (JSON) يحتوي على جميع كلماتك، نقاطك، سلسلتك المتواصلة، وكل تقدّمك. احفظه في "ملفاتي" أو أرسله لنفسك على واتساب كأمان إضافي.
-          <br><br>
-          <b>⬆️ استيراد نسخة:</b> اختر ملف النسخة الاحتياطية لاستعادة جميع بياناتك — مفيد عند تغيير الجهاز أو بعد مسح بيانات المتصفح بالخطأ.
-          <br><br>
-          <div style="background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);border-radius:10px;padding:10px;font-size:12px;color:var(--gold)">
-            💡 <b>ننصح بعمل نسخة احتياطية أسبوعياً</b>، وخصوصاً قبل أي إعادة ضبط، أو عند الوصول لإنجاز مهم (مثل إكمال حزمة كاملة).
-          </div>
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🔄</span>
-          <span class="guide-card-title">إعادة الضبط</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          <b>📦 إعادة ضبط الحِزم فقط:</b> يحذف الكلمات المضافة من الحِزم الجاهزة فقط، ويحافظ على كلماتك الأصلية وتقدّمك.
-          <br><br>
-          <b>🔄 إعادة الضبط بالكامل:</b> يمسح كل شيء (الكلمات، السلسلة، النقاط) ويعيدك للبداية بـ٥٠ كلمة فقط. كل إعادة ضبط تطلب تأكيداً قبل التنفيذ.
-        </div>
-      </div>
-      <div class="guide-card">
-        <div class="guide-card-header" onclick="toggleGuideCard(this)">
-          <span class="guide-card-icon">🌗</span>
-          <span class="guide-card-title">الوضع الليلي / النهاري</span>
-          <span class="guide-card-arrow">▼</span>
-        </div>
-        <div class="guide-card-body">
-          اضغط أيقونة 🌙 / ☀️ في الأعلى للتبديل بين الوضع الداكن والفاتح. يُحفظ اختيارك تلقائياً ولن تحتاج لتغييره مرة أخرى.
-        </div>
-      </div>
-    </div>
-
-    <!-- 💡 نصائح -->
-    <div class="guide-section" id="guide-tips">
-      <div class="help-tip c1">
-        <div class="help-tip-title">📲 إضافة التطبيق على شاشتك الرئيسية</div>
-        <div class="help-tip-body">عند فتح WordSpark لأول مرة من واتساب، اضغط على زر المشاركة في المتصفح واختر "إضافة إلى الشاشة الرئيسية". بهذه الطريقة يصبح WordSpark تطبيقاً حقيقياً بأيقونة على هاتفك، ويفتح بسرعة في كل مرة.</div>
-      </div>
-
-      <div class="help-tip c2">
-        <div class="help-tip-title">🎯 لا تستعجل في إضافة الحِزم</div>
-        <div class="help-tip-body">يحتوي WordSpark على ٣٠٠ كلمة موزّعة على ٦ حِزم. لا تضف كل الحِزم دفعة واحدة! أفضل طريقة هي إضافة حزمة واحدة كل أسبوع أو أسبوعين، مع الاستمرار في تعلّم ٥ كلمات جديدة يومياً. هذا يضمن تعلّماً حقيقياً وثابتاً بدلاً من الحفظ السريع والنسيان.</div>
-      </div>
-
-      <div class="help-tip c3">
-        <div class="help-tip-title">🏆 استخدم السلسلة المتواصلة (Streak) كتحدٍ جماعي</div>
-        <div class="help-tip-body">السلسلة 🔥 تُحفّز الطالب على الدخول يومياً. اجعلها جزءاً من الحصة! اسأل أحياناً: "من لديه سلسلة ٧ أيام متواصلة؟" — تحويل ميزة في التطبيق إلى لحظة تفاعل اجتماعي يرفع الحافز كثيراً بين الطلاب.</div>
-      </div>
-
-      <div class="help-tip c4">
-        <div class="help-tip-title">💾 تنبيه مهم: التقدّم محفوظ على الجهاز فقط</div>
-        <div class="help-tip-body">
-          جميع الكلمات والنقاط والسلسلة المتواصلة تُحفظ داخل متصفح هاتفك فقط (وليس على الإنترنت).
-          <br><br>
-          <b>كيف تتم العملية؟</b> عند إضافة كلمة أو كسب نقطة، يقوم WordSpark بكتابة البيانات فوراً وتلقائياً داخل ملف صغير في المتصفح (localStorage) — بدون أي زر "حفظ"، يحدث كل ذلك في الخلفية.
-          <br><br>
-          <b>أين تُحفظ؟</b> على هذا الجهاز وهذا المتصفح بعينه فقط. فتح الملف من متصفح آخر (مثلاً Chrome بعد Safari) يُظهر تطبيقاً "جديداً" بلا أي تقدّم سابق.
-          <br><br>
-          <b>متى تُفقد البيانات؟</b>
+          تقدّمك محفوظ في <b>متصفّح جهازك</b>، لا على خادم. لذلك هو سريع ويعمل بلا إنترنت — ولذلك أيضًا <b>يمكن أن يضيع</b>:
           <ul>
-            <li>مسح بيانات المتصفح / الكاش (Clear Browsing Data)</li>
-            <li>إعادة ضبط الهاتف أو تثبيت متصفح جديد</li>
-            <li>الانتقال من جهاز إلى جهاز آخر</li>
+            <li>إذا مسحت بيانات المتصفّح</li>
+            <li>إذا غيّرت الجهاز</li>
+            <li>إذا فتحته من متصفّح آخر</li>
           </ul>
-          ✅ <b>النصيحة:</b> استخدم متصفحاً واحداً ثابتاً ولا تمسح بياناته. والأهم: نزّل <b>نسخة احتياطية</b> بانتظام من زر "⬇️ تنزيل نسخة احتياطية" أعلى صفحة الكلمات — فهي الحل الأضمن لحماية تقدّمك مهما حدث.
+          💾 <b>نزّل نسخة احتياطية كل أسبوع</b> من <b>حسابي ← ⚙️ الإعدادات ← 🛡️ متقدّم ← Download Backup</b>. ملف صغير يعيد لك كل شيء.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🧭</span>
+          <span class="guide-card-title">عادة واحدة تحميك</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          استخدم <b>متصفّحًا واحدًا على جهاز واحد</b> طوال رحلتك، ولا تمسح بياناته.
+          <br><br>
+          هذه أبسط عادة تحمي أشهرًا من العمل.
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-card-header" onclick="toggleGuideCard(this)">
+          <span class="guide-card-icon">🚂</span>
+          <span class="guide-card-title">والآن؟</span>
+          <span class="guide-card-arrow">▼</span>
+        </div>
+        <div class="guide-card-body">
+          هذا كل ما تحتاج معرفته. بقيّة التفاصيل ستكتشفها بالضغط.
+          <br><br>
+          <b>والمحطة الأولى تعلّمك أكثر من هذا الدليل كلّه.</b>
         </div>
       </div>
     </div>
@@ -5337,6 +5293,13 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ══ DEBUG LOGGER ══
+// Silent for students. Active only with ?dev=1 in the URL.
+// Use devLog(...) instead of console.log(...) for any diagnostic output.
+// Named devLog (not log) because `log` is already used as a local variable in 8 places.
+const DEBUG = new URLSearchParams(window.location.search).get('dev') === '1';
+const devLog = (...a) => { if (DEBUG) console.log(...a); };
+
 // ══ PRELOADED 50 WORDS ══
 const preloadedWords = [
   // ── أفعال شائعة ─────────────────────────────
@@ -5399,7 +5362,19 @@ const preloadedWords = [
 ];
 
 // ══ THEMED WORD PACKS ══
+// The `starter` pack is special: its words are already present in `words`
+// (seeded on first run) so every activity has fuel from day one. Adopting it
+// does not add duplicates — it clears the `seeded` flag, moving those words
+// into the learner's own dictionary. See adoptStarterPack().
 const wordPacks = {
+  starter: {
+    name: "Starter Pack",
+    nameAr: "حزمة البداية",
+    icon: "🌱", bg: "linear-gradient(135deg,#F5C842,#FB923C)",
+    color: "#F5C842",
+    isStarter: true,
+    words: preloadedWords
+  },
   home: {
     name: "Home & Daily Life",
     nameAr: "المنزل والحياة اليومية",
@@ -5700,18 +5675,27 @@ function renderPackSelector() {
   area.innerHTML = `
     <div style="margin-bottom:16px">
       <div style="font-size:16px;font-weight:700;margin-bottom:4px;font-family:'Space Grotesk',sans-serif">📦 Word Packs <span style="font-size:11px;opacity:.6;font-family:'Tajawal',sans-serif;font-weight:400">حِزَم الكلمات</span></div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Add a complete set of 50 words — each pack unlocks after completing the previous one 🔒<br><span style="opacity:.7">أضف ٥٠ كلمة دفعة واحدة — كل حزمة تُفتح بعد إكمال السابقة</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Your dictionary is yours to build — packs are a shortcut, never a shortcut you must take.<br><span style="opacity:.7">قاموسك تبنيه أنت. الحِزَم اختصار متاح، ولستَ ملزمًا به — كل حزمة تُفتح بعد إكمال السابقة 🔒</span></div>
       ${packKeys.map((key, idx) => {
         const pack = wordPacks[key];
         const added       = !!localStorage.getItem('pack_' + key);
         const completed   = !!localStorage.getItem('pack_completed_' + key);
-        const prevKey     = packKeys[idx - 1];
-        const prevCompleted = idx === 0 || !!localStorage.getItem('pack_completed_' + prevKey);
+        // The Starter Pack sits outside the sequential chain: it is always
+        // available and never gates the themed packs. Making it a prerequisite
+        // would force every learner to adopt 51 words they did not choose —
+        // the exact opposite of building your own dictionary.
+        const chainKeys   = packKeys.filter(k => !wordPacks[k].isStarter);
+        const chainIdx    = chainKeys.indexOf(key);
+        const prevKey     = chainIdx > 0 ? chainKeys[chainIdx - 1] : null;
+        const prevCompleted = pack.isStarter || chainIdx === 0 || !!localStorage.getItem('pack_completed_' + prevKey);
         const locked      = !prevCompleted;
 
         // حساب التقدم
         const packWords = pack.words || [];
-        const userWords = JSON.parse(localStorage.getItem('mywords') || '[]');
+        // Only words the learner owns count as progress. Seeded starter words
+        // are excluded, otherwise the Starter Pack would read 100% before it
+        // has ever been adopted.
+        const userWords = JSON.parse(localStorage.getItem('mywords') || '[]').filter(w => !w.seeded);
         const learnedCount = added ? packWords.filter(pw =>
           userWords.some(uw => uw.en.toLowerCase() === pw.en.toLowerCase())
         ).length : 0;
@@ -5730,8 +5714,12 @@ function renderPackSelector() {
           statusBadge = `<div class="pack-status-badge pack-added">✅ Added · مضافة</div>`;
           actionBtn   = `<button class="pack-complete-btn" onclick="markPackComplete('${key}')">🏁 Mark as Complete</button>`;
         } else {
-          statusBadge = `<div class="pack-status-badge pack-unlocked">🔓 Available · متاحة</div>`;
-          actionBtn   = `<button class="pack-add-btn" style="background:${pack.bg}" onclick="addPack('${key}')">+ Add Pack</button>`;
+          statusBadge = pack.isStarter
+            ? `<div class="pack-status-badge pack-unlocked">🎁 Free Gift · هدية البداية</div>`
+            : `<div class="pack-status-badge pack-unlocked">🔓 Available · متاحة</div>`;
+          actionBtn   = pack.isStarter
+            ? `<button class="pack-add-btn" style="background:${pack.bg}" onclick="addPack('${key}')">🌱 Adopt These Words · تبنَّ هذه الكلمات</button>`
+            : `<button class="pack-add-btn" style="background:${pack.bg}" onclick="addPack('${key}')">+ Add Pack</button>`;
         }
 
         return `
@@ -5769,6 +5757,9 @@ function renderPackSelector() {
 function addPack(key) {
   const pack = wordPacks[key];
   if (!pack) return;
+  // The starter words already live in `words` as seeded entries. Re-adding
+  // them would create 51 duplicates, so adoption clears the flag instead.
+  if (pack.isStarter) return adoptStarterPack();
   const newWords = pack.words.map((w, i) => ({
     ...w, date: new Date().toDateString(), id: Date.now() + i
   }));
@@ -5777,6 +5768,29 @@ function addPack(key) {
   localStorage.setItem('pack_' + key, '1');
   renderPackSelector();
   showToast('✅ Added ' + pack.name + '!', pack.color);
+}
+
+// ══ STARTER PACK ADOPTION ══
+// Moves the seeded starter words across the ownership boundary: they stop
+// being free scaffolding and become part of the learner's own dictionary,
+// counted and displayed like any word they typed themselves. The date is
+// reset to today so the weekly chart reflects a deliberate act, not the day
+// the app happened to be installed.
+function adoptStarterPack() {
+  const todayStr = new Date().toDateString();
+  let adopted = 0;
+  words.forEach(w => {
+    if (w.seeded) { delete w.seeded; w.date = todayStr; adopted++; }
+  });
+  if (!adopted) {
+    showToast('كل كلمات حزمة البداية موجودة لديك بالفعل ✅', '#F5C842');
+    localStorage.setItem('pack_starter', '1');
+    renderPackSelector();
+    return;
+  }
+  localStorage.setItem('pack_starter', '1');
+  save(); updateCounters(); renderWords(); renderFlashcards(); renderPackSelector();
+  showToast('🌱 أضفت ' + adopted + ' كلمة إلى قاموسك!', '#F5C842');
 }
 
 function markPackComplete(key) {
@@ -5934,15 +5948,26 @@ function closeConfirm() {
 }
 
 // ══ HELP MODAL ══
+// The guide was condensed from nine tabs to five. Call sites scattered through
+// the app still ask for the old names, so they are mapped here rather than
+// edited in five places — and any future name simply falls back to page one.
+const GUIDE_PAGES = ['what', 'daily', 'library', 'words', 'protect'];
+const GUIDE_ALIASES = {
+  start: 'what',     journey: 'daily',   tips: 'daily',
+  practice: 'library', learn: 'library',
+  results: 'words',  settings: 'protect', storage: 'protect'
+};
+
 function openHelp(tab) {
   document.getElementById('helpOverlay').classList.add('show');
   if (tab) {
+    const page = GUIDE_PAGES.indexOf(tab) > -1 ? tab : (GUIDE_ALIASES[tab] || GUIDE_PAGES[0]);
     document.querySelectorAll('.guide-section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.guide-tab-btn').forEach(b => b.classList.remove('active'));
-    const section = document.getElementById('guide-' + tab);
+    const section = document.getElementById('guide-' + page);
     if (section) section.classList.add('active');
     const btns = Array.from(document.querySelectorAll('.guide-tab-btn'));
-    const idx = ['start','words','practice','learn','settings','tips'].indexOf(tab);
+    const idx = GUIDE_PAGES.indexOf(page);
     if (btns[idx]) btns[idx].classList.add('active');
   }
   const sheet = document.querySelector('.help-sheet');
@@ -6629,13 +6654,81 @@ function setLevel(btn) {
   selectedLevel = btn.dataset.lvl;
 }
 
+// ══ OFFLINE WORD HINTS ══
+// The curated packs already carry a meaning, an example and its translation
+// for every entry. When a learner types one of those words we offer that
+// material as a hint rather than filling it in: composing the sentence is the
+// part that teaches, so the choice has to stay theirs. No network, no API key,
+// and it works exactly the same on a plane as it does at home.
+let _hintIndex = null;
+function getHintIndex() {
+  if (_hintIndex) return _hintIndex;
+  _hintIndex = {};
+  try {
+    Object.keys(wordPacks).forEach(function (key) {
+      (wordPacks[key].words || []).forEach(function (w) {
+        const k = (w.en || '').toLowerCase().trim();
+        // First pack wins, so the starter words stay the canonical version.
+        if (k && !_hintIndex[k]) _hintIndex[k] = w;
+      });
+    });
+  } catch (e) { devLog('hint index failed', e); }
+  return _hintIndex;
+}
+
+let _hintWord = null;
+function showWordHint(entry) {
+  const box = document.getElementById('wordHint');
+  if (!box) return;
+  _hintWord = entry;
+  document.getElementById('whAr').textContent = entry.ar || '—';
+  const exEl = document.getElementById('whEx');
+  exEl.textContent = entry.ex || '—';
+  exEl.style.display = entry.ex ? '' : 'none';
+  box.style.display = '';
+}
+
+function dismissWordHint() {
+  const box = document.getElementById('wordHint');
+  if (box) box.style.display = 'none';
+  _hintWord = null;
+}
+
+function useWordHint() {
+  if (!_hintWord) return;
+  const set = function (id, val) {
+    const el = document.getElementById(id);
+    if (el && val && !el.value.trim()) el.value = val;
+  };
+  set('inp-ar', _hintWord.ar);
+  set('inp-ex', _hintWord.ex);
+  set('inp-exar', _hintWord.exar);
+  if (_hintWord.level) {
+    document.querySelectorAll('.level-btn').forEach(function (b) {
+      b.classList.toggle('active-lvl', b.dataset.lvl === _hintWord.level);
+    });
+    selectedLevel = _hintWord.level;
+  }
+  dismissWordHint();
+  showToast('✦ تم ملء الاقتراح — عدّله كما تشاء', '#F5C842');
+}
+
 function checkDuplicateWordLive() {
-  const en = document.getElementById('inp-en').value.trim().toLowerCase();
+  const raw = document.getElementById('inp-en').value.trim();
+  const en = raw.toLowerCase();
   const warningEl = document.getElementById('dupWarning');
   if (!warningEl) return;
-  if (!en) { warningEl.style.display = 'none'; return; }
+  if (!en) { warningEl.style.display = 'none'; dismissWordHint(); return; }
   const exists = words.some(w => w.en.toLowerCase().trim() === en);
   warningEl.style.display = exists ? '' : 'none';
+
+  // A hint only helps for a word being added for the first time, and only
+  // once enough has been typed that the match is deliberate rather than a
+  // stray prefix.
+  if (exists || en.length < 3) { dismissWordHint(); return; }
+  const entry = getHintIndex()[en];
+  if (entry) showWordHint(entry);
+  else dismissWordHint();
 }
 
 function addWord() {
@@ -6643,7 +6736,6 @@ function addWord() {
   const ar   = document.getElementById('inp-ar').value.trim();
   const ex   = document.getElementById('inp-ex').value.trim();
   const exar = document.getElementById('inp-exar').value.trim();
-  console.log('addWord called:', {en, ar, wordsCount: words.length, today, goal: getDailyGoal(), todayCount: words.filter(w=>w.date===today).length});
   if (!en || !ar) { showToast('⚠️ Enter the word and its meaning · أدخل الكلمة والمعنى', '#FB7185'); return; }
 
   // Prevent duplicates: check if this English word already exists (case-insensitive)
@@ -6699,6 +6791,7 @@ function doAddWord(en, ar, ex, exar) {
   words.unshift({ en, ar, ex, exar, level: selectedLevel, date: today, id: Date.now(), source: 'mine' });
   save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
   ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
+  dismissWordHint();
   document.getElementById('inp-en').focus();
 
   // رسالة تحفيزية مع عداد
@@ -6919,11 +7012,70 @@ function renderWordCard(w, i) {
 
 let wordsRenderLimit = 20;
 
+// ══ OWNERSHIP BOUNDARY ══
+// `words` holds everything the app can practise with — including the 50
+// starter words seeded on first run, which fuel the quiz, games and
+// flashcards from day one.
+// `myWords()` holds only what the learner actually chose to add. This is the
+// list they see in "كلماتي" and the number every counter reports, so the
+// vocabulary they browse is genuinely theirs and never inflated by words
+// handed to them for free. Adopting the Starter Pack clears the `seeded`
+// flag, which is how those 50 cross the line into the learner's own book.
+function myWords() {
+  return words.filter(w => !w.seeded);
+}
+
+// ══ ACTIVITY WORD REQUIREMENTS ══
+// Each activity needs a different amount of vocabulary to work at all: a
+// multiple-choice quiz cannot build four options from two words. Rather than
+// letting an activity open and fail silently, we check first and explain.
+const ACTIVITY_MIN_WORDS = {
+  hangman:  1,
+  spelling: 1,
+  race:     4,
+  daily:    4,
+  quiz:     4,
+  flash:    1
+};
+
+// Returns true when the activity can run. When it cannot, opens the gate and
+// returns false, so callers read as: `if (!requireWords('quiz')) return;`
+function requireWords(activity, labelAr) {
+  const min = ACTIVITY_MIN_WORDS[activity] || 1;
+  if (words.length >= min) return true;
+  const short = min - words.length;
+  document.getElementById('nwTitle').textContent = labelAr || 'تحتاج كلمات أولاً';
+  document.getElementById('nwMsg').innerHTML =
+    'هذا النشاط يحتاج <b>' + min + '</b> كلمة على الأقل، ولديك <b>' + words.length + '</b>.' +
+    '<br><br>أضف <b>' + short + '</b> ' + (short === 1 ? 'كلمة' : 'كلمات') + ' وسيفتح فورًا 🚀';
+  // Hide the Starter shortcut once it has already been adopted.
+  const starterBtn = document.getElementById('nwStarterBtn');
+  if (starterBtn) starterBtn.style.display = localStorage.getItem('pack_starter') ? 'none' : '';
+  document.getElementById('needWordsOverlay').classList.add('show');
+  return false;
+}
+
+function closeNeedWords() {
+  document.getElementById('needWordsOverlay').classList.remove('show');
+}
+
+function nwGoAddWords() {
+  closeNeedWords();
+  showTab('words', document.getElementById('bn-words'), 'bn');
+  switchWordsTab('add');
+}
+
+function nwAdoptStarter() {
+  closeNeedWords();
+  adoptStarterPack();
+}
+
 function renderWords() {
   const container = document.getElementById('wordsList');
   const empty     = document.getElementById('emptyWords');
   const searchToggle = document.getElementById('searchToggleBtn');
-  if (!words.length) {
+  const mine = myWords();
+  if (!mine.length) {
     container.innerHTML = '';
     empty.style.display = '';
     if (searchToggle) searchToggle.style.display = 'none';
@@ -6931,13 +7083,13 @@ function renderWords() {
     return;
   }
   empty.style.display = 'none';
-  if (searchToggle) searchToggle.style.display = words.length >= 8 ? '' : 'none';
+  if (searchToggle) searchToggle.style.display = mine.length >= 8 ? '' : 'none';
 
   // Cap the default (unfiltered) list so browsing never means scrolling
   // through hundreds of cards at once — a real "one station" violation for
   // students with a large vocabulary. Search/filter results are unaffected.
-  const visible = words.slice(0, wordsRenderLimit);
-  const remaining = words.length - visible.length;
+  const visible = mine.slice(0, wordsRenderLimit);
+  const remaining = mine.length - visible.length;
   let html = visible.map((w, i) => renderWordCard(w, i)).join('');
   if (remaining > 0) {
     html += `<button class="search-toggle-btn" onclick="showMoreWords()" style="margin-top:10px">
@@ -6988,7 +7140,8 @@ function filterWordsList() {
   const query = document.getElementById('wordSearchInp').value.trim().toLowerCase();
   document.getElementById('searchClearBtn').style.display = query ? '' : 'none';
 
-  const filtered = words.filter((w) => {
+  const mine = myWords();
+  const filtered = mine.filter((w) => {
     // Text match
     const matchesText = !query || w.en.toLowerCase().includes(query) || w.ar.includes(query);
     if (!matchesText) return false;
@@ -7012,7 +7165,7 @@ function filterWordsList() {
   const countEl = document.getElementById('searchResultCount');
 
   if (query || currentWordFilter !== 'all') {
-    countEl.textContent = `${filtered.length} من ${words.length} كلمة`;
+    countEl.textContent = `${filtered.length} من ${mine.length} كلمة`;
   } else {
     countEl.textContent = '';
   }
@@ -7023,7 +7176,7 @@ function filterWordsList() {
   } else {
     noResults.style.display = 'none';
     container.innerHTML = filtered.map((w) => {
-      const originalIndex = words.indexOf(w);
+      const originalIndex = mine.indexOf(w);
       return renderWordCard(w, originalIndex);
     }).join('');
   }
@@ -7093,6 +7246,10 @@ function resumeQuiz() {
 }
 
 function startQuiz() {
+  // A multiple-choice quiz needs enough words to build plausible wrong
+  // answers; with fewer it either crashes on an empty list or shows the
+  // correct answer as the only option.
+  if (!requireWords('quiz', '🎯 Random Quiz')) return;
   quizScore = 0; quizIdx = 0;
   quizList  = weightedPickWords(words, Math.min(10, words.length));
   document.getElementById('quizScoreDisplay').textContent = '0';
@@ -7893,9 +8050,10 @@ function renderMissionCard() {
   updateContinueButton(items);
 }
 
-// Rough, honest estimates — not meant to be precise to the second, just to
-// give the student a sense of "this is a short, worthwhile trip" before they
-// start, and a visible reward waiting at the end of it.
+// We count steps, not minutes. A minute estimate is a promise we cannot keep:
+// the same lesson takes one learner four minutes and another twenty, and being
+// slower than the number on screen makes a student feel behind for no reason.
+// Steps remaining is exact, verifiable, and shrinks visibly as they work.
 function updateJourneyStats(items) {
   const timeEl = document.getElementById('journeyTimeValue');
   const rewardEl = document.getElementById('journeyRewardValue');
@@ -7905,26 +8063,25 @@ function updateJourneyStats(items) {
   const wordsRemaining = wordsItem.done ? 0 : (getDailyGoal() - words.filter(w => w.date === today && !w.seeded).length);
   const nextFlowStep = getNextFlowStep();
 
-  let minutes = 0;
+  let steps = 0;
   let points = 0;
 
   if (wordsRemaining > 0) {
-    minutes += wordsRemaining * 1.5;
+    steps += 1; // "add today's words" counts as one step, however many words remain
     points += wordsRemaining * POINTS_CONFIG.addWord;
   }
   if (nextFlowStep) {
-    // Remaining flow steps from here to the end, each ~4 minutes.
     const idx = DAILY_FLOW.indexOf(nextFlowStep);
     const remainingSteps = DAILY_FLOW.slice(idx);
-    minutes += remainingSteps.length * 4;
+    steps += remainingSteps.length;
     points += remainingSteps.reduce((sum, s) => sum + (FLOW_POINTS[s.section] || 0), 0);
   }
 
-  if (minutes <= 0) {
+  if (steps <= 0) {
     timeEl.textContent = 'Done ✓';
     rewardEl.textContent = 'Earned ⭐';
   } else {
-    timeEl.textContent = '~' + Math.ceil(minutes) + ' min';
+    timeEl.textContent = steps + (steps === 1 ? ' step' : ' steps');
     rewardEl.textContent = '+' + points + ' ⭐';
   }
 }
@@ -7980,7 +8137,10 @@ function toggleExploreSection() {
 function switchWordsTab(paneId, btn) {
   document.querySelectorAll('#tab-words .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.wpane === paneId));
   document.querySelectorAll('#wordsTabbar .station-tab-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  // `btn` is absent when the call comes from a shortcut (e.g. the empty-state
+  // "Add your first word" button), so fall back to locating the matching tab.
+  const target = btn || document.querySelector('#wordsTabbar .station-tab-btn[data-wtab="' + paneId + '"]');
+  if (target) target.classList.add('active');
   if (paneId === 'browse') { renderWords(); }
 }
 
@@ -8072,6 +8232,10 @@ function showToast(msg, color='#2DD4BF') {
 
 // ══ GAMES ══
 function startGame(name) {
+  // Gate before hiding the menu, so a blocked learner stays where they are
+  // instead of landing on a blank game screen.
+  const labels = { hangman:'🎯 Hangman', race:'⚡ سباق ٦٠ ثانية', daily:'🌟 تحدي اليوم', spelling:'✍️ تحدي التهجئة' };
+  if (!requireWords(name, labels[name])) return;
   document.getElementById('gamesMenu').style.display = 'none';
   document.getElementById('gameHangman').style.display = 'none';
   document.getElementById('gameRace').style.display = 'none';
@@ -8096,7 +8260,6 @@ const hmParts = ['hm-head','hm-body','hm-larm','hm-rarm','hm-lleg','hm-rleg'];
 let hmWord='', hmGuessed=[], hmWrong=0, hmMax=6;
 
 function initHangman() {
-  if (words.length < 1) { showToast('أضف كلمات أولاً!','#FB7185'); backToGames(); return; }
   const w = words[Math.floor(Math.random()*words.length)];
   hmWord = w.en.toLowerCase().replace(/[^a-z]/g,'');
   hmGuessed = []; hmWrong = 0;
@@ -8241,7 +8404,9 @@ function endRace() {
 // ── DAILY CHALLENGE ───────────────────────────
 function initDaily() {
   const area = document.getElementById('dailyArea');
-  if (words.length < 2) { area.innerHTML='<div class="empty-state"><div class="e-icon">🌟</div><p>أضف كلمات أولاً!</p></div>'; return; }
+  // Safety net: startGame() already gates this, so reaching here means the
+  // dictionary shrank mid-session (e.g. a word was deleted from another tab).
+  if (words.length < 2) { area.innerHTML='<div class="empty-state"><div class="e-icon">🌟</div><p>تحتاج كلمتين على الأقل لهذا التحدي.<br>أضف كلمة جديدة وسيعود التحدي 🚀</p></div>'; return; }
   const todayKey = 'daily_' + new Date().toDateString();
   const done = localStorage.getItem(todayKey);
   if (done) {
@@ -8293,7 +8458,9 @@ function checkDaily(btn, chosen, correct, word, meaning) {
 let spellWord = '', spellAnswer = [], spellRevealed = [], spellScore = 0, spellStreak = 0, spellLocked = false;
 
 function initSpelling() {
-  if (words.length < 1) { showToast('أضف كلمات أولاً!','#FF6B8A'); backToGames(); return; }
+  // Safety net — see note in initDaily(). The gate in startGame() is the
+  // path a learner normally meets.
+  if (words.length < 1) { backToGames(); requireWords('spelling', '✍️ تحدي التهجئة'); return; }
   spellScore = 0; spellStreak = 0;
   renderSpellingQ();
 }
@@ -9786,6 +9953,35 @@ function renderJourneyList() {
   list.innerHTML = html;
 }
 
+// ══ ARABIC SUPPORT LEVEL ══
+// English is what we are teaching, so Arabic should behave like scaffolding:
+// present while it is needed, gone once it is not. Rather than deciding that
+// by taste, we tie it to the learner's own distance along the line.
+//
+//   full  (chapters 1-2)  Arabic sits beside the English.
+//   hint  (chapters 3-4)  English alone; Arabic is one deliberate tap away.
+//   none  (chapters 5-6)  English only.
+//
+// The middle tier is the important one. Removing the safety net entirely makes
+// beginners guess; leaving it free makes them read Arabic and skip the English.
+// Costing one tap means the meaning is *retrieved* rather than handed over,
+// which is the effort that actually fixes a word in memory.
+//
+// Word meanings, first-run screens and warnings about irreversible actions are
+// deliberately exempt everywhere — see arabicSupport() callers.
+function arabicSupport() {
+  try {
+    const p = getTrainProgress();
+    // `completed` is an array of station ids, not a count.
+    const done = Array.isArray(p && p.completed) ? p.completed.length : 0;
+    if (done >= 28) return 'none';   // chapters 5-6
+    if (done >= 19) return 'hint';   // chapters 3-4
+    return 'full';                   // chapters 1-2
+  } catch (e) {
+    return 'full'; // never strand a learner because a lookup failed
+  }
+}
+
 // ══ TRAIN ARRIVAL ══
 var currentTrainStation = null;
 
@@ -9804,14 +10000,24 @@ function launchTrain(stationId) {
     bg.appendChild(star);
   }
 
-  document.getElementById('trainCityName').textContent = currentTrainStation.flag + ' ' + currentTrainStation.name;
-  document.getElementById('trainCitySub').textContent = currentTrainStation.nameEn;
+  // English is the headline; the Arabic name sits beneath it as an anchor and
+  // withdraws once the learner is far enough along to no longer need it.
+  var support = arabicSupport();
+  document.getElementById('trainCityName').textContent =
+    currentTrainStation.flag + ' ' + currentTrainStation.nameEn;
+  var subEl = document.getElementById('trainCitySub');
+  subEl.textContent = (support === 'none') ? '' : currentTrainStation.name;
+  subEl.style.display = (support === 'none') ? 'none' : '';
+  document.getElementById('trainEnterLabel').textContent =
+    (support === 'full') ? 'Enter the station · ادخل المحطة' : 'Enter the station';
   document.getElementById('trainArrivalScreen').style.display = 'flex';
 
-  // Speak arrival
+  // The one spoken moment in the journey belongs to the language being learnt.
+  // Hearing "Now arriving at Makkah" 42 times teaches the phrase by repetition
+  // alone, which an Arabic announcement in an English course never could.
   if (window.speechSynthesis) {
-    var u = new SpeechSynthesisUtterance('وصلنا إلى ' + currentTrainStation.name);
-    u.lang = 'ar-SA'; u.rate = 0.9;
+    var u = new SpeechSynthesisUtterance('Now arriving at ' + currentTrainStation.nameEn);
+    u.lang = 'en-US'; u.rate = 0.88;
     try { window.speechSynthesis.speak(u); } catch(e) {}
   }
 }
@@ -9882,7 +10088,19 @@ function showStationCard() {
     '</div>' +
     '<div class="station-tab-pane" data-pane="ar">' +
       '<div class="station-tab-label" style="color:#F5C842">نبذة بالعربية</div>' +
-      '<div class="station-para-ar">' + s.infoAr + '</div>' +
+      // Past chapter 2 the translation is covered. It is still one tap away,
+      // but that tap is the difference between reading Arabic instead of the
+      // English, and reaching for it only after having tried.
+      (arabicSupport() === 'full'
+        ? '<div class="station-para-ar">' + s.infoAr + '</div>'
+        : '<div class="ar-veil" onclick="this.classList.add(\'open\')">' +
+            '<div class="ar-veil-cover">' +
+              '<span class="ar-veil-icon">👁️</span>' +
+              '<span class="ar-veil-en">Try the English first</span>' +
+              '<span class="ar-veil-hint">اضغط لكشف الترجمة</span>' +
+            '</div>' +
+            '<div class="station-para-ar">' + s.infoAr + '</div>' +
+          '</div>') +
       '<div class="station-quote">' + s.quote + '</div>' +
     '</div>' +
     '<div class="station-tab-pane" data-pane="words">' +
@@ -10097,7 +10315,11 @@ function showSQResult() {
       } else if (chapterJustCompleted) {
         showLevelCompleteOverlay(finishedChapter);
       } else {
-        showToast('🏆 وصلت المحطة ' + station.name + '! القطار ينطلق! 🚄', '#A78BFA');
+        // Celebration text is short, repeated and obvious from context — the
+        // cheapest possible place to hand the learner real English.
+        showToast(arabicSupport() === 'full'
+          ? '🏆 Station complete: ' + station.nameEn + '! · اكتملت المحطة 🚄'
+          : '🏆 Station complete: ' + station.nameEn + '! The train departs 🚄', '#A78BFA');
       }
       openTrainJourney();
     };
