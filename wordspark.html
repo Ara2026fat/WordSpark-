@@ -8319,6 +8319,9 @@ function endHangman(won) {
     : `<div style="font-size:48px">😔</div><div style="font-size:20px;font-weight:900;color:var(--rose);margin:10px 0">انتهت المحاولات!</div>
        <div style="color:var(--muted);font-size:14px;margin-bottom:16px">الكلمة كانت: <b style="color:var(--white)">${hmWord.toUpperCase()}</b></div>
        <button class="btn-start-quiz" onclick="initHangman()">🔄 حاول مرة أخرى</button>`;
+  // A finished round counts whether or not it was won: the requirement is to
+  // practise, and failing a word you then see spelled out still teaches it.
+  completeGame('Hangman');
 }
 
 // ── RACE ─────────────────────────────────────
@@ -8397,8 +8400,7 @@ function endRace() {
       </div>
       <button class="btn-start-quiz" style="background:linear-gradient(135deg,#F5C842,#d97706);color:#0D1117" onclick="initRace()">🔄 العب مجدداً</button>
     </div>`;
-  addStarPoints('playGame');
-  trackTrainGame();
+  completeGame('Race');
 }
 
 // ── DAILY CHALLENGE ───────────────────────────
@@ -8451,6 +8453,7 @@ function checkDaily(btn, chosen, correct, word, meaning) {
     showToast('📚 شاهد الإجابة الصحيحة أعلاه — نراك غداً بكلمة جديدة!','var(--muted)');
   }
   localStorage.setItem('daily_'+new Date().toDateString(), JSON.stringify({won,word,meaning}));
+  completeGame('Daily Challenge');
   setTimeout(()=>initDaily(), 1500);
 }
 
@@ -8625,6 +8628,7 @@ function checkSpelling() {
     fb.className = 'spell-feedback show ok';
     fb.textContent = '🎉 ممتاز! إجابة صحيحة (+10 نقاط)';
     showToast('✅ صحيح!');
+    completeGame('Spelling');
   } else {
     spellStreak = 0;
     fb.className = 'spell-feedback show no';
@@ -10333,21 +10337,53 @@ function showSQResult() {
 }
 
 // Track game for train
+//
+// Every game ending must funnel through completeGame() below. Previously each
+// ending was expected to remember two separate calls — award points, then mark
+// the station requirement — and three of the four games remembered neither, so
+// students played, won, and watched the station stay locked. One entry point
+// means a new game cannot be added wrong.
 function trackTrainGame() {
-  if (!currentTrainStation) return;
+  // `currentTrainStation` is only set when the student arrived through the
+  // journey screen. Opening a game from the Library left it null, so the round
+  // counted for nothing — the single most likely path, silently dropped.
+  // Requirements belong to whichever station is currently active, however the
+  // student reached the game.
   var p = getTrainProgress();
-  if (p.games.indexOf(p.current) === -1) {
-    p.games.push(p.current);
+  var sid = getCurrentStationId(p);
+  if (!sid) return;
+  if (p.games.indexOf(sid) === -1) {
+    p.games.push(sid);
     saveTrainProgress(p);
+  }
+}
+
+// The single call every game makes when a round genuinely finishes.
+// `label` is only used for the confirmation the student sees.
+function completeGame(label) {
+  addStarPoints('playGame');
+  trackTrainGame();
+  logSectionActivity('games');
+  var req = null;
+  try { req = checkStationRequirements(getCurrentStationId(getTrainProgress())); } catch (e) {}
+  // Tell the student the station requirement moved, otherwise finishing a game
+  // feels identical whether or not it counted toward the journey.
+  if (req && req.game.need && req.game.done) {
+    setTimeout(function () {
+      showToast('🚄 ' + (label || 'Game') + ' complete — station requirement met!', '#2DD4BF');
+    }, 900);
   }
 }
 
 // Track podcast for train
 function trackTrainPodcast() {
-  if (!currentTrainStation) return;
+  // Same fix as trackTrainGame(): the Library is a valid way in, so tracking
+  // must not depend on having come through the journey screen.
   var p = getTrainProgress();
-  if (p.podcasts.indexOf(p.current) === -1) {
-    p.podcasts.push(p.current);
+  var sid = getCurrentStationId(p);
+  if (!sid) return;
+  if (p.podcasts.indexOf(sid) === -1) {
+    p.podcasts.push(sid);
     saveTrainProgress(p);
   }
 }
@@ -11238,10 +11274,27 @@ function checkConvOrder() {
   }
 }
 
+// Track conversation for train
+//
+// `p.convs` was read by checkStationRequirements() but nothing ever wrote to
+// it, so any station requiring a conversation could never be cleared no matter
+// how many the student finished. A read-only requirement is a locked door.
+function trackTrainConv() {
+  var p = getTrainProgress();
+  var sid = getCurrentStationId(p);
+  if (!sid) return;
+  if (p.convs.indexOf(sid) === -1) {
+    p.convs.push(sid);
+    saveTrainProgress(p);
+  }
+}
+
 function markConvMastered(key) {
   const alreadyMastered = localStorage.getItem('conv_mastered_' + key) === '1';
   localStorage.setItem('conv_mastered_' + key, '1');
   if (!alreadyMastered) addStarPoints('completeConv');
+  trackTrainConv();
+  logSectionActivity('conv');
   showToast('🏆 أحسنت! تم إتقان هذه المحادثة', '#FFD700');
   openConv(key);
 }
