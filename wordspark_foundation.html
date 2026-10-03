@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WordSpark · التأسيس — نموذج تجريبي</title>
+<meta name="theme-color" content="#0D1117">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════
+   FOUNDATION PROTOTYPE
+   Two tools for the weakest learner:
+     1. Pronunciation coach — the synth teaches, never judges
+     2. Listening drill     — hear it, pick it; no reading needed
+   Both run entirely on-device. No network, no microphone,
+   no permission prompt, nothing that can refuse a student.
+   ══════════════════════════════════════════════════════ */
+
+:root{
+  --ink:#0D1117; --deep:#111827; --panel:#1A2332; --card:#1E2D42; --rim:#243550;
+  --gold:#F5C842; --teal:#2DD4BF; --rose:#FB7185; --mint:#34D399; --lav:#A78BFA;
+  --muted:#64748B; --white:#F1F5F9;
+  --ar:'Tajawal',system-ui,sans-serif;
+  --en:'Space Grotesk',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--ink);color:var(--white);font-family:var(--ar);
+  line-height:1.7;min-height:100svh;padding-bottom:40px;
+  background-image:radial-gradient(110% 50% at 50% -8%,rgba(45,212,191,.09),transparent 60%);
+}
+
+header{
+  padding:16px;text-align:center;border-bottom:1px solid var(--rim);
+  position:sticky;top:0;background:rgba(13,17,23,.96);z-index:20;backdrop-filter:blur(10px);
+}
+.brand{font-family:var(--en);font-size:11px;letter-spacing:4px;color:var(--gold);font-weight:700}
+.sub{font-size:12px;color:var(--muted);margin-top:2px}
+
+.wrap{max-width:520px;margin:0 auto;padding:16px}
+
+/* ── MODE TABS ─────────────────────────────────────── */
+.modes{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px}
+.mode-btn{
+  padding:13px 8px;border-radius:14px;cursor:pointer;border:1px solid var(--rim);
+  background:var(--panel);color:var(--muted);font-family:var(--ar);
+  font-size:13px;font-weight:700;transition:all .22s;
+}
+.mode-btn .i{display:block;font-size:20px;margin-bottom:3px}
+.mode-btn.on{background:linear-gradient(150deg,var(--card),var(--panel));color:var(--white);border-color:var(--teal)}
+
+.pane{display:none}
+.pane.on{display:block}
+
+/* ── PRONUNCIATION COACH ───────────────────────────── */
+.coach-card{
+  background:linear-gradient(155deg,var(--card),var(--panel));
+  border:1px solid var(--rim);border-radius:22px;padding:22px 18px;
+  text-align:center;position:relative;overflow:hidden;
+  box-shadow:0 14px 34px rgba(0,0,0,.3);
+}
+.coach-card::before{
+  content:'';position:absolute;top:0;inset-inline:16%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,200,66,.5),transparent);
+}
+
+/* The word, letter by letter. Silent letters are dimmed and struck
+   through, so the learner *sees* why the sound does not match the
+   spelling — the single most confusing thing in early English. */
+.word-letters{
+  font-family:var(--en);font-size:clamp(34px,11vw,52px);font-weight:700;
+  letter-spacing:2px;direction:ltr;margin-bottom:6px;
+  display:flex;justify-content:center;flex-wrap:wrap;gap:1px;
+}
+.lt{transition:color .25s,transform .25s;position:relative}
+.lt.sound{color:var(--white)}
+.lt.silent{color:#3E4C63;text-decoration:line-through;text-decoration-thickness:2px}
+.lt.tricky{color:var(--gold)}
+.lt.lit{transform:translateY(-5px);color:var(--teal);text-shadow:0 0 16px rgba(45,212,191,.7)}
+
+.phon{font-family:var(--en);font-size:15px;color:var(--lav);direction:ltr;margin-bottom:4px}
+.meaning{font-size:16px;color:var(--white);font-weight:700;margin-bottom:14px}
+
+.legend{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;font-size:10.5px;color:var(--muted);margin-bottom:16px}
+.legend i{font-style:normal;display:inline-flex;align-items:center;gap:4px}
+.dot{width:9px;height:9px;border-radius:3px;display:inline-block}
+
+/* ── SPEED CONTROL ─────────────────────────────────── */
+.speeds{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:12px}
+.sp-btn{
+  padding:11px 4px;border-radius:12px;cursor:pointer;border:1px solid var(--rim);
+  background:var(--panel);color:var(--white);font-family:var(--ar);font-size:12px;font-weight:700;
+  transition:transform .16s,border-color .2s;
+}
+.sp-btn:active{transform:scale(.94)}
+.sp-btn .lbl{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:1px}
+.sp-btn.slow{border-color:rgba(52,211,153,.4)}
+.sp-btn.normal{border-color:rgba(45,212,191,.4)}
+.sp-btn.repeat{border-color:rgba(245,200,66,.4)}
+.sp-btn.busy{background:linear-gradient(100deg,var(--teal),#0EA5E9);color:var(--ink)}
+
+.rep-row{display:flex;gap:6px;justify-content:center;margin-bottom:14px}
+.rep{
+  width:34px;height:34px;border-radius:10px;border:1px solid var(--rim);
+  background:var(--panel);color:var(--muted);font-family:var(--en);font-size:13px;
+  font-weight:700;cursor:pointer;transition:all .2s;
+}
+.rep.on{background:var(--gold);color:var(--ink);border-color:transparent}
+
+.nav-row{display:flex;gap:8px;align-items:center}
+.nav-btn{
+  flex:1;padding:12px;border-radius:13px;cursor:pointer;border:1px solid var(--rim);
+  background:var(--panel);color:var(--white);font-family:var(--ar);font-size:13px;font-weight:700;
+}
+.nav-btn.main{background:linear-gradient(100deg,var(--gold),#FB923C);color:var(--ink);border-color:transparent}
+.nav-btn:disabled{opacity:.3}
+
+.tip{
+  margin-top:14px;padding:11px 13px;border-radius:12px;font-size:12px;
+  background:rgba(245,200,66,.08);border:1px solid rgba(245,200,66,.2);color:#E4C88F;
+  text-align:start;
+}
+.counter{font-family:var(--en);font-size:11px;color:var(--muted);text-align:center;margin-top:12px;letter-spacing:1px}
+
+/* ── LISTENING DRILL ───────────────────────────────── */
+.drill-head{text-align:center;margin-bottom:16px}
+.big-listen{
+  width:100%;padding:26px;border-radius:22px;cursor:pointer;border:0;
+  background:linear-gradient(150deg,#1E3A5C,#0E1C2D);border:1px solid rgba(45,212,191,.35);
+  color:var(--white);font-family:var(--ar);font-size:17px;font-weight:900;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:transform .18s;margin-bottom:16px;
+}
+.big-listen:active{transform:scale(.97)}
+.big-listen .ico{font-size:40px}
+.big-listen.playing .ico{animation:pulse .8s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.15);opacity:.75}}
+
+.choices{display:grid;gap:9px}
+.choice{
+  padding:16px;border-radius:15px;cursor:pointer;border:1px solid var(--rim);
+  background:var(--panel);color:var(--white);
+  font-family:var(--en);font-size:20px;font-weight:700;direction:ltr;
+  transition:transform .16s,border-color .2s,background .2s;
+}
+.choice:active{transform:scale(.97)}
+.choice.right{background:rgba(52,211,153,.18);border-color:var(--mint)}
+.choice.wrong{background:rgba(251,113,133,.15);border-color:var(--rose)}
+.choice .ar{display:block;font-family:var(--ar);font-size:12px;color:var(--muted);font-weight:400;direction:rtl;margin-top:2px}
+
+.score-row{display:flex;gap:10px;justify-content:center;margin:16px 0 4px}
+.sc{background:var(--panel);border:1px solid var(--rim);border-radius:12px;padding:9px 16px;text-align:center;min-width:78px}
+.sc b{display:block;font-family:var(--en);font-size:19px;color:var(--gold)}
+.sc span{font-size:10.5px;color:var(--muted)}
+
+.note-box{
+  margin-top:18px;padding:13px 15px;border-radius:13px;font-size:12.5px;
+  background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);color:#A9C9CF;
+}
+.warn-box{background:rgba(251,113,133,.08);border-color:rgba(251,113,133,.25);color:#E7A9B4}
+
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">WORDSPARK · FOUNDATION</div>
+  <div class="sub">نموذج تجريبي — مدرّب النطق والاستماع</div>
+</header>
+
+<div class="wrap">
+
+  <div class="modes">
+    <button class="mode-btn on" id="mCoach" onclick="setMode('coach')">
+      <span class="i">👂</span>كيف أنطقها؟
+    </button>
+    <button class="mode-btn" id="mDrill" onclick="setMode('drill')">
+      <span class="i">🎧</span>ماذا سمعت؟
+    </button>
+  </div>
+
+  <!-- ══ PRONUNCIATION COACH ══ -->
+  <div class="pane on" id="paneCoach">
+    <div class="coach-card">
+      <div class="word-letters" id="wordLetters"></div>
+      <div class="phon" id="wordPhon"></div>
+      <div class="meaning" id="wordMeaning"></div>
+
+      <div class="legend">
+        <i><span class="dot" style="background:#F1F5F9"></span> يُنطق</i>
+        <i><span class="dot" style="background:#3E4C63"></span> لا يُنطق</i>
+        <i><span class="dot" style="background:#F5C842"></span> انتبه لهذا</i>
+      </div>
+
+      <div class="speeds">
+        <button class="sp-btn slow" id="btnSlow" onclick="say(0.5)">🐢<span class="lbl">ببطء</span></button>
+        <button class="sp-btn normal" id="btnNormal" onclick="say(0.95)">▶️<span class="lbl">عادي</span></button>
+        <button class="sp-btn repeat" id="btnRepeat" onclick="sayRepeat()">🔁<span class="lbl">كرّرها</span></button>
+      </div>
+
+      <div class="rep-row" id="repRow"></div>
+
+      <div class="nav-row">
+        <button class="nav-btn" id="btnPrev" onclick="move(-1)">السابقة</button>
+        <button class="nav-btn main" onclick="say(0.95)">🔊 استمع</button>
+        <button class="nav-btn" id="btnNext" onclick="move(1)">التالية</button>
+      </div>
+
+      <div class="tip" id="wordTip"></div>
+      <div class="counter" id="coachCounter"></div>
+    </div>
+
+    <div class="note-box" id="synthNote"></div>
+  </div>
+
+  <!-- ══ LISTENING DRILL ══ -->
+  <div class="pane" id="paneDrill">
+    <div class="drill-head">
+      <div style="font-size:13px;color:var(--muted)">اضغط واستمع، ثم اختر الكلمة التي سمعتها</div>
+    </div>
+
+    <button class="big-listen" id="bigListen" onclick="playDrill()">
+      <span class="ico">🔊</span>
+      <span>استمع</span>
+    </button>
+
+    <div class="choices" id="drillChoices"></div>
+
+    <div class="score-row">
+      <div class="sc"><b id="scRight">0</b><span>صحيح</span></div>
+      <div class="sc"><b id="scTotal">0</b><span>المحاولات</span></div>
+      <div class="sc"><b id="scStreak">0</b><span>متتالية</span></div>
+    </div>
+
+    <div class="note-box">
+      💡 <b>ملاحظة للمعلّم:</b> الأزواج هنا مختارة عمدًا لتدريب الأصوات التي تصعب على الناطق بالعربية:
+      <b>p/b</b> و<b>v/f</b> والحركات القصيرة والطويلة (ship/sheep).
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ══ FOUNDATION WORD SET ══
+   Built on three principles from early-literacy teaching rather than
+   picked for variety:
+
+   1. SIGHT WORDS — the highest-frequency words in English. Around a
+      hundred of them make up roughly half of any ordinary text, and
+      almost none can be sounded out (the, of, was). A learner who
+      cannot read these cannot read a sentence, however many nouns
+      they know. They are learned whole, by eye.
+
+   2. CVC WORDS — consonant-vowel-consonant, one sound per letter, no
+      exceptions (cat, sun, big). These build the alphabetic principle:
+      succeed at ten of them and the rule generalises.
+
+   3. ARABIC-L1 TRAPS — sounds absent from Arabic, so they are heard
+      and produced as their nearest Arabic neighbour: /p/ becomes /b/,
+      /v/ becomes /f/. These need explicit contrast, not exposure.
+
+   `silent` marks letter indices that carry no sound; `tricky` marks
+   the letters carrying the difficulty being taught. */
+var WORDS = [
+  // ── Sight words: unlock sentences ──
+  { en:'the',   ph:'/ðə/',    ar:'الـ (أداة تعريف)', set:'sight',
+    tip:'من أكثر الكلمات ورودًا في الإنجليزية. لا تُقرأ بالتهجئة — احفظها بالنظر كصورة واحدة.' },
+  { en:'is',    ph:'/ɪz/',    ar:'يكون / هو',        set:'sight',
+    tip:'تربط بين شيئين: <b>The cat <u>is</u> big</b>. بلا هذه الكلمة لا تكتمل جملة.' },
+  { en:'and',   ph:'/ænd/',   ar:'و',                set:'sight',
+    tip:'أداة الربط الأولى. جرّب: <b>bread <u>and</u> water</b>.' },
+  { en:'in',    ph:'/ɪn/',    ar:'في',               set:'sight',
+    tip:'حرف جرّ للمكان: <b>The book is <u>in</u> the bag</b>.' },
+
+  // ── CVC: build decoding ──
+  { en:'cat',   ph:'/kæt/',   ar:'قطة',   set:'cvc',
+    tip:'ثلاثة أحرف، ثلاثة أصوات: c-a-t. انطق كل صوت وحده ثم صِلها بسرعة.' },
+  { en:'sun',   ph:'/sʌn/',   ar:'شمس',   set:'cvc',
+    tip:'s-u-n. لاحظ أن <b>u</b> هنا قصيرة كالفتحة المشوبة بالضم.' },
+  { en:'big',   ph:'/bɪɡ/',   ar:'كبير',  set:'cvc',
+    tip:'b-i-g. الحرف <b>i</b> قصير — ليس "باي" بل "بِـ".' },
+  { en:'red',   ph:'/red/',   ar:'أحمر',  set:'cvc',
+    tip:'r-e-d. صوت <b>r</b> الإنجليزي أخف من الراء العربية، ولا يُكرّر اللسان.' },
+
+  // ── /p/ — absent from Arabic ──
+  { en:'pen',   ph:'/pen/',   ar:'قلم',   set:'trap', tricky:[0],
+    tip:'⚠️ صوت <b>p</b> لا يوجد في العربية، فيُنطق خطأً <b>b</b>. الفرق: <b>p</b> تخرج بدفعة هواء. ضع كفّك أمام فمك — يجب أن تشعر بالهواء في <b>pen</b> ولا تشعر به في <b>Ben</b>.' },
+  { en:'happy', ph:'/ˈhæpi/', ar:'سعيد', set:'trap', tricky:[2,3],
+    tip:'⚠️ <b>pp</b> تُنطق صوتًا واحدًا لا اثنين — وهو صوت <b>p</b> بدفعة الهواء.' },
+
+  // ── /v/ — absent from Arabic ──
+  { en:'very',  ph:'/ˈveri/', ar:'جدًا',  set:'trap', tricky:[0],
+    tip:'⚠️ صوت <b>v</b> لا يوجد في العربية، فيُنطق خطأً <b>f</b>. الفرق: <b>v</b> تهتزّ فيها الحبال الصوتية. ضع إصبعك على حلقك — يجب أن تشعر بالاهتزاز.' },
+  { en:'seven', ph:'/ˈsevən/',ar:'سبعة', set:'trap', tricky:[2],
+    tip:'⚠️ الأسنان العليا تلامس الشفة السفلى مع صوت من الحلق.' },
+
+  // ── Silent letters: why spelling lies ──
+  { en:'know',  ph:'/nəʊ/',   ar:'يعرف', set:'silent', silent:[0],
+    tip:'الحرف <b>k</b> لا يُنطق إطلاقًا. الكلمة تُسمع كأنها <b>no</b> تمامًا.' },
+  { en:'write', ph:'/raɪt/',  ar:'يكتب', set:'silent', silent:[0,4],
+    tip:'الحرف <b>w</b> صامت، و<b>e</b> في النهاية صامتة أيضًا — لكنها تُطيل صوت <b>i</b> قبلها.' },
+  { en:'hour',  ph:'/ˈaʊər/', ar:'ساعة', set:'silent', silent:[0],
+    tip:'الحرف <b>h</b> صامت. تبدأ الكلمة بصوت حركة، ولهذا نقول <b>an hour</b> لا <b>a hour</b>.' },
+
+  // ── Initial clusters: Arabic forbids them ──
+  { en:'street',ph:'/striːt/',ar:'شارع', set:'cluster', tricky:[0,1,2],
+    tip:'⚠️ ثلاثة سواكن متتالية <b>s-t-r</b>. العربية لا تبدأ بساكنين، فيُقحم الناطق حركة: "istreet". تدرّب ببطء ثم أسرع تدريجيًا بلا إقحام.' },
+  { en:'spring',ph:'/sprɪŋ/', ar:'ربيع', set:'cluster', tricky:[0,1,2],
+    tip:'⚠️ نفس الصعوبة: <b>s-p-r</b> بلا حركة بينها.' },
+
+  // ── A strength: th exists in Arabic ──
+  { en:'think', ph:'/θɪŋk/',  ar:'يفكّر', set:'win', tricky:[0,1],
+    tip:'✅ صوت <b>th</b> هنا هو الثاء العربية تمامًا. هذا أصعب صوت على متعلّمي الإنجليزية في العالم — وأنت تملكه أصلًا.' },
+  { en:'this',  ph:'/ðɪs/',   ar:'هذا',  set:'win', tricky:[0,1],
+    tip:'✅ <b>th</b> هنا هي الذال العربية. لاحظ أنها تختلف عن ثاء <b>think</b> — والعربية تفرّق بينهما أيضًا.' }
+];
+
+/* ══ MINIMAL PAIRS ══
+   Each pair differs by exactly one sound, and that sound is one an
+   Arabic speaker is likely to merge. Choosing between them forces the
+   ear to notice a distinction it has been ignoring. */
+var PAIRS = [
+  ['pen','Ben','قلم','اسم شخص'],
+  ['pat','bat','ربتة','مضرب'],
+  ['very','ferry','جدًا','عبّارة'],
+  ['van','fan','شاحنة','مروحة'],
+  ['ship','sheep','سفينة','خروف'],
+  ['bit','beat','قطعة صغيرة','يضرب'],
+  ['bed','bad','سرير','سيّئ'],
+  ['man','men','رجل','رجال'],
+  ['cat','cut','قطة','يقطع'],
+  ['hat','hot','قبعة','حارّ']
+];
+
+var at = 0;
+var reps = 3;
+var synth = window.speechSynthesis || null;
+
+/* ── Speech ────────────────────────────────────────
+   Deliberately NOT jittered. The main app randomises rate slightly so
+   repeated playback sounds human, but a learner drilling a sound needs
+   the identical model every time — variation here is noise, not life. */
+function speak(text, rate, onDone){
+  if (!synth) return;
+  try { synth.cancel(); } catch(e){}
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US';
+  u.rate = rate;
+  u.pitch = 1;
+  u.volume = 1;
+  var vs = synth.getVoices();
+  if (vs && vs.length) {
+    var v = vs.find(function(x){ return /en[-_]US/i.test(x.lang) && /female|samantha|zira|google/i.test(x.name); })
+         || vs.find(function(x){ return /^en/i.test(x.lang); });
+    if (v) u.voice = v;
+  }
+  if (onDone) u.onend = onDone;
+  try { synth.speak(u); } catch(e){}
+}
+
+/* ── Coach ─────────────────────────────────────────── */
+function renderWord(){
+  var w = WORDS[at];
+  var silent = w.silent || [];
+  var tricky = w.tricky || [];
+  document.getElementById('wordLetters').innerHTML = w.en.split('').map(function(ch, i){
+    var cls = silent.indexOf(i) > -1 ? 'silent' : (tricky.indexOf(i) > -1 ? 'tricky' : 'sound');
+    return '<span class="lt ' + cls + '" data-i="' + i + '">' + ch + '</span>';
+  }).join('');
+  document.getElementById('wordPhon').textContent = w.ph;
+  document.getElementById('wordMeaning').textContent = w.ar;
+  document.getElementById('wordTip').innerHTML = w.tip;
+  document.getElementById('coachCounter').textContent = (at + 1) + ' / ' + WORDS.length;
+  document.getElementById('btnPrev').disabled = (at === 0);
+  document.getElementById('btnNext').disabled = (at === WORDS.length - 1);
+}
+
+window.move = function(d){
+  var n = at + d;
+  if (n < 0 || n > WORDS.length - 1) return;
+  at = n;
+  renderWord();
+  say(0.95);
+};
+
+window.say = function(rate){
+  var btn = rate < 0.7 ? document.getElementById('btnSlow') : document.getElementById('btnNormal');
+  btn.classList.add('busy');
+  lightLetters(rate);
+  speak(WORDS[at].en, rate, function(){ btn.classList.remove('busy'); });
+};
+
+/* Sweep a highlight across the letters roughly in time with the audio.
+   It is an approximation, not real alignment — but it tells the learner
+   *where in the word* they are, which is the thing a slow decoder loses. */
+function lightLetters(rate){
+  var letters = Array.prototype.slice.call(document.querySelectorAll('.lt'));
+  var perLetter = (rate < 0.7 ? 190 : 105);
+  letters.forEach(function(el, i){
+    setTimeout(function(){
+      el.classList.add('lit');
+      setTimeout(function(){ el.classList.remove('lit'); }, perLetter);
+    }, i * perLetter);
+  });
+}
+
+window.sayRepeat = function(){
+  var btn = document.getElementById('btnRepeat');
+  btn.classList.add('busy');
+  var n = 0;
+  (function next(){
+    if (n >= reps) { btn.classList.remove('busy'); return; }
+    n++;
+    // Alternate slow / normal: hear the shape, then hear it at speed.
+    var rate = (n % 2 === 1) ? 0.5 : 0.95;
+    lightLetters(rate);
+    speak(WORDS[at].en, rate, function(){ setTimeout(next, 320); });
+  })();
+};
+
+(function buildReps(){
+  var host = document.getElementById('repRow');
+  host.innerHTML = [2,3,4,5].map(function(n){
+    return '<button class="rep' + (n === reps ? ' on' : '') + '" data-n="' + n + '">' + n + '×</button>';
+  }).join('');
+  host.addEventListener('click', function(e){
+    var b = e.target.closest ? e.target.closest('.rep') : null;
+    if (!b) return;
+    reps = parseInt(b.getAttribute('data-n'), 10);
+    Array.prototype.forEach.call(host.children, function(c){
+      c.classList.toggle('on', c === b);
+    });
+  });
+})();
+
+/* ── Listening drill ───────────────────────────────── */
+var target = null, drillPair = null, answered = false;
+var right = 0, total = 0, streak = 0;
+
+function newDrill(){
+  answered = false;
+  drillPair = PAIRS[Math.floor(Math.random() * PAIRS.length)];
+  var flip = Math.random() < 0.5;
+  var a = flip ? 0 : 1, b = flip ? 1 : 0;
+  target = drillPair[a];
+  var opts = [
+    { w: drillPair[a], ar: drillPair[a + 2] },
+    { w: drillPair[b], ar: drillPair[b + 2] }
+  ];
+  if (Math.random() < 0.5) opts.reverse();
+  document.getElementById('drillChoices').innerHTML = opts.map(function(o){
+    return '<button class="choice" data-w="' + o.w + '">' + o.w +
+           '<span class="ar">' + o.ar + '</span></button>';
+  }).join('');
+}
+
+window.playDrill = function(){
+  if (!target) newDrill();
+  var b = document.getElementById('bigListen');
+  b.classList.add('playing');
+  speak(target, 0.8, function(){ b.classList.remove('playing'); });
+};
+
+document.getElementById('drillChoices').addEventListener('click', function(e){
+  var btn = e.target.closest ? e.target.closest('.choice') : null;
+  if (!btn || answered) return;
+  answered = true;
+  var chosen = btn.getAttribute('data-w');
+  var ok = (chosen === target);
+  total++;
+  if (ok) { right++; streak++; btn.classList.add('right'); }
+  else {
+    streak = 0;
+    btn.classList.add('wrong');
+    Array.prototype.forEach.call(document.querySelectorAll('.choice'), function(c){
+      if (c.getAttribute('data-w') === target) c.classList.add('right');
+    });
+  }
+  document.getElementById('scRight').textContent = right;
+  document.getElementById('scTotal').textContent = total;
+  document.getElementById('scStreak').textContent = streak;
+
+  // Always replay the correct word after answering — a wrong answer is a
+  // chance to hear the contrast again, not a moment to feel caught out.
+  setTimeout(function(){ speak(target, 0.55); }, 480);
+  setTimeout(function(){ newDrill(); }, 2100);
+});
+
+/* ── Modes ─────────────────────────────────────────── */
+window.setMode = function(m){
+  document.getElementById('paneCoach').classList.toggle('on', m === 'coach');
+  document.getElementById('paneDrill').classList.toggle('on', m === 'drill');
+  document.getElementById('mCoach').classList.toggle('on', m === 'coach');
+  document.getElementById('mDrill').classList.toggle('on', m === 'drill');
+  if (m === 'drill' && !target) newDrill();
+};
+
+/* ── Boot ──────────────────────────────────────────── */
+renderWord();
+newDrill();
+
+var note = document.getElementById('synthNote');
+if (!synth) {
+  note.className = 'note-box warn-box';
+  note.innerHTML = '⚠️ هذا المتصفّح لا يدعم النطق الصوتي. جرّب Chrome على أندرويد أو Safari على آيفون.';
+} else {
+  note.innerHTML = '🔊 <b>يعمل بلا إنترنت.</b> النطق يصدر من جهازك نفسه — لا يحتاج اتصالًا ولا إذن ميكروفون ولا حسابًا.';
+  // Voice lists load asynchronously on most browsers; nudge them.
+  if (synth.getVoices().length === 0) {
+    synth.onvoiceschanged = function(){ /* voices now cached */ };
+  }
+}
+})();
+</script>
+
+</body>
+</html>
