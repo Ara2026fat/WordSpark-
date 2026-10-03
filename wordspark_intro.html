@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WordSpark · شرارة الكلمة</title>
+<meta name="description" content="تعلّم الإنجليزية ليس جمع كلمات — بل بناء نفسك مهارة بعد مهارة.">
+<meta name="theme-color" content="#060B14">
+<meta property="og:title" content="WordSpark · شرارة الكلمة">
+<meta property="og:description" content="رحلة لبناء اللغة، خطوة بعد خطوة.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+<style>
+/* ══════════════════════════════════════════════════════
+   WordSpark — First Encounter
+   Six screens. Each holds one idea and fits the viewport
+   with nothing to scroll: the reader moves between screens,
+   never inside them.
+   ══════════════════════════════════════════════════════ */
+
+:root{
+  --night:#060B14; --rail:#0E1A2B;
+  --edge:rgba(148,180,220,.13);
+  --gold:#F5C842; --ember:#FB923C; --teal:#2DD4BF; --violet:#A78BFA;
+  --ink:#EAF1FA; --mist:#8FA3BE; --dim:#5A6E88;
+  --ar-display:'Readex Pro',system-ui,sans-serif;
+  --ar-body:'Tajawal',system-ui,sans-serif;
+  --en:'Space Grotesk',system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+  --deck:84px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--night);color:var(--ink);
+  font-family:var(--ar-body);line-height:1.65;
+  background-image:
+    radial-gradient(115% 55% at 50% 110%, rgba(251,146,60,.13), transparent 62%),
+    radial-gradient(85% 45% at 8% -8%, rgba(45,212,191,.09), transparent 58%);
+}
+body.en{font-family:var(--en)}
+
+/* ── TOP ─────────────────────────────────────────────── */
+.top{
+  position:fixed;top:0;inset-inline:0;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;
+}
+.mark{
+  font-family:var(--en);font-weight:700;font-size:11.5px;letter-spacing:4.5px;
+  color:var(--gold);display:inline-flex;align-items:center;gap:8px;
+}
+.mark i{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 11px var(--gold);font-style:normal}
+.lang{display:flex;border:1px solid var(--edge);border-radius:9px;overflow:hidden;background:rgba(14,26,43,.7)}
+.lang button{
+  font-family:var(--en);font-size:10.5px;font-weight:700;letter-spacing:.8px;
+  background:none;border:0;color:var(--dim);padding:6px 12px;cursor:pointer;transition:.25s;
+}
+.lang button.on{background:linear-gradient(100deg,var(--gold),var(--ember));color:var(--night)}
+
+/* ── SCREENS ─────────────────────────────────────────
+   Fixed height, no overflow: the brief's first rule. Content
+   is sized down rather than allowed to spill. */
+.deck{position:relative;height:100svh;width:100%}
+.scr{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+  padding:70px 24px var(--deck);
+  max-width:640px;margin:0 auto;text-align:center;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(26px) scale(.985);
+  transition:opacity .55s cubic-bezier(.22,.8,.28,1),
+             transform .55s cubic-bezier(.22,.8,.28,1),
+             visibility .55s;
+}
+.scr.on{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.scr.was{transform:translateY(-26px) scale(.985)}
+
+/* ── TYPE ────────────────────────────────────────────── */
+.kicker{
+  font-family:var(--en);font-size:10px;font-weight:700;letter-spacing:3.4px;
+  text-transform:uppercase;color:var(--teal);margin-bottom:16px;opacity:.9;
+}
+h1{
+  font-family:var(--ar-display);font-weight:700;
+  font-size:clamp(25px,7.2vw,44px);line-height:1.24;letter-spacing:-.4px;
+  margin-bottom:14px;
+}
+body.en h1{font-family:var(--en);letter-spacing:-1.2px}
+.say{font-size:clamp(14px,3.9vw,17.5px);color:#B9C9DE;max-width:46ch;margin:0 auto}
+strong{color:var(--ink);font-weight:700}
+.flame{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ── 1 · THE SPARK ───────────────────────────────────── */
+.spark{
+  display:flex;align-items:center;justify-content:center;gap:13px;
+  font-family:var(--ar-display);font-weight:700;
+  font-size:clamp(23px,6.6vw,38px);height:56px;margin-bottom:22px;
+}
+body.en .spark{font-family:var(--en)}
+.sw{transition:opacity .4s,transform .4s;display:inline-block;min-width:1ch}
+.sw.off{opacity:0;transform:translateY(-9px)}
+.sw-ar{color:var(--mist)}
+.sw-en{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.bolt{font-size:.5em;color:var(--gold);filter:drop-shadow(0 0 9px rgba(245,200,66,.85));animation:bl 2.7s ease-in-out infinite}
+@keyframes bl{0%,100%{opacity:.5;transform:scale(1)}47%{opacity:1;transform:scale(1.2)}}
+
+.stamp{
+  display:inline-flex;align-items:center;gap:9px;margin-top:22px;
+  font-family:var(--mono);font-size:10.5px;color:var(--dim);
+  border:1px dashed var(--edge);border-radius:8px;padding:7px 14px;
+}
+
+/* ── 3 · THE LINE ────────────────────────────────────── */
+.line-wrap{width:100%;max-width:420px;margin:6px auto 0}
+.line-svg{width:100%;height:auto;display:block}
+.stops-label{
+  display:flex;justify-content:space-between;margin-top:9px;
+  font-family:var(--mono);font-size:9.5px;color:var(--dim);letter-spacing:1px;
+}
+
+/* ── 4 · SKILL CONSTELLATION (the WOW) ───────────────
+   Nine skills as a growing structure rather than a list: nodes
+   ignite in sequence and the links between them draw themselves,
+   so the reader sees a system assembling instead of reading that
+   one exists. */
+.sky{width:100%;max-width:380px;margin:0 auto}
+.sky svg{width:100%;height:auto;display:block;overflow:visible}
+.lnk{stroke:rgba(45,212,191,.34);stroke-width:1;opacity:0;transition:opacity .55s ease}
+.lnk.on{opacity:1}
+.nd{opacity:0;transform-box:fill-box;transform-origin:center;transform:scale(.4);
+  transition:opacity .5s cubic-bezier(.3,1.4,.5,1),transform .5s cubic-bezier(.3,1.4,.5,1)}
+.nd.on{opacity:1;transform:none}
+.nd circle{fill:#0E1A2B;stroke:var(--teal);stroke-width:1.4}
+.nd.core circle{fill:rgba(245,200,66,.14);stroke:var(--gold);stroke-width:1.8}
+.nd text{font-family:'Space Grotesk',sans-serif;font-size:7.4px;font-weight:600;fill:#C3D2E6;text-anchor:middle}
+.nd.core text{fill:var(--gold);font-size:8.4px;font-weight:700}
+
+/* ── 5 · WHAT IT COSTS YOU ───────────────────────────── */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:400px;margin:4px auto 0}
+.fact{
+  background:linear-gradient(160deg,rgba(20,34,54,.8),rgba(10,18,32,.6));
+  border:1px solid var(--edge);border-radius:14px;padding:13px 6px;
+}
+.fact b{display:block;font-family:var(--mono);font-size:21px;color:var(--gold);line-height:1.15}
+.fact span{font-size:10.5px;color:var(--dim)}
+
+/* ── 6 · START ───────────────────────────────────────── */
+.go{
+  display:inline-flex;align-items:center;gap:10px;margin-top:6px;text-decoration:none;
+  font-family:var(--en);font-weight:700;font-size:15px;color:var(--night);
+  background:linear-gradient(100deg,var(--gold),var(--ember));
+  border-radius:14px;padding:15px 34px;
+  box-shadow:0 12px 32px rgba(245,200,66,.22);
+  transition:transform .28s cubic-bezier(.34,1.5,.5,1),box-shadow .28s;
+}
+.go:hover,.go:focus-visible{transform:translateY(-4px);box-shadow:0 20px 42px rgba(245,200,66,.3)}
+.by{margin-top:26px}
+.by .l{font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:1.6px}
+.by .n{font-family:var(--en);font-size:11.5px;font-weight:700;letter-spacing:3px;color:var(--mist)}
+
+/* ── DECK ────────────────────────────────────────────── */
+.bar{
+  position:fixed;bottom:0;inset-inline:0;z-index:50;height:var(--deck);
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:0 18px calc(env(safe-area-inset-bottom,0px) + 2px);
+}
+.nav{
+  width:48px;height:48px;flex:0 0 48px;border-radius:15px;cursor:pointer;
+  background:rgba(20,34,54,.86);border:1px solid var(--edge);color:var(--ink);
+  font-size:17px;display:grid;place-items:center;backdrop-filter:blur(10px);
+  transition:transform .2s,border-color .25s,opacity .25s;
+}
+.nav:hover:not(:disabled),.nav:focus-visible{border-color:var(--gold);transform:translateY(-2px)}
+.nav:active:not(:disabled){transform:scale(.93)}
+.nav:disabled{opacity:.22;cursor:default}
+.nav.fwd{background:linear-gradient(100deg,var(--gold),var(--ember));border-color:transparent;color:var(--night)}
+.nav .ar{display:block}
+body.en .nav .ar{transform:scaleX(-1)}
+
+.pips{display:flex;gap:7px}
+.pip{width:7px;height:7px;border-radius:50%;background:var(--rail);border:1px solid var(--edge);
+  cursor:pointer;padding:0;transition:all .32s cubic-bezier(.4,1.4,.5,1)}
+.pip.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 10px rgba(245,200,66,.65);transform:scale(1.35)}
+.pip.past{background:rgba(245,200,66,.4);border-color:rgba(245,200,66,.4)}
+
+/* ── A11Y & SMALL SCREENS ────────────────────────────── */
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+@media(max-height:680px){
+  h1{font-size:22px}.say{font-size:13.5px}.spark{font-size:21px;height:44px}
+  .kicker{margin-bottom:11px}.sky{max-width:300px}.line-wrap{max-width:340px}
+}
+@media(max-height:560px){
+  h1{font-size:19px;margin-bottom:9px}.say{font-size:12.5px}
+  .sky{max-width:250px}.fact b{font-size:17px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="mark"><i></i>WORDSPARK</div>
+  <div class="lang" role="group" aria-label="Language">
+    <button id="bAr" class="on" onclick="setLang('ar')">عربي</button>
+    <button id="bEn" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- 1 · THE SPARK -->
+<section class="scr on" data-i="0">
+  <div class="kicker" data-ar="The Spark" data-en="The Spark"></div>
+  <div class="spark" aria-hidden="true">
+    <span class="sw sw-ar" id="swAr">كلمة</span>
+    <span class="bolt">✦</span>
+    <span class="sw sw-en" id="swEn">Word</span>
+  </div>
+  <h1 data-ar="تعلُّم الإنجليزية<br>ليس جمعَ كلمات"
+      data-en="Learning English<br>is not collecting words"></h1>
+  <p class="say" data-ar="بل بناءُ نفسك <strong>مهارةً بعد مهارة</strong>."
+     data-en="It is building yourself, <strong>one skill after another</strong>."></p>
+  <div class="stamp" data-ar="بلا تسجيل · بلا اشتراك · يعمل بلا إنترنت"
+       data-en="No sign-up · No subscription · Works offline"></div>
+</section>
+
+<!-- 2 · THE PROBLEM -->
+<section class="scr" data-i="1">
+  <div class="kicker" data-ar="Why people stop" data-en="Why people stop"></div>
+  <h1 data-ar="ما يُوقف المتعلِّم<br>ليس الصعوبة — بل <span class='flame'>التشتّت</span>"
+      data-en="What stops a learner<br>is not difficulty — it is <span class='flame'>scatter</span>"></h1>
+  <p class="say" data-ar="تطبيقٌ يفتح عشرين بابًا معًا يترك المتعلِّم حائرًا، فلا يدخل بابًا. <strong>WordSpark يفتح بابًا واحدًا كل يوم.</strong>"
+     data-en="An app that opens twenty doors at once leaves you unsure which to enter — so you enter none. <strong>WordSpark opens one door a day.</strong>"></p>
+</section>
+
+<!-- 3 · THE LINE -->
+<section class="scr" data-i="2">
+  <div class="kicker" data-ar="The Journey" data-en="The Journey"></div>
+  <h1 data-ar="طريقٌ واحد.<br>اثنتان وأربعون محطة." data-en="One line.<br>Forty-two stations."></h1>
+  <p class="say" style="margin-bottom:18px"
+     data-ar="لا تنتقل إلى محطة حتى تُتقن التي قبلها — فتقدُّمك <strong>مسافةٌ تقطعها</strong>، لا رقمٌ يرتفع."
+     data-en="No station opens until you master the one before — so progress is <strong>distance covered</strong>, not a number rising."></p>
+
+  <div class="line-wrap" aria-hidden="true">
+    <svg class="line-svg" viewBox="0 0 400 60" xmlns="http://www.w3.org/2000/svg">
+      <line x1="14" y1="30" x2="386" y2="30" stroke="rgba(148,180,220,.2)" stroke-width="1.6"/>
+      <line id="lineFill" x1="14" y1="30" x2="14" y2="30"
+            stroke="url(#lg)" stroke-width="2.6" stroke-linecap="round"/>
+      <defs>
+        <linearGradient id="lg" x1="0" x2="1">
+          <stop offset="0" stop-color="#2DD4BF"/><stop offset="1" stop-color="#F5C842"/>
+        </linearGradient>
+      </defs>
+      <g id="lineStops"></g>
+      <text id="lineTrain" x="14" y="20" font-size="15" text-anchor="middle">🚂</text>
+    </svg>
+    <div class="stops-label">
+      <span>MAKKAH</span><span>42 STOPS</span><span>CORONATION</span>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · THE CONSTELLATION (WOW) -->
+<section class="scr" data-i="3">
+  <div class="kicker" data-ar="The System" data-en="The System"></div>
+  <h1 data-ar="لغةٌ واحدة.<br>تسعُ مهاراتٍ تتشابك." data-en="One language.<br>Nine skills, interlocked."></h1>
+  <p class="say" style="margin-bottom:14px"
+     data-ar="كلُّ مهارة تُقوّي التي تجاورها — والمنظومة تنمو معك."
+     data-en="Each skill strengthens the one beside it — and the whole grows with you."></p>
+
+  <div class="sky" aria-hidden="true">
+    <svg viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
+      <g id="skyLinks"></g>
+      <g id="skyNodes"></g>
+    </svg>
+  </div>
+</section>
+
+<!-- 5 · WHAT IS INSIDE -->
+<section class="scr" data-i="4">
+  <div class="kicker" data-ar="What waits inside" data-en="What waits inside"></div>
+  <h1 data-ar="محتوًى حقيقي،<br>لا وعودٌ عامة." data-en="Real material,<br>not vague promises."></h1>
+  <p class="say" style="margin-bottom:18px"
+     data-ar="كلُّ رقمٍ هنا مقروءٌ من المنصّة نفسها."
+     data-en="Every figure here is read from the platform itself."></p>
+
+  <div class="facts">
+    <div class="fact"><b>42</b><span data-ar="محطة" data-en="stations"></span></div>
+    <div class="fact"><b>16</b><span data-ar="درس قواعد" data-en="grammar"></span></div>
+    <div class="fact"><b>25</b><span data-ar="نصّ قراءة" data-en="readings"></span></div>
+    <div class="fact"><b>19</b><span data-ar="حلقة استماع" data-en="episodes"></span></div>
+    <div class="fact"><b>15</b><span data-ar="رتبة" data-en="ranks"></span></div>
+    <div class="fact"><b>25</b><span data-ar="إنجاز" data-en="badges"></span></div>
+  </div>
+</section>
+
+<!-- 6 · START -->
+<section class="scr" data-i="5">
+  <div class="kicker" data-ar="Now Boarding" data-en="Now Boarding"></div>
+  <h1 data-ar="الطريقُ مفتوح.<br><span class='flame'>والمحطةُ الأولى تنتظر.</span>"
+      data-en="The line is open.<br><span class='flame'>The first station waits.</span>"></h1>
+  <p class="say" style="margin-bottom:24px"
+     data-ar="تكتب اسمك، وتنطلق."
+     data-en="Type your name, and go."></p>
+
+  <a class="go" href="https://ara2026fat.github.io/WordSpark-/wordspark.html" target="_blank" rel="noopener">
+    <span data-ar="ابدأ رحلتك" data-en="Start Your Journey"></span>
+    <span class="ar-arrow" aria-hidden="true">←</span>
+  </a>
+
+  <div class="by">
+    <div class="l">DEVELOPED BY</div>
+    <div class="n">ARAFAT ALRAJHI</div>
+  </div>
+</section>
+
+</main>
+
+<nav class="bar" aria-label="Navigation">
+  <button class="nav" id="bPrev" onclick="go(-1)" aria-label="Previous"><span class="ar">→</span></button>
+  <div class="pips" id="pips"></div>
+  <button class="nav fwd" id="bNext" onclick="go(1)" aria-label="Next"><span class="ar">←</span></button>
+</nav>
+
+<div class="sr" role="status" aria-live="polite" id="live"></div>
+
+<script>
+(function(){
+'use strict';
+
+var scrs = Array.prototype.slice.call(document.querySelectorAll('.scr'));
+var N = scrs.length, at = 0, lang = 'ar';
+var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var NAMES = [
+  ['الشرارة','The Spark'], ['التشتّت','The Problem'], ['الطريق','The Line'],
+  ['المنظومة','The System'], ['المحتوى','Inside'], ['الانطلاق','Start']
+];
+
+/* ── Language ──────────────────────────────────────── */
+function applyLang(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ar][data-en]'), function(el){
+    el.innerHTML = el.getAttribute(lang === 'ar' ? 'data-ar' : 'data-en');
+  });
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.body.classList.toggle('en', lang === 'en');
+  document.getElementById('bAr').classList.toggle('on', lang === 'ar');
+  document.getElementById('bEn').classList.toggle('on', lang === 'en');
+  document.getElementById('bPrev').setAttribute('aria-label', lang === 'ar' ? 'السابق' : 'Previous');
+  document.getElementById('bNext').setAttribute('aria-label', lang === 'ar' ? 'التالي' : 'Next');
+  // The CTA arrow is a glyph, so it must be flipped by hand for LTR.
+  var a = document.querySelector('.ar-arrow');
+  if (a) a.textContent = (lang === 'ar') ? '←' : '→';
+  // Node labels live inside the SVG, so they are repainted here rather than
+  // patched afterwards — wrapping this function later would leave setLang
+  // holding the original and the constellation stuck in one language.
+  buildSky();
+  if (at === 3) skyRun(true);
+  say();
+}
+window.setLang = function(l){
+  if (l === lang) return;
+  lang = l;
+  try { localStorage.setItem('wsIntroLang', l); } catch(e){}
+  applyLang();
+};
+
+/* ── 1 · Spark cycle ────────────────────────────────
+   Real vocabulary from the platform. Runs only on screen one. */
+var PAIRS = [
+  ['كلمة','Word'], ['يتعلّم','Learn'], ['يسافر','Travel'], ['يكتشف','Discover'],
+  ['ينجح','Succeed'], ['يُحسِّن','Improve'], ['صبور','Patient'], ['معرفة','Knowledge']
+];
+var sIdx = 0, sTimer = null;
+function sparkTick(){
+  var a = document.getElementById('swAr'), e = document.getElementById('swEn');
+  a.classList.add('off'); e.classList.add('off');
+  setTimeout(function(){
+    sIdx = (sIdx + 1) % PAIRS.length;
+    a.textContent = PAIRS[sIdx][0];
+    e.textContent = PAIRS[sIdx][1];
+    a.classList.remove('off'); e.classList.remove('off');
+  }, 400);
+}
+function sparkRun(on){
+  if (sTimer) { clearInterval(sTimer); sTimer = null; }
+  if (on && !reduce) sTimer = setInterval(sparkTick, 2500);
+}
+
+/* ── 3 · The line ──────────────────────────────────── */
+(function buildLine(){
+  var g = document.getElementById('lineStops'), h = '';
+  for (var i = 0; i < 9; i++) {
+    var x = 14 + (372 / 8) * i;
+    h += '<circle cx="' + x.toFixed(1) + '" cy="30" r="2.6" fill="#0E1A2B" stroke="rgba(148,180,220,.35)" stroke-width="1"/>';
+  }
+  g.innerHTML = h;
+})();
+function lineRun(on){
+  var fill = document.getElementById('lineFill');
+  var train = document.getElementById('lineTrain');
+  if (!fill) return;
+  if (!on) { fill.setAttribute('x2', '14'); train.setAttribute('x', '14'); return; }
+  if (reduce) { fill.setAttribute('x2', '386'); train.setAttribute('x', '386'); return; }
+  var t0 = null;
+  function step(ts){
+    if (!t0) t0 = ts;
+    var k = Math.min(1, (ts - t0) / 2200);
+    var e = 1 - Math.pow(1 - k, 3);           // ease-out
+    var x = 14 + 372 * e;
+    fill.setAttribute('x2', x.toFixed(1));
+    train.setAttribute('x', x.toFixed(1));
+    if (k < 1 && at === 2) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── 4 · Skill constellation ────────────────────────
+   Positions are hand-placed rather than generated: the four input
+   skills sit left, the four output skills right, and comprehension
+   holds the centre, so the picture itself says how they relate. */
+var SKILLS = [
+  { x:150, y:104, en:'Comprehension', ar:'الفهم',     core:true },
+  { x:150, y:26,  en:'Vocabulary',    ar:'المفردات' },
+  { x:64,  y:56,  en:'Reading',       ar:'القراءة' },
+  { x:34,  y:120, en:'Listening',     ar:'الاستماع' },
+  { x:70,  y:180, en:'Spelling',      ar:'الإملاء' },
+  { x:150, y:196, en:'Grammar',       ar:'القواعد' },
+  { x:232, y:180, en:'Pronunciation', ar:'النطق' },
+  { x:266, y:120, en:'Speaking',      ar:'التحدّث' },
+  { x:236, y:56,  en:'Practice',      ar:'التدريب' }
+];
+var LINKS = [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7],[0,8],
+             [1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,1]];
+
+function buildSky(){
+  var lh = LINKS.map(function(l, i){
+    var a = SKILLS[l[0]], b = SKILLS[l[1]];
+    return '<line class="lnk" data-i="' + i + '" x1="' + a.x + '" y1="' + a.y +
+           '" x2="' + b.x + '" y2="' + b.y + '"/>';
+  }).join('');
+  document.getElementById('skyLinks').innerHTML = lh;
+
+  var nh = SKILLS.map(function(s, i){
+    var label = (lang === 'ar') ? s.ar : s.en;
+    var r = s.core ? 21 : 17;
+    return '<g class="nd' + (s.core ? ' core' : '') + '" data-i="' + i + '">' +
+             '<circle cx="' + s.x + '" cy="' + s.y + '" r="' + r + '"/>' +
+             '<text x="' + s.x + '" y="' + (s.y + 2.6) + '">' + label + '</text>' +
+           '</g>';
+  }).join('');
+  document.getElementById('skyNodes').innerHTML = nh;
+}
+
+var skyShown = false;
+function skyRun(on){
+  if (!on) return;
+  var nodes = document.querySelectorAll('.nd');
+  var links = document.querySelectorAll('.lnk');
+  if (reduce) {
+    Array.prototype.forEach.call(nodes, function(n){ n.classList.add('on'); });
+    Array.prototype.forEach.call(links, function(l){ l.classList.add('on'); });
+    return;
+  }
+  // Replay on every visit: it is the moment worth seeing twice.
+  Array.prototype.forEach.call(nodes, function(n){ n.classList.remove('on'); });
+  Array.prototype.forEach.call(links, function(l){ l.classList.remove('on'); });
+  // Core first, then the ring, then the connections between them.
+  setTimeout(function(){ nodes[0].classList.add('on'); }, 120);
+  for (var i = 1; i < nodes.length; i++) {
+    (function(k){ setTimeout(function(){ nodes[k].classList.add('on'); }, 260 + k * 85); })(i);
+  }
+  setTimeout(function(){
+    Array.prototype.forEach.call(links, function(l, j){
+      setTimeout(function(){ l.classList.add('on'); }, j * 45);
+    });
+  }, 1050);
+  skyShown = true;
+}
+
+/* ── Pips ──────────────────────────────────────────── */
+(function(){
+  var h = '';
+  for (var i = 0; i < N; i++) h += '<button class="pip" data-g="' + i + '" aria-label="Screen ' + (i+1) + '"></button>';
+  var host = document.getElementById('pips');
+  host.innerHTML = h;
+  host.addEventListener('click', function(e){
+    var p = e.target.closest ? e.target.closest('.pip') : null;
+    if (p) jump(parseInt(p.getAttribute('data-g'), 10));
+  });
+})();
+
+/* ── Navigation ────────────────────────────────────── */
+function say(){
+  var n = NAMES[at];
+  document.getElementById('live').textContent = (lang === 'ar')
+    ? ('الشاشة ' + (at+1) + ' من ' + N + ' — ' + n[0])
+    : ('Screen ' + (at+1) + ' of ' + N + ' — ' + n[1]);
+}
+
+function paint(){
+  scrs.forEach(function(s, i){
+    s.classList.toggle('on', i === at);
+    s.classList.toggle('was', i < at);
+    s.setAttribute('aria-hidden', i === at ? 'false' : 'true');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.pip'), function(p, i){
+    p.classList.toggle('on', i === at);
+    p.classList.toggle('past', i < at);
+  });
+  document.getElementById('bPrev').disabled = (at === 0);
+  document.getElementById('bNext').disabled = (at === N - 1);
+  sparkRun(at === 0);
+  lineRun(at === 2);
+  if (at === 3) skyRun(true);
+  say();
+}
+
+function jump(i){
+  if (i < 0 || i > N - 1 || i === at) return;
+  at = i;
+  paint();
+}
+window.go = function(d){ jump(at + d); };
+
+document.addEventListener('keydown', function(e){
+  var f = (lang === 'ar') ? 'ArrowLeft' : 'ArrowRight';
+  var b = (lang === 'ar') ? 'ArrowRight' : 'ArrowLeft';
+  if (e.key === f || e.key === 'PageDown') { e.preventDefault(); go(1); }
+  else if (e.key === b || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  else if (e.key === 'Home') { e.preventDefault(); jump(0); }
+  else if (e.key === 'End') { e.preventDefault(); jump(N - 1); }
+});
+
+(function(){
+  var x0 = null, y0 = null;
+  var d = document.getElementById('deck');
+  d.addEventListener('touchstart', function(e){
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+  }, { passive:true });
+  d.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    var dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      go(((lang === 'ar') ? (dx > 0) : (dx < 0)) ? 1 : -1);
+    }
+    x0 = y0 = null;
+  }, { passive:true });
+})();
+
+/* ── Boot ──────────────────────────────────────────── */
+try {
+  var sv = localStorage.getItem('wsIntroLang');
+  if (sv === 'en' || sv === 'ar') lang = sv;
+} catch(e){}
+applyLang();
+paint();
+})();
+</script>
+
+</body>
+</html>

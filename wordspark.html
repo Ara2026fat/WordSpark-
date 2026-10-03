@@ -5,7 +5,11 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<!-- maximum-scale and user-scalable were removed: they stop a learner with
+     weak eyesight from pinching to enlarge the text, which matters in a
+     reading app more than almost anywhere. iOS has ignored the restriction
+     since iOS 10 anyway, so it only ever penalised Android users. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="WordSpark">
@@ -719,6 +723,182 @@
     .word-hint, .word-hint::after { animation: none; }
   }
 
+  /* ── LEVEL CHOICE ─────────────────────────────────────
+     Large, calm targets. This is the first real decision a
+     learner makes, and it must not feel like a test question. */
+  .lvl-choice {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    background: linear-gradient(150deg, var(--card), var(--panel));
+    border: 1px solid var(--rim); border-radius: 18px;
+    padding: 18px 16px; margin-bottom: 11px; cursor: pointer;
+    text-align: start; font-family: 'Tajawal', sans-serif;
+    transition: transform .18s, border-color .22s;
+  }
+  .lvl-choice:active { transform: scale(.97); }
+  .lvl-choice:hover, .lvl-choice:focus-visible { border-color: var(--gold); }
+  .lc-ico { font-size: 26px; flex: 0 0 auto; }
+  .lc-body { display: flex; flex-direction: column; gap: 3px; }
+  .lc-en {
+    font-family: 'Space Grotesk', sans-serif; font-size: 16px;
+    font-weight: 700; color: var(--white);
+  }
+  .lc-ar { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  /* ── KEYBOARD FOCUS ───────────────────────────────────
+     Without a visible focus ring the app cannot be operated by
+     keyboard at all: the user tabs through 153 controls with no
+     idea where they are. Uses the app's own gold so it reads as
+     part of the design rather than a browser default. */
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+  /* Pointer users never see it; only keyboard and assistive tech do. */
+  :focus:not(:focus-visible) { outline: none; }
+
+  /* ── SOUND LAB ────────────────────────────────────────
+     Colours all come from theme variables so the lab follows
+     dark/light like the rest of the app. */
+  .sl-modes { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin:0 16px 16px; }
+  .sl-mode {
+    padding:13px 8px; border-radius:14px; cursor:pointer;
+    border:1px solid var(--rim); background:var(--panel); color:var(--muted);
+    font-family:'Tajawal',sans-serif; font-size:13px; font-weight:700; transition:all .22s;
+  }
+  .sl-mode .i { display:block; font-size:20px; margin-bottom:3px; }
+  .sl-mode.on { background:linear-gradient(150deg,var(--card),var(--panel)); color:var(--white); border-color:var(--teal); }
+
+  .sl-pane { display:none; padding:0 16px; }
+  .sl-pane.on { display:block; }
+
+  .sl-card {
+    background:linear-gradient(155deg,var(--card),var(--panel));
+    border:1px solid var(--rim); border-radius:22px; padding:22px 18px; text-align:center;
+    position:relative; overflow:hidden; box-shadow:0 14px 34px rgba(0,0,0,.26);
+  }
+  .sl-card::before {
+    content:''; position:absolute; top:0; inset-inline:16%; height:1px;
+    background:linear-gradient(90deg,transparent,rgba(245,200,66,.5),transparent);
+  }
+  .sl-word {
+    font-family:'Space Grotesk',sans-serif; font-size:clamp(32px,10.5vw,50px); font-weight:700;
+    letter-spacing:2px; direction:ltr; margin-bottom:6px;
+    display:flex; justify-content:center; flex-wrap:wrap; gap:1px;
+  }
+  .sl-lt { transition:color .25s, transform .25s; }
+  .sl-lt.snd { color:var(--white); }
+  .sl-lt.sil { color:#3E4C63; text-decoration:line-through; text-decoration-thickness:2px; }
+  .sl-lt.trk { color:var(--gold); }
+  .sl-lt.lit { transform:translateY(-5px); color:var(--teal); text-shadow:0 0 16px rgba(45,212,191,.7); }
+
+  .sl-phon { font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--lavender); direction:ltr; margin-bottom:4px; }
+  .sl-mean { font-size:16px; color:var(--white); font-weight:700; margin-bottom:14px; }
+
+  .sl-legend { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; font-size:10.5px; color:var(--muted); margin-bottom:16px; }
+  .sl-legend i { font-style:normal; display:inline-flex; align-items:center; gap:4px; }
+  .sl-dot { width:9px; height:9px; border-radius:3px; display:inline-block; }
+
+  .sl-speeds { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:12px; }
+  .sl-sp {
+    padding:11px 4px; border-radius:12px; cursor:pointer; border:1px solid var(--rim);
+    background:var(--panel); color:var(--white);
+    font-family:'Tajawal',sans-serif; font-size:12px; font-weight:700;
+    transition:transform .16s, border-color .2s;
+  }
+  .sl-sp span { display:block; font-size:10px; color:var(--muted); font-weight:400; margin-top:1px; }
+  .sl-sp:active { transform:scale(.94); }
+  .sl-sp.slow { border-color:rgba(52,211,153,.4); }
+  .sl-sp.norm { border-color:rgba(45,212,191,.4); }
+  .sl-sp.rep  { border-color:rgba(245,200,66,.4); }
+  .sl-sp.busy { background:linear-gradient(100deg,var(--teal),#0EA5E9); color:var(--ink); }
+  .sl-sp.busy span { color:var(--ink); opacity:.75; }
+
+  .sl-reps { display:flex; gap:6px; justify-content:center; margin-bottom:14px; }
+  .sl-rp {
+    width:34px; height:34px; border-radius:10px; border:1px solid var(--rim);
+    background:var(--panel); color:var(--muted);
+    font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700;
+    cursor:pointer; transition:all .2s;
+  }
+  .sl-rp.on { background:var(--gold); color:var(--ink); border-color:transparent; }
+
+  .sl-nav { display:flex; gap:8px; }
+  .sl-nb {
+    flex:1; padding:12px; border-radius:13px; cursor:pointer; border:1px solid var(--rim);
+    background:var(--panel); color:var(--white);
+    font-family:'Tajawal',sans-serif; font-size:13px; font-weight:700;
+  }
+  .sl-nb.main { background:linear-gradient(100deg,var(--gold),#FB923C); color:var(--ink); border-color:transparent; }
+  .sl-nb:disabled { opacity:.3; }
+
+  .sl-tip {
+    margin-top:14px; padding:11px 13px; border-radius:12px; font-size:12px; text-align:start;
+    background:rgba(245,200,66,.08); border:1px solid rgba(245,200,66,.2); color:#E4C88F;
+  }
+  .sl-count { font-family:'Space Grotesk',sans-serif; font-size:11px; color:var(--muted); margin-top:12px; letter-spacing:1px; }
+
+  .sl-eye-row {
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center;
+    margin:10px 0 14px; direction:ltr;
+  }
+  .sl-eye-box {
+    width:56px; height:56px; border-radius:13px; cursor:pointer;
+    border:1px solid var(--rim); background:var(--panel); color:var(--white);
+    font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:700;
+    display:grid; place-items:center; user-select:none;
+    transition:transform .15s, background .25s, border-color .25s;
+  }
+  .sl-eye-box:active { transform:scale(.92); }
+  .sl-eye-box.hit  { background:rgba(52,211,153,.2); border-color:#34D399; color:#34D399; }
+  .sl-eye-box.miss { background:rgba(251,113,133,.16); border-color:var(--rose); color:var(--rose); }
+  .sl-eye-fb {
+    min-height:38px; text-align:center; font-size:13px; padding:9px 12px;
+    border-radius:11px; margin-bottom:6px; opacity:0; transition:opacity .25s;
+  }
+  .sl-eye-fb.show { opacity:1; }
+  .sl-eye-fb.ok  { background:rgba(52,211,153,.1); color:#8FD8BE; }
+  .sl-eye-fb.bad { background:rgba(251,113,133,.1); color:#E7A9B4; }
+
+  .sl-listen {
+    width:100%; padding:26px; border-radius:22px; cursor:pointer;
+    background:linear-gradient(150deg,#1E3A5C,#0E1C2D);
+    border:1px solid rgba(45,212,191,.35); color:var(--white);
+    font-family:'Tajawal',sans-serif; font-size:17px; font-weight:900;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition:transform .18s; margin-bottom:16px;
+  }
+  .sl-listen:active { transform:scale(.97); }
+  .sl-listen .ico { font-size:40px; }
+  .sl-listen.playing .ico { animation:slPulse .8s ease-in-out infinite; }
+  @keyframes slPulse { 50% { transform:scale(1.15); opacity:.75; } }
+
+  .sl-choices { display:grid; gap:9px; }
+  .sl-ch {
+    padding:16px; border-radius:15px; cursor:pointer; border:1px solid var(--rim);
+    background:var(--panel); color:var(--white);
+    font-family:'Space Grotesk',sans-serif; font-size:20px; font-weight:700; direction:ltr;
+    transition:transform .16s, border-color .2s, background .2s;
+  }
+  .sl-ch:active { transform:scale(.97); }
+  .sl-ch.right { background:rgba(52,211,153,.18); border-color:#34D399; }
+  .sl-ch.wrong { background:rgba(251,113,133,.15); border-color:var(--rose); }
+  .sl-ch .ar { display:block; font-family:'Tajawal',sans-serif; font-size:12px; color:var(--muted); font-weight:400; direction:rtl; margin-top:2px; }
+
+  .sl-score { display:flex; gap:10px; justify-content:center; margin:16px 0 4px; }
+  .sl-sc { background:var(--panel); border:1px solid var(--rim); border-radius:12px; padding:9px 16px; text-align:center; min-width:78px; }
+  .sl-sc b { display:block; font-family:'Space Grotesk',sans-serif; font-size:19px; color:var(--gold); }
+  .sl-sc span { font-size:10.5px; color:var(--muted); }
+
+  .sl-note {
+    margin-top:18px; padding:13px 15px; border-radius:13px; font-size:12.5px;
+    background:rgba(45,212,191,.07); border:1px solid rgba(45,212,191,.2); color:#A9C9CF;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sl-listen.playing .ico { animation:none; }
+    .sl-lt { transition:none; }
+  }
+
   .add-form {
     background: var(--panel);
     border: 1px solid var(--rim);
@@ -1015,6 +1195,20 @@
     background:rgba(45,212,191,.08); border:1px solid rgba(45,212,191,.3); border-radius:14px;
     padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.85; direction:ltr; text-align:left;
   }
+  /* The simple version is not just shorter — it is set larger, looser and
+     with wider letter spacing, because a reader who is still decoding needs
+     room between the shapes. Cramped text is itself part of the difficulty. */
+  .station-para-en.simple {
+    font-size:17px; line-height:2.15; letter-spacing:.4px;
+    font-family:'Space Grotesk',sans-serif; font-weight:500;
+  }
+  .lvl-switch {
+    display:block; width:100%; margin-top:9px; padding:9px;
+    background:transparent; border:1px dashed var(--rim); border-radius:11px;
+    color:var(--muted); font-family:'Tajawal',sans-serif; font-size:11.5px;
+    cursor:pointer; transition:border-color .2s, color .2s;
+  }
+  .lvl-switch:active { border-color:var(--teal); color:var(--teal); }
   /* ── TRANSLATION VEIL ─────────────────────────────────
      Not a lock — the translation is right there and opens on a
      single tap. The blur only makes taking it a decision rather
@@ -1048,6 +1242,25 @@
     padding:14px 16px; font-size:13.5px; color:var(--white); line-height:1.9; text-align:right;
   }
   .station-tab-label { font-size:10.5px; font-weight:800; letter-spacing:.5px; margin-bottom:8px; opacity:.8; }
+
+  /* One-tap station vocabulary. Sits above the grid so it reads as an offer
+     attached to the words below it, and confirms in place once used. */
+  .station-addall-btn {
+    width:100%; margin-bottom:10px; padding:11px 12px; cursor:pointer;
+    border:1px solid rgba(167,139,250,.4); border-radius:13px;
+    background:linear-gradient(150deg, rgba(167,139,250,.16), rgba(167,139,250,.05));
+    color:var(--white); display:flex; flex-direction:column; align-items:center; gap:2px;
+    transition:transform .16s, border-color .22s, background .22s;
+  }
+  .station-addall-btn:active { transform:scale(.97); }
+  .station-addall-btn .saa-en {
+    font-family:'Space Grotesk',sans-serif; font-size:13px; font-weight:700; letter-spacing:.2px;
+  }
+  .station-addall-btn .saa-ar { font-size:11px; color:var(--muted); }
+  .station-addall-btn.saa-done {
+    border-color:rgba(52,211,153,.5);
+    background:linear-gradient(150deg, rgba(52,211,153,.16), rgba(52,211,153,.05));
+  }
 
   .station-words-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .station-word-chip {
@@ -1168,6 +1381,12 @@
   .mastery-badge.high { background: rgba(45,212,191,.15); color: var(--teal); }
   .mastery-badge.mid  { background: rgba(245,200,66,.15); color: var(--gold); }
   .badges-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .station-badge {
+    display: inline-block; font-size: 9.5px; font-weight: 700;
+    padding: 2px 8px; border-radius: 20px;
+    background: rgba(45,212,191,.16); color: var(--teal);
+    border: 1px solid rgba(45,212,191,.32);
+  }
   .mine-badge {
     display: inline-block; font-size: 9.5px; font-weight: 700;
     padding: 2px 8px; border-radius: 20px;
@@ -3325,7 +3544,7 @@
     <div class="install-banner-sub" id="installBannerSub">افتح أسرع، بدون متصفح، بأيقونة على شاشتك</div>
   </div>
   <button class="install-banner-btn" id="installBannerBtn" onclick="triggerInstall()">تثبيت</button>
-  <button class="install-banner-close" onclick="dismissInstallBanner()">✕</button>
+  <button aria-label="إغلاق" class="install-banner-close" onclick="dismissInstallBanner()">✕</button>
 </div>
 
 <div class="spark-wrap" id="sparkWrap" onclick="hideSpark()">
@@ -3381,7 +3600,7 @@
 <!-- REVIEW WHEEL MODAL -->
 <div class="rw-backdrop" id="rwBackdrop" onclick="if(event.target===this)rwClose()">
   <div class="rw-modal" style="position:relative">
-    <button class="rw-close" onclick="rwClose()">✕</button>
+    <button aria-label="إغلاق" class="rw-close" onclick="rwClose()">✕</button>
     <div class="rw-title-en" id="rwTitleEn">🎡 Review Wheel</div>
     <div class="rw-title-ar" id="rwTitleAr">عجلة مراجعة المحطات</div>
 
@@ -3601,7 +3820,7 @@
 <div class="train-overlay" id="stationCardScreen" style="display:none;justify-content:flex-start;padding-top:0;overflow:hidden">
   <div style="width:100%;max-width:420px;height:100%;display:flex;flex-direction:column">
     <div class="station-fixed-header" id="stationFixedHeader">
-      <button onclick="closeStationCard()" class="station-close-btn">✕</button>
+      <button aria-label="إغلاق" onclick="closeStationCard()" class="station-close-btn">✕</button>
     </div>
     <div class="station-tabbar" id="stationTabbar"></div>
     <div class="station-tab-content" id="stationCardContent"></div>
@@ -3627,7 +3846,7 @@
     <div id="sqType" style="font-size:11px;color:#A78BFA;margin-bottom:6px;font-weight:700"></div>
     <div style="display:flex;align-items:center;gap:8px">
       <div id="sqQuestion" style="font-size:17px;font-weight:900;color:#F1F5F9"></div>
-      <button class="speak-btn-sm" id="sqSpeakBtn" onclick="speakWord(document.getElementById('sqQuestion').textContent, this)" title="استمع">🔊</button>
+      <button aria-label="استمع" class="speak-btn-sm" id="sqSpeakBtn" onclick="speakWord(document.getElementById('sqQuestion').textContent, this)" title="استمع">🔊</button>
     </div>
   </div>
   <div id="sqOptions" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px"></div>
@@ -3683,6 +3902,60 @@
 </div>
 
 <!-- ══ LEVEL TEST SCREEN ══ -->
+<!-- ══ LEVEL CHOICE ══
+     Shown instead of the test. A learner who has studied English for years
+     already knows roughly where they stand, and asking them takes one tap
+     against nine questions. It also survives the most common real-world event
+     in this app's life: a student deletes it, reinstalls, and would otherwise
+     be marched through the same test again — this lets them restore in a
+     second. Accuracy is not the point; not losing the learner is. -->
+<div id="levelChoiceScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--ink),var(--deep),var(--ink));overflow-y:auto;padding:28px 18px 40px;font-family:'Tajawal',sans-serif">
+  <div style="max-width:420px;margin:0 auto">
+    <div style="text-align:center;margin-bottom:26px">
+      <div style="font-size:40px;margin-bottom:10px">🧭</div>
+      <div style="font-size:20px;font-weight:900;color:#F5C842">أين أنت من الإنجليزية؟</div>
+      <div style="font-size:12.5px;color:#64748B;margin-top:6px;line-height:1.7">
+        اختر ما يصفك — لا توجد إجابة خاطئة،<br>ويمكنك تغييره متى شئت من الإعدادات.
+      </div>
+    </div>
+
+    <button class="lvl-choice" onclick="pickLevel('beginner')">
+      <span class="lc-ico">🟢</span>
+      <span class="lc-body">
+        <span class="lc-en">Beginner</span>
+        <span class="lc-ar">أعرف حروفًا وكلمات قليلة</span>
+      </span>
+    </button>
+
+    <button class="lvl-choice" onclick="pickLevel('medium')">
+      <span class="lc-ico">🟡</span>
+      <span class="lc-body">
+        <span class="lc-en">Intermediate</span>
+        <span class="lc-ar">أفهم جُملًا بسيطة وأقرأ ببطء</span>
+      </span>
+    </button>
+
+    <button class="lvl-choice" onclick="pickLevel('advanced')">
+      <span class="lc-ico">🔵</span>
+      <span class="lc-body">
+        <span class="lc-en">Advanced</span>
+        <span class="lc-ar">أقرأ وأفهم وأريد توسيع مفرداتي</span>
+      </span>
+    </button>
+
+    <div style="text-align:center;margin-top:22px;display:flex;flex-direction:column;gap:9px">
+      <button onclick="startLevelTest()"
+        style="background:none;border:1px dashed #243550;border-radius:11px;padding:11px;color:#8FA3BE;font-family:'Tajawal',sans-serif;font-size:12.5px;cursor:pointer">
+        🎯 لا أعرف — اختبرني في ٩ أسئلة
+      </button>
+      <button onclick="pickLevel('beginner')"
+        style="background:none;border:none;color:#5A6E88;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;padding:6px">
+        تخطّي الآن ←
+      </button>
+    </div>
+  </div>
+</div>
+
 <div id="levelTestScreen" style="display:none;position:fixed;inset:0;z-index:300;background:linear-gradient(160deg,var(--ink),var(--deep),var(--ink));overflow-y:auto;padding:24px 16px 40px;font-family:'Tajawal',sans-serif">
 
   <!-- Header -->
@@ -3696,9 +3969,22 @@
   <div style="background:#1A2332;border-radius:20px;height:8px;margin-bottom:6px;overflow:hidden">
     <div id="ltProgressBar" style="height:100%;width:0%;background:linear-gradient(90deg,#FFD700,#2DD4BF);border-radius:20px;transition:width .4s ease"></div>
   </div>
-  <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:20px">
-    <span id="ltQNum">سؤال 1 من 15</span>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:#64748B;margin-bottom:14px">
+    <span id="ltQNum">سؤال 1 من 9</span>
     <span id="ltStars">⭐ 0</span>
+  </div>
+
+  <!-- Skip.
+       The test arrives before the learner has seen anything the platform does:
+       fifteen questions in a language they may fear, as the price of entry.
+       That is the worst possible first minute, and the people most likely to
+       quit at it are exactly the beginners this platform exists for.
+       Leaving is now one tap, and the test waits for them in Settings. -->
+  <div style="text-align:center;margin-bottom:18px">
+    <button onclick="skipLevelTest()"
+      style="background:none;border:1px dashed #243550;border-radius:10px;padding:8px 16px;color:#64748B;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer">
+      تخطّي الآن — أجّله لوقت لاحق ←
+    </button>
   </div>
 
   <!-- Question Card -->
@@ -3935,7 +4221,7 @@
     <!-- Rank Unlock Popup -->
     <div class="rank-popup" id="rankPopup">
       <div class="rank-popup-icon" id="rankPopupIcon">🌱</div>
-      <div class="rank-popup-title">🎉 رتبة جديدة!</div>
+      <div class="rank-popup-title" id="rankPopupTitle">🎉 New Rank!</div>
       <div class="rank-popup-name" id="rankPopupName"></div>
     </div>
 
@@ -3994,7 +4280,7 @@
       <div class="search-input-row">
         <span class="search-icon">🔍</span>
         <input type="text" id="wordSearchInp" class="search-input" placeholder="ابحث عن كلمة بالإنجليزية أو العربية..." oninput="filterWordsList()">
-        <button class="search-clear-btn" id="searchClearBtn" onclick="clearWordSearch()" style="display:none">✕</button>
+        <button aria-label="إغلاق" class="search-clear-btn" id="searchClearBtn" onclick="clearWordSearch()" style="display:none">✕</button>
       </div>
       <div class="search-filters" id="searchFilters">
         <button class="filter-chip active" data-filter="all" onclick="setWordFilter('all',this)">الكل</button>
@@ -4004,6 +4290,7 @@
         <button class="filter-chip" data-filter="mastered" onclick="setWordFilter('mastered',this)">🏆 متقَنة</button>
         <button class="filter-chip" data-filter="learning" onclick="setWordFilter('learning',this)">📖 قيد التعلّم</button>
         <button class="filter-chip" data-filter="mine" onclick="setWordFilter('mine',this)">✍️ كلماتي</button>
+        <button class="filter-chip" data-filter="station" onclick="setWordFilter('station',this)">🚉 محطتي الحالية</button>
       </div>
       <div class="search-result-count" id="searchResultCount"></div>
     </div>
@@ -4058,6 +4345,14 @@
       </button>
     </div>
     <div class="library-grid">
+      <!-- Sound Lab sits first: it is the only activity that asks nothing of
+           a learner who cannot yet read, so it must not be buried below eight
+           tiles that all assume reading fluency. -->
+      <button class="lib-tile" onclick="showTab('sound',null)">
+        <span class="lib-tile-ico">👂</span>
+        <span class="lib-tile-en">Sound Lab</span>
+        <span class="lib-tile-ar">مختبر الصوت</span>
+      </button>
       <button class="lib-tile" onclick="showTab('grammar',null)">
         <span class="lib-tile-ico">📐</span>
         <span class="lib-tile-en">Grammar</span>
@@ -4098,6 +4393,101 @@
         <span class="lib-tile-en">Flashcards</span>
         <span class="lib-tile-ar">البطاقات</span>
       </button>
+    </div>
+  </div>
+
+  <!-- ══ SOUND LAB ══ -->
+  <!-- Built for the weakest learner in the room: someone who decodes letters
+       slowly and cannot yet read a sentence. Everything here works through the
+       ear, so nothing depends on reading fluency they do not have. It runs on
+       the device's own speech engine — no network, no microphone, no permission
+       prompt, nothing that can refuse a student mid-lesson. -->
+  <div id="tab-sound" class="section">
+    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
+    <div class="tab-head">
+      <h2>👂 Sound Lab</h2>
+      <p>مختبر الصوت — اسمع، كرّر، وميّز</p>
+    </div>
+
+    <div class="sl-modes">
+      <button class="sl-mode on" id="slmCoach" onclick="slMode('coach')">
+        <span class="i">🗣️</span>كيف أنطقها؟
+      </button>
+      <button class="sl-mode" id="slmDrill" onclick="slMode('drill')">
+        <span class="i">🎧</span>ماذا سمعت؟
+      </button>
+      <button class="sl-mode" id="slmEye" onclick="slMode('eye')">
+        <span class="i">👁️</span>أيّها المختلف؟
+      </button>
+    </div>
+
+    <!-- ── Pronunciation coach ── -->
+    <div class="sl-pane on" id="slPaneCoach">
+      <div class="sl-card">
+        <div class="sl-word" id="slLetters"></div>
+        <div class="sl-phon" id="slPhon"></div>
+        <div class="sl-mean" id="slMean"></div>
+
+        <div class="sl-legend">
+          <i><span class="sl-dot" style="background:#F1F5F9"></span> يُنطق</i>
+          <i><span class="sl-dot" style="background:#3E4C63"></span> لا يُنطق</i>
+          <i><span class="sl-dot" style="background:#F5C842"></span> انتبه</i>
+        </div>
+
+        <div class="sl-speeds">
+          <button class="sl-sp slow" id="slSlow" onclick="slSay(0.5)">🐢<span>ببطء</span></button>
+          <button class="sl-sp norm" id="slNorm" onclick="slSay(0.95)">▶️<span>عادي</span></button>
+          <button class="sl-sp rep" id="slRep" onclick="slRepeat()">🔁<span>كرّرها</span></button>
+        </div>
+
+        <div class="sl-reps" id="slReps"></div>
+
+        <div class="sl-nav">
+          <button class="sl-nb" id="slPrev" onclick="slMove(-1)">السابقة</button>
+          <button class="sl-nb main" onclick="slSay(0.95)">🔊 استمع</button>
+          <button class="sl-nb" id="slNext" onclick="slMove(1)">التالية</button>
+        </div>
+
+        <div class="sl-tip" id="slTip"></div>
+        <div class="sl-count" id="slCount"></div>
+      </div>
+    </div>
+
+    <!-- ── Letter discrimination ── -->
+    <div class="sl-pane" id="slPaneEye">
+      <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-bottom:12px">
+        اضغط الحرف المختلف عن البقية
+      </div>
+      <div class="sl-eye-row" id="slEyeRow"></div>
+      <div class="sl-eye-fb" id="slEyeFb"></div>
+      <div class="sl-score">
+        <div class="sl-sc"><b id="slEyeRight">0</b><span>صحيح</span></div>
+        <div class="sl-sc"><b id="slEyeTotal">0</b><span>المحاولات</span></div>
+      </div>
+      <div class="sl-note">
+        💡 هذه أشهر عقبة في تأسيس القراءة: الحروف <b>b/d</b> و<b>p/q</b> و<b>m/n</b>
+        تتشابه شكلًا، فتُقرأ الكلمة خطأً وإن عُرف الصوت. تمييزها بالعين يسبق قراءتها.
+      </div>
+    </div>
+
+    <!-- ── Listening drill ── -->
+    <div class="sl-pane" id="slPaneDrill">
+      <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-bottom:12px">
+        اضغط واستمع، ثم اختر الكلمة التي سمعتها
+      </div>
+      <button class="sl-listen" id="slListen" onclick="slPlayDrill()">
+        <span class="ico">🔊</span><span>استمع</span>
+      </button>
+      <div class="sl-choices" id="slChoices"></div>
+      <div class="sl-score">
+        <div class="sl-sc"><b id="slRight">0</b><span>صحيح</span></div>
+        <div class="sl-sc"><b id="slTotal">0</b><span>المحاولات</span></div>
+        <div class="sl-sc"><b id="slStreak">0</b><span>متتالية</span></div>
+      </div>
+      <div class="sl-note">
+        💡 الأزواج هنا مختارة لتدريب الأصوات التي تصعب على الناطق بالعربية:
+        <b>p/b</b> و<b>v/f</b> والحركات القصيرة والطويلة.
+      </div>
     </div>
   </div>
 
@@ -4257,7 +4647,7 @@
         <div class="vb-chat-log" id="vbChatLog"></div>
 
         <div class="vb-controls">
-          <button class="vb-mic-btn" id="vbMicBtn" onclick="vbToggleListening()">
+          <button aria-label="تحدّث" class="vb-mic-btn" id="vbMicBtn" onclick="vbToggleListening()">
             <span id="vbMicIcon">🎤</span>
           </button>
           <div class="vb-mic-hint" id="vbMicHint">اضغط للتحدث</div>
@@ -4437,7 +4827,7 @@
 </main>
 
 <!-- ══ CONFIRM RESET MODAL ══ -->
-<div class="confirm-overlay" id="confirmOverlay">
+<div class="confirm-overlay" id="confirmOverlay" role="dialog" aria-modal="true">
   <div class="confirm-box">
     <div class="cb-icon" id="cbIcon">⚠️</div>
     <div class="cb-title" id="cbTitle">Are you sure?</div>
@@ -4454,7 +4844,7 @@
 <!-- Shown when a learner opens an activity before their dictionary can fuel
      it. Never a dead end: it names the exact shortfall and offers both paths
      — write your own words, or adopt the Starter Pack. -->
-<div class="confirm-overlay" id="needWordsOverlay">
+<div class="confirm-overlay" id="needWordsOverlay" role="dialog" aria-modal="true">
   <div class="confirm-box">
     <div class="cb-icon">🌱</div>
     <div class="cb-title" id="nwTitle">Almost there!</div>
@@ -4537,7 +4927,7 @@
   <div class="help-sheet">
     <div class="help-header">
       <div class="help-title">📖 دليل استخدام WordSpark</div>
-      <button class="help-close" onclick="closeHelp()">✕</button>
+      <button aria-label="إغلاق" class="help-close" onclick="closeHelp()">✕</button>
     </div>
 
     <div class="guide-tabs" id="guideTabs">
@@ -4642,12 +5032,13 @@
       <div class="guide-card open">
         <div class="guide-card-header" onclick="toggleGuideCard(this)">
           <span class="guide-card-icon">📖</span>
-          <span class="guide-card-title">ثمانية أنشطة — واحد في اليوم يكفي</span>
+          <span class="guide-card-title">تسعة أنشطة — واحد في اليوم يكفي</span>
           <span class="guide-card-arrow">▼</span>
         </div>
         <div class="guide-card-body">
           <ul>
-            <li>📐 <b>Grammar</b> — ١٥ درسًا متسلسلًا، درس واحد كل مرة</li>
+            <li>👂 <b>Sound Lab</b> — اسمع، ميّز الأصوات المتقاربة، وفرّق الحروف المتشابهة شكلًا</li>
+            <li>📐 <b>Grammar</b> — ١٦ درسًا متسلسلًا، درس واحد كل مرة</li>
             <li>📖 <b>Reading</b> — نصوص بثلاثة مستويات مع تصحيح نطقك</li>
             <li>🎧 <b>Podcast</b> — استماع بلا نصّ لتدريب الأذن</li>
             <li>💬 <b>Conversations</b> — مواقف حياتية واقعية</li>
@@ -4777,6 +5168,9 @@
         <div class="guide-card-body">
           هذا كل ما تحتاج معرفته. بقيّة التفاصيل ستكتشفها بالضغط.
           <br><br>
+          <span style="font-size:11px;opacity:.75">🙏 فكرتا <b>«ربط الأزمنة بمبدأ واحد»</b> و<b>«تمييز الحروف المتشابهة»</b>
+          مستوحاتان من أسلوب <b>الأستاذ حسام عبدالله</b> في التدريس — والأمثلة والتمارين هنا من تأليف مستقل بالكامل.</span>
+          <br><br>
           <b>والمحطة الأولى تعلّمك أكثر من هذا الدليل كلّه.</b>
         </div>
       </div>
@@ -4857,7 +5251,7 @@
 
   <!-- All sending (Telegram/WhatsApp/QR) now lives in one place: Settings -->
   <button onclick="openSettingsPanel()" style="width:100%;margin-top:14px;padding:13px;border-radius:14px;border:1px solid rgba(245,200,66,.25);background:rgba(245,200,66,.06);color:#F5C842;font-family:'Tajawal',sans-serif;font-size:12.5px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
-    <span>📤 إرسال نتائجي (تيليجرام / واتساب / QR)</span><span style="opacity:.6">← الإعدادات</span>
+    <span>📤 إرسال نتائجي (مشاركة / واتساب / QR)</span><span style="opacity:.6">← الإعدادات</span>
   </button>
 
   <!-- QR Section (hidden by default; shown when triggered from Settings) -->
@@ -4922,7 +5316,7 @@
         <div class="ach-modal-title">🏆 My Achievements <span>إنجازاتي</span></div>
         <div class="ach-modal-count" id="achModalCount">0/24 unlocked</div>
       </div>
-      <button class="ach-close" onclick="closeAchievementsModal()">✕</button>
+      <button aria-label="إغلاق" class="ach-close" onclick="closeAchievementsModal()">✕</button>
     </div>
     <div class="ach-modal-list" id="achModalList"></div>
   </div>
@@ -4931,7 +5325,7 @@
 <!-- ══ VISUAL REPORT (shareable infographic) ══ -->
 <div class="vr-modal-overlay" id="vrModalOverlay" onclick="if(event.target===this)closeVisualReport()">
   <div class="vr-modal-inner">
-    <button class="vr-close" onclick="closeVisualReport()">✕</button>
+    <button aria-label="إغلاق" class="vr-close" onclick="closeVisualReport()">✕</button>
 
     <div class="vr-scroll">
       <!-- The card itself — this exact node is what gets captured to an image -->
@@ -5032,7 +5426,7 @@
       <div class="sp-handle"></div>
       <div class="sp-top">
         <div class="sp-title">⚙️ Settings</div>
-        <button class="sp-close" onclick="closeSettingsPanel()">✕</button>
+        <button aria-label="إغلاق" class="sp-close" onclick="closeSettingsPanel()">✕</button>
       </div>
       <!-- Student Card -->
       <div class="sp-student" id="spStudent">
@@ -5101,8 +5495,29 @@
         <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="14" stroke="white" stroke-width="2.5" fill="none" opacity=".4"/><path d="M24 14v10l7 4" stroke="white" stroke-width="2.5" stroke-linecap="round"/><path d="M10 10l4 5-5 3" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
       </div>
       <div class="sp-row-body">
-        <div class="sp-row-title">Retake Level Test</div>
-        <div class="sp-row-sub">إعادة اختبار تحديد المستوى</div>
+        <div class="sp-row-title">My Level</div>
+        <div class="sp-row-sub" id="levelSourceSub">مستواي الحالي</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+    <button class="sp-row" onclick="toggleReadingLevel()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#2DD4BF,#0EA5E9)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M8 12h14v26H8z" stroke="white" stroke-width="2.5" fill="none" opacity=".5"/><path d="M26 12h14v26H26z" stroke="white" stroke-width="2.5" fill="none"/><path d="M30 20h6M30 26h6" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Station Text Level</div>
+        <div class="sp-row-sub" id="readingLevelSub">مستوى نصوص المحطات</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="togglePulse()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#64748B,#334155)">
+        <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M6 24h8l4-10 6 20 5-14 4 4h9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+      </div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Anonymous Count</div>
+        <div class="sp-row-sub" id="pulseSub">عدّاد مجهول — بلا معرّف</div>
       </div>
       <div class="sp-row-arrow">→</div>
     </button>
@@ -5119,7 +5534,7 @@
         <svg width="20" height="20" viewBox="0 0 48 48" fill="none"><path d="M10.5 23.5l6.5 2.5 2.5 8 3.5-4 7 5 6-17-25.5 5.5z" fill="white"/></svg>
       </div>
       <div class="sp-row-body">
-        <div class="sp-row-title">Send via Telegram</div>
+        <div class="sp-row-title">Share My Report</div>
         <div class="sp-row-sub">أرسل مباشرة لمعلمك الآن 🚀</div>
       </div>
       <div class="sp-row-arrow">→</div>
@@ -5290,7 +5705,7 @@
   </button>
 </nav>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 // ══ DEBUG LOGGER ══
@@ -5299,6 +5714,47 @@
 // Named devLog (not log) because `log` is already used as a local variable in 8 places.
 const DEBUG = new URLSearchParams(window.location.search).get('dev') === '1';
 const devLog = (...a) => { if (DEBUG) console.log(...a); };
+
+// ══ STORAGE KEY GUARD ══
+// Storage keys are plain strings scattered across the file, and a mistyped one
+// fails silently: setItem creates a brand new key, getItem returns null, and
+// nothing anywhere complains. That is not hypothetical — it cost this project
+// twice. Points were written to 'starPoints' while twelve places read
+// 'wsPoints', so learners earned points that every screen reported as zero.
+// The dev-login button wrote 'wsName' while the app reads 'studentName', so it
+// did nothing at all. Both ran for months in total silence.
+//
+// This guard makes the next one loud. In dev mode (?dev=1) every key touched is
+// checked against the list below and anything unknown is reported immediately.
+// It is inert for students: no wrapper, no cost, nothing changes in the app's
+// behaviour — it only watches while a developer is looking.
+const KNOWN_KEYS = [
+  'studentName','studentLevel','levelSelfDeclared','levelTestSkipped','isTeacher',
+  'mywords','streak','lastDay','longestStreakEver','dailyGoal','mastery','wsPoints',
+  'trainProgress','flowStation','flowWordsBase','flowWordsDay',
+  'readingLevel','readingCompleted','grammarCompleted','quizResume','sqResume',
+  'theme','fontSizeLevel','rwStudentNames','sparkComebackCount','missionSparkDate',
+  'teacherName','teacherPhone','teacherEmail','parentPhone',
+  'lastBackupDate','installBannerDismissedUntil','voiceChatPointsDate',
+  'realPlacementTestResult','pack_starter','countOff','lastCountDay','starPoints'
+];
+// Keys built at runtime from a suffix (a section, a day, a pack id).
+const KNOWN_PREFIXES = [
+  'activity_','count_','daily_','pack_','pack_completed_','conv_mastered_',
+  'pod_done_','addedphrase_','improvementLog_','devLog_'
+];
+
+if (DEBUG) {
+  ['getItem','setItem','removeItem'].forEach(function (fn) {
+    const original = localStorage[fn].bind(localStorage);
+    localStorage[fn] = function (key) {
+      const ok = KNOWN_KEYS.indexOf(key) > -1 ||
+                 KNOWN_PREFIXES.some(function (p) { return String(key).indexOf(p) === 0; });
+      if (!ok) console.warn('⚠️ unknown storage key:', key, '— typo, or add it to KNOWN_KEYS');
+      return original.apply(null, arguments);
+    };
+  });
+}
 
 // ══ PRELOADED 50 WORDS ══
 const preloadedWords = [
@@ -5824,7 +6280,9 @@ function startPackQuiz(key) {
       var wrong = allWords.filter(function(x) { return x.en !== w.en; });
       for (var i = wrong.length-1; i>0; i--) { var j=Math.floor(Math.random()*(i+1)); var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t; }
       var opts = wrong.slice(0,3).map(function(x){return x.ar;});
-      var correctIdx = Math.floor(Math.random()*4);
+      // Insert inside the list we actually built — a fixed 0..3 range assumes
+      // four options exist, which is false whenever the pack is short.
+      var correctIdx = Math.floor(Math.random() * (opts.length + 1));
       opts.splice(correctIdx, 0, w.ar);
       return { q: w.en, type:'meaning', opts:opts, ans:correctIdx, hint:'اختر المعنى الصحيح' };
     } else {
@@ -5833,7 +6291,7 @@ function startPackQuiz(key) {
       var wrong = allWords.filter(function(x){return x.en!==w.en;});
       for(var i=wrong.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t;}
       var opts = wrong.slice(0,3).map(function(x){return x.en;});
-      var correctIdx = Math.floor(Math.random()*4);
+      var correctIdx = Math.floor(Math.random() * (opts.length + 1));
       opts.splice(correctIdx,0,w.en);
       return { q:sentence, type:'fill', opts:opts, ans:correctIdx, hint:'أكمل الجملة بالكلمة الصحيحة' };
     }
@@ -5876,12 +6334,12 @@ function answerPQ(idx, btn) {
     pqCorrect++;
     document.getElementById('pqScore').textContent='⭐ '+pqCorrect;
     fb.style.color='#A78BFA';
-    fb.textContent=['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
+    fb.textContent = answerFeedback(true);
   } else {
     btn.style.background='rgba(251,113,133,.2)';btn.style.borderColor='#FB7185';btn.style.opacity='1';
     btns[q.ans].style.background='rgba(167,139,250,.15)';btns[q.ans].style.borderColor='#A78BFA';btns[q.ans].style.opacity='1';
     fb.style.color='#FB7185';
-    fb.textContent=['لا بأس، واصل! 😊','قريب! استمر 🌟','راجع هذه الكلمة 📚','تعلّمنا شيئاً جديداً! 💪'][Math.floor(Math.random()*4)];
+    fb.textContent = answerFeedback(false);
   }
   setTimeout(function() {
     pqCurrent++;
@@ -5910,7 +6368,9 @@ function showPQResult() {
       localStorage.setItem('pack_completed_' + pqKey, '1');
       document.getElementById('packQuizResult').style.display = 'none';
       renderPackSelector();
-      showToast('🏆 أحسنت! تم فتح الحزمة التالية 🔓', '#A78BFA');
+      showToast(arabicSupport() === 'full'
+        ? '🏆 Next pack unlocked! · فُتحت الحزمة التالية 🔓'
+        : '🏆 Next pack unlocked! 🔓', '#A78BFA');
       addStarPoints('passQuiz');
     };
   } else {
@@ -6111,11 +6571,11 @@ function updateStreak() {
 
   if (isNewDay) {
     // Award streak milestone points (silent — celebration overlay handles the fanfare)
-    if (streak === 3)  { addStarPoints('streak3', true);  showStreakMilestone(3);  autoBackupToTeacher('3-day streak · استمرارية 3 أيام'); }
-    if (streak === 5)  { addStarPoints('streak5', true);  showStreakMilestone(5);  autoBackupToTeacher('5-day streak · استمرارية 5 أيام'); }
-    if (streak === 7)  { addStarPoints('streak7', true);  showStreakMilestone(7);  autoBackupToTeacher('7-day streak · استمرارية 7 أيام'); }
-    if (streak === 15) { addStarPoints('streak15', true); autoBackupToTeacher('15-day streak · استمرارية 15 يوماً'); }
-    if (streak === 30) { addStarPoints('streak30', true); autoBackupToTeacher('30-day streak · استمرارية 30 يوماً'); }
+    if (streak === 3)  { addStarPoints('streak3', true);  showStreakMilestone(3); }
+    if (streak === 5)  { addStarPoints('streak5', true);  showStreakMilestone(5); }
+    if (streak === 7)  { addStarPoints('streak7', true);  showStreakMilestone(7); }
+    if (streak === 15) { addStarPoints('streak15', true); }
+    if (streak === 30) { addStarPoints('streak30', true); }
 
     if (hadGap && streak === 1) {
       const comebackCount = parseInt(localStorage.getItem('sparkComebackCount') || '0') + 1;
@@ -6566,6 +7026,153 @@ function finishRealPlacementTest() {
 }
 
 
+// ══ READING LEVEL ══
+// The placement test used to write its result to localStorage and stop there —
+// nothing read it back, so every learner met the same advanced prose whatever
+// they scored. A test with no consequence is a questionnaire.
+//
+// The level it produces now decides which version of a station's passage is
+// shown. It can also be set by hand, because a learner who finds the text too
+// hard should not have to retake a test to say so.
+//
+//   'simple'  short patterned sentences, controlled vocabulary
+//   'full'    the original passage
+function getReadingLevel() {
+  var manual = localStorage.getItem('readingLevel');
+  if (manual === 'simple' || manual === 'full') return manual;
+  try {
+    var r = JSON.parse(localStorage.getItem('realPlacementTestResult') || 'null');
+    if (r && typeof r.overall === 'number') {
+      // Reading is the skill that decides whether a passage is usable at all,
+      // so it outweighs the average when the two disagree.
+      var reading = (r.skillScores && typeof r.skillScores.reading === 'number')
+        ? r.skillScores.reading : r.overall;
+      return (reading < 60 || r.overall < 55) ? 'simple' : 'full';
+    }
+  } catch (e) {}
+  // No test taken yet: start simple. Being handed something too easy costs a
+  // learner a moment; being handed something unreadable costs them the app.
+  return 'simple';
+}
+
+function setReadingLevel(lv) {
+  localStorage.setItem('readingLevel', lv);
+  refreshReadingLevelLabel();
+  showToast(lv === 'simple'
+    ? '📖 نصوص المحطات ستكون مبسّطة'
+    : '📖 نصوص المحطات ستكون كاملة', '#2DD4BF');
+}
+
+function toggleReadingLevel() {
+  setReadingLevel(getReadingLevel() === 'simple' ? 'full' : 'simple');
+}
+
+function togglePulse() {
+  var off = localStorage.getItem('countOff') === '1';
+  localStorage.setItem('countOff', off ? '0' : '1');
+  refreshPulseLabel();
+  showToast(off ? '📊 تم تفعيل العدّاد المجهول' : '🔕 تم إيقاف العدّاد المجهول', '#64748B');
+}
+
+// levelSelfDeclared and levelTestSkipped were both written and never read once:
+// the app recorded how a learner's level was set and then had no way to show
+// it. Surfacing it matters because the three routes carry different weight —
+// a skip is a default nobody chose, and a learner seeing that is far likelier
+// to correct it than one shown a bare level name.
+function refreshLevelSourceLabel() {
+  var el = document.getElementById('levelSourceSub');
+  if (!el) return;
+  var lv = localStorage.getItem('studentLevel');
+  var names = { beginner: '🟢 مبتدئ', medium: '🟡 متوسط', advanced: '🔵 متقدّم' };
+  if (!lv) { el.textContent = 'لم يُحدَّد بعد — اضغط للاختيار'; return; }
+  var how = localStorage.getItem('levelTestSkipped') === '1' ? 'افتراضي — لم تختر بعد'
+          : localStorage.getItem('levelSelfDeclared') === '1' ? 'اخترته بنفسك'
+          : 'من الاختبار';
+  el.textContent = (names[lv] || lv) + ' · ' + how;
+}
+
+function refreshPulseLabel() {
+  var el = document.getElementById('pulseSub');
+  if (!el) return;
+  el.textContent = (localStorage.getItem('countOff') === '1')
+    ? 'موقوف — لا يُرسل شيء'
+    : 'مفعّل — عدّاد فقط، بلا معرّف';
+}
+
+function refreshReadingLevelLabel() {
+  var el = document.getElementById('readingLevelSub');
+  if (!el) return;
+  el.textContent = (getReadingLevel() === 'simple')
+    ? 'مبسّط · جُمل قصيرة' : 'كامل · النصّ الأصلي';
+}
+
+// ══ SIMPLE STATION TEXT ══
+// Built from the station's own data rather than written by hand for all 42, so
+// every city is covered and none can be missed.
+//
+// The repetition across stations is deliberate, not a shortcut. Patterned text
+// — the same frames recurring with one element changed — is how early readers
+// build fluency: having decoded "This is Makkah" the learner already owns four
+// fifths of "This is Madinah", and can spend their attention on the new word
+// instead of the whole line. Every frame here uses only high-frequency words.
+function simpleStationText(s) {
+  var lines = [];
+  // Long ceremonial names ("Al-Madinah Al-Munawwarah") defeat the purpose at
+  // this level, so a short form is used — but only one that is still a name.
+  // Naive truncation produced "This is Al." and "This is The.", which is
+  // worse than the long version because it is not a place at all.
+  var STOP = { 'al': 1, 'the': 1, 'a': 1, 'of': 1 };
+  var name = s.nameEn;
+  if (name.length > 16) {
+    var parts = name.split(/[\s-]+/).filter(function (p) {
+      return p && !STOP[p.toLowerCase()];
+    });
+    if (parts.length && parts[0].length >= 4) name = parts[0];
+  }
+  lines.push('This is ' + name + '.');
+
+  // The last station is a ceremony, not a place — calling it a city would be
+  // the one factually wrong sentence in the whole set.
+  var isPlace = !/coronation|moment/i.test(s.nameEn);
+  if (isPlace) lines.push('It is a city.');
+
+  // Landmarks are stored in Arabic with a leading emoji, so they cannot go
+  // inside an English sentence. Only include one if it is genuinely Latin
+  // script — otherwise the "simple" text would be bilingual mid-sentence,
+  // which is harder to read than the original, not easier.
+  var lm = (s.landmarks && s.landmarks.length) ? String(s.landmarks[0]) : '';
+  lm = lm.replace(/[^\x20-\x7E]/g, '').split('(')[0].trim();
+  if (lm && lm.length >= 3 && lm.length <= 28) lines.push('You can see ' + lm + ' here.');
+
+  var w = (s.words && s.words.length) ? s.words[0] : null;
+  if (w && w.en && w.en.length <= 12) {
+    lines.push('A new word is "' + w.en.toLowerCase() + '".');
+  }
+  lines.push(isPlace ? 'People come here from far away.' : 'Your journey ends here.');
+  return lines.join(' ');
+}
+
+// ══ ANSWER FEEDBACK ══
+// The single most repeated text in the app: a learner sees one of these after
+// every question, hundreds of times. That makes it the cheapest English in the
+// platform — short, emotionally clear, and understood from context alone even
+// on first sight. The phrases were duplicated in three places, so a change had
+// to be made three times and one copy always drifted; they live here now.
+var FEEDBACK_RIGHT = [
+  ['Excellent! 🎉', 'ممتاز'], ['Great! ✨', 'رائع'], ['Correct! 🌟', 'صحيح'],
+  ['Well done! 💪', 'أحسنت'], ['Exactly! 🔥', 'بالضبط']
+];
+var FEEDBACK_WRONG = [
+  ['Keep going! 😊', 'واصل'], ['So close! 🌟', 'قريب'],
+  ['Review this one 📚', 'راجعها'], ['We learned something! 💪', 'تعلّمنا شيئًا']
+];
+
+function answerFeedback(correct) {
+  var list = correct ? FEEDBACK_RIGHT : FEEDBACK_WRONG;
+  var pick = list[Math.floor(Math.random() * list.length)];
+  return (arabicSupport() === 'full') ? (pick[0] + ' · ' + pick[1]) : pick[0];
+}
+
 function getSparkGrowthTier() {
   // Only words the learner added themselves count toward growth — the free
   // starter pack gives everyone a head start, but Spark should grow with
@@ -6719,7 +7326,10 @@ function checkDuplicateWordLive() {
   const warningEl = document.getElementById('dupWarning');
   if (!warningEl) return;
   if (!en) { warningEl.style.display = 'none'; dismissWordHint(); return; }
-  const exists = words.some(w => w.en.toLowerCase().trim() === en);
+  // Warn only about words visible in "كلماتي". A seeded word the learner has
+  // never seen is not a duplicate from their point of view — it gets adopted
+  // on submit rather than refused.
+  const exists = myWords().some(w => w.en.toLowerCase().trim() === en);
   warningEl.style.display = exists ? '' : 'none';
 
   // A hint only helps for a word being added for the first time, and only
@@ -6742,6 +7352,25 @@ function addWord() {
   const normalizedEn = en.toLowerCase().trim();
   const existing = words.find(w => w.en.toLowerCase().trim() === normalizedEn);
   if (existing) {
+    // A seeded starter word is invisible in "كلماتي", so refusing it told the
+    // learner a word they cannot see is already theirs — and blocked exactly
+    // the station vocabulary they had come to add. Typing it out is the work
+    // that earns it, so we adopt it instead of rejecting: the flag clears, the
+    // word becomes theirs, and anything they typed replaces the canned text.
+    if (existing.seeded) {
+      delete existing.seeded;
+      existing.date = today;
+      existing.source = 'mine';
+      if (ar)   existing.ar = ar;
+      if (ex)   existing.ex = ex;
+      if (exar) existing.exar = exar;
+      save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
+      ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
+      dismissWordHint();
+      document.getElementById('inp-en').focus();
+      showToast('✨ "' + en + '" أُضيفت إلى قاموسك', '#34D399');
+      return;
+    }
     showToast(`⚠️ كلمة "${en}" موجودة لديك مسبقاً!`, '#FB7185');
     document.getElementById('inp-en').focus();
     return;
@@ -6784,29 +7413,415 @@ function doAddWord(en, ar, ex, exar) {
   // starter pack is dated "today" when seeded, which would otherwise make
   // every brand-new student appear to have already hit their daily goal
   // before adding a single word of their own.
-  if (words.filter(w => w.date === today && !w.seeded).length >= goal) {
-    showToast(`🎉 Daily goal reached! · أكملت هدف اليوم`, '#F5C842');
-    return;
-  }
+  const beforeCount = words.filter(w => w.date === today && !w.seeded).length;
+
+  // The goal is a floor, never a ceiling. It previously discarded the word
+  // and congratulated the student for being blocked — punishing exactly the
+  // behaviour the app exists to encourage. A learner arriving at a new
+  // station wants that station's vocabulary today, not three words of it.
   words.unshift({ en, ar, ex, exar, level: selectedLevel, date: today, id: Date.now(), source: 'mine' });
   save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
   ['inp-en','inp-ar','inp-ex','inp-exar'].forEach(id => document.getElementById(id).value = '');
   dismissWordHint();
   document.getElementById('inp-en').focus();
 
-  // رسالة تحفيزية مع عداد
+  // Points and dashboard must update for every word, so the message is chosen
+  // first and awarded afterwards — an early return here would silently cost
+  // the student their stars for the very words they went out of their way to add.
   var todayCount = words.filter(w => w.date === today && !w.seeded).length;
-  var msgs = [
-    '⚡ 1 word added! Keep going! · كلمة واحدة أُضيفت!',
-    '🔥 2 words! You\'re on fire! · كلمتان رائعتان!',
-    '🌟 3 words! Goal reached! · وصلت للهدف!',
-    '💪 4 words! Amazing effort! · مجهود رائع!',
-    '🏆 5 words! Champion! · بطل حقيقي!'
-  ];
-  var msg = msgs[Math.min(todayCount - 1, msgs.length - 1)] || '✨ "' + en + '" added!';
-  showToast(msg, '#2DD4BF');
+  var msg;
+  if (todayCount === goal) {
+    msg = '🎉 Daily goal reached! Keep going · أكملت هدف اليوم — وواصل';
+  } else if (todayCount > goal) {
+    msg = '🔥 +' + (todayCount - goal) + ' beyond your goal! · فوق هدفك';
+  } else {
+    var msgs = [
+      '⚡ 1 word added! Keep going! · كلمة واحدة أُضيفت!',
+      '🔥 2 words! You\'re on fire! · كلمتان رائعتان!',
+      '🌟 3 words! Goal reached! · وصلت للهدف!',
+      '💪 4 words! Amazing effort! · مجهود رائع!',
+      '🏆 5 words! Champion! · بطل حقيقي!'
+    ];
+    msg = msgs[Math.min(todayCount - 1, msgs.length - 1)] || '✨ "' + en + '" added!';
+  }
+  showToast(msg, todayCount >= goal ? '#F5C842' : '#2DD4BF');
   addStarPoints('addWord');
   updateWordsDashboard();
+}
+
+// ══ ADD STATION VOCABULARY ══
+// The five words attached to a station are what its quiz draws on, and for a
+// learner they are the most relevant vocabulary they will meet that day. This
+// adds them in one action, skipping anything already owned, and enriching each
+// entry from the curated index when that word happens to be there — so an
+// added word arrives with an example rather than bare.
+function addStationWords(stationId) {
+  var s = getStationById(stationId);
+  if (!s || !s.words) return;
+
+  // Ownership is judged by what the learner can actually see. A seeded starter
+  // word counts as "not theirs yet", so bulk-add adopts it rather than
+  // reporting that the whole station is already covered — which is what a
+  // learner staring at an empty word list was previously told.
+  var owned = {};
+  myWords().forEach(function (w) { owned[(w.en || '').toLowerCase().trim()] = true; });
+  var seededByKey = {};
+  words.forEach(function (w) {
+    if (w.seeded) seededByKey[(w.en || '').toLowerCase().trim()] = w;
+  });
+
+  var index = getHintIndex();
+  var added = 0, skipped = 0;
+  var stamp = Date.now();
+
+  s.words.forEach(function (w, i) {
+    var key = (w.en || '').toLowerCase().trim();
+    if (!key) return;
+    if (owned[key]) { skipped++; return; }
+
+    // Already present but hidden: promote it instead of creating a duplicate.
+    var seeded = seededByKey[key];
+    if (seeded) {
+      delete seeded.seeded;
+      seeded.date = today;
+      seeded.source = 'station';
+      seeded.stationId = stationId;
+      owned[key] = true;
+      added++;
+      return;
+    }
+
+    var rich = index[key] || {};
+    words.unshift({
+      en: w.en,
+      ar: w.ar,
+      ex: rich.ex || '',
+      exar: rich.exar || '',
+      level: rich.level || 'medium',
+      date: today,
+      id: stamp + i,
+      source: 'station',
+      // Remember which city a word came from. Without this the vocabulary a
+      // station teaches dissolves into the general dictionary the moment it is
+      // added, and the station's own quiz can no longer find it.
+      stationId: stationId
+    });
+    owned[key] = true;
+    added++;
+  });
+
+  if (!added) {
+    showToast('✅ كل كلمات هذه المحطة موجودة في قاموسك', '#2DD4BF');
+    return;
+  }
+
+  save(); updateCounters(); updateStreak(); renderWords(); renderFlashcards();
+  updateWordsDashboard();
+  for (var n = 0; n < added; n++) addStarPoints('addWord');
+
+  var msg = '📚 أُضيفت ' + added + (added === 1 ? ' كلمة' : ' كلمات') + ' إلى قاموسك';
+  if (skipped) msg += ' · ' + skipped + ' موجودة مسبقًا';
+  showToast(msg, '#A78BFA');
+
+  // Words added in bulk are the ones a learner has met least. Offering the
+  // flashcards straight away turns a silent import into a first encounter —
+  // otherwise thirty unfamiliar words sit in the list unread until the quiz.
+  setTimeout(function () {
+    showToast('🃏 راجعها الآن في البطاقات — اضغط المكتبة ← Flashcards', '#2DD4BF');
+  }, 2400);
+
+  var btn = document.getElementById('stationAddAllBtn');
+  if (btn) { btn.classList.add('saa-done'); btn.querySelector('.saa-en').textContent = '✓ Added to my words'; }
+}
+
+// ══ SOUND LAB ══
+// A foundation tool for the learner who decodes letters slowly and cannot yet
+// read a sentence. The word set is not a sample of English — it is built on
+// three teaching principles:
+//   SIGHT   the highest-frequency words, which cannot be sounded out and make
+//           up roughly half of ordinary text. Without these, no sentence reads.
+//   CVC     one sound per letter, no exceptions. Succeed at a few and the
+//           alphabetic principle generalises.
+//   TRAP    sounds absent from Arabic (/p/, /v/) or forbidden shapes (initial
+//           clusters), which are otherwise heard as their nearest Arabic
+//           neighbour and never noticed.
+// `silent` marks letters carrying no sound; `trk` marks the letters carrying
+// the difficulty being taught.
+var SL_WORDS = [
+  { en:'the',   ph:'/ðə/',    ar:'الـ (أداة تعريف)', 
+    tip:'من أكثر الكلمات ورودًا في الإنجليزية. لا تُقرأ بالتهجئة — احفظها بالنظر كصورة واحدة.' },
+  { en:'is',    ph:'/ɪz/',    ar:'يكون / هو',
+    tip:'تربط بين شيئين: <b>The cat <u>is</u> big</b>. بلا هذه الكلمة لا تكتمل جملة.' },
+  { en:'and',   ph:'/ænd/',   ar:'و',
+    tip:'أداة الربط الأولى. جرّب: <b>bread <u>and</u> water</b>.' },
+  { en:'in',    ph:'/ɪn/',    ar:'في',
+    tip:'حرف جرّ للمكان: <b>The book is <u>in</u> the bag</b>.' },
+  { en:'cat',   ph:'/kæt/',   ar:'قطة',
+    tip:'ثلاثة أحرف، ثلاثة أصوات: c-a-t. انطق كل صوت وحده ثم صِلها بسرعة.' },
+  { en:'sun',   ph:'/sʌn/',   ar:'شمس',
+    tip:'s-u-n. لاحظ أن <b>u</b> هنا قصيرة.' },
+  { en:'big',   ph:'/bɪɡ/',   ar:'كبير',
+    tip:'b-i-g. الحرف <b>i</b> قصير — ليس "باي" بل "بِـ".' },
+  { en:'red',   ph:'/red/',   ar:'أحمر',
+    tip:'r-e-d. صوت <b>r</b> الإنجليزي أخفّ من الراء العربية، ولا يُكرّر اللسان.' },
+  { en:'pen',   ph:'/pen/',   ar:'قلم', trk:[0],
+    tip:'⚠️ صوت <b>p</b> لا يوجد في العربية، فيُنطق خطأً <b>b</b>. ضع كفّك أمام فمك — يجب أن تشعر بدفعة هواء في <b>pen</b> ولا تشعر بها في <b>Ben</b>.' },
+  { en:'happy', ph:'/ˈhæpi/', ar:'سعيد', trk:[2,3],
+    tip:'⚠️ <b>pp</b> تُنطق صوتًا واحدًا لا اثنين — وهو صوت <b>p</b> بدفعة الهواء.' },
+  { en:'very',  ph:'/ˈveri/', ar:'جدًا', trk:[0],
+    tip:'⚠️ صوت <b>v</b> لا يوجد في العربية، فيُنطق خطأً <b>f</b>. ضع إصبعك على حلقك — يجب أن تشعر باهتزاز.' },
+  { en:'seven', ph:'/ˈsevən/',ar:'سبعة', trk:[2],
+    tip:'⚠️ الأسنان العليا تلامس الشفة السفلى مع صوت من الحلق.' },
+  { en:'know',  ph:'/nəʊ/',   ar:'يعرف', silent:[0],
+    tip:'الحرف <b>k</b> لا يُنطق إطلاقًا. الكلمة تُسمع كأنها <b>no</b> تمامًا.' },
+  { en:'write', ph:'/raɪt/',  ar:'يكتب', silent:[0,4],
+    tip:'الحرف <b>w</b> صامت، و<b>e</b> في النهاية صامتة أيضًا — لكنها تُطيل صوت <b>i</b> قبلها.' },
+  { en:'hour',  ph:'/ˈaʊər/', ar:'ساعة', silent:[0],
+    tip:'الحرف <b>h</b> صامت. تبدأ الكلمة بصوت حركة، ولهذا نقول <b>an hour</b> لا <b>a hour</b>.' },
+  { en:'street',ph:'/striːt/',ar:'شارع', trk:[0,1,2],
+    tip:'⚠️ ثلاثة سواكن متتالية. العربية لا تبدأ بساكنين، فيُقحم الناطق حركة: "istreet". تدرّب ببطء ثم أسرع بلا إقحام.' },
+  { en:'spring',ph:'/sprɪŋ/', ar:'ربيع', trk:[0,1,2],
+    tip:'⚠️ نفس الصعوبة: <b>s-p-r</b> بلا حركة بينها.' },
+  { en:'think', ph:'/θɪŋk/',  ar:'يفكّر', trk:[0,1],
+    tip:'✅ صوت <b>th</b> هنا هو الثاء العربية تمامًا. هذا أصعب صوت على متعلّمي الإنجليزية في العالم — وأنت تملكه أصلًا.' },
+  { en:'this',  ph:'/ðɪs/',   ar:'هذا',  trk:[0,1],
+    tip:'✅ <b>th</b> هنا هي الذال العربية. لاحظ أنها تختلف عن ثاء <b>think</b> — والعربية تفرّق بينهما أيضًا.' }
+];
+
+// Minimal pairs: each differs by exactly one sound, and that sound is one an
+// Arabic speaker is likely to merge. Choosing between them forces the ear to
+// notice a distinction it has been ignoring.
+var SL_PAIRS = [
+  ['pen','Ben','قلم','اسم شخص'], ['pat','bat','ربتة','مضرب'],
+  ['very','ferry','جدًا','عبّارة'], ['van','fan','شاحنة','مروحة'],
+  ['ship','sheep','سفينة','خروف'], ['bit','beat','قطعة','يضرب'],
+  ['bed','bad','سرير','سيّئ'], ['man','men','رجل','رجال'],
+  ['cat','cut','قطة','يقطع'], ['hat','hot','قبعة','حارّ']
+];
+
+var slAt = 0, slReps = 3, slTarget = null, slAnswered = false;
+var slRight = 0, slTotal = 0, slStreak = 0, slBooted = false;
+
+// Deliberately NOT routed through speakWord(): that function adds a small
+// random jitter to rate and pitch so repeated playback sounds human. A learner
+// drilling a single sound needs the identical model every time — variation here
+// is noise, not life.
+function slSpeak(text, rate, done) {
+  var synth = getSynth();
+  if (!synth) { showToast('⚠️ متصفحك لا يدعم النطق الصوتي', '#FB7185'); return; }
+  try { synth.resume(); synth.cancel(); } catch (e) {}
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'en-US'; u.rate = rate; u.pitch = 1; u.volume = 1;
+  var vs = synth.getVoices();
+  if (vs && vs.length) {
+    var v = pickEnglishVoice(vs, null);
+    if (v) u.voice = v;
+  }
+  if (done) u.onend = done;
+  try { synth.speak(u); } catch (e) {}
+}
+
+function slRender() {
+  var w = SL_WORDS[slAt];
+  var sil = w.silent || [], trk = w.trk || [];
+  document.getElementById('slLetters').innerHTML = w.en.split('').map(function (ch, i) {
+    var c = sil.indexOf(i) > -1 ? 'sil' : (trk.indexOf(i) > -1 ? 'trk' : 'snd');
+    return '<span class="sl-lt ' + c + '">' + ch + '</span>';
+  }).join('');
+  document.getElementById('slPhon').textContent = w.ph;
+  document.getElementById('slMean').textContent = w.ar;
+  document.getElementById('slTip').innerHTML = w.tip;
+  document.getElementById('slCount').textContent = (slAt + 1) + ' / ' + SL_WORDS.length;
+  document.getElementById('slPrev').disabled = (slAt === 0);
+  document.getElementById('slNext').disabled = (slAt === SL_WORDS.length - 1);
+}
+
+// Sweep a highlight across the letters roughly in time with the audio. It is an
+// approximation, not true alignment — but it shows the learner *where in the
+// word* they are, which is exactly what a slow decoder loses track of.
+function slLight(rate) {
+  var ls = Array.prototype.slice.call(document.querySelectorAll('#slLetters .sl-lt'));
+  var per = (rate < 0.7 ? 190 : 105);
+  ls.forEach(function (el, i) {
+    setTimeout(function () {
+      el.classList.add('lit');
+      setTimeout(function () { el.classList.remove('lit'); }, per);
+    }, i * per);
+  });
+}
+
+function slSay(rate) {
+  var btn = document.getElementById(rate < 0.7 ? 'slSlow' : 'slNorm');
+  btn.classList.add('busy');
+  slLight(rate);
+  slSpeak(SL_WORDS[slAt].en, rate, function () { btn.classList.remove('busy'); });
+}
+
+function slRepeat() {
+  var btn = document.getElementById('slRep');
+  btn.classList.add('busy');
+  var n = 0;
+  (function next() {
+    if (n >= slReps) { btn.classList.remove('busy'); return; }
+    n++;
+    // Alternate slow / normal: hear the shape, then hear it at speed.
+    var rate = (n % 2 === 1) ? 0.5 : 0.95;
+    slLight(rate);
+    slSpeak(SL_WORDS[slAt].en, rate, function () { setTimeout(next, 320); });
+  })();
+}
+
+function slMove(d) {
+  var n = slAt + d;
+  if (n < 0 || n > SL_WORDS.length - 1) return;
+  slAt = n;
+  slRender();
+  slSay(0.95);
+}
+
+function slNewDrill() {
+  slAnswered = false;
+  var p = SL_PAIRS[Math.floor(Math.random() * SL_PAIRS.length)];
+  var flip = Math.random() < 0.5;
+  var a = flip ? 0 : 1, b = flip ? 1 : 0;
+  slTarget = p[a];
+  var opts = [{ w: p[a], ar: p[a + 2] }, { w: p[b], ar: p[b + 2] }];
+  if (Math.random() < 0.5) opts.reverse();
+  document.getElementById('slChoices').innerHTML = opts.map(function (o) {
+    return '<button class="sl-ch" data-w="' + o.w + '">' + o.w +
+           '<span class="ar">' + o.ar + '</span></button>';
+  }).join('');
+}
+
+function slPlayDrill() {
+  if (!slTarget) slNewDrill();
+  var b = document.getElementById('slListen');
+  b.classList.add('playing');
+  slSpeak(slTarget, 0.8, function () { b.classList.remove('playing'); });
+}
+
+// ══ LETTER DISCRIMINATION ══
+// The ear half of this lab teaches sounds; this is the eye half. Before a slow
+// decoder can read a word they must see its letters as distinct shapes, and
+// the classic blockers are mirror pairs (b/d, p/q) and rotations (m/w, n/u).
+// A learner who knows the sound of /b/ perfectly will still misread "bad" as
+// "dad" until the shapes separate.
+//
+// Each row is one target letter repeated with a single confusable intruder,
+// and the note after each answer names the confusion so the learner leaves
+// knowing *which* pair caught them.
+var SL_EYE = [
+  { row:'b', odd:'d', note:'<b>b</b> بطنها لليمين و<b>d</b> بطنها لليسار — أشهر خلط في القراءة.' },
+  { row:'d', odd:'b', note:'الفرق موضع الدائرة: <b>d</b> الدائرة قبل العصا، <b>b</b> بعدها.' },
+  { row:'p', odd:'q', note:'<b>p</b> الدائرة لليمين، <b>q</b> لليسار — وكلاهما ذيلهما لأسفل.' },
+  { row:'q', odd:'p', note:'تذكّر: <b>q</b> تأتي دائمًا مع <b>u</b> في الكلمات: queen, quiet.' },
+  { row:'m', odd:'n', note:'<b>m</b> لها ثلاث أرجل و<b>n</b> لها رجلان. عُدّ الأرجل.' },
+  { row:'n', odd:'h', note:'<b>h</b> عصاها طويلة لأعلى، و<b>n</b> قصيرة.' },
+  { row:'u', odd:'v', note:'<b>u</b> قاعها مستدير و<b>v</b> قاعها مدبّب.' },
+  { row:'i', odd:'l', note:'<b>i</b> فوقها نقطة، و<b>l</b> عصا طويلة بلا نقطة.' },
+  { row:'W', odd:'M', note:'<b>W</b> مقلوبة <b>M</b> — انظر إلى اتجاه القمم.' },
+  { row:'g', odd:'q', note:'<b>g</b> ذيلها منحنٍ لليسار، و<b>q</b> ذيلها مستقيم.' },
+  { row:'f', odd:'t', note:'<b>f</b> رأسها معقوف، و<b>t</b> رأسها مستقيم.' },
+  { row:'a', odd:'o', note:'<b>a</b> لها عصا على يمينها، و<b>o</b> دائرة مغلقة فقط.' }
+];
+
+var slEyeAt = 0, slEyeOdd = 0, slEyeLocked = false;
+var slEyeRight = 0, slEyeTotal = 0;
+
+function slEyeRender() {
+  var item = SL_EYE[slEyeAt % SL_EYE.length];
+  var n = 6;
+  slEyeOdd = Math.floor(Math.random() * n);
+  var cells = [];
+  for (var i = 0; i < n; i++) cells.push(i === slEyeOdd ? item.odd : item.row);
+  document.getElementById('slEyeRow').innerHTML = cells.map(function (c, i) {
+    return '<button class="sl-eye-box" data-i="' + i + '">' + c + '</button>';
+  }).join('');
+  var fb = document.getElementById('slEyeFb');
+  fb.className = 'sl-eye-fb';
+  fb.innerHTML = '';
+  slEyeLocked = false;
+}
+
+function slEyePick(i) {
+  if (slEyeLocked) return;
+  slEyeLocked = true;
+  var item = SL_EYE[slEyeAt % SL_EYE.length];
+  var boxes = document.querySelectorAll('.sl-eye-box');
+  var fb = document.getElementById('slEyeFb');
+  slEyeTotal++;
+
+  // The correct letter is always revealed, right or wrong: the point is to see
+  // the difference, not to be scored on it.
+  boxes[slEyeOdd].classList.add('hit');
+  if (i === slEyeOdd) {
+    slEyeRight++;
+    fb.className = 'sl-eye-fb show ok';
+    fb.innerHTML = '✅ صحيح — ' + item.note;
+    addStarPoints('playGame', true);
+  } else {
+    boxes[i].classList.add('miss');
+    fb.className = 'sl-eye-fb show bad';
+    fb.innerHTML = '👁️ المختلف هو الملوّن — ' + item.note;
+  }
+  document.getElementById('slEyeRight').textContent = slEyeRight;
+  document.getElementById('slEyeTotal').textContent = slEyeTotal;
+  // Longer pause after a miss: the explanation is the lesson.
+  setTimeout(function () { slEyeAt++; slEyeRender(); }, i === slEyeOdd ? 1500 : 2600);
+}
+
+function slMode(m) {
+  document.getElementById('slPaneCoach').classList.toggle('on', m === 'coach');
+  document.getElementById('slPaneDrill').classList.toggle('on', m === 'drill');
+  document.getElementById('slPaneEye').classList.toggle('on', m === 'eye');
+  document.getElementById('slmCoach').classList.toggle('on', m === 'coach');
+  document.getElementById('slmDrill').classList.toggle('on', m === 'drill');
+  document.getElementById('slmEye').classList.toggle('on', m === 'eye');
+  if (m === 'drill' && !slTarget) slNewDrill();
+  if (m === 'eye') slEyeRender();
+}
+
+function initSoundLab() {
+  if (slBooted) return;
+  slBooted = true;
+  document.getElementById('slReps').innerHTML = [2, 3, 4, 5].map(function (n) {
+    return '<button class="sl-rp' + (n === slReps ? ' on' : '') + '" data-n="' + n + '">' + n + '×</button>';
+  }).join('');
+  document.getElementById('slReps').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.sl-rp') : null;
+    if (!b) return;
+    slReps = parseInt(b.getAttribute('data-n'), 10);
+    Array.prototype.forEach.call(this.children, function (c) { c.classList.toggle('on', c === b); });
+  });
+  document.getElementById('slChoices').addEventListener('click', function (e) {
+    var btn = e.target.closest ? e.target.closest('.sl-ch') : null;
+    if (!btn || slAnswered) return;
+    slAnswered = true;
+    var ok = (btn.getAttribute('data-w') === slTarget);
+    slTotal++;
+    if (ok) { slRight++; slStreak++; btn.classList.add('right'); addStarPoints('playGame'); }
+    else {
+      slStreak = 0;
+      btn.classList.add('wrong');
+      Array.prototype.forEach.call(document.querySelectorAll('.sl-ch'), function (c) {
+        if (c.getAttribute('data-w') === slTarget) c.classList.add('right');
+      });
+    }
+    document.getElementById('slRight').textContent = slRight;
+    document.getElementById('slTotal').textContent = slTotal;
+    document.getElementById('slStreak').textContent = slStreak;
+    // Always replay the correct word afterwards — a wrong answer is another
+    // chance to hear the contrast, not a moment to feel caught out.
+    setTimeout(function () { slSpeak(slTarget, 0.55); }, 480);
+    setTimeout(slNewDrill, 2100);
+  });
+  document.getElementById('slEyeRow').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.sl-eye-box') : null;
+    if (b) slEyePick(parseInt(b.getAttribute('data-i'), 10));
+  });
+  slRender();
+  slNewDrill();
+  slEyeRender();
 }
 
 // ══ RENDER WORDS ══
@@ -6986,16 +8001,21 @@ function renderWordCard(w, i) {
       : '';
   const mineBadge = w.source === 'mine'
     ? `<span class="mine-badge">✍️ كلمتي</span>`
-    : '';
+    : (w.source === 'station' && w.stationId
+        // Station vocabulary is the newest and least familiar material a
+        // learner holds, so it is named on the card rather than blending into
+        // the list — it tells them what to revise first.
+        ? `<span class="station-badge">🚉 ${(getStationById(w.stationId) || {}).nameEn || 'محطة'}</span>`
+        : '');
   return `
     <div class="word-card" style="border:1.5px solid ${c.border};background:linear-gradient(135deg,${c.bg},var(--panel));box-shadow:0 0 12px ${c.border}22;">
       <div class="word-card-top">
         <div class="word-num" style="background:${c.num};color:${c.txt}">${i + 1}</div>
         <div class="word-info">
-          <div class="word-en" style="color:${c.txt}">${w.en}</div>
-          <div class="word-ar">${w.ar}</div>
-          ${w.ex   ? `<div class="word-example">"${w.ex}"</div>` : ''}
-          ${w.exar ? `<div class="word-example-ar">"${w.exar}"</div>` : ''}
+          <div class="word-en" style="color:${c.txt}">${escHtml(w.en)}</div>
+          <div class="word-ar">${escHtml(w.ar)}</div>
+          ${w.ex   ? `<div class="word-example">"${escHtml(w.ex)}"</div>` : ''}
+          ${w.exar ? `<div class="word-example-ar">"${escHtml(w.exar)}"</div>` : ''}
           <div class="badges-row">${mineBadge}${masteryBadge}</div>
         </div>
       </div>
@@ -7003,8 +8023,8 @@ function renderWordCard(w, i) {
         <div class="word-level lvl-${w.level}">${lvlLabel(w.level)}</div>
         <div class="word-actions">
           <button class="known-btn ${known ? 'active' : ''}" onclick="toggleManualKnown(${w.id})" title="${known ? 'إلغاء وضع معروفة' : 'أعرف هذه الكلمة'}">${known ? '✓' : '☆'}</button>
-          <button class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
-          <button class="word-delete" onclick="deleteWord(${w.id},event)">✕</button>
+          <button aria-label="استمع" class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
+          <button aria-label="إغلاق" class="word-delete" onclick="deleteWord(${w.id},event)">✕</button>
         </div>
       </div>
     </div>`;
@@ -7083,7 +8103,10 @@ function renderWords() {
     return;
   }
   empty.style.display = 'none';
-  if (searchToggle) searchToggle.style.display = mine.length >= 8 ? '' : 'none';
+  // Was 8, which hid the filters from exactly the learner who needs them: a
+  // beginner who has just imported one station's five or six words and wants
+  // to revise them before the gate.
+  if (searchToggle) searchToggle.style.display = mine.length >= 4 ? '' : 'none';
 
   // Cap the default (unfiltered) list so browsing never means scrolling
   // through hundreds of cards at once — a real "one station" violation for
@@ -7157,6 +8180,19 @@ function filterWordsList() {
       return s >= 1 && s < 70;
     }
     if (currentWordFilter === 'mine') return w.source === 'mine';
+    // The vocabulary of the station standing between the learner and the next
+    // city. This is the list to revise immediately before the gate, and until
+    // now there was no way to see it apart from the rest of the dictionary.
+    if (currentWordFilter === 'station') {
+      var cur = getCurrentStationId(getTrainProgress());
+      if (w.stationId === cur) return true;
+      // Words typed by hand rather than imported carry no stationId, so also
+      // match them against the station's own list.
+      var st = getStationById(cur);
+      if (!st || !st.words) return false;
+      var k = (w.en || '').toLowerCase().trim();
+      return st.words.some(function (x) { return (x.en || '').toLowerCase().trim() === k; });
+    }
     return true;
   });
 
@@ -7310,7 +8346,7 @@ function renderQuizQ() {
   let cardHTML, optsHTML;
 
   if (qType === 'type2ar') {
-    cardHTML = `<div class="quiz-type-label">✍️ اكتب الترجمة بالعربية</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
+    cardHTML = `<div class="quiz-type-label">✍️ اكتب الترجمة بالعربية</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button aria-label="استمع" class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
     optsHTML = `
       <div class="type-answer-wrap">
         <input type="text" id="typeAnswerInp" class="type-answer-input" placeholder="اكتب المعنى بالعربية..." autocomplete="off" onkeydown="if(event.key==='Enter')checkTypedAnswer('${esc(w.ar)}')">
@@ -7319,7 +8355,7 @@ function renderQuizQ() {
   } else if (qType === 'en2ar') {
     const wrong = shuffle(words.filter(x => x.ar !== w.ar)).slice(0, Math.min(3, words.length-1)).map(x => x.ar);
     const opts  = shuffle([w.ar, ...wrong]);
-    cardHTML = `<div class="quiz-type-label">English → Arabic</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
+    cardHTML = `<div class="quiz-type-label">English → Arabic</div><div style="display:flex;align-items:center;justify-content:center;gap:10px"><div class="quiz-word-en">${w.en}</div><button aria-label="استمع" class="speak-btn" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button></div>`;
     optsHTML = opts.map(o => `<button class="quiz-opt-btn" onclick="checkAns(this,'${esc(o)}','${esc(w.ar)}')">${o}</button>`).join('');
   } else {
     const wrong = shuffle(words.filter(x => x.en !== w.en)).slice(0, Math.min(3, words.length-1)).map(x => x.en);
@@ -7369,6 +8405,17 @@ function checkTypedAnswer(correctAr) {
   const isRight = correctOptions.some(opt => opt === typedNormalized);
 
   afterAnswer(null, isRight, correctAr, typed);
+}
+
+// HTML-escape text the learner typed before it is placed in the page.
+// `esc` below is a different tool: it escapes for a JavaScript string literal,
+// not for markup, so it does not protect innerHTML. A word containing an HTML
+// tag would otherwise break the layout — and backup files move between
+// devices, so the text is not always the learner's own.
+function escHtml(t) {
+  return String(t == null ? '' : t)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
 function esc(s) { return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
@@ -7584,6 +8631,28 @@ const grammarLessons = [
     examples:[{en:"Close the window, please.",ar:"أغلق النافذة من فضلك.",struct:"{V:Close} {O:the window}, {ADV:please}."},{en:"Don't be late tomorrow.",ar:"لا تتأخر غداً.",struct:"{V:Don't be} {O:late} {ADV:tomorrow}."},{en:"Listen carefully to the instructions.",ar:"استمع جيداً للتعليمات.",struct:"{V:Listen} {ADV:carefully} {ADV:to the instructions}."}],
     quiz:{q:'"___ noise! The baby is sleeping."',opts:['Not make','Don\'t make','No make','Not making'],ans:'Don\'t make',fb:'صحيح! نفي الأمر يكون بـ Don\'t + الفعل ✅',fbW:'نفي صيغة الأمر يكون دائماً بـ Don\'t + الفعل الأساسي'}
   },
+  // ── Lesson 16 · Linking two tenses ───────────────────────────
+  // The first fifteen lessons each teach one tense alone. None teaches how two
+  // tenses sit together in one sentence — which is exactly where an Arabic
+  // speaker goes wrong, because Arabic lets the connector carry the time, so
+  // "I will call you when I will arrive" feels right. Taught here as a single
+  // principle rather than a table: the connector pulls both halves of the
+  // sentence onto one timeline.
+  {
+    icon:'🔗', color:'#2DD4BF', bg:'rgba(45,212,191,.12)',
+    title:'ربط الأزمنة', titleEn:'Linking Two Tenses',
+    level:'الدرس السادس عشر · Lesson 16',
+    explanation:'أكثر خطأ يقع فيه الناطق بالعربية ليس في الزمن نفسه — بل في <b>ربط زمنين في جملة واحدة</b>. في العربية تحمل أداة الربط الزمن، فنقول «سأتصل بك حين أصل». أمّا الإنجليزية فتضبط الفعلين معًا.<br><br>والمبدأ واحد، لا جدول يُحفظ: <b>أداة الربط تشدّ طرفَي الجملة إلى خطّ زمني واحد.</b>',
+    formula:'When / Before / After / Until / As soon as',
+    formulaNote:'بعد هذه الأدوات في سياق المستقبل: <b>مضارع بسيط، بلا will</b>',
+    examples:[
+      {en:"I will call you when I arrive.",ar:"سأتصل بك حين أصل.",struct:"{S:I} {V:will call} {O:you} {ADV:when I arrive}."},
+      {en:"She left after she finished the work.",ar:"غادرت بعد أن أنهت العمل.",struct:"{S:She} {V:left} {ADV:after she finished the work}."},
+      {en:"We will wait until the rain stops.",ar:"سننتظر حتى يتوقّف المطر.",struct:"{S:We} {V:will wait} {ADV:until the rain stops}."},
+      {en:"He had eaten before we arrived.",ar:"كان قد أكل قبل أن نصل.",struct:"{S:He} {V:had eaten} {ADV:before we arrived}."}
+    ],
+    quiz:{q:'"I will send the photo as soon as I ___ home."',opts:['arrive','will arrive','arrived','am arriving'],ans:'arrive',fb:'صحيح! بعد as soon as نستخدم المضارع البسيط بلا will ✅',fbW:'الخطأ الشائع: will مرتين. بعد as soon as يأتي الفعل مضارعًا بسيطًا: as soon as I arrive'}
+  },
 ];
 
 // ══ SENTENCE STRUCTURE BREAKDOWN ══
@@ -7629,7 +8698,7 @@ function renderGrammar() {
             <div class="ex-item">
               <div style="display:flex;align-items:center;gap:6px;justify-content:space-between">
                 <div class="ex-en" style="flex:1">${ex.en}</div>
-                <button class="speak-btn-sm" onclick="speakWord('${ex.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+                <button aria-label="استمع" class="speak-btn-sm" onclick="speakWord('${ex.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
               </div>
               <div class="ex-ar">${ex.ar}</div>
               ${ex.struct ? `
@@ -7824,7 +8893,7 @@ function showFlashcard() {
       <div class="flashcard-inner">
         <div class="flashcard-face">
           <div style="font-family:'Space Grotesk',sans-serif;font-size:32px;font-weight:700;direction:ltr">${w.en}</div>
-          <button class="speak-btn" style="margin-top:10px" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
+          <button aria-label="استمع" class="speak-btn" style="margin-top:10px" onclick="event.stopPropagation();speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع للنطق">🔊</button>
           <div class="fc-hint">اضغط لرؤية المعنى 👆</div>
         </div>
         <div class="flashcard-face flashcard-back">
@@ -7878,6 +8947,7 @@ function showTab(name, btn, navType) {
   if (name === 'home')  { updateHomeStats(); maybeShowBackupReminder(); }
   if (name === 'words') updateWordsDashboard();
   if (name === 'reading') rlRenderList();
+  if (name === 'sound')   initSoundLab();
 
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
 }
@@ -7905,13 +8975,18 @@ function updateHomeStats() {
 
 function openAchievementsModal() {
   const summary = getAchievementSummary();
-  document.getElementById('achModalCount').textContent = summary.done + '/' + summary.total + ' unlocked · مُنجَز';
+  // Achievement names are a handful of words each and are read dozens of times
+  // over a journey, so they carry English cheaply. The Arabic line recedes with
+  // the learner's progress like every other support in the app.
+  const sup = arabicSupport();
+  document.getElementById('achModalCount').textContent =
+    summary.done + '/' + summary.total + (sup === 'none' ? ' unlocked' : ' unlocked · مُنجَز');
   document.getElementById('achModalList').innerHTML = summary.list.map(a => `
     <div class="ach-item ${a.done ? 'done' : ''}">
       <div class="ach-item-icon">${a.icon}</div>
       <div class="ach-item-text">
         <div class="ach-item-en">${a.en}</div>
-        <div class="ach-item-ar">${a.ar}</div>
+        ${sup === 'none' ? '' : `<div class="ach-item-ar">${a.ar}</div>`}
       </div>
       <div class="ach-item-check">${a.done ? '✓' : '○'}</div>
     </div>
@@ -7965,8 +9040,11 @@ function getStationPracticeStep() {
 }
 
 function getMissionItems() {
+  // Detect a station change before reading any progress, so the steps shown
+  // always belong to the city the learner is actually travelling to.
+  syncFlowToStation();
   const goal = getDailyGoal();
-  const wordsToday = words.filter(w => w.date === today && !w.seeded).length;
+  const wordsToday = wordsForCurrentStation();
   const wordsDone = wordsToday >= goal;
 
   const grammarDoneToday = getSectionActivityDays('grammar').indexOf(today) !== -1;
@@ -8060,7 +9138,7 @@ function updateJourneyStats(items) {
   if (!timeEl || !rewardEl) return;
 
   const wordsItem = items[0];
-  const wordsRemaining = wordsItem.done ? 0 : (getDailyGoal() - words.filter(w => w.date === today && !w.seeded).length);
+  const wordsRemaining = wordsItem.done ? 0 : (getDailyGoal() - wordsForCurrentStation());
   const nextFlowStep = getNextFlowStep();
 
   let steps = 0;
@@ -8127,6 +9205,11 @@ function toggleExploreSection() {
   const section = document.getElementById('exploreSection');
   const toggle = document.getElementById('exploreToggle');
   const text = document.getElementById('exploreToggleText');
+  // These elements belonged to the pre-restructure home screen. The function
+  // survived the rewrite but its markup did not, so any surviving call site
+  // would throw on a null. Left in place and guarded rather than deleted,
+  // since the skills panel may return.
+  if (!section || !toggle || !text) return;
   const isOpen = section.classList.toggle('open');
   toggle.classList.toggle('open', isOpen);
   text.textContent = isOpen
@@ -8432,7 +9515,7 @@ function initDaily() {
       <div class="daily-badge">⭐ تحدي اليوم</div>
       <div style="display:flex;align-items:center;justify-content:center;gap:10px">
         <div class="daily-word">${w.en}</div>
-        <button class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+        <button aria-label="استمع" class="speak-btn" onclick="speakWord('${w.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
       </div>
       <div class="daily-clue">💡 ${w.ex||'خمّن معنى هذه الكلمة!'}</div>
     </div>
@@ -8659,8 +9742,29 @@ window.addEventListener('load', () => {
         return;
       }
 
-      // Show name screen if no name saved
+      // Show name screen if no name saved.
+      //
+      // Guard against a returning student being sent back to the welcome flow.
+      // Boot runs inside nested setTimeouts, so an exception anywhere earlier
+      // aborts the chain silently and can leave the app showing whichever
+      // overlay happened to be up. Explicitly closing the welcome screens when
+      // a name exists makes that state unreachable: if we know who this is,
+      // they never see the name or level screens again.
+      // Carry across any points stored under the old key before the account
+      // screens read them, so a returning learner never sees a false zero.
+      migrateStarPoints();
+
+      // Fired well after the UI is up, so it can never delay a first paint.
+      setTimeout(sendUsageCount, 4000);
+
       const name = localStorage.getItem('studentName');
+      if (name) {
+        ['levelTestScreen', 'levelResultScreen', 'levelChoiceScreen', 'nameScreen']
+          .forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+          });
+      }
       if (!name) {
         document.getElementById('nameScreen').style.display = 'flex';
         setTimeout(() => document.getElementById('studentNameInp').focus(), 300);
@@ -8724,9 +9828,10 @@ function saveName() {
   localStorage.setItem('studentName', n);
   document.getElementById('nameScreen').style.display = 'none';
 
-  // Show level test only on first visit
+  // Offer the choice screen, not the test. The test is still there for anyone
+  // who wants it — it is now one of the options rather than the toll gate.
   if (!localStorage.getItem('studentLevel')) {
-    startLevelTest();
+    document.getElementById('levelChoiceScreen').style.display = 'block';
   } else {
     renderStudentBanner(n);
     showToast('أهلاً ' + n + '! 🎉');
@@ -8799,9 +9904,14 @@ function buildLTQuestions() {
     }
     return copy.slice(0, n);
   }
-  var b = pickRandom(ltQuestionBank.beginner, 5).map(function(q){ return Object.assign({}, q, {level:'beginner'}); });
-  var m = pickRandom(ltQuestionBank.medium, 5).map(function(q){ return Object.assign({}, q, {level:'medium'}); });
-  var a = pickRandom(ltQuestionBank.advanced, 5).map(function(q){ return Object.assign({}, q, {level:'advanced'}); });
+  // Three per band rather than five. Fifteen questions in a language a beginner
+  // fears is a wall, not a warm-up, and it stands between them and anything
+  // they came for. Nine still separates the three bands reliably, because the
+  // result is a percentage of the total — the thresholds are unaffected — and a
+  // test people finish is worth more than a precise one they abandon.
+  var b = pickRandom(ltQuestionBank.beginner, 3).map(function(q){ return Object.assign({}, q, {level:'beginner'}); });
+  var m = pickRandom(ltQuestionBank.medium, 3).map(function(q){ return Object.assign({}, q, {level:'medium'}); });
+  var a = pickRandom(ltQuestionBank.advanced, 3).map(function(q){ return Object.assign({}, q, {level:'advanced'}); });
   return b.concat(m).concat(a);
 }
 
@@ -8853,12 +9963,12 @@ function answerLT(idx, btn) {
     ltScore++; ltStarsCount++;
     document.getElementById('ltStars').textContent = '⭐ ' + ltStarsCount;
     fb.style.color = '#2DD4BF';
-    fb.textContent = ['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
+    fb.textContent = answerFeedback(true);
   } else {
     btn.style.background = 'rgba(251,113,133,.2)'; btn.style.borderColor = '#FB7185'; btn.style.opacity = '1';
     btns[q.ans].style.background = 'rgba(45,212,191,.15)'; btns[q.ans].style.borderColor = '#2DD4BF'; btns[q.ans].style.opacity = '1';
     fb.style.color = '#FB7185';
-    fb.textContent = ['حاول مجدداً 💪','لا بأس، واصل! 😊','قريب! استمر 🌟','تعلّمنا شيئاً جديداً! 📚'][Math.floor(Math.random()*4)];
+    fb.textContent = answerFeedback(false);
   }
 
   setTimeout(function() {
@@ -8906,9 +10016,60 @@ function finishLevelTest() {
   setTimeout(function() { showSpark("Every new word is a new spark.", 'كل كلمة جديدة هي شرارة جديدة.', 5500); }, 800);
 }
 
+// A learner stating their own level. Faster than nine questions, and more
+// honest: the test samples nine random items, while a student who has studied
+// for years knows where they stand. Reinstalling the app now costs one tap.
+function pickLevel(level) {
+  localStorage.setItem('studentLevel', level);
+  localStorage.setItem('levelSelfDeclared', '1');
+  // Reading level follows directly, so the choice changes what they actually
+  // see — station texts and quiz option counts — rather than being recorded
+  // and ignored.
+  localStorage.setItem('readingLevel', level === 'advanced' ? 'full' : 'simple');
+
+  var ch = document.getElementById('levelChoiceScreen');
+  if (ch) ch.style.display = 'none';
+  var lt = document.getElementById('levelTestScreen');
+  if (lt) lt.style.display = 'none';
+  var lr = document.getElementById('levelResultScreen');
+  if (lr) lr.style.display = 'none';
+
+  var n = localStorage.getItem('studentName') || '';
+  renderStudentBanner(n);
+  var label = { beginner: '🟢 مبتدئ', medium: '🟡 متوسط', advanced: '🔵 متقدّم' }[level] || '';
+  showToast('أهلاً ' + n + '! بدأنا من ' + label + ' 🚀', '#2DD4BF');
+  setTimeout(function () {
+    showSpark("Every new word is a new spark.", 'كل كلمة جديدة هي شرارة جديدة.', 5000);
+  }, 700);
+}
+
+function skipLevelTest() {
+  // Skipping is a real choice, not a deferral that nags. We record that the
+  // learner declined so the test never reappears on its own, and start them at
+  // the gentlest setting: simple station texts and full Arabic support. Being
+  // given something too easy costs a learner a moment; being handed something
+  // unreadable costs them the app. They can sit the test any time from
+  // Settings, and doing so overrides everything set here.
+  localStorage.setItem('studentLevel', 'beginner');
+  localStorage.setItem('levelTestSkipped', '1');
+  document.getElementById('levelTestScreen').style.display = 'none';
+  var lr = document.getElementById('levelResultScreen');
+  if (lr) lr.style.display = 'none';
+  var n = localStorage.getItem('studentName') || '';
+  renderStudentBanner(n);
+  showToast('أهلاً ' + n + '! يمكنك اختبار مستواك لاحقًا من الإعدادات 🚀', '#2DD4BF');
+  setTimeout(function () {
+    showSpark("Every new word is a new spark.", 'كل كلمة جديدة هي شرارة جديدة.', 5000);
+  }, 700);
+}
+
 function retakeLevelTest() {
   localStorage.removeItem('studentLevel');
-  startLevelTest();
+  localStorage.removeItem('levelTestSkipped');
+  localStorage.removeItem('levelSelfDeclared');
+  // Reopen the choice rather than the test: someone changing their level
+  // usually knows what to change it to, and should not have to earn it again.
+  document.getElementById('levelChoiceScreen').style.display = 'block';
 }
 
 function renderStudentBanner(name) {
@@ -8940,6 +10101,53 @@ function changeName() {
   setTimeout(() => document.getElementById('studentNameInp').focus(), 200);
 }
 
+// ══ ANONYMOUS USAGE COUNT ══
+//
+// Answers exactly one question — is anyone opening this? — and is built so
+// that it cannot answer any other.
+//
+// There is NO identifier. Not a name, not an account, not a random device id.
+// An earlier draft used a persistent random id; that was a mistake. An id that
+// survives across days singles out a device, which makes it personal data
+// under Saudi PDPL (and every comparable regime) even though it carries no
+// name — and the learners here are minors, the most protected category there
+// is, whose data additionally may not leave the Kingdom without a proper legal
+// basis.
+//
+// So the id is gone. Each device contributes at most one anonymous row a day,
+// containing a date and how many stations have been cleared. Counting the rows
+// for a day gives the number of devices opened that day, which is the whole
+// question. Nobody can be followed from one day to the next, because there is
+// nothing to follow.
+//
+// `lastCountDay` is a date kept on the device to avoid sending twice in a day.
+// It never leaves the device and identifies nothing.
+const COUNT_ENDPOINT = ''; // ← paste the Apps Script /exec URL here to enable
+
+function sendUsageCount() {
+  try {
+    if (!COUNT_ENDPOINT) return;                        // not configured
+    if (localStorage.getItem('countOff') === '1') return; // switched off
+    if (!navigator.onLine) return;                      // offline: retry later
+    if (localStorage.getItem('lastCountDay') === today) return; // once a day
+
+    var p = getTrainProgress();
+    var payload = {
+      day: today,
+      stations: Array.isArray(p.completed) ? p.completed.length : 0
+    };
+
+    fetch(COUNT_ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    }).then(function () {
+      localStorage.setItem('lastCountDay', today);
+    }).catch(function () { /* offline or blocked — retry next open */ });
+  } catch (e) { /* never let counting affect the app */ }
+}
+
 // ══ BACKUP SYSTEM ══
 const BACKUP_KEYS_STATIC = ['studentName','streak','lastDay','dailyGoal','theme','teacherName','teacherPhone','isTeacher'];
 
@@ -8952,50 +10160,19 @@ function collectAllLocalStorageData() {
   return data;
 }
 
-// ══ AUTO-BACKUP TO TEACHER (Telegram) ══
-// Silently sends a full backup file to the teacher's Telegram whenever the
-// student hits a meaningful milestone (streak day, completed station). This
-// never interrupts the student — failures are swallowed quietly, and it
-// piggybacks on the same Telegram bot already used for result reports.
-async function autoBackupToTeacher(reason) {
-  try {
-    const allData = collectAllLocalStorageData();
-    const backup = {
-      app: 'WordSpark',
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      studentName: localStorage.getItem('studentName') || '',
-      totalWords: words.length,
-      data: allData
-    };
-    const json = JSON.stringify(backup, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-
-    const dateStr = new Date().toISOString().slice(0,10);
-    const namePart = (localStorage.getItem('studentName') || 'student').replace(/[^a-zA-Z0-9\u0600-\u06FF]/g,'_');
-    const filename = `WordSpark_AutoBackup_${namePart}_${dateStr}.json`;
-
-    const formData = new FormData();
-    formData.append('chat_id', TG_CHAT_ID);
-    formData.append('document', blob, filename);
-    formData.append('caption',
-      '🔄 *Auto-backup* · نسخة احتياطية تلقائية\n' +
-      '👤 ' + (localStorage.getItem('studentName') || 'Student') + '\n' +
-      '📌 ' + reason
-    );
-    formData.append('parse_mode', 'Markdown');
-
-    await fetch('https://api.telegram.org/bot' + TG_BOT_TOKEN + '/sendDocument', {
-      method: 'POST',
-      body: formData
-    });
-
-    localStorage.setItem('lastAutoBackup', new Date().toISOString());
-  } catch (e) {
-    // Silent by design — a background safety-net backup must never disrupt
-    // the student's experience if the network hiccups.
-  }
-}
+// ══ TEACHER REPORTING ══
+// An automatic Telegram upload used to live here. It sent the *entire*
+// contents of localStorage — the student's name, every word they had written,
+// all their progress — to a fixed chat, silently, at seven different
+// milestones, with the bot token written in plain text in this very file.
+//
+// A token shipped to every device is a token anyone can read, and anything it
+// can do, they can do: send as that bot, read what arrives, delete it. The
+// learners here are minors, so this was the most serious defect in the file.
+//
+// It is gone, and the token has been revoked. Reporting now happens only when
+// the student chooses it: they export their progress and send it themselves,
+// by whatever channel they prefer. Consent by action, not by assumption.
 
 function exportBackup() {
   const allData = collectAllLocalStorageData();
@@ -9902,9 +11079,14 @@ function showMapTooltip(event, stationId) {
   var status = getStationStatus(stationId);
   var statusText = status === 'completed' ? '✅ Completed' : status === 'unlocked' ? '🚄 Available' : '🔒 Locked';
   var tooltip = document.getElementById('mapTooltip');
+  var svg = document.getElementById('journeyMapSVG');
+  // The SVG journey map was replaced by the chapter list; renderMapDots()
+  // already returns early when its container is absent, so these handlers are
+  // currently unreachable. Guarded anyway — an unreachable throw is still a
+  // throw the day someone reinstates the map.
+  if (!tooltip || !svg) return;
   tooltip.textContent = s.flag + ' ' + s.name + ' · ' + statusText;
   tooltip.style.display = 'block';
-  var svg = document.getElementById('journeyMapSVG');
   var rect = svg.getBoundingClientRect();
   var svgEl = event.target;
   var cx = parseFloat(svgEl.getAttribute('cx'));
@@ -10061,7 +11243,7 @@ function showStationCard() {
     .then(function(d){
       var wrap = document.getElementById('stationImgWrap');
       if (wrap && d.thumbnail && d.thumbnail.source) {
-        wrap.innerHTML = '<img src="' + d.thumbnail.source + '" style="width:100%;height:100%;object-fit:cover;opacity:.85">' +
+        wrap.innerHTML = '<img src="' + d.thumbnail.source + '" alt="" role="presentation" style="width:100%;height:100%;object-fit:cover;opacity:.85">' +
           '<div style="position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(transparent,#0F1C2E)"></div>';
       }
     }).catch(function(){});
@@ -10088,7 +11270,16 @@ function showStationCard() {
   document.getElementById('stationCardContent').innerHTML =
     '<div class="station-tab-pane active" data-pane="en">' +
       '<div class="station-tab-label" style="color:#2DD4BF">ABOUT · بالإنجليزية</div>' +
-      '<div class="station-para-en">' + s.info + '</div>' +
+      // A 50-word passage is unreadable for someone still decoding letters, and
+      // an unreadable page teaches nothing. Same city, same journey — the text
+      // meets the reader instead of the reader failing the text.
+      (getReadingLevel() === 'simple'
+        ? '<div class="station-para-en simple">' + simpleStationText(s) + '</div>' +
+          '<button class="lvl-switch" onclick="setReadingLevel(\'full\');showStationCard()">' +
+            'اقرأ النصّ الكامل ←</button>'
+        : '<div class="station-para-en">' + s.info + '</div>' +
+          '<button class="lvl-switch" onclick="setReadingLevel(\'simple\');showStationCard()">' +
+            'النصّ صعب؟ اعرض المبسّط ←</button>') +
     '</div>' +
     '<div class="station-tab-pane" data-pane="ar">' +
       '<div class="station-tab-label" style="color:#F5C842">نبذة بالعربية</div>' +
@@ -10109,6 +11300,14 @@ function showStationCard() {
     '</div>' +
     '<div class="station-tab-pane" data-pane="words">' +
       '<div class="station-tab-label" style="color:#A78BFA">📚 كلمات هذه المحطة</div>' +
+      // Station vocabulary is the material for the station's own quiz, so
+      // making the student retype it one word at a time was busywork standing
+      // between them and the journey. One tap adds whatever they do not
+      // already own; duplicates are skipped rather than refused.
+      '<button class="station-addall-btn" id="stationAddAllBtn" onclick="addStationWords(' + s.id + ')">' +
+        '<span class="saa-en">+ Add all to my words</span>' +
+        '<span class="saa-ar">أضف كلمات المحطة إلى قاموسي</span>' +
+      '</button>' +
       '<div class="station-words-grid">' + wordsHtml + '</div>' +
     '</div>' +
     '<div class="station-tab-pane" data-pane="sites">' +
@@ -10197,27 +11396,75 @@ function startStationQuiz(stationId) {
   var station = getStationById(stationId);
   var numQ = station.req.quiz;
 
-  // Build questions from student's own words
-  var pool = words.slice();
-  for (var i = pool.length-1; i>0; i--) {
-    var j = Math.floor(Math.random()*(i+1));
-    var t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+  // WordSpark's whole claim is that command of English is command of words, so
+  // a station's own vocabulary must be the thing its gate tests. Drawing at
+  // random from the entire dictionary meant a learner could add six words about
+  // Taif and then be examined on words they added a fortnight ago — the new,
+  // unfamiliar material, the only reason the station exists, went untested.
+  //
+  // Station words come first. The rest of the dictionary fills any remaining
+  // slots, weighted toward what the learner knows least, so the quiz still
+  // revisits older words instead of drilling one city forever.
+  var stationKeys = {};
+  (station.words || []).forEach(function (w) {
+    stationKeys[(w.en || '').toLowerCase().trim()] = true;
+  });
+
+  var owned = myWords().length ? myWords() : words;
+  var stationOwned = owned.filter(function (w) {
+    return w.stationId === stationId || stationKeys[(w.en || '').toLowerCase().trim()];
+  });
+  var others = owned.filter(function (w) { return stationOwned.indexOf(w) === -1; });
+
+  var selected = shuffle(stationOwned.slice()).slice(0, numQ);
+  if (selected.length < numQ) {
+    selected = selected.concat(weightedPickWords(others, numQ - selected.length));
   }
-  var selected = pool.slice(0, Math.min(numQ, pool.length));
+  selected = shuffle(selected);
+
+  // Distractors are drawn from everything available, so wrong options stay
+  // plausible even when the station contributes only a few words.
+  var pool = owned.slice();
+
+  // With almost nothing in the dictionary a "quiz" would show one option and
+  // call it a question. Better to say so plainly and send the learner to add
+  // words than to hand them a test that proves nothing.
+  if (pool.length < 3) {
+    showToast('📚 تحتاج ٣ كلمات على الأقل قبل اختبار المحطة', '#F5C842');
+    closeStationCard();
+    showTab('words', document.getElementById('bn-words'), 'bn');
+    switchWordsTab('add');
+    return;
+  }
+
+  // A learner still decoding letters spends most of their effort reading the
+  // options rather than knowing the word. Three choices instead of four cuts
+  // that load by a quarter, and meaning questions (one English word, Arabic
+  // options) ask far less reading than a blank inside a full sentence.
+  var sqSimple = (getReadingLevel() === 'simple');
+  var distractors = sqSimple ? 2 : 3;
 
   sqQuestions = selected.map(function(w, idx) {
-    var type = idx % 2 === 0 ? 'meaning' : 'fill';
+    // Fill-in-the-blank needs a real example sentence; without one it degrades
+    // to "word = ___", which tests nothing at all.
+    var type = (sqSimple || !w.ex) ? 'meaning' : (idx % 2 === 0 ? 'meaning' : 'fill');
     var wrong = pool.filter(function(x){return x.en !== w.en;});
     for(var i=wrong.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=wrong[i];wrong[i]=wrong[j];wrong[j]=t;}
 
     if (type === 'meaning') {
-      var opts = wrong.slice(0,3).map(function(x){return x.ar;});
-      var ci = Math.floor(Math.random()*4); opts.splice(ci,0,w.ar);
+      var opts = wrong.slice(0, distractors).map(function(x){return x.ar;});
+      // The insertion point must lie inside the list we actually built. The old
+      // fixed range assumed four options always existed, so a learner with a
+      // small dictionary got an answer index that did not exist — making the
+      // correct answer unselectable.
+      var ci = Math.floor(Math.random() * (opts.length + 1));
+      opts.splice(ci, 0, w.ar);
       return {q:w.en,type:'meaning',opts:opts,ans:ci,hint:'اختر المعنى الصحيح'};
     } else {
-      var sentence = w.ex ? w.ex.replace(new RegExp('\\b'+w.en+'\\b','i'),'___') : w.en + ' = ___';
-      var opts = wrong.slice(0,3).map(function(x){return x.en;});
-      var ci = Math.floor(Math.random()*4); opts.splice(ci,0,w.en);
+      var sentence = w.ex.replace(new RegExp('\\b'+w.en+'\\b','i'),'___');
+      var opts = wrong.slice(0, distractors).map(function(x){return x.en;});
+      var ci = Math.floor(Math.random() * (opts.length + 1));
+      opts.splice(ci, 0, w.en);
       return {q:sentence,type:'fill',opts:opts,ans:ci,hint:'أكمل الجملة بالكلمة الصحيحة'};
     }
   });
@@ -10241,6 +11488,7 @@ function renderSQ() {
   document.getElementById('sqQuestion').textContent = q.q;
   document.getElementById('sqFeedback').textContent = '';
 
+
   var opts = document.getElementById('sqOptions');
   opts.innerHTML = '';
   q.opts.forEach(function(opt, i) {
@@ -10263,12 +11511,12 @@ function answerSQ(idx, btn) {
     sqCorrect++;
     document.getElementById('sqScore').textContent='⭐ '+sqCorrect;
     fb.style.color='#A78BFA';
-    fb.textContent=['ممتاز! 🎉','رائع! ✨','صحيح! 🌟','أحسنت! 💪','بالضبط! 🔥'][Math.floor(Math.random()*5)];
+    fb.textContent = answerFeedback(true);
   } else {
     btn.style.background='rgba(251,113,133,.2)';btn.style.borderColor='#FB7185';btn.style.opacity='1';
     btns[q.ans].style.background='rgba(167,139,250,.15)';btns[q.ans].style.borderColor='#A78BFA';btns[q.ans].style.opacity='1';
     fb.style.color='#FB7185';
-    fb.textContent=['لا بأس، واصل! 😊','قريب! استمر 🌟','راجع هذه الكلمة 📚','تعلّمنا شيئاً! 💪'][Math.floor(Math.random()*4)];
+    fb.textContent = answerFeedback(false);
   }
   setTimeout(function(){
     sqCurrent++;
@@ -10311,10 +11559,9 @@ function showSQResult() {
       saveTrainProgress(p);
       rs.style.display = 'none';
       addStarPoints('passQuiz');
-      autoBackupToTeacher('Completed station: ' + station.name + ' · أكمل محطة ' + station.name);
 
       if (p.completed.length >= TRAIN_STATIONS.length) {
-        showToast('🏆 اكتملت الرحلة بالكامل! ' + TRAIN_STATIONS.length + ' محطة! 🎉', '#F5C842');
+        showToast('🏆 Journey complete! All ' + TRAIN_STATIONS.length + ' stations! 🎉', '#F5C842');
         setTimeout(function() { showSpark('You crossed the whole journey. Incredible!', 'قطعت الرحلة كاملة. أمر مذهل!', 5500); }, 900);
       } else if (chapterJustCompleted) {
         showLevelCompleteOverlay(finishedChapter);
@@ -10422,8 +11669,28 @@ var POINTS_CONFIG = {
   streak30:     100, // 30 يوماً
 };
 
+// ══ POINTS ══
+// There were two keys for one total. Every point earned was written to
+// 'starPoints', while ranks, achievements, the account screen and the visual
+// report all read 'wsPoints' — which nothing ever wrote. Ten readers, zero
+// writers: a learner could work for weeks and every one of those screens
+// would still show zero.
+//
+// One key now: 'wsPoints'. Anyone who accumulated points under the old name
+// keeps them — the larger of the two is carried across, once.
+function migrateStarPoints() {
+  try {
+    var old = parseInt(localStorage.getItem('starPoints') || '0');
+    if (!old) return;
+    var cur = parseInt(localStorage.getItem('wsPoints') || '0');
+    localStorage.setItem('wsPoints', String(Math.max(old, cur)));
+    localStorage.removeItem('starPoints');
+  } catch (e) {}
+}
+
 function getStarPoints() {
-  return parseInt(localStorage.getItem('starPoints') || '0');
+  migrateStarPoints();
+  return parseInt(localStorage.getItem('wsPoints') || '0');
 }
 
 function addStarPoints(type, silent) {
@@ -10431,7 +11698,7 @@ function addStarPoints(type, silent) {
   if (!pts) return;
   var current = getStarPoints();
   var newTotal = current + pts;
-  localStorage.setItem('starPoints', newTotal);
+  localStorage.setItem('wsPoints', newTotal);
 
   var oldRank = getRankByPoints(current);
   var newRank = getRankByPoints(newTotal);
@@ -10487,7 +11754,14 @@ function showRankPopup(rank) {
   var name = document.getElementById('rankPopupName');
   if (!popup) return;
   icon.textContent = rank.icon;
-  name.innerHTML = rank.title + '<br><span style="font-size:13px;opacity:.7;font-weight:400">' + rank.titleAr + '</span>';
+  // Rank names are short and repeated, and the moment is euphoric — the best
+  // possible conditions for meeting English without help. The Arabic gloss
+  // stays while it is needed and withdraws once it is not.
+  var sup = arabicSupport();
+  var t = document.getElementById('rankPopupTitle');
+  if (t) t.textContent = (sup === 'full') ? '🎉 New Rank! · رتبة جديدة' : '🎉 New Rank!';
+  name.innerHTML = rank.title + (sup === 'none' ? ''
+    : '<br><span style="font-size:13px;opacity:.7;font-weight:400">' + rank.titleAr + '</span>');
   popup.classList.add('show');
   setTimeout(function() { popup.classList.remove('show'); }, 3500);
   setTimeout(function() { showSpark('You earned this. Well done!', 'استحققت هذا. أحسنت!'); }, 3200);
@@ -10516,6 +11790,7 @@ const ACTIVITY_SECTIONS = {
   conv:    { icon:'💬', en:'Conversations',  ar:'المحادثات' },
   voice:   { icon:'🎙️', en:'Voice Coach',    ar:'المتحدّث' },
   reading: { icon:'📖', en:'Reading Lab',    ar:'مختبر القراءة' },
+  sound:   { icon:'👂', en:'Sound Lab',     ar:'مختبر الصوت' },
   journey: { icon:'🚂', en:'Train Journey',  ar:'رحلة القطار' }
 };
 
@@ -10553,6 +11828,54 @@ function showUpNextNudge() {
 function getSectionActivityDays(section) {
   try { return JSON.parse(localStorage.getItem('activity_' + section) || '[]'); }
   catch(e) { return []; }
+}
+
+// ══ STATION-AWARE DAILY FLOW ══
+// Today's steps were tracked by date alone. Clearing a station and boarding the
+// next one on the same day therefore left every step still crossed off, so the
+// new city asked nothing of the learner — the journey moved but the work did
+// not. Steps belong to a station as much as to a day: arriving somewhere new
+// starts a fresh page.
+function syncFlowToStation() {
+  try {
+    // Roll the day over FIRST. wordsForCurrentStation() also resets the base on
+    // a new day, and if that ran afterwards it would wipe the base this function
+    // had just written — leaving the learner credited for yesterday's words at
+    // a brand new station.
+    if (localStorage.getItem('flowWordsDay') !== today) {
+      localStorage.setItem('flowWordsDay', today);
+      localStorage.setItem('flowWordsBase', '0');
+    }
+    var sid = getCurrentStationId(getTrainProgress());
+    var seen = localStorage.getItem('flowStation');
+    if (seen === String(sid)) return false;
+    localStorage.setItem('flowStation', String(sid));
+    if (seen === null) return false; // first run: nothing to clear
+    // Clear only today's marks. History for streaks and stats is untouched.
+    DAILY_FLOW.forEach(function (step) {
+      var days = getSectionActivityDays(step.section).filter(function (d) { return d !== today; });
+      localStorage.setItem('activity_' + step.section, JSON.stringify(days));
+    });
+    localStorage.setItem('flowWordsBase', String(myWords().filter(function (w) {
+      return w.date === today;
+    }).length));
+    return true;
+  } catch (e) { return false; }
+}
+
+// Words added today count toward the *current* station's goal. When a new
+// station begins mid-day, the count restarts from whatever was already added,
+// so the learner is asked for fresh words rather than credited for old ones.
+function wordsForCurrentStation() {
+  var todayCount = myWords().filter(function (w) { return w.date === today; }).length;
+  // The base is only meaningful within the day it was set; a new day starts the
+  // count from zero regardless of where the learner stopped yesterday.
+  if (localStorage.getItem('flowWordsDay') !== today) {
+    localStorage.setItem('flowWordsDay', today);
+    localStorage.setItem('flowWordsBase', '0');
+  }
+  var base = parseInt(localStorage.getItem('flowWordsBase') || '0');
+  return Math.max(0, todayCount - base);
 }
 function getSectionActivityCount(section) {
   return parseInt(localStorage.getItem('count_' + section) || '0');
@@ -10812,8 +12135,10 @@ ${lastWords ? '✨ آخر ما تعلّمه: ' + lastWords : ''}
 // ══ TEACHER PHONE SETTINGS ══
 const DEFAULT_TEACHER_PHONE = '966590355799';
 const DEFAULT_TEACHER_EMAIL = 'Ara1979fat@gmail.com';
-const TG_BOT_TOKEN = '8910257559:AAEnoJhgRvZX1qTuoJjpKUNp0d2jGrQeOhw';
-const TG_CHAT_ID   = '1030596793';
+// The Telegram bot token and chat id lived here as plain text. Any student
+// could read them from the page source, so they were never secret. Removed,
+// and the token revoked in BotFather — deleting it here does not take it
+// back from anyone who already copied it.
 function getTeacherEmail() { return localStorage.getItem('teacherEmail') || DEFAULT_TEACHER_EMAIL; }
 function getTeacherPhone() {
   return localStorage.getItem('teacherPhone') || DEFAULT_TEACHER_PHONE;
@@ -11117,7 +12442,7 @@ function openConv(key) {
       <div class="bubble ${line.who}">
         <div style="display:flex;align-items:center;gap:6px">
           <div class="bubble-en" style="flex:1">${line.en}</div>
-          <button class="speak-btn-sm" onclick="speakWord('${line.en.replace(/'/g,"\\'")}', this, false, 'conv${line.who === 'a' ? 'A' : 'B'}')" title="استمع">🔊</button>
+          <button aria-label="استمع" class="speak-btn-sm" onclick="speakWord('${line.en.replace(/'/g,"\\'")}', this, false, 'conv${line.who === 'a' ? 'A' : 'B'}')" title="استمع">🔊</button>
         </div>
         <div class="bubble-ar">${line.ar}</div>
       </div>
@@ -11128,7 +12453,7 @@ function openConv(key) {
     const added = !!localStorage.getItem('addedphrase_' + wordKey);
     return `
     <div class="phrase-bank-item">
-      <button class="speak-btn-sm" onclick="speakWord('${p.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+      <button aria-label="استمع" class="speak-btn-sm" onclick="speakWord('${p.en.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
       <div class="phrase-bank-text">
         <div class="phrase-en">${p.en}</div>
         <div class="phrase-ar">${p.ar}</div>
@@ -11266,7 +12591,9 @@ function checkConvOrder() {
   const userOrder = convOrderSlots.map(s => s.sentence);
   const correct = JSON.stringify(userOrder) === JSON.stringify(c.order);
   if (correct) {
-    showToast('🎉 ترتيب صحيح تماماً!', '#A78BFA');
+    showToast(arabicSupport() === 'full'
+      ? '🎉 Perfect order! · ترتيب صحيح'
+      : '🎉 Perfect order!', '#A78BFA');
     document.querySelectorAll('.order-slot').forEach(s => s.style.borderColor = 'var(--teal)');
   } else {
     showToast('❌ الترتيب غير صحيح، حاول مجدداً', '#FB7185');
@@ -11295,7 +12622,9 @@ function markConvMastered(key) {
   if (!alreadyMastered) addStarPoints('completeConv');
   trackTrainConv();
   logSectionActivity('conv');
-  showToast('🏆 أحسنت! تم إتقان هذه المحادثة', '#FFD700');
+  showToast(arabicSupport() === 'full'
+    ? '🏆 Conversation mastered! · أتقنت المحادثة'
+    : '🏆 Conversation mastered!', '#FFD700');
   openConv(key);
 }
 
@@ -12336,7 +13665,7 @@ function openPodcast(key) {
     </div>
 
     <div class="pod-player">
-      <button class="pod-play-btn" id="podPlayBtn" onclick="podTogglePlay()">▶️</button>
+      <button aria-label="تشغيل" class="pod-play-btn" id="podPlayBtn" onclick="podTogglePlay()">▶️</button>
       <div class="pod-status" id="podStatus">اضغط ▶️ للاستماع للحلقة كاملة (بدون رؤية النص)</div>
       <div class="pod-replay-row">
         <button class="pod-replay-btn" id="podReplayBtn" onclick="podReplayFromStart()">🔁 إعادة الاستماع من البداية</button>
@@ -13576,7 +14905,7 @@ function podRenderQuiz() {
       <div class="pod-quiz-card">
         <div style="display:flex;align-items:flex-start;gap:6px">
           <div class="pod-quiz-q" style="flex:1">${i+1}. ${q.q}<br><span style="font-size:12px;color:var(--muted);font-weight:400">${q.ar}</span></div>
-          <button class="speak-btn-sm" onclick="speakWord('${q.q.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
+          <button aria-label="استمع" class="speak-btn-sm" onclick="speakWord('${q.q.replace(/'/g,"\\'")}', this)" title="استمع">🔊</button>
         </div>
         <div class="pod-quiz-opts" id="podQOpts${i}">
           ${q.opts.map(o => `<button class="pod-quiz-opt" onclick="podCheckAnswer(${i},'${o.replace(/'/g,"\\'")}','${q.ans.replace(/'/g,"\\'")}',this)">${o}</button>`).join('')}
@@ -13604,7 +14933,9 @@ function podCheckAnswer(qIdx, chosen, correct, btnEl) {
 
 function podMarkDone() {
   localStorage.setItem('pod_done_' + currentPodKey, '1');
-  showToast('🏆 أحسنت! أنهيت حلقة الاستماع', '#FFD700');
+  showToast(arabicSupport() === 'full'
+    ? '🏆 Episode finished! · أنهيت الحلقة'
+    : '🏆 Episode finished!', '#FFD700');
   podBackToMenu();
 }
 
@@ -13766,24 +15097,34 @@ function devUnlockAll() {
 }
 
 function devResetProgress() {
+  // These key names date from an earlier schema: words live under 'mywords',
+  // the streak under 'streak', the last day under 'lastDay'. The old names
+  // matched nothing, so "reset" silently left everything in place.
   localStorage.removeItem('trainProgress');
-  localStorage.removeItem('wsWords');
-  localStorage.removeItem('wsStreak');
-  localStorage.removeItem('wsLastDate');
+  localStorage.removeItem('mywords');
+  localStorage.removeItem('streak');
+  localStorage.removeItem('lastDay');
+  // The daily flow is keyed to a station, so it must be cleared with it.
+  localStorage.removeItem('flowStation');
+  localStorage.removeItem('flowWordsBase');
+  localStorage.removeItem('flowWordsDay');
   closeDevPanel();
   showToast('🗑️ تم إعادة الضبط', '#EF4444');
   setTimeout(function(){ location.reload(); }, 1000);
 }
 
 function devSkipName() {
-  var nameBox = document.getElementById('nameBox');
-  if (nameBox && nameBox.style.display !== 'none') {
-    localStorage.setItem('wsName', 'ARAFAT');
-    location.reload();
-  } else {
+  // Wrote to 'wsName' and looked for '#nameBox' — neither exists. The name is
+  // stored under 'studentName' and the screen is '#nameScreen', so this button
+  // silently did nothing at all. Two dead names from an older schema.
+  if (localStorage.getItem('studentName')) {
     closeDevPanel();
     showToast('الاسم مُدخل بالفعل', '#F5C842');
+    return;
   }
+  localStorage.setItem('studentName', 'ARAFAT');
+  localStorage.setItem('studentLevel', 'advanced');
+  location.reload();
 }
 
 </script>
@@ -13820,6 +15161,9 @@ const MOTIVATIONAL = [
 
 // ══ SETTINGS PANEL ══
 function openSettingsPanel() {
+  refreshReadingLevelLabel();
+  refreshPulseLabel();
+  refreshLevelSourceLabel();
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');
@@ -14263,15 +15607,32 @@ async function sendByTelegram() {
     story.journeyLine + '\n' +
     '━━━━━━━━━━━━━━━━━━\n' +
     '📅 ' + date + '\n⚡ Sent from WordSpark';
+  // This used to POST straight to a Telegram bot whose token was embedded in
+  // the page. The report itself was fine — a short summary the student asked
+  // for — but the credential was readable by anyone who opened the source.
+  //
+  // The summary is now handed to the student instead: the system share sheet
+  // where available, the clipboard otherwise. They send it to whoever they
+  // like, through whatever app they already use. Same report, no shared
+  // secret, and the choice of recipient belongs to them.
+  var plain = msg.replace(/\*/g, '');
   try {
-    var res = await fetch('https://api.telegram.org/bot'+TG_BOT_TOKEN+'/sendMessage', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ chat_id:TG_CHAT_ID, text:msg, parse_mode:'Markdown' })
-    });
-    var data = await res.json();
-    if (data.ok) { showCelebration(); }
-    else { showToast('⚠️ Failed to send', '#FB7185'); }
-  } catch(e) { showToast('⚠️ No internet connection', '#FB7185'); }
+    if (navigator.share) {
+      await navigator.share({ title: 'WordSpark', text: plain });
+      showCelebration();
+      return;
+    }
+  } catch (e) {
+    // The share sheet was dismissed — not an error, and not worth a message.
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(plain);
+    showToast('📋 نُسخ تقريرك — الصقه لمن تشاء', '#2DD4BF');
+    showCelebration();
+  } catch (e) {
+    showToast('⚠️ تعذّر النسخ — جرّب "صدّر تقدّمي"', '#FB7185');
+  }
 }
 
 function showCelebration() {

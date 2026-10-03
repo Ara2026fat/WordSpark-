@@ -2,626 +2,598 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>دليل استخدام WordSpark</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>WordSpark · ابدأ رحلتك</title>
+<meta name="description" content="تعلّم الإنجليزية ليس جمع كلمات — بل بناء نفسك مهارة بعد مهارة.">
+<meta name="theme-color" content="#060B14">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@400;600;700&family=Tajawal:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --ink:#0D1117; --panel:#1A2332; --card:#1E2D42; --rim:#243550;
-    --gold:#F5C842; --teal:#2DD4BF; --rose:#FB7185; --lavender:#A78BFA;
-    --muted:#64748B; --soft:#94A3B8; --white:#F1F5F9;
-  }
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    background:var(--ink); color:var(--white);
-    font-family:'Tajawal',sans-serif;
-    line-height:1.8; padding:0;
-  }
-  .hero{
-    background:linear-gradient(135deg,rgba(45,212,191,.1),rgba(167,139,250,.08));
-    border-bottom:1px solid var(--rim);
-    text-align:center; padding:40px 20px 32px;
-  }
-  .hero-icon{
-    width:80px;height:80px;margin:0 auto 16px;
-    border-radius:22px; display:flex;align-items:center;justify-content:center;
-    box-shadow:0 0 32px rgba(45,212,191,.25), 0 0 60px rgba(167,139,250,.15);
-    overflow:hidden;
-  }
-  .hero h1{
-    font-size:28px; font-weight:900;
-    background:linear-gradient(90deg,var(--gold),var(--teal));
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  }
-  .hero p{ color:var(--muted); font-size:14px; margin-top:6px; }
-  .hero .badge{
-    display:inline-block; margin-top:14px;
-    background:rgba(255,255,255,.05); border:1px solid var(--rim);
-    border-radius:20px; padding:6px 16px; font-size:12px; color:var(--soft);
-  }
+/* ══════════════════════════════════════════════════════
+   WordSpark — First Encounter
+   Six screens, each one idea, none of them scrolling.
+   The question this answers is "why would I start?" —
+   not "how do I use it?".
+   ══════════════════════════════════════════════════════ */
 
-  .container{ max-width:760px; margin:0 auto; padding:24px 18px 60px; }
+:root{
+  --night:#060B14; --rail:#0E1A2B; --edge:rgba(148,180,220,.14);
+  --gold:#F5C842; --ember:#FB923C; --teal:#2DD4BF; --violet:#A78BFA;
+  --ink:#EAF1FA; --mist:#8FA3BE; --dim:#5A6E88;
+  --ar-display:'Readex Pro',system-ui,sans-serif;
+  --ar-body:'Tajawal',system-ui,sans-serif;
+  --en:'Space Grotesk',system-ui,sans-serif;
+  --mono:'Space Mono',ui-monospace,monospace;
+  --deck:84px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--night);color:var(--ink);font-family:var(--ar-body);
+  line-height:1.7;
+  background-image:
+    radial-gradient(125% 55% at 50% 112%,rgba(251,146,60,.15),transparent 62%),
+    radial-gradient(85% 45% at 8% -8%,rgba(45,212,191,.10),transparent 60%);
+}
+body.en{font-family:var(--en)}
 
-  /* Table of Contents — Smart Icon Grid */
-  .toc{
-    margin-bottom:30px;
-  }
-  .toc h2{ font-size:15px; margin-bottom:14px; color:var(--gold); text-align:center; }
-  .toc-grid{
-    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
-  }
-  .toc-tile{
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:6px; aspect-ratio:1/0.95; border-radius:18px;
-    text-decoration:none; cursor:pointer;
-    border:1px solid rgba(255,255,255,.08);
-    transition:transform .15s ease;
-    font-family:'Tajawal',sans-serif; padding:0; outline:none;
-  }
-  .toc-tile:active{ transform:scale(.94); }
-  .toc-tile-icon{ font-size:28px; filter:drop-shadow(0 2px 5px rgba(0,0,0,.25)); }
-  .toc-tile-label{ font-size:11.5px; font-weight:800; color:var(--white); text-align:center; line-height:1.3; }
-  .toc-tile.tc1{ background:linear-gradient(150deg,#5C4A1E,#2D2310); }
-  .toc-tile.tc2{ background:linear-gradient(150deg,#0E3B36,#0A2230); }
-  .toc-tile.tc3{ background:linear-gradient(150deg,#5C2E3E,#2D1620); }
-  .toc-tile.tc4{ background:linear-gradient(150deg,#2E4A2E,#16241A); }
-  .toc-tile.tc5{ background:linear-gradient(150deg,#3B2E5C,#211735); }
-  .toc-tile.tc6{ background:linear-gradient(150deg,#5C4A1E,#2D2310); }
-  .toc-tile.tc7{ background:linear-gradient(150deg,#1E4A5C,#0F242D); }
-  .toc-tile.tc8{ background:linear-gradient(150deg,#4A2E5C,#241629); }
-  .toc-tile.tc9{ background:linear-gradient(150deg,#0E3B36,#0A2230); }
-  @media (max-width:360px){
-    .toc-grid{ grid-template-columns:repeat(2,1fr); }
-  }
+/* ── CHROME ─────────────────────────────────────────── */
+.top{
+  position:fixed;top:0;inset-inline:0;z-index:60;
+  display:flex;align-items:center;justify-content:space-between;padding:14px 18px;
+}
+.brand{font-family:var(--en);font-size:11px;letter-spacing:5px;color:var(--gold);
+  font-weight:700;display:inline-flex;align-items:center;gap:8px}
+.brand i{width:6px;height:6px;border-radius:50%;background:var(--gold);
+  box-shadow:0 0 12px var(--gold);font-style:normal}
+.lang{display:flex;border:1px solid var(--edge);border-radius:9px;overflow:hidden;
+  background:rgba(14,26,43,.7);backdrop-filter:blur(8px)}
+.lang button{font-family:var(--en);font-size:10.5px;font-weight:700;letter-spacing:1px;
+  background:none;border:0;color:var(--dim);padding:7px 12px;cursor:pointer;transition:.25s}
+.lang button.on{background:linear-gradient(100deg,var(--gold),var(--ember));color:var(--night)}
 
-  /* Section icon badge (replaces plain number) */
-  .section-title .icon-badge{
-    width:38px;height:38px; border-radius:12px;
-    display:flex;align-items:center;justify-content:center;
-    font-size:18px; flex-shrink:0;
-  }
+/* ── SCREENS ────────────────────────────────────────── */
+.deck{position:relative;height:100svh}
+.scr{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:74px 22px var(--deck);max-width:620px;margin:0 auto;text-align:center;
+  opacity:0;visibility:hidden;transform:translateY(26px) scale(.985);
+  transition:opacity .55s cubic-bezier(.2,.7,.3,1),
+             transform .55s cubic-bezier(.2,.7,.3,1),
+             visibility .55s;
+}
+.scr.live{opacity:1;visibility:visible;transform:none}
+.scr.past{transform:translateY(-26px) scale(.985)}
 
-  /* Sections */
-  .section{ margin-bottom:36px; display:none; }
-  .section.active{ display:block; animation:secFadeIn .3s ease both; }
-  @keyframes secFadeIn{ from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+/* Children rise in sequence once the screen lands, so each idea
+   arrives in reading order instead of all at once. */
+.scr > *{opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s cubic-bezier(.2,.7,.3,1)}
+.scr.live > *{opacity:1;transform:none}
+.scr.live > *:nth-child(1){transition-delay:.12s}
+.scr.live > *:nth-child(2){transition-delay:.22s}
+.scr.live > *:nth-child(3){transition-delay:.32s}
+.scr.live > *:nth-child(4){transition-delay:.42s}
 
-  .back-to-menu{
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(255,255,255,.05); border:1px solid var(--rim);
-    border-radius:12px; padding:9px 16px; margin-bottom:18px;
-    color:var(--soft); font-family:'Tajawal',sans-serif; font-size:13px;
-    cursor:pointer; text-decoration:none;
-  }
-  .back-to-menu:active{ background:rgba(255,255,255,.09); }
-  .section-title{
-    display:flex; align-items:center; gap:10px;
-    font-size:20px; font-weight:900; margin-bottom:14px;
-    padding-bottom:10px; border-bottom:2px solid var(--rim);
-  }
+.kicker{font-family:var(--en);font-size:10.5px;font-weight:700;letter-spacing:3.5px;
+  text-transform:uppercase;color:var(--teal);margin-bottom:14px}
+h1{font-family:var(--ar-display);font-weight:700;
+  font-size:clamp(26px,7.4vw,46px);line-height:1.22;letter-spacing:-.5px;margin-bottom:14px}
+body.en h1{font-family:var(--en);letter-spacing:-1.2px}
+.say{font-size:clamp(14px,3.9vw,17.5px);color:#B9C9DE;max-width:44ch;margin:0 auto}
+.spark-tx{background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
 
-  .card{
-    background:var(--panel); border:1px solid var(--rim);
-    border-radius:14px; padding:16px 18px; margin-bottom:12px;
-    border-right:3px solid var(--teal);
-  }
-  .card.c2{ border-right-color:var(--gold); }
-  .card.c3{ border-right-color:var(--lavender); }
-  .card.c4{ border-right-color:var(--rose); }
-  .card h3{ font-size:15px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
-  .card p, .card ul{ font-size:13.5px; color:var(--soft); }
-  .card ul{ padding-right:20px; margin-top:6px; }
-  .card li{ margin-bottom:4px; }
-  .card b{ color:var(--white); }
+/* ── 1 · THE SPARK ──────────────────────────────────── */
+.stage{height:96px;display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:6px}
+.sp-w{font-family:var(--ar-display);font-size:clamp(26px,7.6vw,42px);font-weight:700;
+  color:var(--mist);transition:opacity .4s,transform .4s}
+.sp-w.en{font-family:var(--en);background:linear-gradient(100deg,var(--gold),var(--ember));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.sp-w.out{opacity:0;transform:translateY(-9px)}
+.sp-b{font-size:20px;color:var(--gold);filter:drop-shadow(0 0 12px rgba(245,200,66,.9));
+  animation:flick 2.6s ease-in-out infinite}
+@keyframes flick{0%,100%{opacity:.5;transform:scale(1)}46%{opacity:1;transform:scale(1.22)}}
 
-  .note{
-    background:rgba(255,215,0,.06); border:1px solid rgba(255,215,0,.2);
-    border-radius:12px; padding:12px 14px; font-size:13px; color:var(--gold);
-    margin-top:10px;
-  }
+/* ── 2 · SKILL CONSTELLATION (the WOW) ──────────────
+   Nine skills wired to one core. Rather than a feature list,
+   the connections light up one by one — the reader watches a
+   system assemble itself, which is the actual claim: these
+   parts are not separate apps, they grow together. */
+.const-wrap{width:100%;max-width:340px;margin-bottom:18px}
+#constel{width:100%;height:auto;display:block;overflow:visible}
+.cn-line{stroke:var(--edge);stroke-width:1;opacity:0;transition:opacity .5s,stroke .5s}
+.cn-line.on{opacity:1;stroke:rgba(45,212,191,.5)}
+.cn-node{opacity:0;transition:opacity .45s,transform .45s;transform-origin:center;transform-box:fill-box}
+.cn-node.on{opacity:1}
+.cn-dot{fill:var(--rail);stroke:var(--edge);stroke-width:1.2;transition:.45s}
+.cn-node.on .cn-dot{fill:rgba(45,212,191,.16);stroke:var(--teal)}
+.cn-tx{font-family:'Space Grotesk',sans-serif;font-size:7.4px;font-weight:700;
+  fill:var(--mist);text-anchor:middle}
+.cn-node.on .cn-tx{fill:var(--ink)}
+.cn-core{fill:url(#coreG);filter:drop-shadow(0 0 10px rgba(245,200,66,.55))}
+.cn-core-tx{font-family:'Space Grotesk',sans-serif;font-size:8.4px;font-weight:700;
+  fill:#0D1117;text-anchor:middle}
 
-  .step-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:8px; }
-  .step{
-    background:var(--card); border-radius:10px; padding:10px 12px; font-size:12.5px; color:var(--soft);
-  }
-  .step b{ color:var(--teal); display:block; margin-bottom:3px; font-size:11px; }
+/* ── 3 · THE LINE ───────────────────────────────────── */
+.line-wrap{width:100%;max-width:400px;margin-bottom:20px}
+#lineSvg{width:100%;height:auto;display:block;overflow:visible}
+.ln-base{stroke:var(--edge);stroke-width:1.4;fill:none}
+.ln-run{stroke:url(#runG);stroke-width:2.4;fill:none;stroke-linecap:round;
+  stroke-dasharray:340;stroke-dashoffset:340;transition:stroke-dashoffset 2.4s cubic-bezier(.3,.8,.3,1)}
+.ln-run.go{stroke-dashoffset:0}
+.ln-stop{fill:var(--rail);stroke:var(--edge);stroke-width:1.2;transition:.5s}
+.ln-stop.on{fill:var(--gold);stroke:var(--gold)}
+.ln-cap{font-family:'Space Grotesk',sans-serif;font-size:7px;fill:var(--dim);text-anchor:middle}
+.ln-cap.on{fill:var(--gold)}
 
-  .color-legend{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; font-size:12px; }
-  .color-legend span{ display:flex; align-items:center; gap:5px; }
-  .color-legend .dot{ width:10px;height:10px;border-radius:50%; }
+.stat-row{display:flex;gap:9px;justify-content:center;margin-top:2px}
+.st{background:rgba(14,26,43,.7);border:1px solid var(--edge);border-radius:13px;
+  padding:10px 15px;min-width:74px}
+.st b{display:block;font-family:var(--mono);font-size:19px;color:var(--gold);line-height:1.15}
+.st span{font-size:10px;color:var(--dim)}
 
-  footer{
-    text-align:center; padding:24px; border-top:1px solid var(--rim);
-    margin-top:30px;
-  }
-  footer .sig{
-    font-family:'Space Grotesk',sans-serif; font-size:11px;
-    background:linear-gradient(90deg,var(--gold),#FF9F43);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-    letter-spacing:2px; font-weight:700; margin-top:4px;
-  }
-  footer .label{ font-family:'Space Grotesk',sans-serif; font-size:10px; color:#3A5070; letter-spacing:1px; text-transform:uppercase; }
+/* ── 4 · OWNERSHIP ──────────────────────────────────── */
+.book{width:100%;max-width:290px;margin-bottom:18px;
+  background:linear-gradient(160deg,rgba(20,34,54,.85),rgba(10,18,32,.7));
+  border:1px solid var(--edge);border-radius:16px;padding:15px;text-align:start}
+.bk-row{display:flex;align-items:center;gap:9px;padding:7px 0;
+  border-bottom:1px solid rgba(148,180,220,.07);opacity:0;transform:translateX(10px);
+  transition:opacity .45s,transform .45s}
+.bk-row.on{opacity:1;transform:none}
+.bk-row:last-child{border-bottom:0}
+.bk-en{font-family:var(--en);font-size:14px;font-weight:700;color:var(--ink);direction:ltr}
+.bk-ar{font-size:11.5px;color:var(--dim);margin-inline-start:auto}
+.bk-mine{font-size:9px;color:var(--teal);border:1px solid rgba(45,212,191,.35);
+  border-radius:20px;padding:1px 7px;white-space:nowrap}
 
-  @media print {
-    body{ background:white; color:#111; }
-    .hero{ background:#f5f5f5; }
-    .card{ border:1px solid #ccc; background:#fafafa; }
-    .toc-tile{ border:1px solid #ccc; background:#fafafa !important; color:#111; }
-    .toc-tile-label{ color:#111; }
-  }
+/* ── 6 · CTA ────────────────────────────────────────── */
+.floor{
+  display:flex;align-items:flex-start;gap:11px;max-width:44ch;margin:0 auto;
+  background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.2);
+  border-radius:14px;padding:13px 15px;text-align:start;
+}
+.floor-ico{font-size:20px;flex:0 0 auto;line-height:1.4}
+.floor-tx{font-size:13.5px;color:#A9C9CF;line-height:1.75}
+.floor-tx b{color:var(--ink)}
+.go-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+  text-decoration:none;font-family:var(--en);font-weight:700;font-size:15.5px;
+  color:var(--night);background:linear-gradient(100deg,var(--gold),var(--ember));
+  border-radius:15px;padding:16px 34px;margin-top:6px;
+  box-shadow:0 12px 34px rgba(245,200,66,.22);
+  transition:transform .28s cubic-bezier(.34,1.5,.5,1),box-shadow .28s;
+}
+.go-btn:hover,.go-btn:focus-visible{transform:translateY(-4px);box-shadow:0 20px 44px rgba(245,200,66,.3)}
+.credit{margin-top:24px}
+.credit .l{font-family:var(--mono);font-size:8.5px;color:var(--dim);letter-spacing:1.6px}
+.credit .n{font-family:var(--en);font-size:11.5px;font-weight:700;letter-spacing:3px;color:var(--mist)}
+
+/* ── DECK ───────────────────────────────────────────── */
+.nav{
+  position:fixed;bottom:0;inset-inline:0;z-index:60;height:var(--deck);
+  display:flex;align-items:center;justify-content:center;gap:15px;
+  padding:0 18px calc(env(safe-area-inset-bottom,0px) + 4px);
+}
+.nb{width:48px;height:48px;flex:0 0 48px;border-radius:14px;cursor:pointer;
+  background:rgba(20,34,54,.88);border:1px solid var(--edge);color:var(--ink);
+  font-size:17px;display:grid;place-items:center;backdrop-filter:blur(10px);
+  transition:transform .2s,border-color .25s,opacity .25s}
+.nb:hover:not(:disabled),.nb:focus-visible{border-color:var(--gold);transform:translateY(-2px)}
+.nb:active:not(:disabled){transform:scale(.93)}
+.nb:disabled{opacity:.22;cursor:default}
+.nb.go{background:linear-gradient(100deg,var(--gold),var(--ember));border-color:transparent;color:var(--night)}
+.nb .ar{display:block}
+body.en .nb .ar{transform:scaleX(-1)}
+.dots{display:flex;gap:7px}
+.dt{width:7px;height:7px;border-radius:50%;background:var(--rail);border:1px solid var(--edge);
+  cursor:pointer;padding:0;transition:all .32s cubic-bezier(.4,1.4,.5,1)}
+.dt.on{background:var(--gold);border-color:var(--gold);
+  box-shadow:0 0 10px rgba(245,200,66,.7);transform:scale(1.32)}
+.dt.done{background:rgba(245,200,66,.42);border-color:rgba(245,200,66,.42)}
+
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media(max-height:660px){
+  .scr{padding-top:64px}
+  .stage{height:74px}
+  .const-wrap{max-width:270px}
+  h1{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .scr > *{opacity:1;transform:none}
+  .ln-run{stroke-dashoffset:0}
+}
 </style>
 </head>
 <body>
 
-<div class="hero">
-<div class="hero-icon">
-    <svg width="80" height="80" viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+<header class="top">
+  <div class="brand"><i></i>WORDSPARK</div>
+  <div class="lang" role="group" aria-label="Language">
+    <button id="bAr" class="on" onclick="setLang('ar')">عربي</button>
+    <button id="bEn" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- 1 · THE SPARK -->
+<section class="scr live" data-i="0">
+  <div class="stage" aria-hidden="true">
+    <span class="sp-w" id="spAr">كلمة</span>
+    <span class="sp-b">✦</span>
+    <span class="sp-w en" id="spEn">Word</span>
+  </div>
+  <h1 data-ar="تعلُّم الإنجليزية<br>ليس <span class='spark-tx'>جمع كلمات</span>"
+      data-en="Learning English is not<br><span class='spark-tx'>collecting words</span>"></h1>
+  <p class="say" data-ar="بل بناء نفسك مهارةً بعد مهارة."
+     data-en="It is building yourself, one skill after another."></p>
+</section>
+
+<!-- 2 · THE SYSTEM (WOW) -->
+<section class="scr" data-i="1">
+  <div class="kicker" data-ar="The System · المنظومة" data-en="The System"></div>
+  <div class="const-wrap">
+    <svg id="constel" viewBox="0 0 300 210" role="img" aria-label="Skills system">
       <defs>
-        <linearGradient id="logoBg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#2A1B5E"/>
-          <stop offset="35%" stop-color="#142845"/>
-          <stop offset="70%" stop-color="#0C3A35"/>
-          <stop offset="100%" stop-color="#070B12"/>
-        </linearGradient>
-        <radialGradient id="logoGlowA" cx="22%" cy="18%" r="55%">
-          <stop offset="0%" stop-color="#B794FF" stop-opacity="0.6"/>
-          <stop offset="100%" stop-color="#B794FF" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="logoGlowB" cx="88%" cy="85%" r="60%">
-          <stop offset="0%" stop-color="#2DE8CC" stop-opacity="0.5"/>
-          <stop offset="100%" stop-color="#2DE8CC" stop-opacity="0"/>
-        </radialGradient>
-        <linearGradient id="logoWS" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stop-color="#FFD700"/>
-          <stop offset="100%" stop-color="#5EEAD4"/>
-        </linearGradient>
-        <linearGradient id="logoSpark" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#FFE066"/>
-          <stop offset="100%" stop-color="#FFD700"/>
-        </linearGradient>
-        <filter id="logoGlow">
-          <feGaussianBlur stdDeviation="3" result="blur"/>
-          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-        </filter>
-        <filter id="logoShadow" x="-50%" y="-50%" width="200%" height="200%">
-          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.45"/>
-        </filter>
+        <radialGradient id="coreG"><stop offset="0%" stop-color="#F5C842"/><stop offset="100%" stop-color="#FB923C"/></radialGradient>
       </defs>
-      <rect x="0" y="0" width="140" height="140" fill="url(#logoBg)" rx="28"/>
-      <rect x="0" y="0" width="140" height="140" fill="url(#logoGlowA)" rx="28"/>
-      <rect x="0" y="0" width="140" height="140" fill="url(#logoGlowB)" rx="28"/>
-      <g filter="url(#logoShadow)">
-        <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="none" stroke="#080C14" stroke-width="5" text-anchor="middle" letter-spacing="-3" stroke-linejoin="round">WS</text>
-        <text x="48" y="90" font-family="Arial, sans-serif" font-size="58" font-weight="900" fill="url(#logoWS)" text-anchor="middle" letter-spacing="-3">WS</text>
-      </g>
-      <g filter="url(#logoGlow)">
-        <path d="M122 28 L100 70 H117 L92 118 L128 60 H110 Z" fill="url(#logoSpark)"/>
-      </g>
+      <g id="cnLines"></g>
+      <g id="cnNodes"></g>
+      <circle class="cn-core" cx="150" cy="105" r="21"/>
+      <text class="cn-core-tx" x="150" y="103">WORD</text>
+      <text class="cn-core-tx" x="150" y="112">SPARK</text>
     </svg>
   </div>
-  <h1>WordSpark</h1>
-  <p>دليل الاستخدام الكامل — منصة تعلّم اللغة الإنجليزية</p>
-  <div class="badge">💡 Developed by ARAFAT ALRAJHI</div>
-</div>
+  <h1 style="font-size:clamp(21px,5.2vw,31px)"
+      data-ar="تسع مهارات <span class='spark-tx'>تنمو معًا</span>"
+      data-en="Nine skills that <span class='spark-tx'>grow together</span>"></h1>
+  <p class="say" data-ar="ليست تسعة تطبيقات متفرّقة — بل منظومة واحدة، كل جزء فيها يقوّي البقية."
+     data-en="Not nine separate apps — one system, where each part strengthens the rest."></p>
+</section>
 
-<div class="container">
+<!-- 3 · THE LINE -->
+<section class="scr" data-i="2">
+  <div class="kicker" data-ar="The Journey · الرحلة" data-en="The Journey"></div>
+  <div class="line-wrap">
+    <svg id="lineSvg" viewBox="0 0 360 74" role="img" aria-label="Journey line">
+      <defs>
+        <linearGradient id="runG" x1="0" x2="1">
+          <stop offset="0%" stop-color="#2DD4BF"/><stop offset="55%" stop-color="#F5C842"/><stop offset="100%" stop-color="#FB923C"/>
+        </linearGradient>
+      </defs>
+      <path class="ln-base" d="M14 32 H346"/>
+      <path class="ln-run" id="lnRun" d="M14 32 H346"/>
+      <g id="lnStops"></g>
+    </svg>
+  </div>
+  <h1 style="font-size:clamp(21px,5.2vw,31px)"
+      data-ar="اثنتان وأربعون محطة.<br><span class='spark-tx'>واحدة في كل مرة.</span>"
+      data-en="Forty-two stations.<br><span class='spark-tx'>One at a time.</span>"></h1>
+  <div class="stat-row">
+    <div class="st"><b>42</b><span data-ar="محطة" data-en="stations"></span></div>
+    <div class="st"><b>6</b><span data-ar="فصول" data-en="chapters"></span></div>
+    <div class="st"><b>15</b><span data-ar="رتبة" data-en="ranks"></span></div>
+  </div>
+</section>
 
-  <div class="toc" id="tocMenu">
-    <h2>📑 محتويات الدليل</h2>
-    <div class="toc-grid">
-      <button onclick="showSection('start')" class="toc-tile tc1"><span class="toc-tile-icon">🏁</span><span class="toc-tile-label">البداية</span></button>
-      <button onclick="showSection('words')" class="toc-tile tc2"><span class="toc-tile-icon">📚</span><span class="toc-tile-label">الكلمات</span></button>
-      <button onclick="showSection('practice')" class="toc-tile tc3"><span class="toc-tile-icon">🎯</span><span class="toc-tile-label">التدريب والألعاب</span></button>
-      <button onclick="showSection('learn')" class="toc-tile tc4"><span class="toc-tile-icon">📐</span><span class="toc-tile-label">القواعد والبطاقات</span></button>
-      <button onclick="showSection('packs')" class="toc-tile tc5"><span class="toc-tile-icon">📦</span><span class="toc-tile-label">حِزَم الكلمات</span></button>
-      <button onclick="showSection('conv')" class="toc-tile tc6"><span class="toc-tile-icon">💬</span><span class="toc-tile-label">محادثات حياتية</span></button>
-      <button onclick="showSection('settings')" class="toc-tile tc7"><span class="toc-tile-icon">⚙️</span><span class="toc-tile-label">الإعدادات</span></button>
-      <button onclick="showSection('tips')" class="toc-tile tc8"><span class="toc-tile-icon">💡</span><span class="toc-tile-label">نصائح مهمة</span></button>
-      <button onclick="showSection('voice')" class="toc-tile tc8"><span class="toc-tile-icon">🎙️</span><span class="toc-tile-label">المتحدّث الصوتي</span></button>
-      <button onclick="showSection('podcast')" class="toc-tile tc9"><span class="toc-tile-icon">🎧</span><span class="toc-tile-label">البودكاست</span></button>
-      <button onclick="showSection('storage')" class="toc-tile tc1"><span class="toc-tile-icon">💾</span><span class="toc-tile-label">كيف يتم الحفظ؟</span></button>
+<!-- 4 · OWNERSHIP -->
+<section class="scr" data-i="3">
+  <div class="kicker" data-ar="Your Words · قاموسك" data-en="Your Words"></div>
+  <div class="book" id="bookCard" aria-hidden="true"></div>
+  <h1 style="font-size:clamp(21px,5.2vw,31px)"
+      data-ar="قاموسٌ <span class='spark-tx'>بخطّ يدك</span>"
+      data-en="A dictionary <span class='spark-tx'>in your own hand</span>"></h1>
+  <p class="say" data-ar="القائمة التي بناها غيرك لا تُشعرك بشيء. والتي بنيتَها بيدك تصير ملكك."
+     data-en="A list built by someone else means nothing. The one you built becomes yours."></p>
+</section>
+
+<!-- 5 · MASTERY -->
+<section class="scr" data-i="4">
+  <div class="kicker" data-ar="No Dead Ends · لا طريق مسدود" data-en="No Dead Ends"></div>
+  <h1 data-ar="لا تخسر شيئًا<br><span class='spark-tx'>إذا لم تنجح</span>"
+      data-en="You lose nothing<br><span class='spark-tx'>when you fail</span>"></h1>
+  <p class="say" data-ar="تراجع وتعيد بلا حدود. وإن انقطعتَ في منتصف اختبار، تعود إلى نفس السؤال ونفس النقطة. الهدف الإتقان، لا العقاب."
+     data-en="Review and retry without limit. Interrupted mid-quiz, you return to the same question at the same point. The goal is mastery, not punishment."></p>
+
+  <!-- The absolute beginner needs to hear this before anything else: the app
+       does not assume they can already read. Without this line they judge the
+       whole platform by the first station's paragraph and leave. -->
+  <div class="floor" style="margin-top:20px">
+    <span class="floor-ico">👂</span>
+    <span class="floor-tx"
+      data-ar="ولا تقرأ حرفًا؟ <b>مختبر الصوت</b> يبدأ معك من الصوت والشكل — تسمع الكلمة، وتميّز <b>b</b> من <b>d</b>، قبل أن تُطالَب بقراءة شيء."
+      data-en="Cannot read yet? <b>Sound Lab</b> starts at sound and shape — hear the word, tell <b>b</b> from <b>d</b> — before anything asks you to read."></span>
+  </div>
+</section>
+
+<!-- 6 · BOARD -->
+<section class="scr" data-i="5">
+  <div class="kicker" data-ar="Now Boarding · الانطلاق" data-en="Now Boarding"></div>
+  <h1 data-ar="القطار <span class='spark-tx'>على الرصيف</span>" data-en="The train is <span class='spark-tx'>at the platform</span>"></h1>
+  <p class="say" data-ar="بلا تسجيل، ولا اشتراك، ولا بيانات تُطلب منك."
+     data-en="No sign-up, no subscription, no data requested."></p>
+  <div>
+    <a class="go-btn" href="https://ara2026fat.github.io/WordSpark-/wordspark.html" target="_blank" rel="noopener"
+       id="goBtn"><span id="goTx">Start Your Journey</span> <span id="goAr">←</span></a>
+    <div class="credit">
+      <div class="l">DEVELOPED BY</div>
+      <div class="n">ARAFAT ALRAJHI</div>
     </div>
   </div>
+</section>
 
-  <!-- ١. البداية -->
-  <div class="section" id="start">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(255,159,67,.18);color:#FF9F43">🏁</span>البداية</div>
+</main>
 
-    <div class="card">
-      <h3>⚡ ما هو WordSpark؟</h3>
-      <p>منصة تفاعلية لتعلّم اللغة الإنجليزية مع الترجمة العربية، تجمع بين <b>الكلمات اليومية</b>، <b>الاختبارات</b>، <b>الألعاب</b>، <b>القواعد</b>، و<b>البطاقات التعليمية</b> — كل ذلك في ملف واحد يعمل على أي هاتف بدون إنترنت بعد أول فتح.</p>
-    </div>
+<nav class="nav" aria-label="Navigation">
+  <button class="nb" id="nPrev" onclick="go(-1)" aria-label="Previous"><span class="ar">→</span></button>
+  <div class="dots" id="dots"></div>
+  <button class="nb go" id="nNext" onclick="go(1)" aria-label="Next"><span class="ar">←</span></button>
+</nav>
 
-    <div class="card c2">
-      <h3>👤 تسجيل الاسم لأول مرة</h3>
-      <p>عند فتح التطبيق لأول مرة، تظهر شاشة ترحيب تطلب كتابة اسمك. هذا الاسم يُستخدم عند إرسال نتائجك للمعلم عبر واتساب. يمكنك تغييره في أي وقت من زر <b>"Change Name"</b> أعلى صفحة الكلمات.</p>
-    </div>
-
-    <div class="card c3">
-      <h3>📲 إضافة WordSpark على الشاشة الرئيسية</h3>
-      <div class="step-grid">
-        <div class="step"><b>📱 آيفون (Safari)</b>افتح الملف ← زر المشاركة ↑ ← "إضافة إلى الشاشة الرئيسية"</div>
-        <div class="step"><b>🤖 أندرويد (Chrome)</b>افتح الملف ← النقاط الثلاث ⋮ ← "إضافة إلى الشاشة الرئيسية"</div>
-      </div>
-      <div class="note">بعد ذلك ستظهر أيقونة WordSpark ⚡ على هاتفك مثل أي تطبيق حقيقي، وتفتح بسرعة كل مرة.</div>
-    </div>
-
-    <div class="card c4">
-      <h3>🏠 الشاشة الرئيسية وطريقة التنقّل</h3>
-      <p>عند فتح WordSpark، تستقبلك <b>الشاشة الرئيسية</b> بشبكة أيقونات كبيرة وواضحة لكل الأقسام:</p>
-      <ul>
-        <li>📚 <b>الكلمات</b> — كلماتك المحفوظة والعداد</li>
-        <li>🎯 <b>اختبار</b> — اختبار عشوائي للكلمات</li>
-        <li>🎮 <b>ألعاب</b> — Hangman، السباق، تحدي اليوم، تحدي التهجئة</li>
-        <li>💬 <b>محادثات</b> — ١٠ مواقف حياتية واقعية للتدرّب على المحادثة</li>
-        <li>🎙️ <b>المتحدّث</b> — رفيق محادثة صوتي بالذكاء الاصطناعي</li>
-        <li>📐 <b>قواعد</b> — ١٥ درساً قواعدياً من الصفر</li>
-        <li>🃏 <b>البطاقات التعليمية</b> — مراجعة سريعة بالتقليب</li>
-        <li>🎧 <b>البودكاست</b> — ١٠ حلقات استماع لتدريب الفهم السمعي</li>
-      </ul>
-      <p style="margin-top:8px"><b>🧭 شريط التنقّل السفلي</b> يحتوي على أهم ٤ أقسام للوصول السريع: الرئيسية، الكلمات، اختبار، المتحدّث.</p>
-      <p style="margin-top:6px">بقية الأقسام تُفتح من الشاشة الرئيسية، وبداخل كل واحد منها زر "🏠 الرئيسية" للعودة بضغطة واحدة.</p>
-    </div>
-  </div>
-
-  <!-- ٢. الكلمات -->
-  <div class="section" id="words">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">📚</span>الكلمات</div>
-
-    <div class="card">
-      <h3>🔢 عداد الكلمات</h3>
-      <p>الرقم الكبير في الأعلى يعرض <b>إجمالي الكلمات المتعلَّمة</b>. أسفله ثلاث بطاقات صغيرة: كلمات <b>اليوم</b>، كلمات <b>الأسبوع</b>، وعدد كلمات المستوى <b>المبتدئ</b>.</p>
-    </div>
-
-    <div class="card c2">
-      <h3>➕ إضافة كلمة جديدة</h3>
-      <p>املأ الحقول: <b>الكلمة بالإنجليزية</b>، <b>المعنى بالعربية</b>، <b>مثال بالإنجليزية</b>، <b>ترجمة المثال</b>، واختر <b>المستوى</b> (مبتدئ / متوسط / متقدم) ثم اضغط "إضافة الكلمة ✨".</p>
-      <div class="note">⚠️ <b>الهدف اليومي قابل للتعديل (٣-٥ كلمات)</b> — يبدأ بـ٣ كلمات (الموصى به للمبتدئين)، ويمكن تغييره بالضغط على الشارة الصفراء أعلى الفورم. هذا مقصود لتشجيع التعلّم التدريجي الثابت بدلاً من الحشو والنسيان.<br><br>🕊️ <b>يوم الجمعة يوم راحة</b> — لا يكسر السلسلة المتواصلة 🔥 إذا لم تفتح التطبيق فيه.</div>
-    </div>
-
-    <div class="card c3">
-      <h3>🎨 بطاقات الكلمات الملوّنة</h3>
-      <p>كل كلمة تظهر في بطاقة بإطار مختلف الألوان (تيفاني، وردي، ذهبي، بنفسجي...) لجعل القائمة أكثر حيوية — لا يرتبط اللون بالمستوى. يمكن حذف أي كلمة بالضغط على ✕ على يمين البطاقة.</p>
-    </div>
-
-    <div class="card" style="border-right-color:var(--teal)">
-      <h3>🔊 الاستماع لنطق الكلمات</h3>
-      <p>بجانب كل كلمة زر <b>🔊</b> — اضغطه لتسمع النطق الصحيح بصوت إنجليزي حقيقي من المتصفح مجاناً.</p>
-      <p style="margin-top:6px">هذا الزر متوفر في: بطاقات الكلمات، البطاقات التعليمية، أمثلة دروس القواعد، أسئلة الاختبار، جمل المحادثات، وتحدي اليوم.</p>
-    </div>
-
-    <div class="card" style="border-right-color:var(--lavender)">
-      <h3>📊 نظام الإتقان الذكي (Mastery)</h3>
-      <p>يتتبّع WordSpark مدى إتقانك لكل كلمة تلقائياً من إجاباتك في الاختبار والسباق وتحدي اليوم.</p>
-      <ul>
-        <li>🟢 <b>متقَنة</b> — أجبت عليها بشكل صحيح عدة مرات</li>
-        <li>🟡 <b>قيد التعلّم</b> — بدأت تتعرّف عليها</li>
-        <li>⚪ <b>جديدة</b> — لم تُختبر بعد</li>
-      </ul>
-      <p style="margin-top:8px"><b>☆ زر "أعرف هذه الكلمة"</b> بجانب كل كلمة يسمح لك بوضعها كمتقَنة يدوياً فوراً.</p>
-      <div class="note">💡 الكلمات المتقَنة لا تختفي أبداً من الاختبارات، فقط يقلّ ظهورها مع إبقاء مراجعة خفيفة دورية حتى لا تُنسى.</div>
-    </div>
-
-    <div class="card" style="border-right-color:var(--orange)">
-      <h3>📈 الرسم البياني الأسبوعي</h3>
-      <p>أسفل لوحة الإتقان، رسم بياني بأعمدة يوضّح عدد الكلمات المضافة في كل يوم من آخر ٧ أيام.</p>
-      <ul>
-        <li>🟠 أعمدة برتقالية: أيام عادية</li>
-        <li>🟢 عمود فيروزي: اليوم الحالي</li>
-        <li>🕊️ يوم الجمعة يظهر برمز الراحة بدلاً من اسمه</li>
-      </ul>
-      <p style="margin-top:6px">يساعدك هذا الرسم (ومعلمك إن شاركته) على رؤية مدى انتظامك في التعلّم بنظرة واحدة.</p>
-    </div>
-
-    <div class="card" style="border-right-color:var(--teal)">
-      <h3>🔍 البحث والتصفية</h3>
-      <p>عند تجاوز كلماتك ٨ كلمات، يظهر زر "🔍 البحث والتصفية في كلماتك" أعلى القائمة.</p>
-      <ul>
-        <li>اكتب أي جزء من كلمة إنجليزية أو عربية للفلترة الفورية</li>
-        <li>فلاتر سريعة: الكل، 🟢 مبتدئ، 🟡 متوسط، 🔵 متقدم، 🏆 متقَنة، 📖 قيد التعلّم</li>
-      </ul>
-      <p style="margin-top:6px">💡 مفيد جداً بعد إضافة عدة حِزَم (٣٠٠+ كلمة) لإيجاد كلمة معينة بسرعة.</p>
-    </div>
-
-    <div class="card" style="border-right-color:var(--lavender)">
-      <h3>🎧 البودكاست — تدريب الاستماع</h3>
-      <p>قسم جديد كلياً لتدريب مهارة الاستماع الحقيقية — ١٠ حلقات قصيرة بمواضيع متنوعة (أول يوم عمل، الطقس، فيلم، رياضة، فقدان الهاتف، الطبخ، نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان).</p>
-      <ul>
-        <li>🎙️ استمع للحوار كاملاً بدون رؤية النص أولاً</li>
-        <li>🔁 إعادة استماع محدودة بمرتين فقط (كاختبارات الاستماع الحقيقية)</li>
-        <li>📜 إظهار النص بعد المحاولة للمراجعة</li>
-        <li>🧠 ٣ أسئلة فهم استماع لكل حلقة</li>
-      </ul>
-      <div class="note">💡 مختلف عن "محادثات حياتية" — هنا تستمع فقط أولاً لتتدرّب على الفهم السمعي الحقيقي.</div>
-    </div>
-  </div>
-
-  <!-- ٣. التدريب والألعاب -->
-  <div class="section" id="practice">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(251,113,133,.18);color:#FB7185">🎯</span>التدريب والألعاب</div>
-
-    <div class="card">
-      <h3>🎯 الاختبار العشوائي</h3>
-      <p>اضغط "ابدأ الاختبار العشوائي" — يعرض ١٠ أسئلة عشوائية بنوعين: <b>إنجليزي ← عربي</b> و<b>عربي ← إنجليزي</b>. كل إجابة صحيحة = ١٠ نقاط. في النهاية تظهر نسبة دقتك مع تقييم تشجيعي.</p>
-    </div>
-
-    <div class="card c2">
-      <h3>🎯 لعبة Hangman (المشنقة)</h3>
-      <p>تظهر كلمة عشوائية من كلماتك مع <b>معناها بالعربية كتلميح</b>. اضغط الحروف لتخمين الكلمة. لديك <b>٦ محاولات خاطئة</b> فقط قبل أن تظهر الرسمة كاملة.</p>
-    </div>
-
-    <div class="card c3">
-      <h3>⚡ سباق ٦٠ ثانية</h3>
-      <p>أجب على أكبر عدد من أسئلة معاني الكلمات في دقيقة واحدة فقط! يظهر عدّاد تنازلي ونقاطك مباشرة. في النهاية تحصل على نسبة الدقة وعدد الإجابات الصحيحة والخاطئة.</p>
-    </div>
-
-    <div class="card c4">
-      <h3>🌟 تحدي اليوم</h3>
-      <p>سؤال واحد <b>يتغيّر كل يوم</b> ويمكن الإجابة عليه مرة واحدة فقط يومياً. النتيجة تُحفظ ويظهر لك "عاد التحدي غداً 🌅" بعد الإجابة.</p>
-    </div>
-
-    <div class="card">
-      <h3>✍️ تحدي التهجئة</h3>
-      <p>يعرض لك <b>المعنى بالعربية</b> ومثالاً، وعليك كتابة <b>الكلمة الإنجليزية</b> بحروفها الصحيحة في الصناديق الفارغة. الحرف الأول يُعرض مجاناً كبداية.</p>
-      <ul>
-        <li>إجابة صحيحة = <b>+10 نقاط</b> وتزيد "المتتالية 🔥"</li>
-        <li>زر <b>"تلميح حرف"</b> يكشف الحرف التالي بمقابل <b>-2 نقاط</b></li>
-        <li>إذا أخطأت، تظهر الكلمة الصحيحة كاملة وتعود "المتتالية" للصفر</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- ٤. القواعد والبطاقات -->
-  <div class="section" id="learn">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(74,154,74,.22);color:#7FD67F">📐</span>القواعد والبطاقات</div>
-
-    <div class="card">
-      <h3>📐 دروس القواعد</h3>
-      <p>١٥ درساً قواعدياً متكاملاً من الصفر — يغطي الأزمنة (المضارع، الماضي، المستقبل، التام)، المقارنة والتفضيل، الأفعال الناقصة، أدوات التعريف، الجموع، حروف الجر، تكوين الأسئلة، أدوات الربط، صفات الملكية، وصيغة الأمر — مع شرح بالعربية، صيغة القاعدة، أمثلة، وتمرين تفاعلي لكل درس.</p>
-      <p style="margin-top:8px">🎨 اضغط <b>"Show Structure"</b> أسفل أي مثال لرؤية تحليل الجملة بالألوان:</p>
-      <div class="color-legend">
-        <span><span class="dot" style="background:var(--teal)"></span>الفاعل (Subject)</span>
-        <span><span class="dot" style="background:var(--gold)"></span>الفعل (Verb)</span>
-        <span><span class="dot" style="background:var(--lavender)"></span>المفعول به (Object)</span>
-        <span><span class="dot" style="background:var(--rose)"></span>ظرف (Adverbial)</span>
-      </div>
-    </div>
-
-    <div class="card c2">
-      <h3>🃏 البطاقات التعليمية (Flashcards)</h3>
-      <p>اضغط على البطاقة لتقلبها وترى المعنى والمثال. استخدم الأسهم "السابقة / التالية" للتنقل بين كل كلماتك بسرعة — طريقة سريعة للمراجعة قبل الاختبار.</p>
-    </div>
-  </div>
-
-  <!-- ٥. حزم الكلمات -->
-  <div class="section" id="packs">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(167,139,250,.18);color:#A78BFA">📦</span>حِزَم الكلمات الجاهزة</div>
-
-    <div class="card c3">
-      <p>أسفل قسم إضافة الكلمات تجد <b>٥ حِزَم جاهزة (٥٠ كلمة لكل واحدة)</b> بالإضافة إلى الحزمة الأصلية:</p>
-      <ul>
-        <li>⚡ الحزمة الأصلية (٥٠ كلمة) — مفتوحة من البداية</li>
-        <li>🏠 المنزل والحياة اليومية</li>
-        <li>💼 العمل والمهنة</li>
-        <li>🌍 السفر والأماكن</li>
-        <li>💬 عبارات المحادثة</li>
-        <li>🎓 كلمات أكاديمية</li>
-      </ul>
-      <p style="margin-top:8px">اضغط <b>"+ إضافة الحزمة"</b> لإضافة ٥٠ كلمة فوراً لمكتبتك. يصبح الإجمالي <b>٣٠٠ كلمة</b> عند إضافة الجميع.</p>
-      <div class="note">
-        🔒 <b>نظام الفتح التدريجي:</b> كل حزمة جديدة <b>مقفلة</b> حتى تُكمل الحزمة السابقة. بعد إضافة حزمة والانتهاء من تعلّمها، اضغط <b>"🏁 تمييز كمكتملة"</b> لتفتح الحزمة التالية تلقائياً — هذا يضمن عدم الاستعجال في إضافة الكلمات.
-      </div>
-    </div>
-  </div>
-
-  <!-- ٦. محادثات حياتية -->
-  <div class="section" id="conv">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(245,200,66,.18);color:#F5C842">💬</span>محادثات حياتية</div>
-
-    <div class="card">
-      <h3>💬 ١٠ مواقف حياتية واقعية</h3>
-      <p>قسم كامل للتدرّب على المحادثة في مواقف يومية حقيقية:</p>
-      <ul>
-        <li>🏥 في المستشفى</li>
-        <li>🛒 في السوق</li>
-        <li>🍽️ في المطعم</li>
-        <li>🏫 في المدرسة</li>
-        <li>✈️ في المطار</li>
-        <li>🏦 في البنك</li>
-        <li>🚕 في التاكسي</li>
-        <li>💼 في العمل</li>
-        <li>📞 مكالمة هاتفية</li>
-        <li>🆘 حالة طوارئ</li>
-      </ul>
-    </div>
-
-    <div class="card c2">
-      <h3>📋 ماذا يحتوي كل موقف؟</h3>
-      <ul>
-        <li>💬 <b>محادثة نموذجية</b> بين شخصين (A و B) بالإنجليزية مع الترجمة العربية الكاملة</li>
-        <li>📌 <b>عبارات مفيدة إضافية</b> — اضغط زر "+" بجانب أي عبارة لإضافتها مباشرة إلى بنك كلماتك</li>
-        <li>🧩 <b>تمرين ترتيب الجمل</b> — اسحب وضع أول ٤ جمل من المحادثة بالترتيب الصحيح للتأكد من فهمك</li>
-        <li>🏆 زر <b>"أتقنت هذه المحادثة"</b> — لتمييز الموقف كمكتمل، فيظهر له شارة 🏆 في القائمة الرئيسية</li>
-      </ul>
-      <div class="note">💡 هذا القسم مثالي للطلاب الذين يريدون استخدام اللغة في مواقف حقيقية، وليس فقط حفظ كلمات منفصلة.</div>
-    </div>
-  </div>
-
-  <!-- ٧. الإعدادات -->
-  <div class="section" id="settings">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(0,212,255,.18);color:#00D4FF">⚙️</span>الإعدادات</div>
-
-    <div class="card">
-      <h3>🔥 السلسلة المتواصلة (Streak)</h3>
-      <p>كل يوم تفتح فيه WordSpark، تزيد السلسلة 🔥 بمقدار ١. إذا فوّت يوماً كاملاً بدون فتح التطبيق، تعود السلسلة إلى الصفر.</p>
-    </div>
-
-    <div class="card c2">
-      <h3>💬 إرسال النتائج للمعلم</h3>
-      <p>اضغط الزر الأخضر <b>"Send My Results to [اسم المعلم] via WhatsApp"</b> ليُفتح واتساب برسالة جاهزة تحتوي: اسمك، إجمالي الكلمات، كلمات اليوم والأسبوع، السلسلة المتواصلة، وآخر ٥ كلمات تعلّمتها.</p>
-      <p style="margin-top:8px">🔧 <b>تغيير بيانات المعلم/المعلمة:</b> من 🏠 الشاشة الرئيسية، اضغط بطاقة "👨‍🏫 بيانات المعلم/المعلمة" وأدخل اسم ورقم واتساب معلمك الخاص.</p>
-    </div>
-
-    <div class="card" style="border-right-color:var(--teal)">
-      <h3>🛡️ النسخ الاحتياطي (مهم جداً!)</h3>
-      <p>بياناتك محفوظة في متصفحك فقط، وقد تُفقد عند مسح بيانات المتصفح أو تغيير الجهاز.</p>
-      <ul>
-        <li><b>⬇️ تنزيل نسخة احتياطية:</b> يحمّل ملف JSON يحتوي على جميع كلماتك ونقاطك وتقدّمك</li>
-        <li><b>⬆️ استيراد نسخة:</b> يستعيد جميع بياناتك من ملف نسخة احتياطية سابق</li>
-      </ul>
-      <div class="note">💡 ننصح بعمل نسخة احتياطية أسبوعياً، وخصوصاً قبل أي إعادة ضبط أو عند إكمال إنجاز مهم.</div>
-    </div>
-
-    <div class="card c3">
-      <h3>🔄 إعادة الضبط</h3>
-      <ul>
-        <li><b>📦 إعادة ضبط الحِزم فقط:</b> يحذف كلمات الحِزم الجاهزة فقط، ويحافظ على كلماتك الأصلية وتقدّمك.</li>
-        <li><b>🔄 إعادة الضبط بالكامل:</b> يمسح كل شيء ويعيدك للبداية بـ٥٠ كلمة فقط.</li>
-      </ul>
-      <p style="margin-top:6px">كل إعادة ضبط تطلب تأكيداً قبل التنفيذ — لن يحدث شيء بالخطأ.</p>
-    </div>
-
-    <div class="card c4">
-      <h3>🌗 الوضع الليلي / النهاري</h3>
-      <p>اضغط أيقونة 🌙 / ☀️ في الأعلى للتبديل بين الوضع الداكن والفاتح. يُحفظ اختيارك تلقائياً.</p>
-    </div>
-  </div>
-
-  <!-- ٧. نصائح -->
-  <div class="section" id="tips">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(124,91,230,.2);color:#A78BFA">💡</span>نصائح مهمة</div>
-
-    <div class="card">
-      <h3>🎯 لا تستعجل في إضافة الحِزم</h3>
-      <p>أفضل طريقة هي إضافة حزمة واحدة كل أسبوع أو أسبوعين، مع الاستمرار في تعلّم ٥ كلمات جديدة يومياً. هذا يضمن تعلّماً حقيقياً وثابتاً بدلاً من الحفظ السريع والنسيان.</p>
-    </div>
-
-    <div class="card c2">
-      <h3>🏆 استخدم السلسلة المتواصلة كتحدٍ جماعي</h3>
-      <p>السلسلة 🔥 تُحفّز الطالب على الدخول يومياً. اجعلها جزءاً من الحصة! اسأل أحياناً: "من لديه سلسلة ٧ أيام متواصلة؟" — تحويل ميزة في التطبيق إلى لحظة تفاعل اجتماعي يرفع الحافز كثيراً بين الطلاب.</p>
-    </div>
-  </div>
-
-  <!-- المتحدّث الصوتي -->
-  <div class="section" id="voice">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(167,139,250,.18);color:#A78BFA">🎙️</span>المتحدّث الصوتي</div>
-
-    <div class="card c3">
-      <h3>🤖 ما هو المتحدّث الصوتي؟</h3>
-      <p>رفيق محادثة ذكي (Buddy) مدعوم بالذكاء الاصطناعي يتيح لك التحدّث بالإنجليزية بصوتك الحقيقي والحصول على ردود فورية — مثل محادثة حقيقية مع شخص إنجليزي.</p>
-    </div>
-
-    <div class="card">
-      <h3>🎯 كيف تستخدمه؟</h3>
-      <ul>
-        <li>اضغط <b>🎙️ المتحدّث</b> من الشاشة الرئيسية أو شريط التنقل السفلي</li>
-        <li>اختر <b>موضوعاً للمحادثة</b> (مثل: السفر، الطعام، الدراسة...)</li>
-        <li>اضغط <b>زر الميكروفون</b> وتحدّث بالإنجليزية</li>
-        <li>Buddy يسمع ويرد عليك بالإنجليزية تلقائياً</li>
-      </ul>
-      <div class="note">📱 <b>متطلبات:</b> يعمل بشكل أفضل على <b>Chrome</b> (أندرويد) و<b>Safari</b> (آيفون). تأكد من السماح للمتصفح باستخدام الميكروفون.</div>
-    </div>
-
-    <div class="card c2">
-      <h3>💡 نصائح للاستخدام الأمثل</h3>
-      <ul>
-        <li>تحدّث بوضوح وببطء في البداية حتى يتعرّف عليك المتصفح</li>
-        <li>ابدأ بجمل قصيرة ثم تدرّج إلى جمل أطول</li>
-        <li>إذا لم يتعرّف على صوتك، اضغط الزر مرة أخرى وأعد المحاولة</li>
-        <li>استخدمه يومياً ولو ٥ دقائق — هذا يبني الطلاقة بشكل حقيقي</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- البودكاست -->
-  <div class="section" id="podcast">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">🎧</span>البودكاست التعليمي</div>
-
-    <div class="card">
-      <h3>🎧 ما هو البودكاست؟</h3>
-      <p>قسم مخصص لتدريب <b>مهارة الاستماع الحقيقية</b> — ١٠ حلقات قصيرة بمواضيع متنوعة ومألوفة:</p>
-      <ul>
-        <li>أول يوم عمل، الطقس، الحديث عن فيلم</li>
-        <li>الرياضة، فقدان الهاتف، الطبخ</li>
-        <li>نهاية الأسبوع، حيوان أليف، الزحام، الاستعداد لامتحان</li>
-      </ul>
-    </div>
-
-    <div class="card c2">
-      <h3>📋 كيف تعمل كل حلقة؟</h3>
-      <ul>
-        <li>🎙️ <b>استمع أولاً</b> بدون رؤية أي نص</li>
-        <li>🔁 <b>إعادة استماع محدودة بمرتين فقط</b> — تماماً كاختبارات الاستماع الرسمية</li>
-        <li>🧠 <b>أجب على ٣ أسئلة فهم</b> بعد الاستماع</li>
-        <li>📜 <b>أظهر النص</b> بعد الإجابة للمراجعة والتعلم</li>
-      </ul>
-      <div class="note">💡 البودكاست مختلف عن "محادثات حياتية" — هنا تستمع <b>أولاً</b> دون رؤية النص، مما يدرّبك على الفهم السمعي الحقيقي كما في الحياة الفعلية.</div>
-    </div>
-  </div>
-
-  <!-- كيف يتم الحفظ -->
-  <div class="section" id="storage">
-    <button class="back-to-menu" onclick="showSection(null)">← القائمة الرئيسية</button>
-    <div class="section-title"><span class="icon-badge" style="background:rgba(45,212,191,.18);color:#2DD4BF">💾</span>كيف يتم حفظ بياناتك؟</div>
-
-    <div class="card c4">
-      <h3>📍 التخزين المحلي (localStorage)</h3>
-      <p>جميع الكلمات والنقاط والسلسلة المتواصلة تُحفظ داخل متصفح هاتفك فقط (وليس على الإنترنت).</p>
-
-      <p style="margin-top:10px"><b>كيف تتم العملية؟</b><br>
-      عند إضافة كلمة أو كسب نقطة، يقوم WordSpark بكتابة البيانات فوراً وتلقائياً داخل ملف صغير في المتصفح — بدون أي زر "حفظ"، يحدث كل ذلك في الخلفية.</p>
-
-      <p style="margin-top:10px"><b>أين تُحفظ؟</b><br>
-      على هذا الجهاز وهذا المتصفح بعينه فقط. فتح الملف من متصفح آخر (مثلاً Chrome بعد Safari) يُظهر تطبيقاً "جديداً" بلا أي تقدّم سابق.</p>
-
-      <p style="margin-top:10px"><b>متى تُفقد البيانات؟</b></p>
-      <ul>
-        <li>مسح بيانات المتصفح / الكاش (Clear Browsing Data)</li>
-        <li>إعادة ضبط الهاتف أو تثبيت متصفح جديد</li>
-        <li>الانتقال من جهاز إلى جهاز آخر</li>
-      </ul>
-
-      <div class="note">✅ <b>النصيحة:</b> استخدم متصفحاً واحداً ثابتاً ولا تمسح بياناته. والأهم: نزّل <b>نسخة احتياطية</b> بانتظام من قسم الكلمات (راجع قسم "٧. الإعدادات") — فهي الحل الأضمن لحماية تقدّمك مهما حدث.</div>
-    </div>
-  </div>
-
-</div>
-
-<footer>
-  <div class="label">💡 Developed by</div>
-  <div class="sig">ARAFAT ALRAJHI</div>
-  <div style="font-size:10px;color:#253545;margin-top:4px;font-family:'Space Grotesk',sans-serif">© 2026 · WordSpark User Guide · v2</div>
-</footer>
+<div class="sr" role="status" aria-live="polite" id="live"></div>
 
 <script>
-function showSection(id) {
-  const toc = document.getElementById('tocMenu');
-  const sections = document.querySelectorAll('.section');
+(function(){
+'use strict';
 
-  if (!id) {
-    // Back to menu: hide all sections, show the icon grid
-    sections.forEach(s => s.classList.remove('active'));
-    toc.style.display = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+var scr = Array.prototype.slice.call(document.querySelectorAll('.scr'));
+var N = scr.length, at = 0, lang = 'ar';
+var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var TITLES = [
+  ['الشرارة','The Spark'], ['المنظومة','The System'], ['الرحلة','The Journey'],
+  ['قاموسك','Your Words'], ['الإتقان','Mastery'], ['الانطلاق','Boarding']
+];
+
+/* ── The nine skills, wired to one core ─────────────── */
+var SKILLS = [
+  'VOCAB','READING','LISTENING','SPEAKING','PRONUNCE',
+  'SPELLING','GRAMMAR','COMPREHEND','PRACTICE'
+];
+(function buildConstellation(){
+  var lines = '', nodes = '';
+  var cx = 150, cy = 105, rx = 118, ry = 76;
+  SKILLS.forEach(function(name, i){
+    var a = (Math.PI * 2 * i / SKILLS.length) - Math.PI / 2;
+    var x = +(cx + Math.cos(a) * rx).toFixed(1);
+    var y = +(cy + Math.sin(a) * ry).toFixed(1);
+    lines += '<line class="cn-line" data-k="' + i + '" x1="' + cx + '" y1="' + cy + '" x2="' + x + '" y2="' + y + '"/>';
+    nodes += '<g class="cn-node" data-k="' + i + '">' +
+               '<circle class="cn-dot" cx="' + x + '" cy="' + y + '" r="15"/>' +
+               '<text class="cn-tx" x="' + x + '" y="' + (y + 2.6) + '">' + name + '</text>' +
+             '</g>';
+  });
+  document.getElementById('cnLines').innerHTML = lines;
+  document.getElementById('cnNodes').innerHTML = nodes;
+})();
+
+var constTimer = null;
+function runConstellation(on){
+  if (constTimer) { clearTimeout(constTimer); constTimer = null; }
+  var ls = document.querySelectorAll('.cn-line');
+  var ns = document.querySelectorAll('.cn-node');
+  if (!on) {
+    Array.prototype.forEach.call(ls, function(e){ e.classList.remove('on'); });
+    Array.prototype.forEach.call(ns, function(e){ e.classList.remove('on'); });
     return;
   }
-
-  toc.style.display = 'none';
-  sections.forEach(s => s.classList.remove('active'));
-  const target = document.getElementById(id);
-  if (target) target.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (reduce) {
+    Array.prototype.forEach.call(ls, function(e){ e.classList.add('on'); });
+    Array.prototype.forEach.call(ns, function(e){ e.classList.add('on'); });
+    return;
+  }
+  var i = 0;
+  (function step(){
+    if (i >= ls.length) return;
+    ls[i].classList.add('on');
+    ns[i].classList.add('on');
+    i++;
+    constTimer = setTimeout(step, 165);
+  })();
 }
+
+/* ── The line draws itself ──────────────────────────── */
+(function buildLine(){
+  var caps = ['MAKKAH','', '', '', '', 'CORONATION'];
+  var html = '';
+  for (var i = 0; i < 6; i++) {
+    var x = 14 + i * (332 / 5);
+    html += '<circle class="ln-stop" data-k="' + i + '" cx="' + x.toFixed(1) + '" cy="32" r="5"/>';
+    if (caps[i]) html += '<text class="ln-cap" data-k="' + i + '" x="' + x.toFixed(1) + '" y="52">' + caps[i] + '</text>';
+  }
+  document.getElementById('lnStops').innerHTML = html;
+})();
+
+var lineTimer = null;
+function runLine(on){
+  if (lineTimer) { clearTimeout(lineTimer); lineTimer = null; }
+  var run = document.getElementById('lnRun');
+  var stops = document.querySelectorAll('.ln-stop');
+  var caps = document.querySelectorAll('.ln-cap');
+  if (!on) {
+    run.classList.remove('go');
+    Array.prototype.forEach.call(stops, function(e){ e.classList.remove('on'); });
+    Array.prototype.forEach.call(caps, function(e){ e.classList.remove('on'); });
+    return;
+  }
+  if (reduce) {
+    run.classList.add('go');
+    Array.prototype.forEach.call(stops, function(e){ e.classList.add('on'); });
+    Array.prototype.forEach.call(caps, function(e){ e.classList.add('on'); });
+    return;
+  }
+  // Force a reflow so the dash animation restarts on every visit.
+  run.classList.remove('go'); void run.getBoundingClientRect();
+  run.classList.add('go');
+  var i = 0;
+  (function step(){
+    if (i >= stops.length) return;
+    stops[i].classList.add('on');
+    var c = document.querySelector('.ln-cap[data-k="' + i + '"]');
+    if (c) c.classList.add('on');
+    i++;
+    lineTimer = setTimeout(step, 400);
+  })();
+}
+
+/* ── The learner's own dictionary, filling in ───────── */
+var BOOK = [
+  ['Ambitious','طموح'], ['Discover','يكتشف'], ['Patient','صبور'], ['Knowledge','معرفة']
+];
+function buildBook(){
+  document.getElementById('bookCard').innerHTML = BOOK.map(function(w, i){
+    return '<div class="bk-row" data-k="' + i + '">' +
+             '<span class="bk-en">' + w[0] + '</span>' +
+             '<span class="bk-ar">' + w[1] + '</span>' +
+             '<span class="bk-mine">' + (lang === 'ar' ? 'كلمتي' : 'mine') + '</span>' +
+           '</div>';
+  }).join('');
+}
+var bookTimer = null;
+function runBook(on){
+  if (bookTimer) { clearTimeout(bookTimer); bookTimer = null; }
+  var rows = document.querySelectorAll('.bk-row');
+  if (!on) { Array.prototype.forEach.call(rows, function(r){ r.classList.remove('on'); }); return; }
+  if (reduce) { Array.prototype.forEach.call(rows, function(r){ r.classList.add('on'); }); return; }
+  var i = 0;
+  (function step(){
+    if (i >= rows.length) return;
+    rows[i].classList.add('on');
+    i++;
+    bookTimer = setTimeout(step, 300);
+  })();
+}
+
+/* ── The spark: real vocabulary, igniting ───────────── */
+var SPARK = [['كلمة','Word'],['يتعلّم','Learn'],['يكتشف','Discover'],['ينجح','Succeed'],['معرفة','Knowledge']];
+var spAt = 0, spTimer = null;
+function runSpark(on){
+  if (spTimer) { clearInterval(spTimer); spTimer = null; }
+  if (!on || reduce) return;
+  spTimer = setInterval(function(){
+    var a = document.getElementById('spAr'), e = document.getElementById('spEn');
+    a.classList.add('out'); e.classList.add('out');
+    setTimeout(function(){
+      spAt = (spAt + 1) % SPARK.length;
+      a.textContent = SPARK[spAt][0];
+      e.textContent = SPARK[spAt][1];
+      a.classList.remove('out'); e.classList.remove('out');
+    }, 420);
+  }, 2500);
+}
+
+/* ── Language ───────────────────────────────────────── */
+function applyLang(){
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ar][data-en]'), function(el){
+    el.innerHTML = el.getAttribute(lang === 'ar' ? 'data-ar' : 'data-en');
+  });
+  document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+  document.body.classList.toggle('en', lang === 'en');
+  document.getElementById('bAr').classList.toggle('on', lang === 'ar');
+  document.getElementById('bEn').classList.toggle('on', lang === 'en');
+  document.getElementById('goTx').textContent = (lang === 'ar') ? 'ابدأ رحلتك' : 'Start Your Journey';
+  document.getElementById('goAr').textContent = (lang === 'ar') ? '←' : '→';
+  document.getElementById('nPrev').setAttribute('aria-label', lang === 'ar' ? 'السابق' : 'Previous');
+  document.getElementById('nNext').setAttribute('aria-label', lang === 'ar' ? 'التالي' : 'Next');
+  buildBook();
+  if (at === 3) runBook(true);
+  announce();
+}
+window.setLang = function(l){
+  if (l === lang) return;
+  lang = l;
+  try { localStorage.setItem('wsGuideLang', l); } catch(e){}
+  applyLang();
+};
+
+/* ── Deck ───────────────────────────────────────────── */
+(function(){
+  var h = '';
+  for (var i = 0; i < N; i++) h += '<button class="dt" data-g="' + i + '" aria-label="Screen ' + (i+1) + '"></button>';
+  var host = document.getElementById('dots');
+  host.innerHTML = h;
+  host.addEventListener('click', function(e){
+    var d = e.target.closest ? e.target.closest('.dt') : null;
+    if (d) jump(parseInt(d.getAttribute('data-g'), 10));
+  });
+})();
+
+function announce(){
+  var t = TITLES[at];
+  document.getElementById('live').textContent = (lang === 'ar')
+    ? ((at + 1) + ' من ' + N + ' — ' + t[0])
+    : ((at + 1) + ' of ' + N + ' — ' + t[1]);
+}
+
+function paint(){
+  scr.forEach(function(s, i){
+    s.classList.toggle('live', i === at);
+    s.classList.toggle('past', i < at);
+    s.setAttribute('aria-hidden', i === at ? 'false' : 'true');
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.dt'), function(d, i){
+    d.classList.toggle('on', i === at);
+    d.classList.toggle('done', i < at);
+  });
+  document.getElementById('nPrev').disabled = (at === 0);
+  document.getElementById('nNext').disabled = (at === N - 1);
+
+  // Each screen's motion runs only while it is on stage.
+  runSpark(at === 0);
+  runConstellation(at === 1);
+  runLine(at === 2);
+  runBook(at === 3);
+  announce();
+}
+
+function jump(i){
+  if (i < 0 || i > N - 1 || i === at) return;
+  at = i;
+  paint();
+}
+window.go = function(d){ jump(at + d); };
+
+document.addEventListener('keydown', function(e){
+  var f = (lang === 'ar') ? 'ArrowLeft' : 'ArrowRight';
+  var b = (lang === 'ar') ? 'ArrowRight' : 'ArrowLeft';
+  if (e.key === f || e.key === 'PageDown') { e.preventDefault(); go(1); }
+  else if (e.key === b || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+  else if (e.key === 'Home') { e.preventDefault(); jump(0); }
+  else if (e.key === 'End') { e.preventDefault(); jump(N - 1); }
+});
+
+(function(){
+  var x0 = null, y0 = null;
+  var d = document.getElementById('deck');
+  d.addEventListener('touchstart', function(e){
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+  }, { passive: true });
+  d.addEventListener('touchend', function(e){
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    var dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 52 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+      go(((lang === 'ar') ? (dx > 0) : (dx < 0)) ? 1 : -1);
+    }
+    x0 = y0 = null;
+  }, { passive: true });
+})();
+
+try {
+  var sv = localStorage.getItem('wsGuideLang');
+  if (sv === 'en' || sv === 'ar') lang = sv;
+} catch(e){}
+applyLang();
+paint();
+})();
 </script>
 
 </body>
