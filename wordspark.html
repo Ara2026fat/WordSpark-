@@ -9,6 +9,15 @@
      weak eyesight from pinching to enlarge the text, which matters in a
      reading app more than almost anywhere. iOS has ignored the restriction
      since iOS 10 anyway, so it only ever penalised Android users. -->
+<!-- Lite mode. A learner on a phone that cannot afford blur and shadow opens
+     the platform once with ?lite and the choice sticks; ?lite=0 undoes it.
+     This has to run before the first paint, or the heavy version flashes on
+     screen first and the slow phone pays for it anyway. -->
+<script>try{var q=location.search;
+if(/[?&]lite=0/.test(q))localStorage.removeItem('liteMode');
+else if(/[?&]lite/.test(q))localStorage.setItem('liteMode','1');
+if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add('lite');
+}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -40,6 +49,10 @@
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
     --tap: 48px;
+    /* Empty track behind a progress bar. Separate from --rim on purpose: the
+       rim carries the chapter colour, and a tinted track reads as a second
+       fill inside the bar. */
+    --track: rgba(255,255,255,.10);
   }
 
   /* ── LIGHT THEME ── */
@@ -56,6 +69,7 @@
     --muted:  #8693A8;
     --soft:   #5B6B85;
     --white:  #1A2333;
+    --track:  rgba(30,41,59,.13);
   }
   /* Header is intentionally theme-independent (see header block below) —
      it carries its own brand gradient in both light and dark mode, so no
@@ -253,6 +267,110 @@
   .bnav-btn .icon { font-size: 22px; line-height: 1; }
   .bnav-btn.active { color: var(--gold); }
   .bnav-btn.active .icon { filter: drop-shadow(0 0 4px var(--gold)); }
+
+
+  /* ── ICONS ──────────────────────────────────────────────────────────────
+     One glyph definition serves both sizes. The glossy badge look lives in
+     the disc behind the glyph, never in the glyph, so the 46px tile and the
+     23px nav icon can never drift out of sync with each other. */
+  .wsi { display: inline-block; vertical-align: middle; flex: none; }
+  .wsi use {
+    fill: none; stroke: currentColor;
+    stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+  /* The disc: body gradient, then the gloss, then the bezel. */
+  .wsi.disc { filter: drop-shadow(0 2px 4px rgba(0,0,0,.38)); }
+  .wsi.disc use { stroke: #FFFDF5; stroke-width: 2.3; }
+  body.light-theme .wsi.disc { filter: drop-shadow(0 2px 5px rgba(30,41,59,.22)); }
+
+
+  /* ── LITE MODE ──────────────────────────────────────────────────────────
+     Everything costly, switched off by a single class on <html>: the blurs,
+     the shadows, the animations. Nothing is hidden and nothing moves, so the
+     platform stays whole on a phone that could not otherwise run it. */
+  html.lite *, html.lite *::before, html.lite *::after {
+    animation: none !important; transition: none !important;
+    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  html.lite .lib-tile { background: var(--card) !important; border-color: var(--rim) !important; }
+  html.lite .wsi.disc { filter: none !important; }
+  html.lite .mission-station-row::after { display: none !important; }
+
+  /* Several surfaces are drawn as white at 2-9% opacity, which is a tint on a
+     dark page and nothing at all on a light one: in light mode the Library
+     tiles and the rows above them had no edge, so there was no sign they could
+     be pressed. They are given a real card colour and a real border there. */
+  body.light-theme .lib-tile {
+    background: var(--panel);
+    border-color: var(--rim);
+    box-shadow: 0 2px 8px rgba(30,41,59,.06);
+  }
+  body.light-theme .lib-tile:active { background: var(--card); }
+  body.light-theme .home-settings-btn { border-color: var(--rim); background: var(--panel); }
+  body.light-theme .home-settings-btn:active { background: var(--card); }
+  body.light-theme .home-settings-icon { background: var(--card); }
+  body.light-theme .bench-row { border-color: rgba(224,168,0,.45) !important; }
+  body.light-theme .bench-ico { background: none !important; }
+
+  /* The bezel carries the learner's progress in that activity: a dim ring to
+     start, filling with gold as they go. One glance at the Library answers
+     "where have I actually been?" — and, more usefully, where they have never
+     been. The icons were already discs, so this costs no new element and no
+     new screen. */
+  :root { --ring-dim: rgba(255,255,255,.22); }
+  body.light-theme { --ring-dim: rgba(30,41,59,.17); }
+  /* An untouched activity is the one thing on this screen worth noticing, so
+     its ring must be visible rather than merely present. */
+  .lib-tile .ring-arc { stroke-linejoin: round; }
+  .ring-arc { transition: stroke-dasharray .9s cubic-bezier(.3,1,.4,1); }
+  .lib-tile.act-full .wsi.disc { filter: drop-shadow(0 0 7px rgba(245,200,66,.5)) drop-shadow(0 2px 4px rgba(0,0,0,.38)); }
+  html.lite .ring-arc { transition: none; }
+  html.lite .lib-tile.act-full .wsi.disc { filter: none; }
+
+  /* ── CHAPTER LIGHT ───────────────────────────────────────────────────────
+     The journey map already gives each chapter a colour, and until now that
+     colour lived only on the map. One attribute on <body> carries it into the
+     light of every screen, so a learner in Chapter 1 and a learner in Chapter 5
+     are not looking at the same room.
+
+     Deliberately ambient only. Text colour, gold-for-reward and teal-for-
+     correct never move: a learner must not have to relearn what a colour means
+     because they crossed a chapter boundary, and contrast must not drift with
+     progress. This is the temperature of the room, not a repaint.
+
+     Two carriers, because one was not enough. The wash alone was invisible:
+     these screens are dense with opaque cards, so the page colour shows only
+     in the margins. The card rim is on every surface, and it was doing almost
+     nothing anyway — #243550 on #1E2D42 is a 1.13:1 border, which is to say
+     barely a border at all. Tinting it lifts every rim to roughly 2:1 against
+     its card, so the chapter is felt and the edges of things become easier to
+     see at the same time. */
+  :root { --chap-glow: rgba(45,212,191,.20); }
+  body[data-chapter="1"] { --chap-glow: rgba(45,212,191,.20); --rim: #265B6B; }
+  body[data-chapter="2"] { --chap-glow: rgba(52,211,153,.20); --rim: #285B62; }
+  body[data-chapter="3"] { --chap-glow: rgba(167,139,250,.22); --rim: #434A79; }
+  body[data-chapter="4"] { --chap-glow: rgba(245,200,66,.18); --rim: #56584D; }
+  body[data-chapter="5"] { --chap-glow: rgba(251,146,60,.20); --rim: #584B4B; }
+  body[data-chapter="6"] { --chap-glow: rgba(255,184,0,.23); --rim: #59543D; }
+  body.light-theme { --chap-glow: rgba(14,159,138,.13); }
+  body.light-theme[data-chapter="1"] { --chap-glow: rgba(14,159,138,.13); --rim: #B9E1E5; }
+  body.light-theme[data-chapter="2"] { --chap-glow: rgba(5,150,105,.13); --rim: #BAE1DE; }
+  body.light-theme[data-chapter="3"] { --chap-glow: rgba(124,91,230,.13); --rim: #D1D2F1; }
+  body.light-theme[data-chapter="4"] { --chap-glow: rgba(224,168,0,.15); --rim: #E1DECC; }
+  body.light-theme[data-chapter="5"] { --chap-glow: rgba(234,88,12,.13); --rim: #E2D4CB; }
+  body.light-theme[data-chapter="6"] { --chap-glow: rgba(217,119,6,.16); --rim: #E3DBBF; }
+
+  /* Fixed, so it is the light in the room rather than something that scrolls
+     past. It starts below the header, which is opaque and would otherwise eat
+     the brightest part of it. Negative z-index puts it over the page colour
+     and under everything written on it. */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(150% 58% at 50% 4%, var(--chap-glow), transparent 72%);
+    transition: background 1.4s ease;
+  }
+  html.lite body::before { transition: none; }
 
   /* ── TOP TABS (tablet/desktop fallback) ── */
   .nav-tabs {
@@ -757,6 +875,148 @@
   /* Pointer users never see it; only keyboard and assistive tech do. */
   :focus:not(:focus-visible) { outline: none; }
 
+  /* ── BENCHMARK ───────────────────────────────────────
+     Deliberately plainer than the rest of the app. This screen
+     measures rather than teaches, and the visual language says
+     so: no gradients on the question card, no celebration, no
+     streak. The only colour is the score and the growth line. */
+  #tab-bench { padding-bottom: 40px; }
+  .bm-intro, .bm-locked, .bm-result { padding: 0 16px; text-align: center; }
+  .bm-hero { font-size: 44px; margin: 8px 0 6px; }
+  .bm-title { font-size: 21px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+  .bm-lead { font-size: 13.5px; color: var(--muted); line-height: 1.85; max-width: 42ch; margin: 0 auto 16px; }
+  .bm-weights { display: grid; grid-template-columns: repeat(4,1fr); gap: 7px; margin-bottom: 14px; }
+  .bm-w { background: var(--panel); border: 1px solid var(--rim); border-radius: 11px; padding: 9px 4px; }
+  .bm-w b { display: block; font-family: 'Space Grotesk', sans-serif; font-size: 15px; color: var(--teal); }
+  .bm-w span { font-size: 9.5px; color: var(--muted); }
+  .bm-rules {
+    font-size: 12px; color: var(--muted); line-height: 2; text-align: start;
+    background: rgba(45,212,191,.06); border: 1px solid rgba(45,212,191,.18);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 16px;
+  }
+  .bm-start {
+    width: 100%; padding: 15px; border-radius: 14px; border: none; cursor: pointer;
+    background: linear-gradient(100deg, var(--gold), #FB923C); color: var(--ink);
+    font-family: 'Tajawal', sans-serif; font-size: 15px; font-weight: 900;
+  }
+  .bm-lock-ico { font-size: 40px; margin: 10px 0 8px; }
+  .bm-lock-t { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 7px; }
+  .bm-lock-s { font-size: 12.5px; color: var(--muted); line-height: 1.85; max-width: 40ch; margin: 0 auto; }
+
+  .bm-bar { height: 3px; background: var(--track); margin: 0 16px; border-radius: 2px; overflow: hidden; }
+  .bm-fill { height: 100%; background: var(--teal); transition: width .3s; }
+  .bm-meta {
+    display: flex; justify-content: space-between; padding: 9px 16px 0;
+    font-family: 'Space Grotesk', sans-serif; font-size: 11px; color: var(--muted);
+  }
+  .bm-sec { color: var(--teal); }
+  .bm-card { margin: 12px 16px 0; }
+  .bm-passage {
+    background: var(--panel); border: 1px solid var(--rim); border-radius: 13px;
+    padding: 14px 15px; font-size: 14px; line-height: 1.95; color: var(--white);
+    direction: ltr; text-align: left; margin-bottom: 13px;
+    font-family: 'Space Grotesk', sans-serif; font-weight: 500;
+  }
+  .bm-play {
+    width: 100%; padding: 17px; border-radius: 14px; margin-bottom: 7px; cursor: pointer;
+    background: linear-gradient(150deg,#1E3A5C,#0E1C2D); border: 1px solid rgba(45,212,191,.35);
+    color: var(--white); font-family: 'Tajawal', sans-serif; font-size: 15px; font-weight: 800;
+  }
+  .bm-hint { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 11px; }
+  .bm-q {
+    font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 12px;
+    direction: ltr; text-align: left; font-family: 'Space Grotesk', sans-serif; line-height: 1.7;
+  }
+  .bm-opts { display: grid; gap: 8px; }
+  .bm-opt {
+    padding: 14px; border-radius: 12px; cursor: pointer; text-align: left; direction: ltr;
+    background: var(--panel); border: 1px solid var(--rim); color: var(--white);
+    font-family: 'Space Grotesk', sans-serif; font-size: 14px; transition: transform .14s, border-color .2s;
+  }
+  .bm-opt:active { transform: scale(.98); border-color: var(--teal); }
+
+  .bm-score-ring { margin: 14px 0 4px; }
+  .bm-score { font-family: 'Space Grotesk', sans-serif; font-size: 56px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .bm-of { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--muted); }
+  .bm-delta > span { direction: rtl; unicode-bidi: isolate; }
+  .bm-delta { direction: ltr; unicode-bidi: isolate; font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin: 8px 0 14px; }
+  .bm-delta span { font-family: 'Tajawal', sans-serif; font-size: 11px; color: var(--muted); font-weight: 400; }
+  .bm-delta.up { color: #34D399; } .bm-delta.down { color: var(--rose); } .bm-delta.flat { color: var(--muted); }
+  .bm-rows { display: grid; gap: 9px; margin-bottom: 14px; }
+  .bm-row { display: grid; grid-template-columns: 96px 1fr 38px; gap: 9px; align-items: center; }
+  .bm-row-l { font-size: 12.5px; color: var(--white); text-align: start; }
+  /* Isolated and forced LTR: a leading + or - is a bidirectionally neutral
+     character, so inside an Arabic label it was being pushed to the end and
+     "+12" was reading as "12+". */
+  .bm-row-l i {
+    font-style: normal; font-size: 10.5px; font-family: 'Space Grotesk', sans-serif;
+    display: inline-block; direction: ltr; unicode-bidi: isolate;
+  }
+  .bm-row-l i.up { color: #34D399; } .bm-row-l i.down { color: var(--rose); }
+  /* The bar carries two readings at once: where the learner is now, and where
+     they were a fortnight ago. The number beside it already says "+6"; this
+     says the same thing as a distance, which is the form the eye reads without
+     being asked to. Raised from 7px to 10px because the earlier height had no
+     room for a second mark. */
+  .bm-row-bar {
+    height: 10px; background: var(--track); border-radius: 5px;
+    overflow: hidden; position: relative;
+  }
+  .bm-row-bar i {
+    display: block; height: 100%; border-radius: 5px;
+    background: linear-gradient(90deg,var(--teal),var(--gold));
+  }
+  /* The stretch between the two sittings. Over the fill when it was won, over
+     the empty track when it was lost. */
+  .bm-band { position: absolute; top: 0; bottom: 0; }
+  /* The won stretch must be lighter than the fill it sits on, or it disappears
+     into the teal end of the gradient and only the ghost mark carries the
+     message. The lost stretch sits on the empty track instead, so it only has
+     to be visible against that. */
+  .bm-band.gain { background: rgba(190,250,222,.78); }
+  .bm-band.loss { background: rgba(251,113,133,.45); }
+  /* The ghost: the mark standing where the learner stood last time. A dark
+     core with a pale edge so it is legible over the bright fill and over the
+     dim track alike. */
+  /* Core and halo swap with the theme: on a dark bar a pale mark with a dark
+     edge, on a light one the reverse. Either way it has to stay legible over
+     the bright fill, the pale gain band and the empty track alike. */
+  .bm-was {
+    position: absolute; top: -2px; bottom: -2px; width: 2px;
+    margin-inline-start: -1px; border-radius: 2px;
+    background: #F8FAFC; box-shadow: 0 0 0 1px rgba(2,6,23,.7);
+  }
+  body.light-theme .bm-was {
+    background: #0F172A; box-shadow: 0 0 0 1px rgba(255,255,255,.85);
+  }
+  .bm-legend {
+    font-size: 11px; color: var(--muted); text-align: start;
+    margin: -6px 0 12px; display: flex; align-items: center; gap: 7px;
+  }
+  .bm-legend span {
+    display: inline-block; width: 2px; height: 11px; background: #F8FAFC;
+    box-shadow: 0 0 0 1px rgba(2,6,23,.7); border-radius: 2px; flex: none;
+  }
+  body.light-theme .bm-legend span {
+    background: #0F172A; box-shadow: 0 0 0 1px rgba(255,255,255,.85);
+  }
+  .bm-row-v { font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--muted); }
+  .bm-advice {
+    font-size: 12.5px; color: #E4C88F; line-height: 1.85; text-align: start;
+    background: rgba(245,200,66,.08); border: 1px solid rgba(245,200,66,.2);
+    border-radius: 12px; padding: 12px 14px;
+  }
+  .bm-note {
+    margin: 16px; padding: 12px 14px; border-radius: 12px; font-size: 12.5px;
+    background: rgba(45,212,191,.07); border: 1px solid rgba(45,212,191,.2); color: #A9C9CF;
+  }
+  .bm-chart { margin: 18px 16px 0; background: var(--panel); border: 1px solid var(--rim); border-radius: 15px; padding: 13px; }
+  .bm-chart-h { font-size: 12.5px; color: var(--white); font-weight: 700; margin-bottom: 7px; }
+  .bm-svg { width: 100%; height: auto; display: block; }
+  .bm-pt { font-family: 'Space Grotesk', sans-serif; font-size: 8px; fill: var(--muted); text-anchor: middle; }
+  .bm-growth { font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 700; text-align: center; margin-top: 6px; }
+  .bm-growth.up { color: #34D399; } .bm-growth.down { color: var(--rose); }
+
   /* ── SOUND LAB ────────────────────────────────────────
      Colours all come from theme variables so the lab follows
      dark/light like the rest of the app. */
@@ -1064,7 +1324,7 @@
   .rank-info { flex: 1; }
   .rank-title { font-size: 13px; font-weight: 700; color: var(--gold); font-family:'Space Grotesk',sans-serif; }
   .rank-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .rank-progress-bar { height: 4px; background: var(--rim); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+  .rank-progress-bar { height: 4px; background: var(--track); border-radius: 4px; margin-top: 6px; overflow: hidden; }
   .rank-progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,var(--gold),var(--teal)); transition: width .5s ease; }
   .rank-points { font-size: 12px; font-weight: 700; color: var(--teal); white-space: nowrap; }
   .rank-popup {
@@ -1539,14 +1799,32 @@
     content: ''; position: absolute; bottom: 0; inset-inline-start: 0;
     width: 34%; height: 2px;
     background: linear-gradient(90deg, transparent, var(--teal), transparent);
-    animation: railRun 4.8s linear infinite; opacity: .65;
+    animation: railRun 12.6s ease-in-out infinite; opacity: .65;
   }
   @keyframes railRun {
-    0%   { inset-inline-start: -34%; }
-    100% { inset-inline-start: 100%; }
+    0%, 62%  { inset-inline-start: -34%; }
+    75%, 100% { inset-inline-start: 100%; }
   }
   @media (prefers-reduced-motion: reduce) {
     .mission-station-row::after { animation: none; opacity: .3; }
+  }
+  /* A band of light crosses the card once, then waits eleven seconds off its
+     edge. Motion that is still most of the time reads as a surface catching
+     the light; motion that never stops reads as something demanding to be
+     looked at, which is the opposite of what a study screen wants. */
+  .mission-card::after {
+    content: ''; position: absolute; top: -30%; bottom: -30%;
+    width: 30%; inset-inline-start: -55%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.085), transparent);
+    transform: skewX(-18deg); pointer-events: none;
+    animation: cardGlint 18.9s ease-in-out infinite;
+  }
+  @keyframes cardGlint {
+    0%, 60%   { inset-inline-start: -55%; }
+    78%, 100% { inset-inline-start: 135%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mission-card::after { animation: none; opacity: 0; }
   }
   .mission-station-flag { font-size: 16px; }
   .mission-station-text b { color: var(--teal); font-weight: 800; }
@@ -1649,7 +1927,11 @@
   }
 
   .library-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    /* Nine tiles, three columns, three even rows. auto-fit sets the column
+       count from the width, so it cannot guarantee a full last row by itself:
+       a tenth tile would sit alone again. Anything added here should come in
+       threes, or go in a row of its own above like the Benchmark did. */
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(94px, 1fr)); gap: 12px;
     margin-top: 18px;
   }
   .lib-tile {
@@ -1660,7 +1942,7 @@
     transition: transform .15s ease; -webkit-user-select: none; user-select: none;
   }
   .lib-tile:active { transform: scale(.94); }
-  .lib-tile-ico { font-size: 30px; }
+  .lib-tile-ico { display: flex; line-height: 0; }
   .lib-tile-en { font-size: 12.5px; font-weight: 800; color: var(--white); font-family: 'Space Grotesk', sans-serif; }
   .lib-tile-ar { font-size: 9.5px; color: var(--muted); }
   .home-tile:active { transform: scale(.94); }
@@ -1714,6 +1996,11 @@
     background: rgba(255,255,255,.05);
     display: flex; align-items: center; justify-content: center;
   }
+  /* The Benchmark row carries the gold of the thing it measures toward, and
+     sits apart from the grid because it is not practice. */
+  .bench-row { border-color: rgba(245,200,66,.28) !important; }
+  .bench-ico { background: none !important; width: 36px !important; height: 36px !important; }
+
   .home-settings-text { flex: 1; text-align: right; }
   .home-settings-title { display: block; font-size: 12.5px; font-weight: 700; color: var(--soft); }
   .home-settings-sub { display: block; font-size: 10px; color: var(--muted); margin-top: 1px; }
@@ -2254,6 +2541,36 @@
 </style>
 </head>
 <body>
+<!-- Icon sprite: every icon in the nav and the Library is defined
+     exactly once here and drawn with <use>. Emoji were replaced
+     because each platform draws them differently (and two tiles had
+     collided on the same glyph). Static HTML, not JS-generated: if a
+     script throws early the navigation must still have its icons. -->
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;left:-9999px"><defs>
+<linearGradient id="wsd-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9A8"/><stop offset="1" stop-color="#B4860C"/></linearGradient>
+<linearGradient id="wsd-teal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5EEAD4"/><stop offset="1" stop-color="#0E7490"/></linearGradient>
+<linearGradient id="wsd-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7DD3FC"/><stop offset="1" stop-color="#1E40AF"/></linearGradient>
+<linearGradient id="wsd-violet" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#4C1D95"/></linearGradient>
+<linearGradient id="wsd-rose" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDA4AF"/><stop offset="1" stop-color="#9F1239"/></linearGradient>
+<linearGradient id="wsd-amber" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#B45309"/></linearGradient>
+<linearGradient id="wsGloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<linearGradient id="wsRing" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF6CF"/><stop offset=".38" stop-color="#F5C842"/><stop offset=".66" stop-color="#8A5F06"/><stop offset="1" stop-color="#FFE9A8"/></linearGradient>
+<g id="wsg-home"><path d="M-13 -0.5 L0 -12.5 L13 -0.5"/><path d="M-9.5 -3 V12.5 H9.5 V-3"/><path d="M-3.5 12.5 V4.5 H3.5 V12.5"/></g>
+<g id="wsg-train"><path d="M-13 -12 H2.5 Q8 -12 10.5 -6.5 L13.5 0.5 V4 Q13.5 6 11.5 6 H-13 Q-15 6 -15 4 V-10 Q-15 -12 -13 -12 Z"/><path d="M-10.5 -7.5 H-2 V-1.5 H-10.5 Z"/><path d="M1.5 -7.5 H4.5 L8 -1.5 H1.5 Z"/><circle cx="-7.5" cy="9.5" r="3"/><circle cx="5" cy="9.5" r="3"/><path d="M-14.5 14 H14.5"/></g>
+<g id="wsg-library"><path d="M-14 13.5 H14"/><path d="M-12 13.5 V-5 H-6 V13.5"/><path d="M-3.5 13.5 V-12 H2.5 V13.5"/><path d="M6.3 13.5 L10.8 -1.6 L13.2 -0.9 L8.7 13.5 Z"/></g>
+<g id="wsg-words"><path d="M-7.5 -14 H12 Q13.5 -14 13.5 -12.5 V5.5"/><rect x="-14" y="-10" width="22" height="22" rx="3.4"/><path d="M-6.5 6.5 L-2 -4.5 L2.5 6.5"/><path d="M-4.7 2 H0.7"/></g>
+<g id="wsg-account"><circle cx="0" cy="-6" r="6"/><path d="M-11.5 13.5 C-11.5 4.8 -6 1.8 0 1.8 C6 1.8 11.5 4.8 11.5 13.5"/></g>
+<g id="wsg-bench"><path d="M-12.5 -14 H-4.5 V14 H-12.5 Z"/><path d="M-12.5 -7 H-8 M-12.5 0 H-8 M-12.5 7 H-8"/><path d="M-0.5 11 L4.5 2 L8.5 5 L13.5 -7"/><path d="M13.5 -7 L8.6 -6.2 M13.5 -7 L12.7 -2.2"/></g>
+<g id="wsg-ear"><circle cx="-9" cy="0" r="2.7" fill="currentColor" stroke="none"/><path d="M-3 -5 A6.8 6.8 0 0 1 -3 5"/><path d="M1.5 -9.5 A12 12 0 0 1 1.5 9.5"/><path d="M6 -13.5 A17 17 0 0 1 6 13.5"/></g>
+<g id="wsg-grammar"><circle cx="0" cy="-11" r="3.7"/><path d="M-2.7 -8.4 L-7 -2.6 M2.7 -8.4 L7 -2.6"/><circle cx="-9.6" cy="0.4" r="3.7"/><circle cx="9.6" cy="0.4" r="3.7"/><path d="M-9.6 4.1 V9.5 M9.6 4.1 V9.5"/><path d="M-13.5 12.5 H13.5"/></g>
+<g id="wsg-book"><path d="M0 -8 V12.5"/><path d="M0 -8 C-4 -12.2 -9 -12.8 -13 -11.2 V9.2 C-9 7.6 -4 8.2 0 12.5 C4 8.2 9 7.6 13 9.2 V-11.2 C9 -12.8 4 -12.2 0 -8 Z"/></g>
+<g id="wsg-headph"><path d="M-11.5 1 V-2.5 A11.5 11.5 0 0 1 11.5 -2.5 V1"/><rect x="-14.5" y="0" width="6.5" height="11.5" rx="3.2"/><rect x="8" y="0" width="6.5" height="11.5" rx="3.2"/></g>
+<g id="wsg-talk"><rect x="-14" y="-13" width="16.5" height="11.5" rx="3.4"/><path d="M-9 -1.5 V2.5 L-5 -1.5"/><rect x="-2.5" y="0" width="16.5" height="11.5" rx="3.4"/><path d="M9 11.5 V15 L5 11.5"/></g>
+<g id="wsg-pad"><path d="M-7.5 -7 H7.5 Q12.5 -7 14 0.5 Q15.2 7.5 10.5 8.6 Q7.3 9.3 5.6 5.2 H-5.6 Q-7.3 9.3 -10.5 8.6 Q-15.2 7.5 -14 0.5 Q-12.5 -7 -7.5 -7 Z"/><path d="M-9.4 -1.2 H-4.6 M-7 -3.6 V1.2"/><circle cx="6.2" cy="-2.6" r="1.7" fill="currentColor" stroke="none"/><circle cx="9.6" cy="1" r="1.7" fill="currentColor" stroke="none"/></g>
+<g id="wsg-clip"><rect x="-11.5" y="-11.5" width="23" height="25" rx="3.4"/><path d="M-4 -11.5 V-14.5 H4 V-11.5"/><path d="M-5.8 1.2 L-1.6 5.4 L6.2 -3.6"/></g>
+<g id="wsg-mic"><rect x="-5" y="-15" width="10" height="17" rx="5"/><path d="M-10 0.5 C-10 7.5 -5.2 10.5 0 10.5 C5.2 10.5 10 7.5 10 0.5"/><path d="M0 10.5 V14.5"/></g>
+<g id="wsg-cards"><rect x="-13" y="-11.5" width="19" height="23" rx="3.2" transform="rotate(-11)"/><rect x="-6.5" y="-8.5" width="19" height="23" rx="3.2"/><path d="M-2 7.5 H8"/></g>
+</defs></svg>
 
 <!-- ══ SPLASH SCREEN ══ -->
 <div id="splash" style="
@@ -3188,7 +3505,7 @@
 .vr-journey-icon { font-size: 22px; flex-shrink: 0; }
 .vr-journey-main { font-family: 'Space Grotesk', sans-serif; font-size: 13.5px; font-weight: 700; color: var(--white); }
 .vr-journey-sub { font-size: 10.5px; color: var(--soft); margin-top: 1px; }
-.vr-progress-track { height: 6px; background: var(--rim); border-radius: 4px; overflow: hidden; }
+.vr-progress-track { height: 6px; background: var(--track); border-radius: 4px; overflow: hidden; }
 .vr-progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--lavender)); border-radius: 4px; }
 .vr-progress-label { font-size: 10px; color: var(--muted); margin-top: 5px; text-align: center; }
 
@@ -3332,7 +3649,7 @@
 .sp-name-ar { font-size:10px; color:var(--soft); margin-inline-start:5px; }
 .sp-count { font-family:'Space Grotesk',sans-serif; font-size:12px; font-weight:700; color:var(--teal); flex-shrink:0; }
 .sp-dots { display:flex; gap:4px; }
-.sp-dot { width:16px; height:16px; border-radius:5px; background:var(--rim); flex-shrink:0; }
+.sp-dot { width:16px; height:16px; border-radius:5px; background:var(--track); flex-shrink:0; }
 .sp-dot.active { background:var(--teal); }
 .sp-dot.today { border:1.5px solid var(--gold); }
 .sp-empty { text-align:center; color:var(--muted); font-size:11px; padding:6px 0; }
@@ -3466,8 +3783,9 @@
 }
 .spark-wrap.show {
   transform: translateX(-50%) translateY(0) scale(1);
-  opacity: 1; pointer-events: auto;
+  opacity: 1; pointer-events: none;
 }
+.spark-wrap.show .spark-orb-zone { pointer-events: auto; cursor: pointer; }
 .spark-orb-zone {
   position: relative; width: 58px; height: 66px;
   animation: sparkBreathe 3.2s ease-in-out infinite;
@@ -4332,7 +4650,7 @@
   <!-- ══ LIBRARY (single entry point for all practice activities) ══ -->
   <div id="tab-library" class="section">
     <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <div class="sec-title">📖 Library <span style="font-size:10px;font-weight:400;color:var(--muted)">المكتبة</span></div>
+    <div class="sec-title"><svg class="wsi" viewBox="-24 -24 48 48" width="21" height="21" aria-hidden="true" style="color:var(--gold)"><use href="#wsg-library"/></svg> Library <span style="font-size:10px;font-weight:400;color:var(--muted)">المكتبة</span></div>
     <div class="sec-sub">كل أنشطة التدريب في مكان واحد</div>
     <div class="home-settings-row">
       <button class="home-settings-btn" onclick="rwOpenActivityPicker()" style="flex:1">
@@ -4344,56 +4662,76 @@
         <span class="home-settings-arrow">←</span>
       </button>
     </div>
+    <div class="home-settings-row">
+      <button class="home-settings-btn bench-row" onclick="openBenchmark()">
+        <span class="home-settings-icon bench-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="34" height="34" aria-hidden="true"><circle r="22" fill="url(#wsd-gold)"/><circle r="22" fill="url(#wsGloss)"/><circle r="22" fill="none" stroke="url(#wsRing)" stroke-width="2"/><use href="#wsg-bench"/></svg></span>
+        <span class="home-settings-text">
+          <span class="home-settings-title">Benchmark <span style="font-size:10px;opacity:.6;font-weight:400">المقياس</span></span>
+          <span class="home-settings-sub" id="benchRowSub">قياس ثابت كل أسبوعين — لا يُدرّب عليه</span>
+        </span>
+        <span class="home-settings-arrow">←</span>
+      </button>
+    </div>
     <div class="library-grid">
       <!-- Sound Lab sits first: it is the only activity that asks nothing of
            a learner who cannot yet read, so it must not be buried below eight
            tiles that all assume reading fluency. -->
-      <button class="lib-tile" onclick="showTab('sound',null)">
-        <span class="lib-tile-ico">👂</span>
+      <button class="lib-tile" data-act="sound" onclick="showTab('sound',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-teal)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-ear" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Sound Lab</span>
         <span class="lib-tile-ar">مختبر الصوت</span>
       </button>
-      <button class="lib-tile" onclick="showTab('grammar',null)">
-        <span class="lib-tile-ico">📐</span>
+      <button class="lib-tile" data-act="grammar" onclick="showTab('grammar',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-sky)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-grammar" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Grammar</span>
         <span class="lib-tile-ar">القواعد</span>
       </button>
-      <button class="lib-tile" onclick="showTab('reading',null)">
-        <span class="lib-tile-ico">📖</span>
+      <button class="lib-tile" data-act="reading" onclick="showTab('reading',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-violet)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-book" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Reading</span>
         <span class="lib-tile-ar">القراءة</span>
       </button>
-      <button class="lib-tile" onclick="showTab('podcast',null)">
-        <span class="lib-tile-ico">🎧</span>
+      <button class="lib-tile" data-act="podcast" onclick="showTab('podcast',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-rose)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-headph" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Podcast</span>
         <span class="lib-tile-ar">بودكاست</span>
       </button>
-      <button class="lib-tile" onclick="showTab('conv',null)">
-        <span class="lib-tile-ico">💬</span>
+      <button class="lib-tile" data-act="conv" onclick="showTab('conv',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-amber)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-talk" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Conversations</span>
         <span class="lib-tile-ar">محادثات</span>
       </button>
-      <button class="lib-tile" onclick="showTab('games',null)">
-        <span class="lib-tile-ico">🎮</span>
+      <button class="lib-tile" data-act="games" onclick="showTab('games',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-teal)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-pad" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Games</span>
         <span class="lib-tile-ar">ألعاب</span>
       </button>
-      <button class="lib-tile" onclick="showTab('quiz',null)">
-        <span class="lib-tile-ico">🎯</span>
+      <button class="lib-tile" data-act="quiz" onclick="showTab('quiz',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-gold)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-clip" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Quiz</span>
         <span class="lib-tile-ar">اختبار</span>
       </button>
-      <button class="lib-tile" onclick="showTab('voice',null)">
-        <span class="lib-tile-ico">🎙️</span>
+      <button class="lib-tile" data-act="voice" onclick="showTab('voice',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-rose)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-mic" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Speak</span>
         <span class="lib-tile-ar">تحدّث</span>
       </button>
-      <button class="lib-tile" onclick="showTab('flash',null)">
-        <span class="lib-tile-ico">🃏</span>
+      <button class="lib-tile" data-act="flash" onclick="showTab('flash',null)">
+        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-sky)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-cards" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-en">Flashcards</span>
         <span class="lib-tile-ar">البطاقات</span>
       </button>
     </div>
+  </div>
+
+  <!-- ══ BENCHMARK ══ -->
+  <div id="tab-bench" class="section">
+    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
+    <div class="tab-head">
+      <h2>📐 Benchmark</h2>
+      <p>المقياس — أداة قياس ثابتة، لا نشاط</p>
+    </div>
+    <div id="bmBody"></div>
   </div>
 
   <!-- ══ SOUND LAB ══ -->
@@ -5478,6 +5816,15 @@
       <div class="sp-row-arrow">→</div>
     </button>
 
+        <button class="sp-row" id="liteBtn" onclick="toggleLite()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#64748B,#334155)">⚡</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">Light Performance Mode</div>
+        <div class="sp-row-sub" id="liteSub">وضع الأداء الخفيف</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
     <button class="sp-row" id="helpBtn" onclick="closeSettingsPanel();openHelp()">
       <div class="sp-row-icon" style="background:linear-gradient(135deg,#2DD4BF,#0E9F8A)">📖</div>
       <div class="sp-row-body">
@@ -5670,38 +6017,19 @@
 
 <nav class="bottom-nav">
   <button class="bnav-btn active" id="bn-home" onclick="showTab('home',this,'bn')">
-    <span class="icon">🏠</span><span style="font-size:9px">Home</span>
+    <span class="icon"><svg class="wsi" viewBox="-24 -24 48 48" width="23" height="23" aria-hidden="true"><use href="#wsg-home"/></svg></span><span style="font-size:9px">Home</span>
   </button>
   <button class="bnav-btn" id="bn-train" onclick="openTrainJourney()">
-    <span class="icon">
-        <svg width="24" height="18" viewBox="0 0 300 110" fill="none" style="display:block">
-          <defs>
-            <linearGradient id="nBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1E5878"/><stop offset="100%" stop-color="#091E2E"/></linearGradient>
-            <linearGradient id="nNose" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#0EA5E9"/><stop offset="100%" stop-color="#2DD4BF"/></linearGradient>
-          </defs>
-          <path d="M42 22 Q45 14 55 12 L255 12 Q265 12 268 22 Z" fill="#2A6E90"/>
-          <rect x="40" y="24" width="228" height="52" rx="6" fill="url(#nBody)"/>
-          <path d="M268 24 L294 35 Q298 42 294 49 L268 60 Z" fill="url(#nNose)"/>
-          <rect x="40" y="39" width="258" height="6" rx="3" fill="#F5C842" opacity="0.9"/>
-          <rect x="52" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
-          <rect x="102" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
-          <rect x="190" y="28" width="38" height="22" rx="5" fill="#BAE6FD" opacity="0.7"/>
-          <rect x="36" y="74" width="256" height="8" rx="4" fill="#05111C"/>
-          <circle cx="68" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
-          <circle cx="148" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
-          <circle cx="218" cy="88" r="14" fill="#071520" stroke="#2DD4BF" stroke-width="2"/>
-          <circle cx="293" cy="42" r="6" fill="#FFF176" opacity="0.85"/>
-        </svg>
-      </span><span style="font-size:9px">Journey</span>
+    <span class="icon"><svg class="wsi" viewBox="-24 -24 48 48" width="23" height="23" aria-hidden="true"><use href="#wsg-train"/></svg></span><span style="font-size:9px">Journey</span>
   </button>
   <button class="bnav-btn" id="bn-library" onclick="showTab('library',this,'bn')">
-    <span class="icon">📖</span><span style="font-size:9px">Library</span>
+    <span class="icon"><svg class="wsi" viewBox="-24 -24 48 48" width="23" height="23" aria-hidden="true"><use href="#wsg-library"/></svg></span><span style="font-size:9px">Library</span>
   </button>
   <button class="bnav-btn" id="bn-words" onclick="showTab('words',this,'bn')">
-    <span class="icon">📚</span><span style="font-size:9px">Words</span>
+    <span class="icon"><svg class="wsi" viewBox="-24 -24 48 48" width="23" height="23" aria-hidden="true"><use href="#wsg-words"/></svg></span><span style="font-size:9px">Words</span>
   </button>
   <button class="bnav-btn" id="bn-account" onclick="showResultsTab(this)">
-    <span class="icon">👤</span><span style="font-size:9px">Account</span>
+    <span class="icon"><svg class="wsi" viewBox="-24 -24 48 48" width="23" height="23" aria-hidden="true"><use href="#wsg-account"/></svg></span><span style="font-size:9px">Account</span>
   </button>
 </nav>
 
@@ -5733,14 +6061,15 @@ const KNOWN_KEYS = [
   'mywords','streak','lastDay','longestStreakEver','dailyGoal','mastery','wsPoints',
   'trainProgress','flowStation','flowWordsBase','flowWordsDay',
   'readingLevel','readingCompleted','grammarCompleted','quizResume','sqResume',
-  'theme','fontSizeLevel','rwStudentNames','sparkComebackCount','missionSparkDate',
+  'theme','fontSizeLevel','liteMode','rwStudentNames','sparkComebackCount','missionSparkDate',
   'teacherName','teacherPhone','teacherEmail','parentPhone',
   'lastBackupDate','installBannerDismissedUntil','voiceChatPointsDate',
-  'realPlacementTestResult','pack_starter','countOff','lastCountDay','starPoints'
+  'realPlacementTestResult','pack_starter','countOff','lastCountDay','starPoints',
+  'arOpens','stationViews','levelLocked','bmHistory'
 ];
 // Keys built at runtime from a suffix (a section, a day, a pack id).
 const KNOWN_PREFIXES = [
-  'activity_','count_','daily_','pack_','pack_completed_','conv_mastered_',
+  'activity_','count_','done_','dcount_','daily_','pack_','pack_completed_','conv_mastered_',
   'pod_done_','addedphrase_','improvementLog_','devLog_'
 ];
 
@@ -7037,6 +7366,93 @@ function finishRealPlacementTest() {
 //
 //   'simple'  short patterned sentences, controlled vocabulary
 //   'full'    the original passage
+// ══ SILENT LEVEL DETECTION ══
+//
+// A learner's behaviour is a better measure than their own answer. Asked
+// directly, a shy student understates and a confident one overstates, and
+// either way they are guessing about a scale they have never seen.
+//
+// So nobody is asked. Four signals are read from work the learner is doing
+// anyway, and none of them costs them a single tap:
+//
+//   1. How often they uncover the Arabic translation at a station. A reader
+//      who rarely needs it is reading. This is the strongest signal, and the
+//      only one that required any new tracking.
+//   2. Average mastery across their own words — how well the vocabulary they
+//      chose has actually stuck.
+//   3. Length of the English words they type unprompted. Beginners reach for
+//      short, concrete words; stronger learners reach for longer ones.
+//   4. Stations cleared. Distance travelled is evidence in itself.
+//
+// Everyone starts simple, because being handed something too easy costs a
+// moment while being handed something unreadable costs the learner entirely.
+// Promotion needs agreement from several signals, not one good day, and it
+// happens quietly: no popup, no "you have been upgraded", nothing to perform.
+// A learner who notices at all just finds the texts got longer.
+function inferReadingLevel() {
+  try {
+    var score = 0;
+
+    // 1 · Translation reliance. Measured per station visited, so it does not
+    //     punish a learner simply for having travelled further.
+    var arOpens = parseInt(localStorage.getItem('arOpens') || '0');
+    var stationViews = parseInt(localStorage.getItem('stationViews') || '0');
+    if (stationViews >= 3) {
+      var reliance = arOpens / stationViews;
+      if (reliance < 0.25) score += 3;
+      else if (reliance < 0.6) score += 1;
+      else score -= 2;   // leaning on the translation every time
+    }
+
+    // 2 · Mastery of their own vocabulary.
+    var mine = myWords();
+    if (mine.length >= 8) {
+      var total = 0;
+      mine.forEach(function (w) { total += getMasteryScore(w.id); });
+      var avg = total / mine.length;
+      if (avg >= 55) score += 2;
+      else if (avg >= 30) score += 1;
+    }
+
+    // 3 · Vocabulary reach: average length of words they typed themselves.
+    var typed = mine.filter(function (w) { return w.source === 'mine'; });
+    if (typed.length >= 5) {
+      var chars = 0;
+      typed.forEach(function (w) { chars += (w.en || '').length; });
+      var avgLen = chars / typed.length;
+      if (avgLen >= 7.5) score += 2;
+      else if (avgLen >= 5.5) score += 1;
+    }
+
+    // 4 · Distance travelled.
+    var p = getTrainProgress();
+    var done = Array.isArray(p.completed) ? p.completed.length : 0;
+    if (done >= 8) score += 2;
+    else if (done >= 4) score += 1;
+
+    // Hysteresis: promotion needs a clear margin, demotion a clearer one, so a
+    // learner is never flipped back and forth by one hard day.
+    var current = localStorage.getItem('readingLevel') || 'simple';
+    if (current === 'simple' && score >= 6) return 'full';
+    if (current === 'full'   && score <= 0) return 'simple';
+    return current;
+  } catch (e) {
+    return localStorage.getItem('readingLevel') || 'simple';
+  }
+}
+
+// Called where evidence changes — after a station is cleared. Writes silently:
+// the learner is never told, because being told turns a measurement into a
+// verdict about them.
+function refreshInferredLevel() {
+  if (localStorage.getItem('levelLocked') === '1') return; // learner chose by hand
+  var next = inferReadingLevel();
+  if (next !== localStorage.getItem('readingLevel')) {
+    localStorage.setItem('readingLevel', next);
+    devLog('reading level inferred ->', next);
+  }
+}
+
 function getReadingLevel() {
   var manual = localStorage.getItem('readingLevel');
   if (manual === 'simple' || manual === 'full') return manual;
@@ -7057,6 +7473,7 @@ function getReadingLevel() {
 
 function setReadingLevel(lv) {
   localStorage.setItem('readingLevel', lv);
+  localStorage.setItem('levelLocked', '1');
   refreshReadingLevelLabel();
   showToast(lv === 'simple'
     ? '📖 نصوص المحطات ستكون مبسّطة'
@@ -7071,6 +7488,7 @@ function togglePulse() {
   var off = localStorage.getItem('countOff') === '1';
   localStorage.setItem('countOff', off ? '0' : '1');
   refreshPulseLabel();
+  refreshLiteLabel();
   showToast(off ? '📊 تم تفعيل العدّاد المجهول' : '🔕 تم إيقاف العدّاد المجهول', '#64748B');
 }
 
@@ -7089,6 +7507,24 @@ function refreshLevelSourceLabel() {
           : localStorage.getItem('levelSelfDeclared') === '1' ? 'اخترته بنفسك'
           : 'من الاختبار';
   el.textContent = (names[lv] || lv) + ' · ' + how;
+}
+
+/* Lite mode is applied before the first paint by a script in <head>, so the
+   toggle only records the choice; the reload is what makes it take effect
+   without leaving half the page still blurred. */
+function toggleLite() {
+  var on = localStorage.getItem('liteMode') === '1';
+  if (on) localStorage.removeItem('liteMode'); else localStorage.setItem('liteMode', '1');
+  showToast(on ? '✨ عادت المؤثّرات الكاملة' : '⚡ وضع الأداء الخفيف', '#64748B');
+  setTimeout(function () { location.reload(); }, 700);
+}
+
+function refreshLiteLabel() {
+  var el = document.getElementById('liteSub');
+  if (!el) return;
+  el.textContent = (localStorage.getItem('liteMode') === '1')
+    ? 'مفعّل — بلا حركة ولا ضباب، للأجهزة البطيئة'
+    : 'موقوف — المؤثّرات الكاملة';
 }
 
 function refreshPulseLabel() {
@@ -7534,6 +7970,1070 @@ function addStationWords(stationId) {
   if (btn) { btn.classList.add('saa-done'); btn.querySelector('.saa-en').textContent = '✓ Added to my words'; }
 }
 
+// ══ THE BENCHMARK ══
+//
+// Everything else in WordSpark measures effort: words added, stations cleared,
+// days in a row. None of it measures ability. A learner can add two hundred
+// words and clear twenty stations without reading English any better.
+//
+// Worse, the practice quizzes draw from the learner's *own* vocabulary, which
+// is exactly right for learning and useless for measurement: 80% in week one
+// and 80% in week ten are scores on two different tests. You cannot measure
+// distance with a ruler that changes length.
+//
+// So this is deliberately separate from everything else:
+//
+//   FIXED      These items appear nowhere else in the app. They cannot be
+//              learned by practising, which is what makes a repeat score mean
+//              something.
+//   WEIGHTED   Reading 40%, Structure 30%, Listening 20%, Writing Analysis 10%
+//              — the published weights of the Saudi STEP exam, so the number
+//              is interpretable against a test learners actually sit.
+//   PARALLEL   Two equivalent forms alternate, so a second sitting is not the
+//              same paper again.
+//   SPACED     Available once every 14 days. Measuring more often than that
+//              reports noise, not growth.
+//
+// The score is not a grade on the learner. It is a measurement of distance
+// travelled, and its only real job is to have a second reading to compare to.
+var BM_INTERVAL_DAYS = 14;
+
+var BM_FORMS = [
+  // ── Form A ────────────────────────────────────────────────────────────
+  {
+    id: 'A',
+    reading: [
+      { passage: "Sara works at a small library in the city centre. Every morning she arranges the new books on the shelves. She likes the quiet, but Thursday afternoons are busy because students come to borrow books before the weekend.",
+        items: [
+          { q: "When is the library busiest?", opts: ["At the weekend", "On Monday", "Every morning", "Thursday afternoons"], ans: 3 },
+          { q: "The word \"arranges\" is closest in meaning to:", opts: ["reads", "puts in order", "repairs", "buys"], ans: 1 },
+          { q: "What can we conclude about Sara?", opts: ["She works at night", "She dislikes her job", "She prefers quiet work", "She is a student"], ans: 2 }
+        ] },
+      { passage: "Most plants need sunlight to make food. However, a few species that grow on dark forest floors have adapted differently: they take nutrients from fungi in the soil instead. These plants are often pale, because they no longer need the green chemical that captures light.",
+        items: [
+          { q: "Why are these plants pale?", opts: ["They grow too fast", "They lack the chemical that captures light", "The soil is poor", "They are very old"], ans: 1 },
+          { q: "The word \"adapted\" means:", opts: ["changed to suit conditions", "moved away", "died out", "grown larger"], ans: 0 },
+          { q: "What is the main idea?", opts: ["All plants need sun", "Fungi are harmful", "Some plants survive without sunlight", "Forests are dark"], ans: 2 }
+        ] },
+      { passage: "The committee postponed its decision until further data became available. Several members argued that acting too quickly would be worse than waiting, though one warned that delay carried its own cost.",
+        items: [
+          { q: "What did the committee do?", opts: ["Voted unanimously", "Resigned", "Rejected the plan", "Delayed deciding"], ans: 3 },
+          { q: "\"Postponed\" is closest to:", opts: ["cancelled", "approved", "delayed", "discussed"], ans: 2 }
+        ] }
+    ],
+    structure: [
+      { q: "She ___ in Riyadh since 2019.", opts: ["has lived", "is living", "lived", "lives"], ans: 0 },
+      { q: "If I ___ more time, I would finish the report.", opts: ["have", "had", "will have", "am having"], ans: 1 },
+      { q: "The results were ___ than we expected.", opts: ["good", "better", "best", "the best"], ans: 1 },
+      { q: "He asked me where ___.", opts: ["I am live", "did I live", "I lived", "do I live"], ans: 2 },
+      { q: "Neither the manager nor the employees ___ informed.", opts: ["has been", "was", "were", "is"], ans: 2 },
+      { q: "I will call you as soon as I ___ home.", opts: ["will arrive", "arrive", "arrived", "am arriving"], ans: 1 }
+    ],
+    listening: [
+      { say: "The meeting has been moved from Tuesday to Thursday at nine.", q: "When is the meeting now?", opts: ["Thursday at nine", "Thursday at five", "Tuesday at five", "Tuesday at nine"], ans: 0 },
+      { say: "Please leave the package with the neighbour if nobody answers.", q: "What should be done if nobody answers?", opts: ["Return it", "Leave it with the neighbour", "Call the office", "Wait outside"], ans: 1 },
+      { say: "Although the flight was delayed, we still arrived before midnight.", q: "What is true?", opts: ["They arrived at dawn", "They arrived late at night but before midnight", "The flight was cancelled", "They missed the flight"], ans: 1 },
+      { say: "The library closes early on Fridays, so return your books by noon.", q: "By when should books be returned on Friday?", opts: ["By noon", "By evening", "By nine", "Any time"], ans: 0 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["we visited makkah in ramadan.", "We visited Makkah in Ramadan.", "We Visited Makkah In Ramadan.", "we Visited makkah in ramadan."], ans: 1 },
+      { q: "Which sentence is correctly punctuated?", opts: ["He studied hard he passed the exam.", "He studied hard, so he passed the exam.", "He studied hard; so he passed the exam.", "He studied hard, he passed the exam."], ans: 1 }
+    ]
+  },
+
+  // ── Form B ────────────────────────────────────────────────────────────
+  // Matched to Form A item for item: same skills, same counts, same rough
+  // difficulty — so a score on B is comparable to a score on A.
+  {
+    id: 'B',
+    reading: [
+      { passage: "Omar repairs bicycles in a small shop near the school. He opens early so students can leave their bikes before class. Most repairs take an hour, but he keeps a few spare wheels for the ones that cannot wait.",
+        items: [
+          { q: "Why does Omar open early?", opts: ["To clean the shop", "So students can drop off bikes", "To meet suppliers", "Because he lives nearby"], ans: 1 },
+          { q: "The word \"spare\" is closest in meaning to:", opts: ["old", "broken", "extra", "expensive"], ans: 2 },
+          { q: "What can we conclude about Omar?", opts: ["He plans for urgent cases", "He dislikes students", "He works only at night", "He is closing the shop"], ans: 0 }
+        ] },
+      { passage: "Deserts receive very little rain, yet many animals live there. Some survive by staying underground during the day and hunting at night, when the air is cooler. Others get almost all the water they need from the food they eat.",
+        items: [
+          { q: "Why do some desert animals hunt at night?", opts: ["The air is cooler", "They cannot see by day", "Predators sleep", "There is more food"], ans: 0 },
+          { q: "The word \"survive\" means:", opts: ["stay alive", "travel far", "grow quickly", "give up"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Rain is common in deserts", "Animals adapt to dry conditions", "Night is dangerous", "Deserts have no life"], ans: 1 }
+        ] },
+      { passage: "The council approved the proposal despite considerable opposition. Critics maintained that the cost had been underestimated, while supporters insisted the delay would prove more expensive still.",
+        items: [
+          { q: "What did the council do?", opts: ["Postponed it", "Amended it", "Rejected the proposal", "Approved it"], ans: 3 },
+          { q: "\"Considerable\" is closest to:", opts: ["unexpected", "slight", "significant", "polite"], ans: 2 }
+        ] }
+    ],
+    structure: [
+      { q: "They ___ in Jeddah for ten years.", opts: ["have worked", "are working", "worked", "work"], ans: 0 },
+      { q: "If she ___ earlier, she would have caught the train.", opts: ["left", "had left", "leaves", "has left"], ans: 1 },
+      { q: "This road is ___ than the old one.", opts: ["widest", "the widest", "wide", "wider"], ans: 3 },
+      { q: "She wanted to know why ___ late.", opts: ["he was", "did he", "he is been", "was he"], ans: 0 },
+      { q: "Either the teacher or the students ___ responsible.", opts: ["is", "are", "was", "has been"], ans: 1 },
+      { q: "We will start the lesson after everyone ___.", opts: ["sits", "sat", "is sitting", "will sit"], ans: 0 }
+    ],
+    listening: [
+      { say: "The lesson has been changed from Sunday to Monday at four.", q: "When is the lesson now?", opts: ["Monday at nine", "Sunday at nine", "Sunday at four", "Monday at four"], ans: 3 },
+      { say: "Please send the file by email if the printer is not working.", q: "What should be done if the printer fails?", opts: ["Fix it", "Send the file by email", "Wait a day", "Call the manager"], ans: 1 },
+      { say: "Even though it rained all morning, the match started on time.", q: "What is true?", opts: ["The match began as planned", "The match was cancelled", "It did not rain", "The match ended early"], ans: 0 },
+      { say: "The clinic opens late on Wednesdays, so arrive after ten.", q: "When should you arrive on Wednesday?", opts: ["After ten", "Before eight", "At dawn", "Any time"], ans: 0 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["My brother studies at King Saud University.", "My Brother Studies At King Saud University.", "my Brother studies at king Saud university.", "my brother studies at king saud university."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["She was tired; but she kept working.", "She was tired, she kept working.", "She was tired but she kept working", "She was tired, but she kept working."], ans: 3 }
+    ]
+  },
+  // ── Form C ────────────────────────────────────────────────────────────
+  {
+    id: 'C',
+    reading: [
+      { passage: "Noura sells dates at the Friday market. She arrives before sunrise to set up her table, and by midday most of the boxes are empty. Her regular customers know she keeps the best fruit aside for them.",
+        items: [
+          { q: "When does Noura arrive at the market?", opts: ["In the evening", "After the customers", "At midday", "Before sunrise"], ans: 3 },
+          { q: "The phrase \"keeps aside\" is closest in meaning to:", opts: ["throws away", "reserves", "sells quickly", "counts"], ans: 1 },
+          { q: "What can we conclude about her business?", opts: ["It is failing", "She values loyal customers", "She works alone at night", "She sells only to tourists"], ans: 1 }
+        ] },
+      { passage: "Bees communicate the location of flowers by dancing. The direction of the dance shows where the flowers are in relation to the sun, and its length tells the other bees how far they must fly. A single dance can send hundreds of bees to the same field.",
+        items: [
+          { q: "What does the length of the dance show?", opts: ["The time of day", "The number of bees", "The type of flower", "The distance to fly"], ans: 3 },
+          { q: "The word \"location\" means:", opts: ["season", "colour", "place", "smell"], ans: 2 },
+          { q: "What is the main idea?", opts: ["Flowers attract bees by scent", "Bees cannot see flowers", "Dancing is for enjoyment", "Bees pass on information by movement"], ans: 3 }
+        ] },
+      { passage: "The report was criticised for relying on assumptions that had never been tested. Its authors replied that gathering firmer evidence would have delayed publication by years, by which time the question might no longer matter.",
+        items: [
+          { q: "Why was the report criticised?", opts: ["It was published late", "It ignored the authors", "It was too short", "It rested on untested assumptions"], ans: 3 },
+          { q: "\"Firmer\" is closest in meaning to:", opts: ["cheaper", "older", "shorter", "stronger"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "He ___ at this company since he graduated.", opts: ["has worked", "is working", "worked", "works"], ans: 0 },
+      { q: "If the weather ___ better, we would go out.", opts: ["will be", "has been", "is", "were"], ans: 3 },
+      { q: "Her explanation was ___ than his.", opts: ["the clearest", "clear", "clearer", "clearest"], ans: 2 },
+      { q: "They asked me how long ___ there.", opts: ["did I stay", "I had stayed", "I do stay", "had I stayed"], ans: 1 },
+      { q: "Neither the students nor the teacher ___ ready.", opts: ["is", "were", "have been", "are"], ans: 0 },
+      { q: "Wait here until the bus ___.", opts: ["is coming", "will come", "comes", "came"], ans: 2 }
+    ],
+    listening: [
+      { say: "The exam has been moved from Saturday to Sunday at eight.", q: "When is the exam now?", opts: ["Saturday at eight", "Sunday at eight", "Sunday at ten", "Saturday at ten"], ans: 1 },
+      { say: "Please use the side entrance if the main door is locked.", q: "What should you do if the main door is locked?", opts: ["Wait outside", "Use the side entrance", "Call security", "Come back later"], ans: 1 },
+      { say: "Despite the heavy traffic, he reached the office before the meeting began.", q: "What is true?", opts: ["He arrived in time", "He missed the meeting", "There was no traffic", "The meeting was cancelled"], ans: 0 },
+      { say: "The shop stops taking orders at six, so send yours before then.", q: "By when should orders be sent?", opts: ["Any time", "Before six", "After six", "At midnight"], ans: 1 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["last Ramadan we travelled to madinah.", "last ramadan we travelled to madinah.", "Last Ramadan we travelled to Madinah.", "Last Ramadan We Travelled To Madinah."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The road was closed, we took another route.", "The road was closed so we took another route", "The road was closed, so we took another route.", "The road was closed; so we took another route."], ans: 2 }
+    ]
+  },
+
+  // ── Form D ────────────────────────────────────────────────────────────
+  {
+    id: 'D',
+    reading: [
+      { passage: "Faisal teaches swimming at the community pool. He starts with the youngest children because they tire quickly, and leaves the adult classes for the evening. On hot days he moves the first lesson earlier.",
+        items: [
+          { q: "Why does Faisal teach the youngest children first?", opts: ["The pool is empty", "They arrive early", "They tire quickly", "They pay more"], ans: 2 },
+          { q: "The word \"tire\" is closest in meaning to:", opts: ["grow taller", "learn faster", "become tired", "become bored"], ans: 2 },
+          { q: "What can we conclude about Faisal?", opts: ["He adjusts his schedule to conditions", "He dislikes adults", "He swims badly", "He works only in winter"], ans: 0 }
+        ] },
+      { passage: "Volcanic ash can travel thousands of kilometres in the upper atmosphere. Although the particles are tiny, they scatter sunlight and can cool the surface of the planet for a year or more after a large eruption.",
+        items: [
+          { q: "What effect can volcanic ash have?", opts: ["It cools the surface", "It stops rain entirely", "It increases sunlight", "It warms the planet"], ans: 0 },
+          { q: "The word \"scatter\" means:", opts: ["absorb completely", "spread in different directions", "store", "destroy"], ans: 1 },
+          { q: "What is the main idea?", opts: ["Small particles can affect global climate", "Ash falls near the volcano only", "Eruptions are rare", "Ash is harmless"], ans: 0 }
+        ] },
+      { passage: "The proposal was withdrawn before a vote could be taken. Observers disagreed about the reason: some assumed its supporters had lost confidence, while others suspected they were simply waiting for a better moment.",
+        items: [
+          { q: "What happened to the proposal?", opts: ["It was withdrawn", "It was rewritten", "It was voted down", "It was passed"], ans: 0 },
+          { q: "\"Suspected\" is closest in meaning to:", opts: ["believed without proof", "denied", "announced", "proved"], ans: 0 }
+        ] }
+    ],
+    structure: [
+      { q: "We ___ each other since childhood.", opts: ["are knowing", "knew", "know", "have known"], ans: 3 },
+      { q: "If he ___ harder, he would pass easily.", opts: ["will study", "has studied", "studies", "studied"], ans: 3 },
+      { q: "This machine is ___ than the old model.", opts: ["most efficient", "the most efficient", "efficient", "more efficient"], ans: 3 },
+      { q: "She wondered what ___ to the keys.", opts: ["does happen", "has happen", "did happen", "had happened"], ans: 3 },
+      { q: "Either the driver or the passengers ___ at fault.", opts: ["is", "are", "was", "has been"], ans: 1 },
+      { q: "Call me before you ___ the house.", opts: ["are leaving", "will leave", "leave", "left"], ans: 2 }
+    ],
+    listening: [
+      { say: "The appointment has been changed from Monday to Wednesday at eleven.", q: "When is the appointment now?", opts: ["Wednesday at eleven", "Wednesday at one", "Monday at one", "Monday at eleven"], ans: 0 },
+      { say: "Please take the stairs if the lift is out of order.", q: "What should you do if the lift is broken?", opts: ["Use the back door", "Wait for repair", "Take the stairs", "Leave the building"], ans: 2 },
+      { say: "Although the shop had closed, the manager let us collect our order.", q: "What is true?", opts: ["The order was lost", "They got their order", "The shop was open", "They came back later"], ans: 1 },
+      { say: "The gates shut at seven, so plan to arrive well before that.", q: "When should you arrive?", opts: ["Exactly at seven", "After seven", "At any hour", "Well before seven"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["We study English every Tuesday.", "We Study English Every Tuesday.", "we Study english every Tuesday.", "we study english every tuesday."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["He was late but he apologised", "He was late, but he apologised.", "He was late; but he apologised.", "He was late, he apologised."], ans: 1 }
+    ]
+  },
+
+  // ── Form E ────────────────────────────────────────────────────────────
+  {
+    id: 'E',
+    reading: [
+      { passage: "Maha repairs old watches in a shop her grandfather opened. Customers often bring pieces that no longer work at all, and she explains honestly when a repair would cost more than the watch is worth.",
+        items: [
+          { q: "What does Maha tell customers?", opts: ["That she only sells new watches", "That she cannot help", "Every watch can be fixed", "When repair costs too much"], ans: 3 },
+          { q: "The word \"honestly\" is closest in meaning to:", opts: ["quickly", "quietly", "politely", "truthfully"], ans: 3 },
+          { q: "What can we conclude about Maha?", opts: ["She values fairness over profit", "She dislikes old watches", "She charges the highest prices", "She inherited no skills"], ans: 0 }
+        ] },
+      { passage: "Salt was once so valuable that it was used to pay workers. It preserved food through long winters and across long journeys, which meant that control of a salt mine could make a small town unexpectedly powerful.",
+        items: [
+          { q: "Why was salt valuable?", opts: ["It was beautiful", "It preserved food", "It was rare in the sea", "It was easy to carry"], ans: 1 },
+          { q: "The word \"preserved\" means:", opts: ["kept from spoiling", "cooked", "coloured", "weighed"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Winters were short", "Salt is used in cooking", "Salt once shaped wealth and power", "Mines are dangerous"], ans: 2 }
+        ] },
+      { passage: "The findings were widely reported, though few accounts mentioned how small the sample had been. The researchers themselves had described their results as preliminary, a caution that disappeared almost entirely in the retelling.",
+        items: [
+          { q: "What did most reports leave out?", opts: ["The authors' names", "The small sample size", "The date of the study", "The funding source"], ans: 1 },
+          { q: "\"Preliminary\" is closest in meaning to:", opts: ["incorrect", "expensive", "final", "early and not conclusive"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "They ___ in that house since 2015.", opts: ["are living", "lived", "live", "have lived"], ans: 3 },
+      { q: "If we ___ the map, we would not be lost.", opts: ["will bring", "are bringing", "bring", "had brought"], ans: 3 },
+      { q: "Today's lesson was ___ than yesterday's.", opts: ["difficult", "more difficult", "most difficult", "the most difficult"], ans: 1 },
+      { q: "He asked her when ___ the letter.", opts: ["does she send", "had she sent", "did she send", "she had sent"], ans: 3 },
+      { q: "Neither the coach nor the players ___ satisfied.", opts: ["was", "has been", "is", "were"], ans: 3 },
+      { q: "We will begin once everyone ___ here.", opts: ["was", "has being", "will be", "is"], ans: 3 }
+    ],
+    listening: [
+      { say: "The trip has been postponed from Thursday to Friday at seven.", q: "When is the trip now?", opts: ["Thursday at nine", "Thursday at seven", "Friday at seven", "Friday at nine"], ans: 2 },
+      { say: "Please write your name on the list if the office is empty.", q: "What should you do if nobody is in the office?", opts: ["Write your name on the list", "Phone the manager", "Knock louder", "Come back tomorrow"], ans: 0 },
+      { say: "Even though the directions were unclear, they found the house easily.", q: "What is true?", opts: ["The directions were clear", "They never arrived", "They found it without difficulty", "They got lost"], ans: 2 },
+      { say: "Registration ends at four, so submit your form earlier in the day.", q: "When should the form be submitted?", opts: ["After four", "At midnight", "Next week", "Earlier in the day"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["my family visited riyadh last january.", "My family visited Riyadh last January.", "My Family Visited Riyadh Last January.", "my Family visited riyadh last January."], ans: 1 },
+      { q: "Which sentence is correctly punctuated?", opts: ["She called twice, nobody answered.", "She called twice but nobody answered", "She called twice, but nobody answered.", "She called twice; but nobody answered."], ans: 2 }
+    ]
+  },
+
+  // ── Form F ────────────────────────────────────────────────────────────
+  {
+    id: 'F',
+    reading: [
+      { passage: "Yousef drives a delivery van across the city. He plans his route the night before so that the furthest stops come first, and finishes near his own neighbourhood in the late afternoon.",
+        items: [
+          { q: "Why does Yousef visit the furthest stops first?", opts: ["The van is lighter", "They pay more", "So he finishes near home", "They open early"], ans: 2 },
+          { q: "The word \"route\" is closest in meaning to:", opts: ["price", "vehicle", "delay", "path to follow"], ans: 3 },
+          { q: "What can we conclude about Yousef?", opts: ["He works at night", "He is often late", "He plans carefully", "He dislikes driving"], ans: 2 }
+        ] },
+      { passage: "Some birds navigate using the earth's magnetic field. Young birds appear to be born with a rough sense of direction, but they correct it each season by watching where the stars rise and set.",
+        items: [
+          { q: "How do young birds correct their sense of direction?", opts: ["By watching the stars", "By listening to the wind", "By resting more often", "By following older birds"], ans: 0 },
+          { q: "The word \"navigate\" means:", opts: ["find their way", "build nests", "sing", "gather food"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Magnetism is weak", "Birds cannot travel far", "Birds combine instinct with learning", "Stars are fixed"], ans: 2 }
+        ] },
+      { passage: "The policy achieved its stated aim, yet its wider effects were harder to judge. Supporters pointed to the figures; critics argued that the figures measured only what was easiest to count.",
+        items: [
+          { q: "What did critics argue?", opts: ["The figures measured the wrong things", "The policy was too expensive", "Supporters were dishonest", "The policy failed its aim"], ans: 0 },
+          { q: "\"Stated\" is closest in meaning to:", opts: ["doubtful", "hidden", "declared", "forgotten"], ans: 2 }
+        ] }
+    ],
+    structure: [
+      { q: "She ___ that car for three years.", opts: ["drives", "has driven", "is driving", "drove"], ans: 1 },
+      { q: "If they ___ earlier, they would have found seats.", opts: ["came", "had come", "come", "have come"], ans: 1 },
+      { q: "The second test was ___ than the first.", opts: ["the easiest", "easy", "easier", "easiest"], ans: 2 },
+      { q: "I asked him why ___ the meeting.", opts: ["had he left", "did he leave", "he had left", "does he leave"], ans: 2 },
+      { q: "Either the parents or the child ___ mistaken.", opts: ["are", "is", "were", "have been"], ans: 1 },
+      { q: "Do not open the door until the train ___.", opts: ["stops", "stopped", "is stopping", "will stop"], ans: 0 }
+    ],
+    listening: [
+      { say: "The lecture has been shifted from Tuesday to Wednesday at three.", q: "When is the lecture now?", opts: ["Wednesday at three", "Wednesday at five", "Tuesday at five", "Tuesday at three"], ans: 0 },
+      { say: "Please leave a message if the line is busy.", q: "What should you do if the line is busy?", opts: ["Keep calling", "Leave a message", "Send a letter", "Visit in person"], ans: 1 },
+      { say: "Although the tickets were expensive, the hall was completely full.", q: "What is true?", opts: ["Nobody came", "Tickets were cheap", "The event was cancelled", "Many people still attended"], ans: 3 },
+      { say: "The results are posted at noon, so check the board after lunch.", q: "When should you check the board?", opts: ["After lunch", "Before dawn", "At midnight", "Next month"], ans: 0 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["dr. Khalid teaches at the university of Dammam.", "dr. khalid teaches at the university of dammam.", "Dr. Khalid teaches at the University of Dammam.", "Dr. Khalid Teaches At The University Of Dammam."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The test was hard, everyone passed.", "The test was hard yet everyone passed", "The test was hard, yet everyone passed.", "The test was hard; yet everyone passed."], ans: 2 }
+    ]
+  },
+  // ── Form G ────────────────────────────────────────────────────────────
+  {
+    id: 'G',
+    reading: [
+      { passage: "Hind runs a small bakery beside the mosque. She bakes bread twice a day because the morning batch is always gone by noon. Customers who arrive late often ask her to keep a loaf for them the next day.",
+        items: [
+          { q: "Why does Hind bake twice a day?", opts: ["The morning bread sells out", "She works alone", "The mosque asks her to", "The oven is small"], ans: 0 },
+          { q: "The word \"batch\" is closest in meaning to:", opts: ["a price", "a group made together", "a type of flour", "a customer"], ans: 1 },
+          { q: "What can we conclude about the bakery?", opts: ["It sells no bread", "It is rarely visited", "Demand is high", "It opens only in winter"], ans: 2 }
+        ] },
+      { passage: "Trees in a forest are connected underground by threads of fungus. Through this network, a large tree can send sugar to a smaller one growing in its shade. Scientists now think a forest behaves less like a crowd of individuals and more like a single system.",
+        items: [
+          { q: "What can a large tree send to a smaller one?", opts: ["Seeds", "Leaves", "Water only", "Sugar"], ans: 3 },
+          { q: "The word \"network\" means:", opts: ["a type of soil", "a season", "a connected system", "a tall tree"], ans: 2 },
+          { q: "What is the main idea?", opts: ["Shade kills young trees", "Forests compete fiercely", "Fungus harms trees", "A forest acts as one connected system"], ans: 3 }
+        ] },
+      { passage: "The agreement was praised as a breakthrough, although its terms left the hardest questions for later. Diplomats defended this, noting that a narrow agreement signed is worth more than a broad one still being argued over.",
+        items: [
+          { q: "What did the agreement leave out?", opts: ["The hardest questions", "The date", "The participants", "The signatures"], ans: 0 },
+          { q: "\"Breakthrough\" is closest in meaning to:", opts: ["failure", "major advance", "delay", "mistake"], ans: 1 }
+        ] }
+    ],
+    structure: [
+      { q: "I ___ this book since last Ramadan.", opts: ["have read", "am reading", "reads", "read"], ans: 0 },
+      { q: "If she ___ the truth, she would tell us.", opts: ["knows", "knew", "will know", "has known"], ans: 1 },
+      { q: "The new office is ___ than the old one.", opts: ["the quietest", "quiet", "quieter", "quietest"], ans: 2 },
+      { q: "He asked us where ___ the documents.", opts: ["do we put", "had we put", "did we put", "we had put"], ans: 3 },
+      { q: "Neither the report nor the figures ___ accurate.", opts: ["has been", "is", "are", "was"], ans: 2 },
+      { q: "Lock the door before you ___ to bed.", opts: ["went", "are going", "will go", "go"], ans: 3 }
+    ],
+    listening: [
+      { say: "The interview has been moved from Monday to Tuesday at ten.", q: "When is the interview now?", opts: ["Tuesday at ten", "Tuesday at two", "Monday at two", "Monday at ten"], ans: 0 },
+      { say: "Please sign the form at reception if the clerk is not at the desk.", q: "What should you do if the clerk is away?", opts: ["Leave immediately", "Sign the form at reception", "Phone the office", "Wait an hour"], ans: 1 },
+      { say: "Although the room was crowded, everyone could hear the speaker clearly.", q: "What is true?", opts: ["The speaker was heard well", "The room was empty", "Nobody could hear", "The talk was cancelled"], ans: 0 },
+      { say: "The pharmacy closes at nine, so collect your medicine before evening prayer.", q: "When should the medicine be collected?", opts: ["Next week", "Before evening prayer", "After nine", "At dawn"], ans: 1 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["our Teacher mr. Salem lives in khobar.", "our teacher mr. salem lives in khobar.", "Our teacher Mr. Salem lives in Khobar.", "Our Teacher Mr. Salem Lives In Khobar."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["It was raining; yet we walked home.", "It was raining, we walked home.", "It was raining yet we walked home", "It was raining, yet we walked home."], ans: 3 }
+    ]
+  },
+
+  // ── Form H ────────────────────────────────────────────────────────────
+  {
+    id: 'H',
+    reading: [
+      { passage: "Bandar photographs weddings at the weekend and works in an office during the week. He says the two jobs suit each other: one is quiet and predictable, the other is loud and never the same twice.",
+        items: [
+          { q: "What does Bandar do during the week?", opts: ["Teaches photography", "Photographs weddings", "Works in an office", "Travels abroad"], ans: 2 },
+          { q: "The word \"predictable\" is closest in meaning to:", opts: ["dangerous", "far away", "expensive", "easy to expect"], ans: 3 },
+          { q: "Why do the two jobs suit each other?", opts: ["They are opposites that balance", "Both are quiet", "Both are at weekends", "They pay the same"], ans: 0 }
+        ] },
+      { passage: "Glass looks solid, but it has no fixed internal pattern the way most solids do. Its particles are frozen in a disordered arrangement, which is why glass breaks along no particular line and shatters instead of splitting cleanly.",
+        items: [
+          { q: "Why does glass shatter rather than split?", opts: ["It is very thin", "Its particles are disordered", "It is too cold", "It contains water"], ans: 1 },
+          { q: "The word \"disordered\" means:", opts: ["without regular arrangement", "very hard", "transparent", "heated"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Glass is the strongest solid", "Glass is unusual among solids", "All solids shatter", "Glass is a liquid"], ans: 1 }
+        ] },
+      { passage: "The measure was introduced quietly and attracted little comment at the time. Only years later, when its consequences had spread well beyond the sector it was written for, did it become the subject of serious debate.",
+        items: [
+          { q: "When did the measure attract serious debate?", opts: ["Never", "Immediately", "Years later", "Before it was introduced"], ans: 2 },
+          { q: "\"Consequences\" is closest in meaning to:", opts: ["costs", "arguments", "rules", "results"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "She ___ her car since the accident.", opts: ["did not drove", "does not drive", "has not driven", "is not driving"], ans: 2 },
+      { q: "If I ___ you, I would accept the offer.", opts: ["will be", "have been", "am", "were"], ans: 3 },
+      { q: "This summer was ___ than last summer.", opts: ["hotter", "hottest", "the hottest", "hot"], ans: 0 },
+      { q: "They asked me who ___ the window.", opts: ["did break", "had broken", "does break", "has broke"], ans: 1 },
+      { q: "Either the manager or the assistants ___ available.", opts: ["are", "was", "has been", "is"], ans: 0 },
+      { q: "Send the message once you ___ the address.", opts: ["will find", "find", "found", "are finding"], ans: 1 }
+    ],
+    listening: [
+      { say: "The delivery has been changed from Wednesday to Thursday at noon.", q: "When is the delivery now?", opts: ["Wednesday at six", "Wednesday at noon", "Thursday at noon", "Thursday at six"], ans: 2 },
+      { say: "Please park behind the building if the front spaces are taken.", q: "What should you do if the front is full?", opts: ["Wait in the car", "Go home", "Park on the grass", "Park behind the building"], ans: 3 },
+      { say: "Even though the instructions were long, the task took only ten minutes.", q: "What is true?", opts: ["They gave up", "There were no instructions", "The task was quick", "The task took all day"], ans: 2 },
+      { say: "The gates open at five, so there is no point coming any earlier.", q: "What does the speaker suggest?", opts: ["Arrive at dawn", "Come the next day", "Skip the event", "Do not arrive before five"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["The King Fahd Causeway links Saudi Arabia and Bahrain.", "The King Fahd Causeway Links Saudi Arabia And Bahrain.", "the King fahd causeway links saudi Arabia and bahrain.", "the king fahd causeway links saudi arabia and bahrain."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["He arrived early but the doors were shut", "He arrived early, but the doors were shut.", "He arrived early; but the doors were shut.", "He arrived early, the doors were shut."], ans: 1 }
+    ]
+  },
+
+  // ── Form I ────────────────────────────────────────────────────────────
+  {
+    id: 'I',
+    reading: [
+      { passage: "Reem volunteers at an animal shelter every Thursday. The work is harder than she expected, but she says the difficult part is not cleaning the cages; it is saying goodbye when a dog finds a new home.",
+        items: [
+          { q: "What does Reem find hardest?", opts: ["Saying goodbye to the dogs", "Arriving on Thursdays", "Finding the shelter", "Cleaning the cages"], ans: 0 },
+          { q: "The word \"volunteers\" is closest in meaning to:", opts: ["studies", "works without pay", "visits briefly", "manages"], ans: 1 },
+          { q: "What can we conclude about Reem?", opts: ["She is paid well", "She dislikes dogs", "She becomes attached to the animals", "She wants to leave"], ans: 2 }
+        ] },
+      { passage: "Sound travels about four times faster through water than through air. Whales take advantage of this: their calls can carry for hundreds of kilometres across an ocean, reaching other whales long before any ship could.",
+        items: [
+          { q: "How does sound behave in water?", opts: ["It stops quickly", "It becomes silent", "It travels more slowly", "It travels much faster"], ans: 3 },
+          { q: "The phrase \"take advantage of\" means:", opts: ["ignore", "damage", "make use of", "complain about"], ans: 2 },
+          { q: "What is the main idea?", opts: ["Water blocks sound", "Whales cannot hear", "Ships are noisy", "Whales communicate over vast distances"], ans: 3 }
+        ] },
+      { passage: "The committee's recommendation was unanimous, but unanimity is not the same as certainty. Several members later admitted that they had agreed partly because disagreeing would have required an explanation none of them could easily give.",
+        items: [
+          { q: "Why did some members agree?", opts: ["Disagreeing was difficult to justify", "They were ordered to", "They misread the report", "They were fully convinced"], ans: 0 },
+          { q: "\"Unanimous\" is closest in meaning to:", opts: ["divided", "agreed by everyone", "rejected", "delayed"], ans: 1 }
+        ] }
+    ],
+    structure: [
+      { q: "They ___ in this field for twenty years.", opts: ["have researched", "are researching", "researched", "research"], ans: 0 },
+      { q: "If the shop ___ open, we would buy some water.", opts: ["is", "were", "will be", "has been"], ans: 1 },
+      { q: "Her second attempt was ___ than the first.", opts: ["the most successful", "successful", "more successful", "most successful"], ans: 2 },
+      { q: "He wanted to know whether ___ the message.", opts: ["do I receive", "had I received", "did I receive", "I had received"], ans: 3 },
+      { q: "Neither the pilots nor the engineer ___ worried.", opts: ["have been", "are", "is", "were"], ans: 2 },
+      { q: "Switch off the lights after everyone ___.", opts: ["left", "is leaving", "will leave", "leaves"], ans: 3 }
+    ],
+    listening: [
+      { say: "The class has been moved from Thursday to Saturday at nine.", q: "When is the class now?", opts: ["Saturday at nine", "Saturday at eleven", "Thursday at eleven", "Thursday at nine"], ans: 0 },
+      { say: "Please use the printer upstairs if this one runs out of paper.", q: "What should you do if the printer runs out of paper?", opts: ["Email the file", "Use the printer upstairs", "Refill it yourself", "Cancel the job"], ans: 1 },
+      { say: "Although he had never cooked before, the meal turned out very well.", q: "What is true?", opts: ["The meal was good", "The meal was burnt", "He is an expert cook", "He did not cook"], ans: 0 },
+      { say: "The library stops lending at four, so borrow the book this morning.", q: "When should the book be borrowed?", opts: ["Next month", "This morning", "After four", "Tomorrow night"], ans: 1 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["i met ahmed at the Red sea mall on friday.", "i met ahmed at the red sea mall on friday.", "I met Ahmed at the Red Sea Mall on Friday.", "I Met Ahmed At The Red Sea Mall On Friday."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The plan failed; and nobody was surprised.", "The plan failed, nobody was surprised.", "The plan failed and nobody was surprised", "The plan failed, and nobody was surprised."], ans: 3 }
+    ]
+  },
+
+  // ── Form J ────────────────────────────────────────────────────────────
+  {
+    id: 'J',
+    reading: [
+      { passage: "Tariq keeps bees on his family's farm. He checks the hives early, when the air is still cool and the bees are calm. By the time the sun is high he has finished and is back indoors.",
+        items: [
+          { q: "When does Tariq check the hives?", opts: ["Once a month", "At midday", "Early, while it is cool", "After sunset"], ans: 2 },
+          { q: "The word \"calm\" is closest in meaning to:", opts: ["hungry", "crowded", "asleep", "quiet and still"], ans: 3 },
+          { q: "Why does he work at that time?", opts: ["The bees are less active", "The farm is closed later", "He prefers the dark", "The hives are moved daily"], ans: 0 }
+        ] },
+      { passage: "Paper was invented in China and took more than a thousand years to reach Europe. Along the way it replaced heavier and costlier materials, and the sudden drop in the price of writing changed who was able to keep records at all.",
+        items: [
+          { q: "What effect did paper have?", opts: ["It replaced ink", "It made writing cheaper", "It made books rarer", "It slowed trade"], ans: 1 },
+          { q: "The word \"costlier\" means:", opts: ["more expensive", "lighter", "older", "stronger"], ans: 0 },
+          { q: "What is the main idea?", opts: ["China traded with Europe", "A cheap material widened access to writing", "Paper is fragile", "Records were unnecessary"], ans: 1 }
+        ] },
+      { passage: "The theory remains influential despite the weakness of the evidence originally offered for it. Its defenders argue that later work has supplied the support it lacked; its critics reply that a conclusion reached for poor reasons is not rescued by better ones arriving afterwards.",
+        items: [
+          { q: "What do critics argue?", opts: ["The theory is forgotten", "The theory is now proven", "Later support does not fix flawed reasoning", "The evidence was always strong"], ans: 2 },
+          { q: "\"Influential\" is closest in meaning to:", opts: ["recently written", "widely rejected", "difficult to read", "having a strong effect"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "We ___ to that restaurant several times.", opts: ["went", "go", "have been", "are going"], ans: 2 },
+      { q: "If he ___ the warning, the accident would not have happened.", opts: ["notices", "has noticed", "noticed", "had noticed"], ans: 3 },
+      { q: "The desert nights are ___ than the days.", opts: ["colder", "coldest", "the coldest", "cold"], ans: 0 },
+      { q: "She asked me how much ___ for the ticket.", opts: ["did I pay", "I had paid", "do I pay", "had I paid"], ans: 1 },
+      { q: "Either the students or the supervisor ___ mistaken.", opts: ["is", "were", "have been", "are"], ans: 0 },
+      { q: "Water the plants before the sun ___.", opts: ["will rise", "rises", "rose", "is rising"], ans: 1 }
+    ],
+    listening: [
+      { say: "The workshop has been moved from Sunday to Tuesday at four.", q: "When is the workshop now?", opts: ["Sunday at eight", "Sunday at four", "Tuesday at four", "Tuesday at eight"], ans: 2 },
+      { say: "Please return the key to the office if nobody is in the classroom.", q: "What should you do if the classroom is empty?", opts: ["Keep the key", "Lock yourself in", "Leave it on the desk", "Return the key to the office"], ans: 3 },
+      { say: "Although the bus broke down, the passengers reached the airport in time.", q: "What is true?", opts: ["The bus was new", "They walked home", "They arrived in time", "They missed the flight"], ans: 2 },
+      { say: "The form must be submitted by Sunday, so complete it over the weekend.", q: "When should the form be completed?", opts: ["After Sunday", "In a month", "On Wednesday", "Over the weekend"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["Professor Laila teaches Arabic at Taif University.", "Professor Laila Teaches Arabic At Taif University.", "professor Laila teaches arabic at Taif university.", "professor laila teaches arabic at taif university."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The lights went out so we kept working", "The lights went out, so we kept working.", "The lights went out; so we kept working.", "The lights went out, we kept working."], ans: 1 }
+    ]
+  },
+  // ── Form K ────────────────────────────────────────────────────────────
+  {
+    id: 'K',
+    reading: [
+      { passage: "Majed fixes air conditioners during the summer months. His phone rings all day in July, but in winter the calls almost stop, so he uses that time to order parts and service his own tools.",
+        items: [
+          { q: "What does Majed do in winter?", opts: ["Fixes more units", "Closes his business", "Takes a long holiday", "Orders parts and services tools"], ans: 3 },
+          { q: "The word \"service\" here is closest in meaning to:", opts: ["sell", "maintain", "borrow", "replace"], ans: 1 },
+          { q: "What can we conclude about Majed?", opts: ["He uses the quiet season well", "He works only in winter", "He dislikes his trade", "He has no tools"], ans: 0 }
+        ] },
+      { passage: "A camel can drink over a hundred litres of water in a few minutes. Its body stores the water in the bloodstream rather than the hump, which holds fat instead. That fat can be broken down for energy when food is scarce.",
+        items: [
+          { q: "What does the hump actually store?", opts: ["Air", "Water", "Fat", "Salt"], ans: 2 },
+          { q: "The word \"scarce\" means:", opts: ["nearby", "hard to find", "heavy", "fresh"], ans: 1 },
+          { q: "What is the main idea?", opts: ["Fat is useless", "Camels never drink", "Camels store water in the hump", "A camel's body is adapted to shortage"], ans: 3 }
+        ] },
+      { passage: "The survey results were published without the questions that produced them. Readers could therefore see what people had answered but not what they had actually been asked, which made the figures impossible to interpret with any confidence.",
+        items: [
+          { q: "What was missing from the publication?", opts: ["The sample size", "The answers", "The questions asked", "The date"], ans: 2 },
+          { q: "\"Interpret\" is closest in meaning to:", opts: ["understand the meaning of", "publish", "repeat", "shorten"], ans: 0 }
+        ] }
+    ],
+    structure: [
+      { q: "He ___ in this hospital since he qualified.", opts: ["is working", "worked", "works", "has worked"], ans: 3 },
+      { q: "If the road ___ clear, we would arrive on time.", opts: ["is", "were", "will be", "has been"], ans: 1 },
+      { q: "The second edition is ___ than the first.", opts: ["more detailed", "most detailed", "the most detailed", "detailed"], ans: 0 },
+      { q: "They asked me which route ___.", opts: ["had I taken", "did I take", "I had taken", "do I take"], ans: 2 },
+      { q: "Neither the engineer nor the technicians ___ present.", opts: ["is", "were", "was", "has been"], ans: 1 },
+      { q: "Close the window before it ___.", opts: ["rained", "is raining", "will rain", "rains"], ans: 3 }
+    ],
+    listening: [
+      { say: "The ceremony has been moved from Friday to Saturday at six.", q: "When is the ceremony now?", opts: ["Friday at eight", "Friday at six", "Saturday at six", "Saturday at eight"], ans: 2 },
+      { say: "Please knock twice if the bell does not work.", q: "What should you do if the bell is broken?", opts: ["Knock twice", "Shout", "Come back later", "Send a message"], ans: 0 },
+      { say: "Although the test was long, most students finished before the bell.", q: "What is true?", opts: ["Nobody finished", "The test was short", "The bell did not ring", "Most finished in time"], ans: 3 },
+      { say: "Applications close at midnight, so send yours during the afternoon.", q: "When should applications be sent?", opts: ["At dawn only", "During the afternoon", "After midnight", "Next year"], ans: 1 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["We landed at King Khalid Airport on Monday.", "We Landed At King Khalid Airport On Monday.", "we landed at King khalid airport on monday.", "we landed at king khalid airport on monday."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The car was old, it still ran well.", "The car was old but it still ran well", "The car was old, but it still ran well.", "The car was old; but it still ran well."], ans: 2 }
+    ]
+  },
+
+  // ── Form L ────────────────────────────────────────────────────────────
+  {
+    id: 'L',
+    reading: [
+      { passage: "Layla writes a weekly column for a local newspaper. She keeps a notebook with her at all times because the best ideas, she says, arrive while she is doing something else entirely.",
+        items: [
+          { q: "Why does Layla carry a notebook?", opts: ["To record interviews", "Ideas arrive unexpectedly", "The editor requires it", "To practise handwriting"], ans: 1 },
+          { q: "The word \"column\" here means:", opts: ["a stone pillar", "a list of numbers", "a photograph", "a regular article"], ans: 3 },
+          { q: "What can we conclude about her writing?", opts: ["She dislikes newspapers", "It is planned at a desk only", "Inspiration comes unplanned", "She writes once a year"], ans: 2 }
+        ] },
+      { passage: "Coral reefs cover less than one percent of the ocean floor, yet about a quarter of all sea species depend on them at some point in their lives. The reef provides shelter from larger predators and a steady supply of smaller food.",
+        items: [
+          { q: "What proportion of sea species depend on reefs?", opts: ["About a quarter", "All of them", "None", "One percent"], ans: 0 },
+          { q: "The word \"shelter\" means:", opts: ["food", "light", "current", "protection"], ans: 3 },
+          { q: "What is the main idea?", opts: ["Reefs are large", "A small habitat supports many species", "Predators avoid reefs", "Coral is a plant"], ans: 1 }
+        ] },
+      { passage: "The exhibition was described as comprehensive, though it drew almost entirely on one private collection. What looked like a survey of the period was in practice a portrait of a single collector's taste.",
+        items: [
+          { q: "What was the problem with the exhibition?", opts: ["It reflected one collector's taste", "It opened late", "It had no visitors", "It was too small"], ans: 0 },
+          { q: "\"Comprehensive\" is closest in meaning to:", opts: ["brief", "popular", "covering everything", "expensive"], ans: 2 }
+        ] }
+    ],
+    structure: [
+      { q: "They ___ that house since their marriage.", opts: ["own", "have owned", "are owning", "owned"], ans: 1 },
+      { q: "If I ___ about the delay, I would have waited.", opts: ["know", "have known", "knew", "had known"], ans: 3 },
+      { q: "His handwriting is ___ than mine.", opts: ["the neatest", "neat", "neater", "neatest"], ans: 2 },
+      { q: "She asked him what ___ at the meeting.", opts: ["had happened", "does happen", "had happen", "did happen"], ans: 0 },
+      { q: "Either the nurses or the doctor ___ informed.", opts: ["were", "have been", "are", "is"], ans: 3 },
+      { q: "Pay the bill before the office ___.", opts: ["will close", "closes", "closed", "is closing"], ans: 1 }
+    ],
+    listening: [
+      { say: "The appointment has been moved from Tuesday to Thursday at two.", q: "When is the appointment now?", opts: ["Thursday at two", "Thursday at four", "Tuesday at four", "Tuesday at two"], ans: 0 },
+      { say: "Please leave the keys with the guard if the office is closed.", q: "What should you do if the office is closed?", opts: ["Post them", "Wait outside", "Leave the keys with the guard", "Take them home"], ans: 2 },
+      { say: "Even though the screen was small, everyone could follow the match.", q: "What is true?", opts: ["The match was cancelled", "Everyone followed it", "Nobody watched", "The screen was huge"], ans: 1 },
+      { say: "The results come out on Sunday, so do not expect news before then.", q: "When will the results come?", opts: ["On Friday", "Immediately", "Never", "On Sunday"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["the Prophet's mosque is in madinah.", "the prophet's mosque is in madinah.", "The Prophet's Mosque is in Madinah.", "The Prophet's Mosque Is In Madinah."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["He trained daily, so he won the race.", "He trained daily; so he won the race.", "He trained daily, he won the race.", "He trained daily so he won the race"], ans: 0 }
+    ]
+  },
+
+  // ── Form M ────────────────────────────────────────────────────────────
+  {
+    id: 'M',
+    reading: [
+      { passage: "Saeed manages a bookshop that stays open until midnight. Most of his sales happen after nine, when students arrive looking for something to read that has nothing to do with their courses.",
+        items: [
+          { q: "When does most of the selling happen?", opts: ["At dawn", "On holidays", "Before noon", "After nine at night"], ans: 3 },
+          { q: "The phrase \"has nothing to do with\" means:", opts: ["is written about", "is unrelated to", "is required by", "is cheaper than"], ans: 1 },
+          { q: "What do the students want?", opts: ["Reading unconnected to study", "Quiet space", "Free coffee", "Textbooks"], ans: 0 }
+        ] },
+      { passage: "Lightning heats the air around it to roughly five times the temperature of the sun's surface. The air expands so violently that it produces the sound we call thunder, which is why the two always arrive together, even when the gap makes them seem separate.",
+        items: [
+          { q: "What causes thunder?", opts: ["Wind speed", "Rain striking the ground", "Air expanding violently", "Clouds colliding"], ans: 2 },
+          { q: "The word \"expands\" means:", opts: ["falls", "grows larger", "cools", "darkens"], ans: 1 },
+          { q: "What is the main idea?", opts: ["Lightning is silent", "They are unrelated events", "Thunder comes before lightning", "Thunder is a direct result of lightning"], ans: 3 }
+        ] },
+      { passage: "The author's argument depends on a definition introduced halfway through the book and never defended. Accept it, and the conclusion follows almost automatically; question it, and very little of the remaining structure holds.",
+        items: [
+          { q: "What does the argument depend on?", opts: ["The reader's background", "A famous authority", "An undefended definition", "Extensive evidence"], ans: 2 },
+          { q: "\"Holds\" here is closest in meaning to:", opts: ["remains valid", "grips tightly", "delays", "contains"], ans: 0 }
+        ] }
+    ],
+    structure: [
+      { q: "We ___ this software since January.", opts: ["are using", "used", "use", "have used"], ans: 3 },
+      { q: "If she ___ the keys, we could leave now.", opts: ["finds", "had found", "will find", "has found"], ans: 1 },
+      { q: "The southern route is ___ than the coastal one.", opts: ["shorter", "shortest", "the shortest", "short"], ans: 0 },
+      { q: "He asked me whether ___ the report.", opts: ["had I finished", "did I finish", "I had finished", "do I finish"], ans: 2 },
+      { q: "Neither the actors nor the director ___ satisfied.", opts: ["are", "is", "were", "have been"], ans: 1 },
+      { q: "Begin the presentation when the guests ___.", opts: ["arrived", "are arriving", "will arrive", "arrive"], ans: 3 }
+    ],
+    listening: [
+      { say: "The training has been moved from Sunday to Monday at seven.", q: "When is the training now?", opts: ["Sunday at nine", "Sunday at seven", "Monday at seven", "Monday at nine"], ans: 2 },
+      { say: "Please send a copy by post if the email bounces back.", q: "What should you do if the email fails?", opts: ["Send a copy by post", "Try again tomorrow", "Phone instead", "Do nothing"], ans: 0 },
+      { say: "Although he started last, he finished the race second.", q: "What is true?", opts: ["He came last", "He did not run", "He won", "He finished near the front"], ans: 3 },
+      { say: "The counter shuts at three, so pay the fee this morning.", q: "When should the fee be paid?", opts: ["Next month", "This morning", "After three", "Tomorrow evening"], ans: 1 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["Eid al-Fitr falls in spring this year.", "Eid Al-Fitr Falls In Spring This Year.", "eid al-Fitr falls in Spring this year.", "eid al-fitr falls in spring this year."], ans: 0 },
+      { q: "Which sentence is correctly punctuated?", opts: ["She spoke softly, nobody heard her.", "She spoke softly so nobody heard her", "She spoke softly, so nobody heard her.", "She spoke softly; so nobody heard her."], ans: 2 }
+    ]
+  },
+
+  // ── Form N ────────────────────────────────────────────────────────────
+  {
+    id: 'N',
+    reading: [
+      { passage: "Huda trains guide dogs for people who cannot see. The training takes almost two years, and she admits that the hardest part is not teaching the dog but teaching the owner to trust it completely.",
+        items: [
+          { q: "What does Huda find hardest?", opts: ["Training the dog", "Teaching the owner to trust", "Finding dogs", "The two-year wait"], ans: 1 },
+          { q: "The word \"admits\" is closest in meaning to:", opts: ["denies", "shouts", "forgets", "accepts as true"], ans: 3 },
+          { q: "What can we conclude?", opts: ["The work takes a week", "Owners train themselves", "Trust matters as much as skill", "Dogs learn nothing"], ans: 2 }
+        ] },
+      { passage: "Mountains make their own weather. Air forced upward by a slope cools as it rises, and the moisture it carries falls as rain on the windward side. The far side, starved of that moisture, is often dry enough to be a desert.",
+        items: [
+          { q: "Why is the far side of a mountain often dry?", opts: ["The moisture has already fallen", "It is higher", "It has no wind", "It faces the sun"], ans: 0 },
+          { q: "The word \"starved\" here means:", opts: ["hungry for food", "frozen", "flooded", "deprived"], ans: 3 },
+          { q: "What is the main idea?", opts: ["Mountains are always wet", "Terrain shapes rainfall", "Deserts cause mountains", "Rain falls evenly"], ans: 1 }
+        ] },
+      { passage: "The policy was defended on the grounds that no better alternative had been proposed. That defence is weaker than it sounds: the absence of a rival plan says nothing about whether the present one does any good.",
+        items: [
+          { q: "Why is the defence described as weak?", opts: ["Lacking a rival does not prove merit", "The policy was new", "It was unpopular", "No alternative existed"], ans: 0 },
+          { q: "\"Grounds\" here is closest in meaning to:", opts: ["buildings", "limits", "reasons", "soil"], ans: 2 }
+        ] }
+    ],
+    structure: [
+      { q: "She ___ that language since childhood.", opts: ["speaks", "has spoken", "is speaking", "spoke"], ans: 1 },
+      { q: "If they ___ the signs, they would not have got lost.", opts: ["have read", "reads", "read", "had read"], ans: 3 },
+      { q: "The morning flight is ___ than the evening one.", opts: ["the cheapest", "cheap", "cheaper", "cheapest"], ans: 2 },
+      { q: "They wanted to know when ___ the project.", opts: ["we had started", "do we start", "had we started", "did we start"], ans: 0 },
+      { q: "Either the teacher or the parents ___ to blame.", opts: ["was", "has been", "is", "are"], ans: 3 },
+      { q: "Do not pay until you ___ the goods.", opts: ["will receive", "receive", "received", "are receiving"], ans: 1 }
+    ],
+    listening: [
+      { say: "The seminar has been moved from Wednesday to Thursday at five.", q: "When is the seminar now?", opts: ["Thursday at five", "Thursday at seven", "Wednesday at seven", "Wednesday at five"], ans: 0 },
+      { say: "Please take a numbered ticket if the queue is long.", q: "What should you do if the queue is long?", opts: ["Leave at once", "Call ahead", "Take a numbered ticket", "Push forward"], ans: 2 },
+      { say: "Although the recipe looked complicated, it needed only four ingredients.", q: "What is true?", opts: ["It was never tried", "It was simpler than it looked", "It needed twenty ingredients", "It failed completely"], ans: 1 },
+      { say: "The museum empties at six, so visit the upper floor early.", q: "When should you visit the upper floor?", opts: ["After six", "At midnight", "On no day", "Early"], ans: 3 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["the Arabian gulf lies east of saudi arabia.", "the arabian gulf lies east of saudi arabia.", "The Arabian Gulf lies east of Saudi Arabia.", "The Arabian Gulf Lies East Of Saudi Arabia."], ans: 2 },
+      { q: "Which sentence is correctly punctuated?", opts: ["We waited an hour, but the train never came.", "We waited an hour; but the train never came.", "We waited an hour, the train never came.", "We waited an hour but the train never came"], ans: 0 }
+    ]
+  },
+  // ── Form O ────────────────────────────────────────────────────────────
+  {
+    id: 'O',
+    reading: [
+      { passage: "Nawaf repairs fishing nets on the harbour wall. He learned the knots from his father, who learned them from his own, and he can mend a tear faster than most people can describe it.",
+        items: [
+          { q: "How did Nawaf learn his skill?", opts: ["By watching videos", "At a college", "From his father", "From a book"], ans: 2 },
+          { q: "The word \"mend\" is closest in meaning to:", opts: ["repair", "cut", "sell", "measure"], ans: 0 },
+          { q: "What can we conclude about the skill?", opts: ["It was recently invented", "It requires machines", "It is easy to explain", "It is passed down in families"], ans: 3 }
+        ] },
+      { passage: "An octopus can change both the colour and the texture of its skin in under a second. It does this without seeing colour at all: its eyes detect only brightness, so the matching appears to happen through sensors in the skin itself.",
+        items: [
+          { q: "What is surprising about the octopus?", opts: ["It avoids bright light", "It changes colour without seeing colour", "It cannot move quickly", "It has no skin"], ans: 1 },
+          { q: "The word \"detect\" means:", opts: ["sense", "create", "reflect", "hide"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Brightness is colour", "Octopuses are blind", "Colour matching may work through the skin", "Texture is unimportant"], ans: 2 }
+        ] },
+      { passage: "The study has been cited hundreds of times, usually for a claim it does not quite make. Its authors were careful to describe a correlation; those who quote it have steadily converted that into a cause.",
+        items: [
+          { q: "What did the authors actually describe?", opts: ["A cause", "A correlation", "An experiment", "A prediction"], ans: 1 },
+          { q: "\"Cited\" is closest in meaning to:", opts: ["printed", "translated", "criticised", "referred to"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "He ___ that shop since his father retired.", opts: ["ran", "runs", "has run", "is running"], ans: 2 },
+      { q: "If the machine ___ working, we would finish today.", opts: ["were", "will be", "has been", "is"], ans: 0 },
+      { q: "The desert road is ___ than the mountain pass.", opts: ["safest", "the safest", "safe", "safer"], ans: 3 },
+      { q: "She asked me why ___ so early.", opts: ["did I leave", "I had left", "do I leave", "had I left"], ans: 1 },
+      { q: "Neither the guards nor the officer ___ aware.", opts: ["was", "were", "have been", "are"], ans: 0 },
+      { q: "Turn off the engine before you ___ the car.", opts: ["are leaving", "will leave", "leave", "left"], ans: 2 }
+    ],
+    listening: [
+      { say: "The match has been moved from Friday to Sunday at eight.", q: "When is the match now?", opts: ["Friday at eight", "Sunday at eight", "Sunday at six", "Friday at six"], ans: 1 },
+      { say: "Please use the spare charger if yours stops working.", q: "What should you do if your charger fails?", opts: ["Buy a new phone", "Wait a day", "Borrow a battery", "Use the spare charger"], ans: 3 },
+      { say: "Although the path was steep, the children climbed it without complaint.", q: "What is true?", opts: ["The path was flat", "They turned back", "They climbed it willingly", "They refused to climb"], ans: 2 },
+      { say: "The kitchen stops serving at ten, so order your meal before then.", q: "When should the meal be ordered?", opts: ["Before ten", "After ten", "At dawn", "Next day"], ans: 0 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["The Holy Quran Was Revealed In Arabic.", "the Holy quran was revealed in arabic.", "the holy quran was revealed in arabic.", "The Holy Quran was revealed in Arabic."], ans: 3 },
+      { q: "Which sentence is correctly punctuated?", opts: ["He knocked loudly but nobody opened", "He knocked loudly, but nobody opened.", "He knocked loudly; but nobody opened.", "He knocked loudly, nobody opened."], ans: 1 }
+    ]
+  },
+
+  // ── Form P ────────────────────────────────────────────────────────────
+  {
+    id: 'P',
+    reading: [
+      { passage: "Amal designs playgrounds for schools. She watches children use the finished ones and says they almost always invent games the designers never imagined, which is how she decides what to build next.",
+        items: [
+          { q: "How does Amal decide what to build next?", opts: ["By watching children play", "By copying other schools", "By following a manual", "By asking teachers"], ans: 0 },
+          { q: "The word \"invent\" is closest in meaning to:", opts: ["copy", "break", "create", "forget"], ans: 2 },
+          { q: "What can we conclude about her method?", opts: ["She never visits schools", "She learns from real use", "She ignores children", "She builds the same design twice"], ans: 1 }
+        ] },
+      { passage: "Rivers carry sediment to the sea, and over centuries that sediment builds the land at a river's mouth. When dams hold the sediment back, the delta stops growing and the sea begins, slowly, to take it back.",
+        items: [
+          { q: "What happens when dams hold back sediment?", opts: ["The river dries up", "The sea retreats", "The delta grows faster", "The delta stops growing"], ans: 3 },
+          { q: "The word \"sediment\" means:", opts: ["fish", "current", "carried solid material", "salt water"], ans: 2 },
+          { q: "What is the main idea?", opts: ["Deltas depend on sediment supply", "Rivers never change", "The sea is shrinking", "Dams protect deltas"], ans: 0 }
+        ] },
+      { passage: "The translation is faithful to the words and loses almost everything else. Rhythm, register and the small hesitations that gave the original its character have all been smoothed away in the interest of accuracy.",
+        items: [
+          { q: "What has the translation lost?", opts: ["The title", "The author's name", "The meaning of words", "Rhythm and character"], ans: 3 },
+          { q: "\"Faithful\" here is closest in meaning to:", opts: ["popular", "accurate to", "religious", "lengthy"], ans: 1 }
+        ] }
+    ],
+    structure: [
+      { q: "They ___ in that company since the merger.", opts: ["have worked", "are working", "worked", "work"], ans: 0 },
+      { q: "If I ___ the recipe, I would have bought butter.", opts: ["reads", "read", "had read", "have read"], ans: 2 },
+      { q: "The winter market is ___ than the summer one.", opts: ["busy", "busier", "busiest", "the busiest"], ans: 1 },
+      { q: "He asked them how ___ the problem.", opts: ["do they solve", "had they solved", "did they solve", "they had solved"], ans: 3 },
+      { q: "Either the author or the editors ___ responsible.", opts: ["has been", "is", "are", "was"], ans: 2 },
+      { q: "Serve the food as soon as the guests ___.", opts: ["sit", "sat", "are sitting", "will sit"], ans: 0 }
+    ],
+    listening: [
+      { say: "The visit has been moved from Monday to Wednesday at nine.", q: "When is the visit now?", opts: ["Wednesday at eleven", "Monday at eleven", "Monday at nine", "Wednesday at nine"], ans: 3 },
+      { say: "Please record the reading by hand if the meter display is blank.", q: "What should you do if the display is blank?", opts: ["Call the owner", "Record the reading by hand", "Replace the meter", "Skip the house"], ans: 1 },
+      { say: "Even though the box looked heavy, one person carried it easily.", q: "What is true?", opts: ["It was lighter than it looked", "Nobody could lift it", "It was empty of air", "It was never moved"], ans: 0 },
+      { say: "The clinic takes walk-ins until two, so come in the late morning.", q: "When should you come?", opts: ["After two", "At midnight", "Late morning", "Late evening"], ans: 2 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["we crossed the empty quarter in march.", "We crossed the Empty Quarter in March.", "We Crossed The Empty Quarter In March.", "we crossed the Empty quarter in march."], ans: 1 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The sky darkened; so we went inside.", "The sky darkened, we went inside.", "The sky darkened so we went inside", "The sky darkened, so we went inside."], ans: 3 }
+    ]
+  },
+
+  // ── Form Q ────────────────────────────────────────────────────────────
+  {
+    id: 'Q',
+    reading: [
+      { passage: "Rashid teaches calligraphy to adults in the evenings. Most of his students arrive expecting to practise letters; he starts them instead on breathing and posture, because a shaking hand cannot draw a steady line.",
+        items: [
+          { q: "What does Rashid teach first?", opts: ["Choosing ink", "Letters", "Breathing and posture", "History of writing"], ans: 2 },
+          { q: "The word \"steady\" is closest in meaning to:", opts: ["firm and even", "fast", "thick", "colourful"], ans: 0 },
+          { q: "Why does he begin that way?", opts: ["Students ask for it", "It fills the time", "Letters are unimportant", "Control of the body comes first"], ans: 3 }
+        ] },
+      { passage: "The human eye sees detail clearly in only a tiny central patch. The impression of a sharp, complete scene is assembled by the brain from rapid movements of the eye, several times a second, which we almost never notice.",
+        items: [
+          { q: "How is a sharp whole scene produced?", opts: ["The eye sees it all at once", "The brain assembles it from quick eye movements", "Light is magnified", "The scene is simplified"], ans: 1 },
+          { q: "The word \"assembled\" means:", opts: ["put together", "destroyed", "recorded", "coloured"], ans: 0 },
+          { q: "What is the main idea?", opts: ["Detail is unimportant", "Vision is passive recording", "Clear vision is partly constructed", "The eye never moves"], ans: 2 }
+        ] },
+      { passage: "The committee asked for simplicity and received it, then complained that important distinctions had been lost. Both things were true at once, which is the ordinary condition of any summary and not a failure of this one.",
+        items: [
+          { q: "What does the passage suggest about summaries?", opts: ["They always fail", "Losing detail is inherent to them", "They should be longer", "Committees dislike them"], ans: 1 },
+          { q: "\"Distinctions\" is closest in meaning to:", opts: ["honours", "delays", "copies", "differences"], ans: 3 }
+        ] }
+    ],
+    structure: [
+      { q: "She ___ here since the new term began.", opts: ["taught", "teaches", "has taught", "is teaching"], ans: 2 },
+      { q: "If the file ___ smaller, I could email it.", opts: ["were", "will be", "has been", "is"], ans: 0 },
+      { q: "This chair is ___ than the one upstairs.", opts: ["most comfortable", "the most comfortable", "comfortable", "more comfortable"], ans: 3 },
+      { q: "They asked me what ___ about the plan.", opts: ["did I think", "I had thought", "do I think", "had I thought"], ans: 1 },
+      { q: "Neither the shops nor the bank ___ open.", opts: ["is", "were", "have been", "are"], ans: 0 },
+      { q: "Water the garden after the sun ___.", opts: ["is setting", "will set", "sets", "set"], ans: 2 }
+    ],
+    listening: [
+      { say: "The lesson has been moved from Saturday to Monday at eleven.", q: "When is the lesson now?", opts: ["Saturday at eleven", "Monday at eleven", "Monday at one", "Saturday at one"], ans: 1 },
+      { say: "Please write the total on the receipt if the machine prints nothing.", q: "What should you do if nothing prints?", opts: ["Cancel the sale", "Restart the shop", "Refuse payment", "Write the total by hand"], ans: 3 },
+      { say: "Although the shop was far, the walk took only twenty minutes.", q: "What is true?", opts: ["They never arrived", "It took three hours", "The walk was short", "They drove there"], ans: 2 },
+      { say: "The window for changes shuts on Thursday, so decide by Wednesday.", q: "By when should you decide?", opts: ["By Wednesday", "By Friday", "Next month", "No deadline"], ans: 0 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["The River Nile Flows Through Egypt.", "the river Nile flows through egypt.", "the river nile flows through egypt.", "The River Nile flows through Egypt."], ans: 3 },
+      { q: "Which sentence is correctly punctuated?", opts: ["She studied medicine and her brother studied law", "She studied medicine, and her brother studied law.", "She studied medicine; and her brother studied law.", "She studied medicine, her brother studied law."], ans: 1 }
+    ]
+  },
+
+  // ── Form R ────────────────────────────────────────────────────────────
+  {
+    id: 'R',
+    reading: [
+      { passage: "Dalal runs a small plant nursery outside the city. She refuses to sell species that will not survive the local summer, even when customers ask for them, and she explains why before letting anyone leave disappointed.",
+        items: [
+          { q: "Why does Dalal refuse some sales?", opts: ["They will not survive locally", "She has none in stock", "Customers dislike them", "The plants are expensive"], ans: 0 },
+          { q: "The word \"survive\" is closest in meaning to:", opts: ["spread", "cost", "stay alive", "flower"], ans: 2 },
+          { q: "What can we conclude about Dalal?", opts: ["She grows no plants", "She values honest advice over a sale", "She sells anything", "She dislikes customers"], ans: 1 }
+        ] },
+      { passage: "Ice reflects most of the sunlight that falls on it, while dark water absorbs almost all of it. As polar ice shrinks, more dark water is exposed, more heat is absorbed, and the melting speeds up on its own.",
+        items: [
+          { q: "What happens as polar ice shrinks?", opts: ["Water reflects more", "Sunlight weakens", "Melting slows", "Melting accelerates"], ans: 3 },
+          { q: "The word \"absorbs\" means:", opts: ["freezes", "divides", "takes in", "sends back"], ans: 2 },
+          { q: "What is the main idea?", opts: ["Melting can reinforce itself", "Sunlight is constant", "Dark water is cold", "Ice and water behave identically"], ans: 0 }
+        ] },
+      { passage: "The objection is often raised that the method has never been tested at scale. That is accurate, but it describes a gap in the evidence rather than a flaw in the method, and the two are regularly confused.",
+        items: [
+          { q: "What does the passage distinguish between?", opts: ["Theory and practice", "Old and new methods", "Cost and benefit", "A gap in evidence and a flaw in method"], ans: 3 },
+          { q: "\"Raised\" here is closest in meaning to:", opts: ["grown", "put forward", "lifted up", "increased"], ans: 1 }
+        ] }
+    ],
+    structure: [
+      { q: "We ___ this route since the bridge closed.", opts: ["have used", "are using", "used", "use"], ans: 0 },
+      { q: "If he ___ the alarm, he would not have overslept.", opts: ["has set", "set", "had set", "sets"], ans: 2 },
+      { q: "The evening session is ___ than the morning one.", opts: ["long", "longer", "longest", "the longest"], ans: 1 },
+      { q: "She asked us where ___ the equipment.", opts: ["do we store", "had we stored", "did we store", "we had stored"], ans: 3 },
+      { q: "Either the drivers or the supervisor ___ late.", opts: ["have been", "are", "is", "were"], ans: 2 },
+      { q: "Do not sign until you ___ the contract.", opts: ["read", "are read", "reading", "will read"], ans: 0 }
+    ],
+    listening: [
+      { say: "The deadline has been moved from Thursday to Saturday at noon.", q: "When is the deadline now?", opts: ["Saturday at four", "Thursday at four", "Thursday at noon", "Saturday at noon"], ans: 3 },
+      { say: "Please hand the papers to the secretary if I am in a meeting.", q: "What should you do if the speaker is busy?", opts: ["Come back next week", "Hand the papers to the secretary", "Keep them", "Leave them on the floor"], ans: 1 },
+      { say: "Although the camera was old, the photographs were remarkably sharp.", q: "What is true?", opts: ["The photographs were good", "The camera was new", "No photographs were taken", "They were blurred"], ans: 0 },
+      { say: "The ticket office opens at eight, so there is no need to queue at dawn.", q: "What does the speaker advise?", opts: ["Skip the trip", "Buy online only", "Do not queue at dawn", "Arrive at midnight"], ans: 2 }
+    ],
+    writing: [
+      { q: "Choose the correctly written sentence:", opts: ["ramadan begins in february next year.", "Ramadan begins in February next year.", "Ramadan Begins In February Next Year.", "ramadan begins in February next Year."], ans: 1 },
+      { q: "Which sentence is correctly punctuated?", opts: ["The lamp broke; and the room went dark.", "The lamp broke, the room went dark.", "The lamp broke and the room went dark", "The lamp broke, and the room went dark."], ans: 3 }
+    ]
+  }
+];
+
+// STEP's published weights. The raw count of correct answers is not the score:
+// a section worth 40% of a real exam must be worth 40% here, or the number
+// cannot be read against anything.
+var BM_WEIGHTS = { reading: 40, structure: 30, listening: 20, writing: 10 };
+
+// ── Engine ──────────────────────────────────────────────────────────────
+var bmState = null;
+
+function bmHistory() {
+  try { return JSON.parse(localStorage.getItem('bmHistory') || '[]'); }
+  catch (e) { return []; }
+}
+
+function bmDaysSinceLast() {
+  var h = bmHistory();
+  if (!h.length) return 999;
+  return Math.floor((Date.now() - h[h.length - 1].at) / 86400000);
+}
+
+// Forms alternate, so a second sitting is never the same paper.
+function bmNextForm() {
+  return BM_FORMS[bmHistory().length % BM_FORMS.length];
+}
+
+// Flatten a form into one ordered list, tagging each item with its section so
+// the score can be weighted afterwards.
+function bmBuildItems(form) {
+  var out = [];
+  form.reading.forEach(function (p) {
+    p.items.forEach(function (it) {
+      out.push({ sec: 'reading', passage: p.passage, q: it.q, opts: it.opts, ans: it.ans });
+    });
+  });
+  form.structure.forEach(function (it) {
+    out.push({ sec: 'structure', q: it.q, opts: it.opts, ans: it.ans });
+  });
+  form.listening.forEach(function (it) {
+    out.push({ sec: 'listening', say: it.say, q: it.q, opts: it.opts, ans: it.ans });
+  });
+  form.writing.forEach(function (it) {
+    out.push({ sec: 'writing', q: it.q, opts: it.opts, ans: it.ans });
+  });
+  return out;
+}
+
+function openBenchmark() {
+  var days = bmDaysSinceLast();
+  var h = bmHistory();
+  document.getElementById('tab-bench').classList.add('active');
+  document.querySelectorAll('.section').forEach(function (s) {
+    if (s.id !== 'tab-bench') s.classList.remove('active');
+  });
+  if (days < BM_INTERVAL_DAYS && h.length) {
+    bmShowLocked(BM_INTERVAL_DAYS - days);
+  } else {
+    bmShowIntro();
+  }
+}
+
+function bmShowLocked(left) {
+  // Measuring more often than the interval reports noise. Saying so plainly is
+  // better than letting a learner retake it daily and watch a flat line.
+  document.getElementById('bmBody').innerHTML =
+    '<div class="bm-locked">' +
+      '<div class="bm-lock-ico">\u23F3</div>' +
+      '<div class="bm-lock-t">\u0627\u0644\u0645\u0642\u064a\u0627\u0633 \u0645\u062a\u0627\u062d \u0628\u0639\u062f <b>' + left + '</b> \u064a\u0648\u0645\u064b\u0627</div>' +
+      '<div class="bm-lock-s">\u0627\u0644\u0642\u064a\u0627\u0633 \u0643\u0644 \u0623\u0633\u0628\u0648\u0639\u064a\u0646 \u0645\u0642\u0635\u0648\u062f: \u0627\u0644\u0644\u063a\u0629 \u0644\u0627 \u062a\u062a\u063a\u064a\u0651\u0631 \u0641\u064a \u064a\u0648\u0645\u060c ' +
+        '\u0648\u0642\u064a\u0627\u0633\u0647\u0627 \u064a\u0648\u0645\u064a\u064b\u0627 \u064a\u064f\u0638\u0647\u0631 \u062a\u0634\u0648\u064a\u0634\u064b\u0627 \u0644\u0627 \u062a\u0642\u062f\u0651\u0645\u064b\u0627.</div>' +
+    '</div>' + bmHistoryHtml();
+}
+
+function bmShowIntro() {
+  var h = bmHistory();
+  var first = !h.length;
+  document.getElementById('bmBody').innerHTML =
+    '<div class="bm-intro">' +
+      '<div class="bm-hero">\ud83d\udcd0</div>' +
+      '<div class="bm-title">' + (first ? '\u0642\u064a\u0627\u0633\u0643 \u0627\u0644\u0623\u0648\u0651\u0644' : '\u0642\u064a\u0627\u0633 \u062c\u062f\u064a\u062f') + '</div>' +
+      '<p class="bm-lead">' +
+        (first
+          ? '\u0639\u0634\u0631\u0648\u0646 \u0633\u0624\u0627\u0644\u064b\u0627 \u0628\u0623\u0648\u0632\u0627\u0646 \u0627\u062e\u062a\u0628\u0627\u0631 <b>STEP</b>. \u0647\u0630\u0647 \u0627\u0644\u062f\u0631\u062c\u0629 \u0644\u064a\u0633\u062a \u062d\u0643\u0645\u064b\u0627 \u0639\u0644\u064a\u0643 \u2014 \u0647\u064a <b>\u0646\u0642\u0637\u0629 \u0627\u0644\u0628\u062f\u0627\u064a\u0629</b> \u0627\u0644\u062a\u064a \u0633\u062a\u0642\u0627\u0631\u0646 \u0628\u0647\u0627 \u0644\u0627\u062d\u0642\u064b\u0627.'
+          : '\u0646\u0641\u0633 \u0627\u0644\u0623\u0648\u0632\u0627\u0646\u060c \u0648\u0646\u0645\u0648\u0630\u062c \u0645\u062e\u062a\u0644\u0641. \u0642\u0627\u0631\u0646 \u0646\u062a\u064a\u062c\u062a\u0643 \u0628\u0627\u0644\u0645\u0631\u0629 \u0627\u0644\u0633\u0627\u0628\u0642\u0629.') +
+      '</p>' +
+      '<div class="bm-weights">' +
+        '<div class="bm-w"><b>40%</b><span>Reading</span></div>' +
+        '<div class="bm-w"><b>30%</b><span>Structure</span></div>' +
+        '<div class="bm-w"><b>20%</b><span>Listening</span></div>' +
+        '<div class="bm-w"><b>10%</b><span>Writing</span></div>' +
+      '</div>' +
+      '<div class="bm-rules">' +
+        '\u2022 \u0639\u0634\u0631\u0648\u0646 \u0633\u0624\u0627\u0644\u064b\u0627 \u00b7 \u0646\u062d\u0648 \u0631\u0628\u0639 \u0633\u0627\u0639\u0629<br>' +
+        '\u2022 \u0628\u0644\u0627 \u062a\u0631\u062c\u0645\u0629 \u0648\u0628\u0644\u0627 \u062a\u0644\u0645\u064a\u062d \u2014 \u0644\u0623\u0646 \u0627\u0644\u0634\u0631\u0648\u0637 \u064a\u062c\u0628 \u0623\u0646 \u062a\u062b\u0628\u062a<br>' +
+        '\u2022 \u0623\u0633\u0626\u0644\u062a\u0647 \u0644\u0627 \u062a\u0638\u0647\u0631 \u0641\u064a \u0623\u064a \u0646\u0634\u0627\u0637 \u0622\u062e\u0631' +
+      '</div>' +
+      '<button class="bm-start" onclick="bmStart()">\u0627\u0628\u062f\u0623 \u0627\u0644\u0642\u064a\u0627\u0633 \u2190</button>' +
+    '</div>' + bmHistoryHtml();
+}
+
+function bmStart() {
+  var form = bmNextForm();
+  bmState = { form: form.id, items: bmBuildItems(form), at: 0, answers: [], startedAt: Date.now() };
+  bmRender();
+}
+
+function bmRender() {
+  var it = bmState.items[bmState.at];
+  var n = bmState.items.length;
+  var secName = { reading: 'Reading \u00b7 \u0627\u0644\u0642\u0631\u0627\u0621\u0629', structure: 'Structure \u00b7 \u0627\u0644\u0642\u0648\u0627\u0639\u062f',
+                  listening: 'Listening \u00b7 \u0627\u0644\u0627\u0633\u062a\u0645\u0627\u0639', writing: 'Writing \u00b7 \u0627\u0644\u062a\u062d\u0644\u064a\u0644 \u0627\u0644\u0643\u062a\u0627\u0628\u064a' }[it.sec];
+
+  var head =
+    '<div class="bm-bar"><div class="bm-fill" style="width:' + ((bmState.at / n) * 100) + '%"></div></div>' +
+    '<div class="bm-meta"><span>' + (bmState.at + 1) + ' / ' + n + '</span><span class="bm-sec">' + secName + '</span></div>';
+
+  var body = '';
+  if (it.sec === 'reading' && it.passage) {
+    body += '<div class="bm-passage">' + it.passage + '</div>';
+  }
+  if (it.sec === 'listening') {
+    body += '<button class="bm-play" onclick="bmPlay()">\ud83d\udd0a \u0627\u0633\u062a\u0645\u0639</button>' +
+            '<div class="bm-hint">\u064a\u064f\u0633\u0645\u0639 \u0645\u0631\u062a\u064a\u0646 \u0639\u0644\u0649 \u0627\u0644\u0623\u0643\u062b\u0631</div>';
+  }
+  body += '<div class="bm-q">' + it.q + '</div>';
+  body += '<div class="bm-opts">' + it.opts.map(function (o, i) {
+    return '<button class="bm-opt" data-i="' + i + '">' + o + '</button>';
+  }).join('') + '</div>';
+
+  document.getElementById('bmBody').innerHTML = head + '<div class="bm-card">' + body + '</div>';
+  bmPlays = 0;
+  if (it.sec === 'listening') bmPlay();
+}
+
+var bmPlays = 0;
+function bmPlay() {
+  var it = bmState.items[bmState.at];
+  if (!it.say || bmPlays >= 2) return;
+  bmPlays++;
+  // Fixed rate, like every other measured condition here.
+  slSpeak(it.say, 0.9);
+}
+
+function bmAnswer(i) {
+  var it = bmState.items[bmState.at];
+  bmState.answers.push({ sec: it.sec, correct: i === it.ans });
+  bmState.at++;
+  // No feedback between items. Telling a learner they were wrong mid-test
+  // changes how they answer the rest, and a measurement has to leave the thing
+  // it measures alone.
+  if (bmState.at >= bmState.items.length) bmFinish();
+  else bmRender();
+}
+
+function bmFinish() {
+  var by = {};
+  Object.keys(BM_WEIGHTS).forEach(function (k) { by[k] = { right: 0, total: 0 }; });
+  bmState.answers.forEach(function (a) {
+    by[a.sec].total++;
+    if (a.correct) by[a.sec].right++;
+  });
+
+  var score = 0;
+  Object.keys(BM_WEIGHTS).forEach(function (k) {
+    var pct = by[k].total ? by[k].right / by[k].total : 0;
+    by[k].pct = Math.round(pct * 100);
+    score += pct * BM_WEIGHTS[k];
+  });
+  score = Math.round(score);
+
+  var rec = {
+    at: Date.now(), form: bmState.form, score: score,
+    sections: { reading: by.reading.pct, structure: by.structure.pct,
+                listening: by.listening.pct, writing: by.writing.pct },
+    minutes: Math.max(1, Math.round((Date.now() - bmState.startedAt) / 60000))
+  };
+  var h = bmHistory();
+  h.push(rec);
+  localStorage.setItem('bmHistory', JSON.stringify(h));
+  bmState = null;
+  bmShowResult(rec, h);
+}
+
+function bmShowResult(rec, h) {
+  var prev = h.length > 1 ? h[h.length - 2] : null;
+  var delta = prev ? rec.score - prev.score : null;
+  var deltaHtml = '';
+  if (delta !== null) {
+    var cls = delta > 0 ? 'up' : (delta < 0 ? 'down' : 'flat');
+    var sign = delta > 0 ? '+' : '';
+    deltaHtml = '<div class="bm-delta ' + cls + '">' + sign + delta +
+      ' <span>\u0645\u0646\u0630 \u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u0633\u0627\u0628\u0642</span></div>';
+  }
+
+  var rows = Object.keys(BM_WEIGHTS).map(function (k) {
+    var label = { reading: '\u0627\u0644\u0642\u0631\u0627\u0621\u0629', structure: '\u0627\u0644\u0642\u0648\u0627\u0639\u062f',
+                  listening: '\u0627\u0644\u0627\u0633\u062a\u0645\u0627\u0639', writing: '\u0627\u0644\u062a\u062d\u0644\u064a\u0644 \u0627\u0644\u0643\u062a\u0627\u0628\u064a' }[k];
+    var p = rec.sections[k];
+    var pp = prev ? prev.sections[k] : null;
+    var d = pp === null ? '' : (p - pp > 0 ? ' <i class="up">+' + (p - pp) + '</i>'
+            : (p - pp < 0 ? ' <i class="down">' + (p - pp) + '</i>' : ''));
+    // The ghost of the previous sitting, drawn in the same bar: a mark where
+    // the learner stood last time, and the stretch between then and now.
+    var ghost = '';
+    if (pp !== null) {
+      var lo = Math.min(p, pp), hi = Math.max(p, pp);
+      var cls = p > pp ? 'gain' : (p < pp ? 'loss' : 'same');
+      if (hi > lo) {
+        ghost += '<b class="bm-band ' + cls + '" style="inset-inline-start:' + lo +
+                 '%;width:' + (hi - lo) + '%"></b>';
+      }
+      // clamped so a previous 100 still shows its full width inside the bar
+      ghost += '<u class="bm-was" style="inset-inline-start:' + Math.min(pp, 98.6) + '%"></u>';
+    }
+    return '<div class="bm-row"><span class="bm-row-l">' + label + d + '</span>' +
+           '<span class="bm-row-bar"><i style="width:' + p + '%"></i>' + ghost + '</span>' +
+           '<span class="bm-row-v">' + p + '%</span></div>';
+  }).join('');
+
+  // Without a word the mark is a mystery, and a mysterious mark on a score is
+  // worse than no mark. Shown only once there is a previous sitting to explain.
+  var legend = prev
+    ? '<div class="bm-legend"><span></span>\u0647\u0630\u0647 \u0627\u0644\u0639\u0644\u0627\u0645\u0629 = \u0645\u0648\u0636\u0639\u0643 \u0641\u064a \u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u0633\u0627\u0628\u0642</div>'
+    : '';
+
+  // The weakest section is the single most useful thing a learner can take
+  // away, so it is named rather than left to be read off a chart.
+  var weakest = Object.keys(rec.sections).reduce(function (a, b) {
+    return rec.sections[a] <= rec.sections[b] ? a : b;
+  });
+  var advice = {
+    reading: '\ud83d\udcd6 \u0627\u0628\u062f\u0623 \u0645\u0646 <b>\u0627\u0644\u0642\u0631\u0627\u0621\u0629</b> \u0641\u064a \u0627\u0644\u0645\u0643\u062a\u0628\u0629 \u2014 \u0648\u0647\u064a \u0623\u0643\u0628\u0631 \u0642\u0633\u0645 \u0641\u064a STEP (40%).',
+    structure: '\ud83d\udcd0 \u0631\u0643\u0651\u0632 \u0639\u0644\u0649 <b>\u0627\u0644\u0642\u0648\u0627\u0639\u062f</b> \u2014 \u062f\u0631\u0633 \u0648\u0627\u062d\u062f \u0643\u0644 \u064a\u0648\u0645.',
+    listening: '\ud83c\udfa7 \u0627\u0633\u062a\u0645\u0639 \u0644\u062d\u0644\u0642\u0629 <b>\u0628\u0648\u062f\u0643\u0627\u0633\u062a</b> \u064a\u0648\u0645\u064a\u064b\u0627.',
+    writing: '\u270d\ufe0f \u0627\u0646\u062a\u0628\u0647 \u0644\u0639\u0644\u0627\u0645\u0627\u062a \u0627\u0644\u062a\u0631\u0642\u064a\u0645 \u0648\u0627\u0644\u062d\u0631\u0648\u0641 \u0627\u0644\u0643\u0628\u064a\u0631\u0629 \u0641\u064a \u0623\u0645\u062b\u0644\u0629 \u0627\u0644\u0642\u0648\u0627\u0639\u062f.'
+  }[weakest];
+
+  document.getElementById('bmBody').innerHTML =
+    '<div class="bm-result">' +
+      '<div class="bm-score-ring"><div class="bm-score">' + rec.score + '</div><div class="bm-of">/ 100</div></div>' +
+      deltaHtml +
+      '<div class="bm-rows">' + rows + '</div>' + legend +
+      '<div class="bm-advice">' + advice + '</div>' +
+    '</div>' + bmHistoryHtml();
+  addStarPoints('completeQuiz', true);
+}
+
+// A single score says nothing. Two say everything — so the history is drawn
+// as a line the moment there is more than one point on it.
+function bmHistoryHtml() {
+  var h = bmHistory();
+  if (h.length < 2) {
+    return h.length === 1
+      ? '<div class="bm-note">\ud83d\udcc8 \u0642\u064a\u0627\u0633 \u0648\u0627\u062d\u062f \u0644\u0627 \u064a\u0642\u0648\u0644 \u0634\u064a\u0626\u064b\u0627 \u0639\u0646 \u0627\u0644\u062a\u062d\u0633\u0651\u0646. \u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u062b\u0627\u0646\u064a \u0647\u0648 \u0627\u0644\u0630\u064a \u064a\u0631\u0633\u0645 \u0627\u0644\u062e\u0637.</div>'
+      : '';
+  }
+  var pts = h.slice(-8);
+  var w = 300, hh = 110, pad = 14;
+  var max = 100;
+  var step = pts.length > 1 ? (w - pad * 2) / (pts.length - 1) : 0;
+  var coords = pts.map(function (p, i) {
+    return [pad + i * step, hh - pad - (p.score / max) * (hh - pad * 2)];
+  });
+  var line = coords.map(function (c, i) { return (i ? 'L' : 'M') + c[0].toFixed(1) + ' ' + c[1].toFixed(1); }).join(' ');
+  var dots = coords.map(function (c, i) {
+    return '<circle cx="' + c[0].toFixed(1) + '" cy="' + c[1].toFixed(1) + '" r="3.5" fill="#F5C842"/>' +
+           '<text x="' + c[0].toFixed(1) + '" y="' + (c[1] - 8).toFixed(1) + '" class="bm-pt">' + pts[i].score + '</text>';
+  }).join('');
+  var first = pts[0].score, last = pts[pts.length - 1].score;
+  var growth = last - first;
+
+  return '<div class="bm-chart">' +
+    '<div class="bm-chart-h">\ud83d\udcc8 \u062a\u0637\u0648\u0651\u0631\u0643 \u2014 \u0622\u062e\u0631 ' + pts.length + ' \u0642\u064a\u0627\u0633\u0627\u062a</div>' +
+    '<svg viewBox="0 0 ' + w + ' ' + hh + '" class="bm-svg">' +
+      '<line x1="' + pad + '" y1="' + (hh - pad) + '" x2="' + (w - pad) + '" y2="' + (hh - pad) + '" stroke="rgba(148,180,220,.18)"/>' +
+      '<path d="' + line + '" fill="none" stroke="#2DD4BF" stroke-width="2" stroke-linecap="round"/>' + dots +
+    '</svg>' +
+    '<div class="bm-growth ' + (growth >= 0 ? 'up' : 'down') + '">' +
+      (growth >= 0 ? '+' : '') + growth + ' \u0646\u0642\u0637\u0629 \u0645\u0646\u0630 \u0623\u0648\u0651\u0644 \u0642\u064a\u0627\u0633' +
+    '</div></div>';
+}
+
 // ══ SOUND LAB ══
 // A foundation tool for the learner who decodes letters slowly and cannot yet
 // read a sentence. The word set is not a sample of English — it is built on
@@ -7766,6 +9266,7 @@ function slEyePick(i) {
   }
   document.getElementById('slEyeRight').textContent = slEyeRight;
   document.getElementById('slEyeTotal').textContent = slEyeTotal;
+  slCountOne();
   // Longer pause after a miss: the explanation is the lesson.
   setTimeout(function () { slEyeAt++; slEyeRender(); }, i === slEyeOdd ? 1500 : 2600);
 }
@@ -7810,6 +9311,7 @@ function initSoundLab() {
     document.getElementById('slRight').textContent = slRight;
     document.getElementById('slTotal').textContent = slTotal;
     document.getElementById('slStreak').textContent = slStreak;
+    slCountOne();
     // Always replay the correct word afterwards — a wrong answer is another
     // chance to hear the contrast, not a moment to feel caught out.
     setTimeout(function () { slSpeak(slTarget, 0.55); }, 480);
@@ -8478,6 +9980,7 @@ function nextQ() { renderQuizQ(); }
 
 function renderQuizResult() {
   clearQuizProgress();
+  logSectionDone('quiz');
   document.getElementById('quizProgressFill').style.width = '100%';
   document.getElementById('quizProgressText').textContent = `${quizList.length} / ${quizList.length}`;
   const pct = Math.round((quizScore / (quizList.length * 10)) * 100);
@@ -8832,6 +10335,7 @@ function markGrammarLessonDone(i) {
       done.push(i);
       localStorage.setItem('grammarCompleted', JSON.stringify(done));
       logSectionActivity('grammar');
+      logSectionDone('grammar');
     }
   } catch(e) {}
   if (typeof renderMissionCard === 'function') renderMissionCard();
@@ -8886,8 +10390,26 @@ function renderFlashcards() {
   setupSwipe();
 }
 
+// Sound Lab and Flashcards have no end: no last card, no final question. A
+// threshold stands in for the finish line — five answers or five cards in one
+// sitting, counted per visit and logged once, so a single tap never counts and
+// a long session does not count five times.
+var slSessionDone = 0, fcSessionSeen = {}, fcSessionLogged = false;
+
+function slCountOne() {
+  slSessionDone++;
+  if (slSessionDone === 5) logSectionDone('sound');
+}
+
+function fcCountOne(idx) {
+  if (fcSessionLogged) return;
+  fcSessionSeen[idx] = 1;
+  if (Object.keys(fcSessionSeen).length >= 5) { fcSessionLogged = true; logSectionDone('flash'); }
+}
+
 function showFlashcard() {
   const w = words[currentFlash]; if (!w) return;
+  fcCountOne(currentFlash);
   document.getElementById('fcMain').innerHTML = `
     <div class="flashcard-wrap" id="fc" onclick="document.getElementById('fc').classList.toggle('flipped')">
       <div class="flashcard-inner">
@@ -8920,11 +10442,75 @@ function setupSwipe() {
   }, { passive: true });
 }
 
+// ══ LIBRARY PROGRESS RINGS ══
+// Two honest measures, not one averaged one. Four activities have a syllabus
+// with a last item, so their ring is simply how much of it is finished. The
+// other five never end, so theirs is how many separate days the learner has
+// actually worked in them, out of twelve — which is a habit, not a score.
+// Both answer the same question at a glance, and the label on each tile says
+// which of the two it is rather than leaving the learner to guess.
+var LIB_HABIT_TARGET = 12;
+
+function libCountPrefix(prefix, keys) {
+  var n = 0;
+  for (var i = 0; i < keys.length; i++) {
+    if (localStorage.getItem(prefix + keys[i])) n++;
+  }
+  return n;
+}
+
+function libActivityProgress(sec) {
+  try {
+    if (sec === 'grammar') {
+      return { done: getGrammarCompleted().length, total: grammarLessons.length, kind: 'syllabus' };
+    }
+    if (sec === 'reading') {
+      return { done: rlGetCompleted().length, total: readingPassages.length, kind: 'syllabus' };
+    }
+    if (sec === 'podcast') {
+      var pk = Object.keys(podcastEpisodes);
+      return { done: libCountPrefix('pod_done_', pk), total: pk.length, kind: 'syllabus' };
+    }
+    if (sec === 'conv') {
+      var ck = Object.keys(conversations);
+      return { done: libCountPrefix('conv_mastered_', ck), total: ck.length, kind: 'syllabus' };
+    }
+    return { done: getSectionDoneDays(sec).length, total: LIB_HABIT_TARGET, kind: 'habit' };
+  } catch (e) {
+    return { done: 0, total: 1, kind: 'habit' };
+  }
+}
+
+function paintLibraryRings() {
+  var tiles = document.querySelectorAll('.lib-tile[data-act]');
+  for (var i = 0; i < tiles.length; i++) {
+    var t = tiles[i];
+    var p = libActivityProgress(t.getAttribute('data-act'));
+    var pct = p.total ? Math.min(100, Math.round(p.done / p.total * 100)) : 0;
+    var arc = t.querySelector('.ring-arc');
+    if (arc) {
+      arc.setAttribute('stroke-dasharray', pct + ' 100');
+      // A rounded cap on a zero-length dash still paints a dot, so an activity
+      // never opened showed a speck of gold as if it had been started.
+      arc.style.visibility = pct > 0 ? '' : 'hidden';
+    }
+    t.classList.toggle('act-full', pct >= 100);
+    // The ring is shape and colour only. The same fact goes to the button's
+    // label so it is not lost to anyone using a screen reader, or to anyone
+    // who simply cannot tell a three-quarter arc from a full one.
+    var name = t.querySelector('.lib-tile-en');
+    t.setAttribute('aria-label', (name ? name.textContent + ' — ' : '') + (p.kind === 'syllabus'
+      ? p.done + ' of ' + p.total + ' finished'
+      : 'practised on ' + p.done + ' of ' + p.total + ' days'));
+  }
+}
+
 // ══ TABS ══
 function showTab(name, btn, navType) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
   logSectionActivity(name);
+  if (name === 'library') { try { paintLibraryRings(); } catch (e) {} }
 
   // Bottom nav now has 5 items: home, journey(train), library, words, account.
   // Practice screens (quiz, voice, games, grammar, etc.) are reached via the
@@ -8948,6 +10534,7 @@ function showTab(name, btn, navType) {
   if (name === 'words') updateWordsDashboard();
   if (name === 'reading') rlRenderList();
   if (name === 'sound')   initSoundLab();
+  if (name === 'bench')   openBenchmark();
 
   window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
 }
@@ -9015,7 +10602,7 @@ const DAILY_FLOW = [
 ];
 
 function getNextFlowStep() {
-  return DAILY_FLOW.find(step => getSectionActivityDays(step.section).indexOf(today) === -1) || null;
+  return DAILY_FLOW.find(step => getSectionDoneDays(step.section).indexOf(today) === -1) || null;
 }
 
 // ══ JOURNEY-AWARE DAILY LESSON ══
@@ -9047,7 +10634,7 @@ function getMissionItems() {
   const wordsToday = wordsForCurrentStation();
   const wordsDone = wordsToday >= goal;
 
-  const grammarDoneToday = getSectionActivityDays('grammar').indexOf(today) !== -1;
+  const grammarDoneToday = getSectionDoneDays('grammar').indexOf(today) !== -1;
   const lessonIdx = getTodaysGrammarLesson();
   const lesson = lessonIdx !== null ? grammarLessons[lessonIdx] : null;
 
@@ -9201,21 +10788,8 @@ function continueLearning() {
   if (next) next.go(); else rwOpenActivityPicker();
 }
 
-function toggleExploreSection() {
-  const section = document.getElementById('exploreSection');
-  const toggle = document.getElementById('exploreToggle');
-  const text = document.getElementById('exploreToggleText');
-  // These elements belonged to the pre-restructure home screen. The function
-  // survived the rewrite but its markup did not, so any surviving call site
-  // would throw on a null. Left in place and guarded rather than deleted,
-  // since the skills panel may return.
-  if (!section || !toggle || !text) return;
-  const isOpen = section.classList.toggle('open');
-  toggle.classList.toggle('open', isOpen);
-  text.textContent = isOpen
-    ? '🧭 Hide Skills · إخفاء المهارات'
-    : '🧭 Explore All Skills · استكشف كل المهارات';
-}
+// Removed: its markup went with the pre-restructure home screen.
+
 
 function switchWordsTab(paneId, btn) {
   document.querySelectorAll('#tab-words .station-tab-pane').forEach(p => p.classList.toggle('active', p.dataset.wpane === paneId));
@@ -9750,6 +11324,16 @@ window.addEventListener('load', () => {
       // overlay happened to be up. Explicitly closing the welcome screens when
       // a name exists makes that state unreachable: if we know who this is,
       // they never see the name or level screens again.
+      // One delegated listener for the benchmark's options: the markup is
+      // rebuilt for every item, so binding per render would leak handlers.
+      var bmBody = document.getElementById('bmBody');
+      if (bmBody) {
+        bmBody.addEventListener('click', function (e) {
+          var b = e.target.closest ? e.target.closest('.bm-opt') : null;
+          if (b && bmState) bmAnswer(parseInt(b.getAttribute('data-i'), 10));
+        });
+      }
+
       // Carry across any points stored under the old key before the account
       // screens read them, so a returning learner never sees a false zero.
       migrateStarPoints();
@@ -9828,11 +11412,16 @@ function saveName() {
   localStorage.setItem('studentName', n);
   document.getElementById('nameScreen').style.display = 'none';
 
-  // Offer the choice screen, not the test. The test is still there for anyone
-  // who wants it — it is now one of the options rather than the toll gate.
+  // Nobody is asked anything. Level is measured from behaviour as the learner
+  // works (see inferReadingLevel), so the first thing after typing a name is
+  // the platform itself — not a questionnaire about a scale they have never
+  // seen. The choice screen and the test both remain, reachable from Settings
+  // for anyone who wants to set their level deliberately.
   if (!localStorage.getItem('studentLevel')) {
-    document.getElementById('levelChoiceScreen').style.display = 'block';
-  } else {
+    localStorage.setItem('studentLevel', 'beginner');
+    localStorage.setItem('readingLevel', 'simple');
+  }
+  {
     renderStudentBanner(n);
     showToast('أهلاً ' + n + '! 🎉');
   }
@@ -10000,6 +11589,15 @@ function showLevelResult() {
     badge='🟢 Beginner'; badgeColor='rgba(45,212,191,.2)'; borderColor='#2DD4BF';
   }
   localStorage.setItem('studentLevel', level);
+  // The nine-question test is the one that actually runs, so it is the one that
+  // must set the reading level. getReadingLevel() also reads a four-skill
+  // placement result — but the function that writes that result is never
+  // called, so without this line a learner could sit the test, be told they are
+  // advanced, and still be shown beginner station texts.
+  localStorage.setItem('readingLevel', level === 'advanced' ? 'full' : 'simple');
+  localStorage.setItem('levelLocked', '1');
+  localStorage.removeItem('levelSelfDeclared');
+  localStorage.removeItem('levelTestSkipped');
   document.getElementById('lrEmoji').textContent = emoji;
   document.getElementById('lrTitle').textContent = title;
   document.getElementById('lrSubtitle').textContent = subtitle;
@@ -10022,6 +11620,10 @@ function finishLevelTest() {
 function pickLevel(level) {
   localStorage.setItem('studentLevel', level);
   localStorage.setItem('levelSelfDeclared', '1');
+  // A deliberate choice outranks measurement. Silently overriding what someone
+  // just chose would be the one thing that makes the hidden system feel like
+  // it is fighting them.
+  localStorage.setItem('levelLocked', '1');
   // Reading level follows directly, so the choice changes what they actually
   // see — station texts and quiz option counts — rather than being recorded
   // and ignored.
@@ -10649,6 +12251,7 @@ function getTrainProgress() {
 }
 function saveTrainProgress(p) {
   localStorage.setItem('trainProgress', JSON.stringify(p));
+  try { applyChapterLight(); } catch (e) {}
 }
 
 function getStationStatus(stationId) {
@@ -10727,6 +12330,20 @@ function getStationById(id) {
   const s = TRAIN_STATIONS.find(st => st.id === id);
   if (s) _stationByIdCache[id] = s;
   return s;
+}
+
+// ══ CHAPTER LIGHT ══
+// Mirrors the current chapter onto <body> so the CSS above can tint the page.
+// Called on load and after anything that can move the learner forward; it is a
+// single attribute write, so calling it twice costs nothing.
+function applyChapterLight() {
+  try {
+    var ch = getChapterForStation(getCurrentStationId(getTrainProgress()));
+    var id = ch ? String(ch.id) : '1';
+    if (document.body.getAttribute('data-chapter') !== id) {
+      document.body.setAttribute('data-chapter', id);
+    }
+  } catch (e) {}
 }
 
 function getChapterForStation(stationId) {
@@ -10907,12 +12524,8 @@ function handleCityClick(stationId, dotClass) {
   launchTrain(stationId);
 }
 
-function hexToRgb(hex) {
-  var r = parseInt(hex.slice(1,3),16);
-  var g = parseInt(hex.slice(3,5),16);
-  var b = parseInt(hex.slice(5,7),16);
-  return r + ',' + g + ',' + b;
-}
+// Removed: unused colour helper.
+
 
 function setJourneyView(view) {
   currentJourneyView = view;
@@ -11210,6 +12823,12 @@ function launchTrain(stationId) {
 
 function showStationCard() {
   document.getElementById('trainArrivalScreen').style.display = 'none';
+  // Denominator for the translation-reliance signal: opens of the Arabic tab
+  // only mean something against how many station cards were seen.
+  try {
+    localStorage.setItem('stationViews',
+      String(parseInt(localStorage.getItem('stationViews') || '0') + 1));
+  } catch (e) {}
   var s = currentTrainStation;
   var reqs = checkStationRequirements(s.id);
   var status = getStationStatus(s.id);
@@ -11342,6 +12961,15 @@ function showStationCard() {
 }
 
 function switchStationTab(paneId, btn) {
+  // The one new measurement the silent level detection needs: how often the
+  // learner reaches for the Arabic. Two integers, nothing about the learner,
+  // and never shown to them.
+  if (paneId === 'ar') {
+    try {
+      localStorage.setItem('arOpens',
+        String(parseInt(localStorage.getItem('arOpens') || '0') + 1));
+    } catch (e) {}
+  }
   document.querySelectorAll('.station-tab-pane').forEach(function(p){ p.classList.toggle('active', p.dataset.pane === paneId); });
   document.querySelectorAll('.station-tab-btn').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
@@ -11568,6 +13196,8 @@ function showSQResult() {
       } else {
         // Celebration text is short, repeated and obvious from context — the
         // cheapest possible place to hand the learner real English.
+        // Evidence has changed — re-measure quietly.
+        refreshInferredLevel();
         showToast(arabicSupport() === 'full'
           ? '🏆 Station complete: ' + station.nameEn + '! · اكتملت المحطة 🚄'
           : '🏆 Station complete: ' + station.nameEn + '! The train departs 🚄', '#A78BFA');
@@ -11611,6 +13241,7 @@ function completeGame(label) {
   addStarPoints('playGame');
   trackTrainGame();
   logSectionActivity('games');
+  logSectionDone('games');
   var req = null;
   try { req = checkStationRequirements(getCurrentStationId(getTrainProgress())); } catch (e) {}
   // Tell the student the station requirement moved, otherwise finishing a game
@@ -11794,6 +13425,36 @@ const ACTIVITY_SECTIONS = {
   journey: { icon:'🚂', en:'Train Journey',  ar:'رحلة القطار' }
 };
 
+// ══ COMPLETION LOG ══
+// activity_<section> counts the days a screen was OPENED — showTab() writes it
+// on every tab change. That is attendance, and the account heatmap wants it.
+// It is not evidence of work, so anything that asks "did they actually do
+// this?" reads done_<section> instead, written only from the handful of places
+// where a thing is genuinely finished.
+function logSectionDone(section) {
+  if (!ACTIVITY_SECTIONS[section]) return;
+  try {
+    var key = 'done_' + section;
+    var log = JSON.parse(localStorage.getItem(key) || '[]');
+    var todayStr = new Date().toDateString();
+    if (log[log.length - 1] !== todayStr) {
+      log.push(todayStr);
+      if (log.length > 90) log.shift();
+      localStorage.setItem(key, JSON.stringify(log));
+      if (DAILY_FLOW.some(function (f) { return f.section === section; })) {
+        setTimeout(showUpNextNudge, 2600);
+      }
+    }
+    var ck = 'dcount_' + section;
+    localStorage.setItem(ck, String(parseInt(localStorage.getItem(ck) || '0') + 1));
+  } catch (e) {}
+}
+
+function getSectionDoneDays(section) {
+  try { return JSON.parse(localStorage.getItem('done_' + section) || '[]'); }
+  catch (e) { return []; }
+}
+
 function logSectionActivity(section) {
   if (!ACTIVITY_SECTIONS[section]) return;
   try {
@@ -11809,12 +13470,6 @@ function logSectionActivity(section) {
     const countKey = 'count_' + section;
     localStorage.setItem(countKey, (parseInt(localStorage.getItem(countKey) || '0') + 1).toString());
 
-    // Connect today's steps together: the first time a Daily Flow section is
-    // completed today, gently point toward what comes next — this is what
-    // makes the day feel like one guided path instead of a menu of options.
-    if (isFirstTodayBeforeLog && DAILY_FLOW.some(s => s.section === section)) {
-      setTimeout(showUpNextNudge, 2600);
-    }
   } catch(e) {}
 }
 
@@ -11853,8 +13508,8 @@ function syncFlowToStation() {
     if (seen === null) return false; // first run: nothing to clear
     // Clear only today's marks. History for streaks and stats is untouched.
     DAILY_FLOW.forEach(function (step) {
-      var days = getSectionActivityDays(step.section).filter(function (d) { return d !== today; });
-      localStorage.setItem('activity_' + step.section, JSON.stringify(days));
+      var days = getSectionDoneDays(step.section).filter(function (d) { return d !== today; });
+      localStorage.setItem('done_' + step.section, JSON.stringify(days));
     });
     localStorage.setItem('flowWordsBase', String(myWords().filter(function (w) {
       return w.date === today;
@@ -12139,7 +13794,8 @@ const DEFAULT_TEACHER_EMAIL = 'Ara1979fat@gmail.com';
 // could read them from the page source, so they were never secret. Removed,
 // and the token revoked in BotFather — deleting it here does not take it
 // back from anyone who already copied it.
-function getTeacherEmail() { return localStorage.getItem('teacherEmail') || DEFAULT_TEACHER_EMAIL; }
+// Removed: unused; the email is read inline where needed.
+
 function getTeacherPhone() {
   return localStorage.getItem('teacherPhone') || DEFAULT_TEACHER_PHONE;
 }
@@ -12622,6 +14278,7 @@ function markConvMastered(key) {
   if (!alreadyMastered) addStarPoints('completeConv');
   trackTrainConv();
   logSectionActivity('conv');
+  logSectionDone('conv');
   showToast(arabicSupport() === 'full'
     ? '🏆 Conversation mastered! · أتقنت المحادثة'
     : '🏆 Conversation mastered!', '#FFD700');
@@ -12800,6 +14457,7 @@ function vbBackToTopics() {
   // Award once per day, and only for a real exchange (not an accidental open/close).
   if (vbPromptIdx > 0 && localStorage.getItem('voiceChatPointsDate') !== today) {
     localStorage.setItem('voiceChatPointsDate', today);
+    logSectionDone('voice');
     addStarPoints('voiceChat');
   }
   document.getElementById('vbChatWrap').style.display = 'none';
@@ -14285,6 +15943,7 @@ function rlMarkCompleted(id) {
   if (!done.includes(id)) {
     done.push(id);
     localStorage.setItem('readingCompleted', JSON.stringify(done));
+    logSectionDone('reading');
     addStarPoints('readComplete');
   }
 }
@@ -14933,6 +16592,7 @@ function podCheckAnswer(qIdx, chosen, correct, btnEl) {
 
 function podMarkDone() {
   localStorage.setItem('pod_done_' + currentPodKey, '1');
+  logSectionDone('podcast');
   showToast(arabicSupport() === 'full'
     ? '🏆 Episode finished! · أنهيت الحلقة'
     : '🏆 Episode finished!', '#FFD700');
@@ -14981,6 +16641,7 @@ function initFontSize() {
 // ══ INIT ══
 (function init() {
   applyTheme();
+  applyChapterLight();
   initFontSize();
   updateCounters();
   updateStreak();
@@ -15113,19 +16774,9 @@ function devResetProgress() {
   setTimeout(function(){ location.reload(); }, 1000);
 }
 
-function devSkipName() {
-  // Wrote to 'wsName' and looked for '#nameBox' — neither exists. The name is
-  // stored under 'studentName' and the screen is '#nameScreen', so this button
-  // silently did nothing at all. Two dead names from an older schema.
-  if (localStorage.getItem('studentName')) {
-    closeDevPanel();
-    showToast('الاسم مُدخل بالفعل', '#F5C842');
-    return;
-  }
-  localStorage.setItem('studentName', 'ARAFAT');
-  localStorage.setItem('studentLevel', 'advanced');
-  location.reload();
-}
+// Removed devSkipName(): devAutoLogin() does the same job and is the one
+// actually wired to a button.
+
 
 </script>
 
@@ -15163,6 +16814,7 @@ const MOTIVATIONAL = [
 function openSettingsPanel() {
   refreshReadingLevelLabel();
   refreshPulseLabel();
+  refreshLiteLabel();
   refreshLevelSourceLabel();
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
@@ -15563,29 +17215,8 @@ function showResultsQR() {
   qrSec.scrollIntoView({ behavior:'smooth' });
 }
 
-function sendByWhatsApp() {
-  var name   = localStorage.getItem('studentName') || 'Student';
-  var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
-  var streak = parseInt(localStorage.getItem('streak') || '0');
-  var pts    = parseInt(localStorage.getItem('wsPoints') || '0');
-  var p      = getTrainProgress();
-  var done   = (p.completed || []).length;
-  var rank   = RANKS[0];
-  for (var i = 0; i < RANKS.length; i++) { if (pts >= RANKS[i].points) rank = RANKS[i]; }
-  var date   = new Date().toLocaleDateString('en-GB');
-  var phone  = getTeacherPhone();
-  var story  = buildLearnerStory(name, words.length, streak, rank, done, TRAIN_STATIONS.length, 'en');
-  var msg = encodeURIComponent(
-    '📊 *WordSpark — ' + name + '\'s Journey*\n\n' +
-    story.wordsLine + '\n' +
-    story.streakLine + '\n' +
-    story.rankLine + '\n' +
-    story.journeyLine + '\n\n' +
-    '📅 ' + date + '\n⚡ Sent from WordSpark'
-  );
-  window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
-  showCelebration();
-}
+// Removed: superseded by exportToParent() / exportResults(), which the settings rows actually call.
+
 
 async function sendByTelegram() {
   var name   = localStorage.getItem('studentName') || 'Student';
@@ -15647,66 +17278,8 @@ function closeCelebrate() {
 }
 
 // ══ QR RESULTS ══
-function openQR() {
-  // جمع البيانات
-  var name    = localStorage.getItem('studentName') || 'Student';
-  var words   = JSON.parse(localStorage.getItem('mywords') || '[]');
-  var streak  = parseInt(localStorage.getItem('streak') || '0');
-  var p       = getTrainProgress();
-  var done    = (p.completed || []).length;
-  var total   = TRAIN_STATIONS.length;
-  var pct     = Math.round((done / total) * 100);
+// Removed: superseded by showResultsQR(), which the settings row actually calls.
 
-  // حساب النقاط والرتبة
-  var pts = 0;
-  try { pts = parseInt(localStorage.getItem('wsPoints') || '0'); } catch(e){}
-  var rank = RANKS[0];
-  for (var i = 0; i < RANKS.length; i++) {
-    if (pts >= RANKS[i].points) rank = RANKS[i];
-  }
-
-  // ملء البيانات
-  document.getElementById('qrName').textContent   = name;
-  document.getElementById('qrAvatar').textContent  = rank.icon;
-  document.getElementById('qrRank').textContent    = rank.title + ' · ' + rank.titleAr;
-  document.getElementById('qrWords').textContent   = words.length;
-  document.getElementById('qrStreak').textContent  = streak;
-  document.getElementById('qrPoints').textContent  = pts;
-  document.getElementById('qrStations').textContent= done;
-  document.getElementById('qrProgressPct').textContent = pct + '%';
-  document.getElementById('qrProgressFill').style.width = pct + '%';
-
-  // التاريخ
-  var now = new Date();
-  document.getElementById('qrDate').textContent =
-    now.toLocaleDateString('en-GB') + ' · ' + now.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
-
-  // بيانات QR
-  var qrData = [
-    'WordSpark Report',
-    'Student: ' + name,
-    'Rank: ' + rank.title,
-    'Words: ' + words.length,
-    'Streak: ' + streak + ' days',
-    'Points: ' + pts,
-    'Stations: ' + done + '/' + total,
-    'Date: ' + now.toLocaleDateString('en-GB'),
-    'Verify: ara2026fat.github.io/WordSpark-/wordspark.html'
-  ].join('\n');
-
-  // توليد رمز QR
-  var canvas = document.getElementById('qrCodeCanvas');
-  canvas.innerHTML = '';
-  new QRCode(canvas, {
-    text: qrData,
-    width: 160, height: 160,
-    colorDark: '#0D1117',
-    colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.M
-  });
-
-  document.getElementById('qrOverlay').classList.add('show');
-}
 
 function closeQR() {
   document.getElementById('qrOverlay').classList.remove('show');
