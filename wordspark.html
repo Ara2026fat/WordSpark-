@@ -4262,7 +4262,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     </button>
 
     <div style="text-align:center;margin-top:22px;display:flex;flex-direction:column;gap:9px">
-      <button onclick="startLevelTest()"
+      <button onclick="startLevelTest(true)"
         style="background:none;border:1px dashed #243550;border-radius:11px;padding:11px;color:#8FA3BE;font-family:'Tajawal',sans-serif;font-size:12.5px;cursor:pointer">
         🎯 لا أعرف — اختبرني في ٩ أسئلة
       </button>
@@ -6064,7 +6064,7 @@ const KNOWN_KEYS = [
   'theme','fontSizeLevel','liteMode','rwStudentNames','sparkComebackCount','missionSparkDate',
   'teacherName','teacherPhone','teacherEmail','parentPhone',
   'lastBackupDate','installBannerDismissedUntil','voiceChatPointsDate',
-  'realPlacementTestResult','pack_starter','countOff','lastCountDay','starPoints',
+  'realPlacementTestResult','ltResume','pack_starter','countOff','lastCountDay','starPoints',
   'arOpens','stationViews','levelLocked','bmHistory'
 ];
 // Keys built at runtime from a suffix (a section, a day, a pack id).
@@ -7503,6 +7503,14 @@ function refreshLevelSourceLabel() {
   var lv = localStorage.getItem('studentLevel');
   var names = { beginner: '🟢 مبتدئ', medium: '🟡 متوسط', advanced: '🔵 متقدّم' };
   if (!lv) { el.textContent = 'لم يُحدَّد بعد — اضغط للاختيار'; return; }
+  // An unfinished test is the one state the old label could not describe: it
+  // showed a level that came from a default, as if it had been measured.
+  var r = ltLoadResume();
+  if (r) {
+    el.textContent = 'اختبار غير مكتمل (' + r.at + ' من ' +
+                     r.qs.length + ') — اضغط لإكماله';
+    return;
+  }
   var how = localStorage.getItem('levelTestSkipped') === '1' ? 'افتراضي — لم تختر بعد'
           : localStorage.getItem('levelSelfDeclared') === '1' ? 'اخترته بنفسك'
           : 'من الاختبار';
@@ -11349,6 +11357,15 @@ window.addEventListener('load', () => {
             if (el) el.style.display = 'none';
           });
       }
+      // An unfinished test is worth one sentence on the way in. Not a screen
+      // that blocks: they left it for a reason, and may leave it again.
+      if (name && ltLoadResume()) {
+        setTimeout(function () {
+          var r = ltLoadResume();
+          if (r) showToast('ℹ️ اختبار المستوى متوقّف عند ' + r.at + '/' + r.qs.length +
+                           ' — أكمله من الإعدادات ‹ My Level', '#F5C842');
+        }, 3200);
+      }
       if (!name) {
         document.getElementById('nameScreen').style.display = 'flex';
         setTimeout(() => document.getElementById('studentNameInp').focus(), 300);
@@ -11510,9 +11527,38 @@ var ltCurrent = 0, ltScore = 0, ltStarsCount = 0;
 var ltColors = { beginner:'#2DD4BF', medium:'#F5C842', advanced:'#A78BFA' };
 var ltEmojis = { beginner:'🟢', medium:'🟡', advanced:'🔵' };
 
-function startLevelTest() {
-  ltQuestions = buildLTQuestions();
-  ltCurrent = 0; ltScore = 0; ltStarsCount = 0;
+// A test abandoned halfway now keeps its place. Stored per answer rather than
+// on exit, because there is no reliable moment of leaving in a web app: the
+// learner closes the tab, the phone sleeps, the browser evicts the page.
+function ltSaveResume() {
+  try {
+    localStorage.setItem('ltResume', JSON.stringify({
+      qs: ltQuestions, at: ltCurrent, score: ltScore, stars: ltStarsCount
+    }));
+  } catch (e) {}
+}
+
+function ltLoadResume() {
+  try {
+    var r = JSON.parse(localStorage.getItem('ltResume') || 'null');
+    if (!r || !r.qs || !r.qs.length || r.at >= r.qs.length) return null;
+    return r;
+  } catch (e) { return null; }
+}
+
+function ltClearResume() { try { localStorage.removeItem('ltResume'); } catch (e) {} }
+
+function startLevelTest(fresh) {
+  var r = fresh ? null : ltLoadResume();
+  if (r) {
+    ltQuestions = r.qs; ltCurrent = r.at; ltScore = r.score; ltStarsCount = r.stars;
+    showToast('أكملنا من السؤال ' + (ltCurrent + 1) +
+              ' — حيث توقّفت', '#2DD4BF');
+  } else {
+    ltQuestions = buildLTQuestions();
+    ltCurrent = 0; ltScore = 0; ltStarsCount = 0;
+    ltSaveResume();
+  }
   document.getElementById('levelTestScreen').style.display = 'block';
   document.getElementById('levelResultScreen').style.display = 'none';
   renderLTQuestion();
@@ -11562,6 +11608,7 @@ function answerLT(idx, btn) {
 
   setTimeout(function() {
     ltCurrent++;
+    ltSaveResume();
     if (ltCurrent < ltQuestions.length) {
       document.getElementById('ltCard').style.transform = 'translateX(-10px)';
       setTimeout(function() { document.getElementById('ltCard').style.transform = 'translateX(0)'; renderLTQuestion(); }, 200);
@@ -11598,6 +11645,7 @@ function showLevelResult() {
   localStorage.setItem('levelLocked', '1');
   localStorage.removeItem('levelSelfDeclared');
   localStorage.removeItem('levelTestSkipped');
+  ltClearResume();
   document.getElementById('lrEmoji').textContent = emoji;
   document.getElementById('lrTitle').textContent = title;
   document.getElementById('lrSubtitle').textContent = subtitle;
@@ -11620,6 +11668,7 @@ function finishLevelTest() {
 function pickLevel(level) {
   localStorage.setItem('studentLevel', level);
   localStorage.setItem('levelSelfDeclared', '1');
+  ltClearResume();
   // A deliberate choice outranks measurement. Silently overriding what someone
   // just chose would be the one thing that makes the hidden system feel like
   // it is fighting them.
@@ -11654,6 +11703,7 @@ function skipLevelTest() {
   // Settings, and doing so overrides everything set here.
   localStorage.setItem('studentLevel', 'beginner');
   localStorage.setItem('levelTestSkipped', '1');
+  ltClearResume();
   document.getElementById('levelTestScreen').style.display = 'none';
   var lr = document.getElementById('levelResultScreen');
   if (lr) lr.style.display = 'none';
@@ -11666,6 +11716,10 @@ function skipLevelTest() {
 }
 
 function retakeLevelTest() {
+  // A half-finished test goes straight back to where it stopped. Sending
+  // someone to the level menu here would quietly discard the answers they
+  // already gave, which is the thing this whole change exists to stop.
+  if (ltLoadResume()) { startLevelTest(); return; }
   localStorage.removeItem('studentLevel');
   localStorage.removeItem('levelTestSkipped');
   localStorage.removeItem('levelSelfDeclared');
