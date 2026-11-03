@@ -63,6 +63,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     --card:   #1E2D42;
     --rim:    #243550;
     --gold:   #F5C842;
+    --prog:   #F5C842;
     --teal:   #2DD4BF;
     --rose:   #FB7185;
     --lavender:#A78BFA;
@@ -92,6 +93,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     --card:   #EEF2F8;
     --rim:    #DCE4EF;
     --gold:   #E0A800;
+    --prog:   #8A5F06;
     --teal:   #0E9F8A;
     --rose:   #E14D6A;
     --lavender:#7C5BE6;
@@ -2186,8 +2188,38 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .continue-btn:active { transform: scale(.98); }
   .continue-btn.celebrate { background: linear-gradient(135deg, var(--gold), #E8940F); box-shadow: 0 10px 26px rgba(245,200,66,.3); }
   .continue-btn-ar { font-size: 16px; font-weight: 800; }
-  .continue-btn-en { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; opacity: .72;
-                     unicode-bidi: isolate; }
+  .continue-btn-en { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; opacity: .72; }
+
+  /* ══ CURRICULUM PROGRESS ══
+     One number answering one question: how much of the syllabus is done, and
+     how much is left. Only the five tracks that have a last item are counted.
+     Games, pronunciation, quizzes and flashcards are open-ended practice — a
+     percentage of something with no end is not a percentage, so they are named
+     under the card as practice rather than folded into the figure. */
+  .cur-card {
+    margin: 0 16px 20px; padding: 16px 16px 14px;
+    background: var(--card); border: 1px solid var(--rim); border-radius: 18px;
+  }
+  .cur-top { display: flex; align-items: center; gap: 14px; }
+  .cur-ring { flex-shrink: 0; width: 76px; height: 76px; }
+  .cur-ring text { font-family: 'Space Grotesk', sans-serif; }
+  .cur-head { flex: 1; min-width: 0; }
+  .cur-title-ar { font-size: 15px; font-weight: 800; color: var(--white); }
+  .cur-title-en { font-family: 'Space Grotesk', sans-serif; font-size: 10.5px;
+                  color: var(--muted); letter-spacing: .3px; margin-top: 1px; }
+  .cur-count { font-size: 13px; color: var(--soft); margin-top: 7px; line-height: 1.7; }
+  .cur-count b { color: var(--prog); font-weight: 800; }
+  .cur-left { color: var(--muted); }
+  .cur-rows { margin-top: 14px; display: grid; gap: 9px; }
+  .cur-row { display: grid; grid-template-columns: 78px 1fr 42px; align-items: center; gap: 9px; }
+  .cur-row-lbl { font-size: 12px; color: var(--soft); white-space: nowrap; }
+  .cur-row-bar { height: 7px; border-radius: 99px; background: var(--track); overflow: hidden; }
+  .cur-row-fill { height: 100%; border-radius: 99px; width: 0;
+                  background: var(--prog);
+                  transition: width .5s cubic-bezier(.2,.8,.3,1); }
+  .cur-row-num { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px;
+                 color: var(--muted); text-align: left; }
+  .cur-note { margin-top: 13px; font-size: 11.5px; color: var(--muted); line-height: 1.8; }
 
   /* ══ EXPLORE ALL SKILLS (collapsed by default) ══ */
   .explore-toggle {
@@ -4742,6 +4774,26 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <span class="continue-btn-ar" id="continueBtnAr">تابع رحلتك</span>
       <span class="continue-btn-en" id="continueBtnEn">Continue Journey</span>
     </button>
+
+    <div class="cur-card" id="curCard">
+      <div class="cur-top">
+        <svg class="cur-ring" viewBox="0 0 80 80" aria-hidden="true">
+          <circle cx="40" cy="40" r="32" fill="none" stroke="var(--track)" stroke-width="7"/>
+          <circle id="curArc" cx="40" cy="40" r="32" pathLength="100" fill="none"
+                  stroke="var(--prog)" stroke-width="7" stroke-linecap="round"
+                  stroke-dasharray="0 100" transform="rotate(-90 40 40)"/>
+          <text id="curPctText" x="40" y="45" text-anchor="middle"
+                font-size="19" font-weight="900" fill="var(--prog)">0%</text>
+        </svg>
+        <div class="cur-head">
+          <div class="cur-title-ar">تقدّمي في المنهج</div>
+          <div class="cur-title-en">Curriculum Progress</div>
+          <div class="cur-count" id="curCount">—</div>
+        </div>
+      </div>
+      <div class="cur-rows" id="curRows"></div>
+      <div class="cur-note">الألعاب والنطق والاختبارات والبطاقات تدريب مستمر لا نهاية له، فلا تُحسب في النسبة.</div>
+    </div>
   </div>
 
   <!-- ══ WORDS ══ -->
@@ -11763,8 +11815,15 @@ function markGrammarLessonDone(i) {
 }
 
 function getGrammarCompleted() {
-  try { return JSON.parse(localStorage.getItem('grammarCompleted') || '[]'); }
-  catch(e) { return []; }
+  // Same failure getTrainProgress was hardened against: this returned whatever
+  // JSON held, so a value saved as an object or a literal null — by an older
+  // build, a hand-edited backup, or a half-written record — reached .includes()
+  // and threw on the home screen during boot. Valid JSON that is not an array
+  // is the dangerous case, because the try/catch never fires on it.
+  try {
+    var v = JSON.parse(localStorage.getItem('grammarCompleted') || '[]');
+    return Array.isArray(v) ? v : [];
+  } catch(e) { return []; }
 }
 
 // Today's single lesson focus — the next one the student hasn't finished
@@ -11905,6 +11964,95 @@ function libActivityProgress(sec) {
   }
 }
 
+// ══ CURRICULUM PERCENTAGE ══
+// "How much have I finished, and how much is left" — asked of the syllabus as
+// a whole. Every item carries the same weight, so the figure is simply items
+// finished over items that exist; the per-track rows underneath show where the
+// number comes from, which is why no track needed an invented multiplier.
+//
+// Only tracks with a final item are eligible. Each one's `done` is read from
+// the counter that already drives its own screen, so this card can never
+// disagree with the screen it summarises.
+var CURRICULUM_TRACKS = [
+  { key: 'stations', ar: 'المحطات',    total: function () { return TRAIN_STATIONS.length; },
+    done: function () { return getTrainProgress().completed.length; } },
+  { key: 'grammar',  ar: 'القواعد',    total: function () { return grammarLessons.length; },
+    done: function () { return getGrammarCompleted().length; } },
+  { key: 'reading',  ar: 'القراءة',    total: function () { return readingPassages.length; },
+    done: function () { return rlGetCompleted().length; } },
+  { key: 'podcast',  ar: 'البودكاست',  total: function () { return Object.keys(podcastEpisodes).length; },
+    done: function () { return libCountPrefix('pod_done_', Object.keys(podcastEpisodes)); } },
+  { key: 'conv',     ar: 'المحادثات',  total: function () { return Object.keys(conversations).length; },
+    done: function () { return libCountPrefix('conv_mastered_', Object.keys(conversations)); } }
+];
+
+function curriculumProgress() {
+  var rows = [], done = 0, total = 0;
+  for (var i = 0; i < CURRICULUM_TRACKS.length; i++) {
+    var t = CURRICULUM_TRACKS[i], d = 0, n = 0;
+    // One broken track must not take the whole card down with it, so each is
+    // read inside its own guard and simply contributes nothing if it throws.
+    try { n = t.total() || 0; } catch (e) { n = 0; }
+    try { d = t.done() || 0; } catch (e) { d = 0; }
+    if (d > n) d = n;
+    if (!n) continue;
+    rows.push({ ar: t.ar, done: d, total: n, pct: Math.round(d / n * 100) });
+    done += d; total += n;
+  }
+  return {
+    rows: rows,
+    done: done,
+    total: total,
+    left: total - done,
+    // Floored, not rounded: rounding up would show 100% to a learner with one
+    // item still unfinished, and the card would be lying at the only moment
+    // its number really matters.
+    pct: total ? Math.floor(done / total * 100) : 0
+  };
+}
+
+function renderCurriculumCard() {
+  var card = document.getElementById('curCard');
+  if (!card) return;
+  var p = curriculumProgress();
+
+  var arc = document.getElementById('curArc');
+  if (arc) {
+    arc.setAttribute('stroke-dasharray', p.pct + ' 100');
+    // A round cap paints a dot even on a zero-length dash, which read as a
+    // start that had not happened.
+    arc.style.visibility = p.pct > 0 ? '' : 'hidden';
+  }
+  var pctEl = document.getElementById('curPctText');
+  if (pctEl) pctEl.textContent = p.pct + '%';
+
+  var countEl = document.getElementById('curCount');
+  if (countEl) {
+    countEl.innerHTML = p.done === 0
+      ? 'لم تبدأ بعد — أمامك <b>' + p.total + '</b> درسًا ومحطة.'
+      : 'أنجزت <b>' + p.done + '</b> من ' + p.total +
+        '<span class="cur-left"> · المتبقي ' + p.left + '</span>';
+  }
+
+  var rowsEl = document.getElementById('curRows');
+  if (rowsEl) {
+    rowsEl.innerHTML = p.rows.map(function (r) {
+      return '<div class="cur-row">' +
+        '<div class="cur-row-lbl">' + r.ar + '</div>' +
+        '<div class="cur-row-bar"><div class="cur-row-fill" style="width:' + r.pct + '%"></div></div>' +
+        '<div class="cur-row-num">' + r.done + '/' + r.total + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // The ring is shape and colour only, so the same fact goes to the card as a
+  // label for anyone who cannot read an arc — or cannot see one.
+  card.setAttribute('role', 'group');
+  card.setAttribute('aria-label',
+    'تقدّمي في المنهج: ' + p.pct + ' بالمئة — أنجزت ' + p.done + ' من ' + p.total +
+    ' والمتبقي ' + p.left);
+}
+
 function paintLibraryRings() {
   var tiles = document.querySelectorAll('.lib-tile[data-act]');
   for (var i = 0; i < tiles.length; i++) {
@@ -11986,6 +12134,7 @@ function updateHomeStats() {
   }
 
   renderMissionCard();
+  try { renderCurriculumCard(); } catch (e) {}
 }
 
 function openAchievementsModal() {
@@ -14957,8 +15106,11 @@ function logSectionDone(section) {
 }
 
 function getSectionDoneDays(section) {
-  try { return JSON.parse(localStorage.getItem('done_' + section) || '[]'); }
-  catch (e) { return []; }
+  // Normalised, not just guarded — see getGrammarCompleted.
+  try {
+    var v = JSON.parse(localStorage.getItem('done_' + section) || '[]');
+    return Array.isArray(v) ? v : [];
+  } catch (e) { return []; }
 }
 
 function logSectionActivity(section) {
@@ -17441,8 +17593,11 @@ let rlRecognition = null;
 let rlListening = false;
 
 function rlGetCompleted() {
-  try { return JSON.parse(localStorage.getItem('readingCompleted') || '[]'); }
-  catch(e) { return []; }
+  // Normalised, not just guarded — see getGrammarCompleted.
+  try {
+    var v = JSON.parse(localStorage.getItem('readingCompleted') || '[]');
+    return Array.isArray(v) ? v : [];
+  } catch(e) { return []; }
 }
 function rlMarkCompleted(id) {
   const done = rlGetCompleted();
