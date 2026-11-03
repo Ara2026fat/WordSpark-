@@ -6426,12 +6426,18 @@ const WS_CONFIG = {
 
   // رقم المعلّم الافتراضي وبريده
   // Where a student's results go when they have not been given their own
-  // teacher's number. Today this is Arafat's personal WhatsApp and inbox:
-  // right for one class, and a different proposition once the link is public,
-  // because every stranger's student lands in the same phone. Emptying both
-  // strings makes the app ask for a teacher's number instead of assuming one.
-  teacherPhone: '966590355799',
-  teacherEmail: 'Ara1979fat@gmail.com',
+  // teacher's number. These held Arafat's personal WhatsApp and inbox, which
+  // was right while the link went to one class by hand. The link is public
+  // now, so they are empty: a personal mobile number in a file anyone can
+  // view-source is not a default, and every stranger's student would have
+  // landed in the same phone. Empty means the app asks each teacher for their
+  // own number the first time results are sent — which is what a platform
+  // with more than one teacher needs anyway.
+  //
+  // To put your own class back on autopilot, fill these two in. Nothing else
+  // changes; the in-app Teacher settings already override them per device.
+  teacherPhone: '',
+  teacherEmail: '',
 
   // الإحصاءات
   // GoatCounter is cookieless and collects no personal data, but it is still a
@@ -15458,7 +15464,7 @@ function getTeacherPhone() {
   return localStorage.getItem('teacherPhone') || DEFAULT_TEACHER_PHONE;
 }
 function getTeacherDisplayName() {
-  return localStorage.getItem('teacherName') || 'ARAFAT';
+  return localStorage.getItem('teacherName') || 'My Teacher';
 }
 function openTeacherPhoneModal() {
   document.getElementById('teacherPhoneInp').value = (localStorage.getItem('teacherPhone') || '').replace(/^966/, '');
