@@ -231,6 +231,7 @@ body {
   <div class="clsname" id="clsName">…</div>
   <div class="chip" id="clsCode">······</div>
   <button class="hbtn on" id="mWeek" onclick="setMode('week')">الأسبوع</button>
+  <button class="hbtn" id="mTeam" onclick="setMode('team')">الفِرَق</button>
   <button class="hbtn" id="mAll" onclick="setMode('all')">الإجمالي</button>
   <button class="hbtn" id="fsBtn" onclick="toggleFs()" title="ملء الشاشة">⛶</button>
   <div class="live beat" id="live" title="يُحدَّث تلقائيًّا"></div>
@@ -287,6 +288,16 @@ var KEY = (function () {
   } catch (e) { return ''; }
 })();
 
+// Set once by the teacher in the dashboard; it is the association's name on
+// their own screen, stored on the device and never sent anywhere.
+var ORG = (function () {
+  try {
+    var q = new URLSearchParams(location.search).get('org');
+    if (q != null) localStorage.setItem('ws_org', q.slice(0, 40));
+    return localStorage.getItem('ws_org') || '';
+  } catch (e) { return ''; }
+})();
+
 var TRACKS = [
   { k:'stations', ev:'station', ar:'المحطات',   cls:'s-stations', col:'var(--gold)',   max:42 },
   { k:'grammar',  ev:'grammar', ar:'القواعد',   cls:'s-grammar',  col:'var(--violet)', max:16 },
@@ -299,6 +310,11 @@ var REFRESH_MS = 45000, PAGE_MS = 9000, SPOT_MS = 6000;
 
 var MODE = 'week', DATA = null, page = 0, pages = 1, perPage = 10, spotIdx = 0;
 var tPage = null, tSpot = null, tPoll = null, lastTop = null, paused = 0;
+// Where everyone stood at the previous refresh, so a milestone can be noticed
+// the moment it is crossed rather than inferred from a number on screen.
+var prevPct = {}, MILESTONES = [10, 25, 50, 75, 100];
+var laneTop = 0;
+var TEAM_COLORS = ['var(--gold)','var(--teal)','var(--violet)','var(--lime)','var(--rose)'];
 
 /* A name always gets the same animal, so children recognise themselves across
    sessions without anything about them being stored. */
@@ -339,7 +355,48 @@ async function load() {
 }
 
 /* ══ the race ══ */
+// Teams are rows of their own: the lane is the team, and no child's name
+// appears in the ranking at all. The one who is behind is still on the side
+// that is winning, which is the entire point of offering this mode.
+function teamRacers() {
+  if (!DATA) return [];
+  var by = {};
+  DATA.learners.forEach(function (r) {
+    var t = (r.team || '').trim();
+    if (!t) return;
+    var g = by[t] || (by[t] = { alias: t, members: 0, score: 0, done: 0, total: 0,
+                                week: 0, streak: 0, last: 0, isTeam: true,
+                                tracks: { stations:0, grammar:0, reading:0, podcast:0, conv:0 },
+                                weekTracks: {} });
+    g.members++;
+    g.done += r.done_total; g.total += r.total_items;
+    g.week += r.done_7d;
+    g.streak = Math.max(g.streak, r.streak_days);
+    g.last = Math.max(g.last, r.last_sync_at);
+    ['stations','grammar','reading','podcast','conv'].forEach(function (k) { g.tracks[k] += r[k] || 0; });
+    var wt = r.week_tracks || {};
+    for (var k2 in wt) if (Object.prototype.hasOwnProperty.call(wt, k2)) {
+      g.weekTracks[k2] = (g.weekTracks[k2] || 0) + wt[k2];
+    }
+  });
+  var out = [];
+  for (var name in by) if (Object.prototype.hasOwnProperty.call(by, name)) {
+    var g = by[name];
+    // Per-member averages, so a team of nine cannot beat a team of four just
+    // by being bigger.
+    g.score = g.members ? Math.round(g.week / g.members * 10) / 10 : 0;
+    g.pct = g.total ? Math.floor(g.done / g.total * 100) : 0;
+    out.push(g);
+  }
+  out.sort(function (a, b) {
+    if (b.score !== a.score) return b.score - a.score;
+    return String(a.alias).localeCompare(String(b.alias), 'ar');
+  });
+  return out;
+}
+
 function racers() {
+  if (MODE === 'team') return teamRacers();
   if (!DATA) return [];
   var list = DATA.learners.map(function (r) {
     return {
@@ -347,7 +404,7 @@ function racers() {
       score: MODE === 'week' ? r.done_7d : r.done_total,
       pct: r.pct, done: r.done_total, total: r.total_items,
       week: r.done_7d, month: r.done_30d, streak: r.streak_days,
-      weekTracks: r.week_tracks || {},
+      weekTracks: r.week_tracks || {}, team: r.team || '',
       last: r.last_sync_at, tracks: r
     };
   });
@@ -369,7 +426,10 @@ function layout() {
   if (!n) return;
   // Lanes get as tall as they can while still fitting whole; only when even
   // the smallest readable lane will not fit does the board start paging.
-  var MIN = 30, MAX = 76;
+  // A two-team race gets taller lanes than a sixty-child one, because the
+  // room has to read it from the back either way.
+  var MIN = 30;
+  var MAX = n <= 3 ? 120 : n <= 6 ? 96 : 76;
   perPage = Math.max(1, Math.floor(h / MIN));
   if (perPage >= n) perPage = n;
   var laneH = Math.floor(h / Math.min(perPage, n));
@@ -377,17 +437,24 @@ function layout() {
   document.documentElement.style.setProperty('--lane', laneH + 'px');
   pages = Math.ceil(n / perPage);
   if (page >= pages) page = 0;
+  // Whatever is left over is split above and below, so a short field sits in
+  // the middle of the track instead of clinging to the top with a void under
+  // it - which read as a board that had failed to finish drawing.
+  var shown = Math.min(perPage, n - page * perPage);
+  laneTop = Math.max(0, Math.floor((h - shown * laneH) / 2));
 }
 
 function render() {
   if (!DATA) return;
-  el('clsName').textContent = DATA.label || 'الصفّ';
+  el('clsName').textContent = (ORG ? ORG + ' · ' : '') + (DATA.label || 'الصفّ');
   el('clsCode').textContent = DATA.code || '';
 
   var all = racers();
   if (!all.length) {
-    showMsg('لم ينضم أحد بعد.<br>اكتب الرمز <b>' + esc(DATA.code) + '</b> على السبورة.');
-    el('pager').innerHTML = ''; renderTiles(all); return;
+    showMsg(MODE === 'team'
+      ? 'لم تُوزَّع الفِرَق بعد.<br>افتح لوحة المعلّم واضغط «وزّع الفِرَق».'
+      : 'لم ينضم أحد بعد.<br>اكتب الرمز <b>' + esc(DATA.code) + '</b> على السبورة.');
+    el('pager').innerHTML = ''; renderTiles(racersFlat()); return;
   }
   hideMsg();
   layout();
@@ -408,7 +475,7 @@ function render() {
       node.className = 'lane'; node.id = id;
       node.innerHTML =
         '<div class="rank"></div>' +
-        '<div class="who"><div class="ava">' + avatarFor(r.alias) + '</div>' +
+        '<div class="who"><div class="ava">' + (r.isTeam ? '🛡️' : avatarFor(r.alias)) + '</div>' +
         '<div class="nm">' + esc(r.alias) + '</div></div>' +
         '<div class="rail">' + TRACKS.map(function (t) {
           return '<div class="seg ' + t.cls + '" data-t="' + t.k + '"></div>';
@@ -422,13 +489,13 @@ function render() {
     var rk = node.querySelector('.rank');
     rk.textContent = medal;
     rk.className = 'rank' + (rank <= 3 ? ' top' : '');
-    node.style.transform = 'translateY(' + (i * laneH) + 'px)';
+    node.style.transform = 'translateY(' + (laneTop + i * laneH) + 'px)';
     node.classList.toggle('zero', r.score === 0);
 
     // How far along the rail the runner stands. In the weekly race the leader
     // defines the far end, so the board is always full of movement even in a
     // week where nobody finished much.
-    var frac = MODE === 'week'
+    var frac = (MODE === 'week' || MODE === 'team')
       ? (maxScore ? r.score / maxScore : 0)
       : (r.total ? r.done / r.total : 0);
     frac = Math.max(0, Math.min(1, frac));
@@ -450,7 +517,8 @@ function render() {
       var acc2 = 0;
       var span = frac * 100;
       TRACKS.forEach(function (t, k) {
-        var part = r.score ? ((r.weekTracks[t.ev] || 0) / r.score) * span : 0;
+        var denom = MODE === 'team' ? (r.week || 1) : (r.score || 1);
+        var part = ((r.weekTracks[t.ev] || 0) / denom) * span;
         segs[k].style.insetInlineStart = acc2 + '%';
         segs[k].style.width = part + '%';
         segs[k].style.display = '';
@@ -466,8 +534,9 @@ function render() {
     }
     node.querySelector('.runner').style.insetInlineStart = (frac * 100) + '%';
     node.querySelector('.runner').textContent = r.score > 0 ? '🏃' : '';
-    node.querySelector('.val').textContent = MODE === 'week'
-      ? '+' + r.score : r.pct + '%';
+    node.querySelector('.val').textContent =
+      MODE === 'team' ? '+' + r.score :
+      MODE === 'week' ? '+' + r.score : r.pct + '%';
   });
 
   [].slice.call(box.querySelectorAll('.lane')).forEach(function (n) {
@@ -481,15 +550,48 @@ function render() {
     : '';
 
   renderTiles(all);
-  if (!el('spRows').children.length || spotIdx >= all.length) spotlight(all[0].alias);
+  var flat = racersFlat();
+  if (!el('spRows').children.length || spotIdx >= flat.length) {
+    if (flat.length) spotlight(flat[0].alias);
+  }
 
   // Announce a change at the front, once, to the room.
   var top = all[0] && all[0].score > 0 ? all[0].alias : null;
-  if (top && lastTop && top !== lastTop) cheer(avatarFor(top) + ' ' + top + ' يتصدّر!');
+  if (top && lastTop && top !== lastTop) {
+    cheer((all[0].isTeam ? '🛡️ ' : avatarFor(top) + ' ') + top + ' يتصدّر!');
+  }
   if (top) lastTop = top;
+
+  checkMilestones();
+}
+
+// A milestone is something every child reaches eventually, which is exactly
+// why it is worth announcing: unlike first place, it is not taken by being
+// faster than someone else.
+function checkMilestones() {
+  if (!DATA || MODE === 'team') return;
+  var first = Object.keys(prevPct).length === 0;
+  DATA.learners.forEach(function (r) {
+    var was = prevPct[r.alias];
+    prevPct[r.alias] = r.pct;
+    if (first || was == null || r.pct <= was) return;
+    for (var i = MILESTONES.length - 1; i >= 0; i--) {
+      var m = MILESTONES[i];
+      if (was < m && r.pct >= m) {
+        cheer(avatarFor(r.alias) + ' ' + r.alias + ' بلغ ' + m + '٪ من الرحلة!');
+        return;   // one announcement per learner per refresh, loudest first
+      }
+    }
+  });
+}
+
+function racersFlat() {
+  var m = MODE; MODE = 'week';
+  var r = racers(); MODE = m; return r;
 }
 
 function renderTiles(all) {
+  if (MODE === 'team') all = racersFlat();
   var s = DATA.summary || {};
   var weekly = MODE === 'week';
   el('tClass').textContent = weekly ? (s.class_week || 0) : (s.class_done || 0);
@@ -502,7 +604,7 @@ function renderTiles(all) {
 }
 
 function spotlight(alias) {
-  var all = racers();
+  var all = racersFlat();
   var i = all.findIndex(function (r) { return r.alias === alias; });
   if (i < 0) i = 0;
   spotIdx = i;
@@ -533,11 +635,14 @@ function cheer(text) {
 function setMode(m) {
   MODE = m; page = 0; lastTop = null;
   el('mWeek').classList.toggle('on', m === 'week');
+  el('mTeam').classList.toggle('on', m === 'team');
   el('mAll').classList.toggle('on', m === 'all');
-  el('trackTitle').textContent = m === 'week' ? 'سباق هذا الأسبوع' : 'الرحلة كاملة';
-  el('trackSub').textContent = m === 'week'
-    ? 'يبدأ من جديد كل سبت'
-    : 'كل لون جزء من المنهج';
+  el('trackTitle').textContent =
+    m === 'week' ? 'سباق هذا الأسبوع' :
+    m === 'team' ? 'سباق الفِرَق' : 'الرحلة كاملة';
+  el('trackSub').textContent =
+    m === 'week' ? 'يبدأ من جديد كل سبت' :
+    m === 'team' ? 'معدّل كل فريق هذا الأسبوع' : 'كل لون جزء من المنهج';
   el('lanes').querySelectorAll('.lane').forEach(function (n) { n.remove(); });
   render();
 }
@@ -545,7 +650,7 @@ function setMode(m) {
 function nextPage() { if (pages > 1 && !paused) { page = (page + 1) % pages; render(); } }
 function nextSpot() {
   if (paused) return;
-  var all = racers();
+  var all = racersFlat();
   if (all.length < 2) return;
   spotIdx = (spotIdx + 1) % all.length;
   spotlight(all[spotIdx].alias);
@@ -567,7 +672,8 @@ function toggleFs() {
 
 document.addEventListener('keydown', function (e) {
   if (e.key === 'f' || e.key === 'F') toggleFs();
-  else if (e.key === ' ') { e.preventDefault(); setMode(MODE === 'week' ? 'all' : 'week'); }
+  else if (e.key === ' ') { e.preventDefault();
+    setMode(MODE === 'week' ? 'team' : MODE === 'team' ? 'all' : 'week'); }
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { pause(); nextPage(); }
   else if (e.key === 'r' || e.key === 'R') load();
 });

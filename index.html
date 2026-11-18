@@ -18,6 +18,163 @@ if(/[?&]lite=0/.test(q))localStorage.removeItem('liteMode');
 else if(/[?&]lite/.test(q))localStorage.setItem('liteMode','1');
 if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add('lite');
 }catch(e){}</script>
+
+<script>
+/* ══ PROFILES — several learners, one device ══════════════════════════════
+   Ten children can share one tablet at a charity, so progress cannot be keyed
+   to the device. This runs before every other script because switching is a
+   rename of the whole store, and everything below must already be looking at
+   the right learner.
+
+   The active learner's data lives in the ordinary keys the rest of the app
+   already uses. Everyone else's lives behind "prof:<id>:". Switching moves one
+   set out and the other in, then reloads. No other line in the file changed:
+   on a file this size, renaming keys is the difference between a safe change
+   and a weekend of regressions.                                            */
+(function () {
+  var P = window.WSProfiles = {};
+  // Keys that belong to the TABLET, not to a child. Everything else travels.
+  var DEVICE_KEYS = {
+    'ws_profiles':1, 'ws_active':1, 'ws_shared_mode':1, 'ws_switching':1,
+    'liteMode':1, 'theme':1, 'ws_api':1, 'ws_teacher_key':1, 'ws_org':1,
+    'countOff':1, 'teacherPhone':1, 'teacherName':1
+  };
+  var PREFIX = 'prof:';
+
+  function ls() { return window.localStorage; }
+  function readJSON(k, d) {
+    try { var v = JSON.parse(ls().getItem(k)); return v == null ? d : v; } catch (e) { return d; }
+  }
+  function writeJSON(k, v) { try { ls().setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+  P.list = function () {
+    var l = readJSON('ws_profiles', []);
+    return Array.isArray(l) ? l : [];
+  };
+  P.active = function () { try { return ls().getItem('ws_active') || ''; } catch (e) { return ''; } };
+  P.sharedMode = function () { try { return ls().getItem('ws_shared_mode') === '1'; } catch (e) { return false; } };
+  P.setSharedMode = function (on) {
+    try { on ? ls().setItem('ws_shared_mode', '1') : ls().removeItem('ws_shared_mode'); } catch (e) {}
+  };
+  P.current = function () {
+    var id = P.active();
+    return P.list().filter(function (x) { return x.id === id; })[0] || null;
+  };
+
+  function newId() {
+    var a = 'abcdefghijklmnopqrstuvwxyz0123456789', o = '';
+    try {
+      var b = new Uint8Array(8); crypto.getRandomValues(b);
+      for (var i = 0; i < 8; i++) o += a[b[i] % a.length];
+    } catch (e) { for (var j = 0; j < 8; j++) o += a[Math.floor(Math.random() * a.length)]; }
+    return o;
+  }
+
+  function appKeys() {
+    var out = [], s = ls();
+    for (var i = 0; i < s.length; i++) {
+      var k = s.key(i);
+      if (!k || DEVICE_KEYS[k] || k.indexOf(PREFIX) === 0) continue;
+      out.push(k);
+    }
+    return out;
+  }
+
+  // Park the learner who is leaving, then unpack the one arriving. Both halves
+  // are one synchronous pass with no awaits, so there is no window in which a
+  // child could end up with half of someone else's progress.
+  function park(id) {
+    if (!id) return;
+    var s = ls(), keys = appKeys();
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      try { s.setItem(PREFIX + id + ':' + k, s.getItem(k)); s.removeItem(k); } catch (e) {}
+    }
+  }
+  function unpack(id) {
+    if (!id) return;
+    var s = ls(), pre = PREFIX + id + ':', mine = [];
+    for (var i = 0; i < s.length; i++) {
+      var k = s.key(i);
+      if (k && k.indexOf(pre) === 0) mine.push(k);
+    }
+    for (var j = 0; j < mine.length; j++) {
+      try { s.setItem(mine[j].slice(pre.length), s.getItem(mine[j])); s.removeItem(mine[j]); } catch (e) {}
+    }
+  }
+
+  P.create = function (name, avatar) {
+    var l = P.list();
+    var prof = { id: newId(), name: String(name || '').trim().slice(0, 20) || 'طالب',
+                 avatar: avatar || '🦊', created: Date.now() };
+    l.push(prof);
+    writeJSON('ws_profiles', l);
+    return prof;
+  };
+
+  P.switchTo = function (id, reload, seed) {
+    if (!id || id === P.active()) return false;
+    if (!P.list().some(function (x) { return x.id === id; })) return false;
+    try {
+      ls().setItem('ws_switching', id);
+      park(P.active());
+      unpack(id);
+      if (seed) for (var k in seed) {
+        if (Object.prototype.hasOwnProperty.call(seed, k) && ls().getItem(k) == null) {
+          ls().setItem(k, seed[k]);
+        }
+      }
+      ls().setItem('ws_active', id);
+      ls().removeItem('ws_switching');
+    } catch (e) { return false; }
+    // A reload is what makes this safe: every module reads its state at boot,
+    // so re-running boot is simpler and far more reliable than hunting down
+    // every in-memory copy of the previous learner's data.
+    if (reload !== false) location.reload();
+    return true;
+  };
+
+  P.rename = function (id, name) {
+    var l = P.list();
+    for (var i = 0; i < l.length; i++) if (l[i].id === id) l[i].name = String(name).trim().slice(0, 20);
+    writeJSON('ws_profiles', l);
+  };
+
+  P.remove = function (id) {
+    var s = ls(), pre = PREFIX + id + ':', kill = [];
+    for (var i = 0; i < s.length; i++) { var k = s.key(i); if (k && k.indexOf(pre) === 0) kill.push(k); }
+    kill.forEach(function (k) { try { s.removeItem(k); } catch (e) {} });
+    writeJSON('ws_profiles', P.list().filter(function (x) { return x.id !== id; }));
+    if (P.active() === id) {
+      // The active learner's data is in the plain keys, so it has to go too,
+      // or the next child to sign in would inherit it.
+      appKeys().forEach(function (k) { try { s.removeItem(k); } catch (e) {} });
+      try { s.removeItem('ws_active'); } catch (e) {}
+    }
+  };
+
+  // First run on a device that has been used before: adopt whatever is already
+  // in the plain keys as profile one, so nobody's existing progress is orphaned
+  // by this upgrade.
+  (function boot() {
+    try {
+      var interrupted = ls().getItem('ws_switching');
+      if (interrupted) {
+        // A switch died midway - finish it rather than leaving a mixed store.
+        unpack(interrupted);
+        ls().setItem('ws_active', interrupted);
+        ls().removeItem('ws_switching');
+      }
+      if (!P.list().length) {
+        var first = P.create(ls().getItem('studentName') || 'طالب', '🦊');
+        ls().setItem('ws_active', first.id);
+      } else if (!P.active()) {
+        ls().setItem('ws_active', P.list()[0].id);
+      }
+    } catch (e) {}
+  })();
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -657,30 +814,55 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
      this: an accent doing the job of text. */
   body.light-theme .wp-station { color: var(--teal-ink); }
 
-  /* ── TOP TABS (tablet/desktop fallback) ── */
-  .nav-tabs {
-    display: none;
-    background: var(--deep);
-    border-bottom: 1px solid var(--rim);
-    overflow-x: auto;
-    scrollbar-width: none;
+  /* ══ PROFILES ══ */
+  .who-chip {
+    display:none; align-items:center; gap:7px; cursor:pointer;
+    background:rgba(255,255,255,.06); border:1px solid var(--rim);
+    border-radius:99px; padding:4px 11px 4px 5px; margin-bottom:9px;
+    font-family:inherit; color:var(--white);
   }
-  .nav-tabs::-webkit-scrollbar { display: none; }
-  .tab-btn {
-    flex: 1; padding: 13px 10px;
-    background: none; border: none;
-    border-bottom: 3px solid transparent;
-    color: var(--muted);
-    font-family: 'Tajawal', sans-serif;
-    font-size: 13px; cursor: pointer;
-    transition: all .25s; white-space: nowrap;
-    min-width: 80px; text-align: center;
-  }
-  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); background: rgba(245,200,66,.05); }
+  .who-chip.on { display:inline-flex; }
+  .who-chip .av { font-size:17px; line-height:1; }
+  .who-chip .nm { font-size:12.5px; font-weight:700; max-width:110px;
+                  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .who-chip .sw { font-size:10.5px; color:var(--muted); }
+  .who-chip:hover { border-color:var(--gold); }
+  body.light-theme .who-chip { background:rgba(30,41,59,.05); }
 
+  .who-grid {
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(104px,1fr));
+    gap:10px; margin:6px 0 14px; max-height:46vh; overflow:auto;
+  }
+  .who-card {
+    background:var(--card); border:1px solid var(--rim); border-radius:15px;
+    padding:14px 8px; cursor:pointer; text-align:center; font-family:inherit;
+    color:var(--white); transition:.15s;
+  }
+  .who-card:hover, .who-card:focus-visible { border-color:var(--gold); outline:none; transform:translateY(-2px); }
+  .who-card.cur { border-color:var(--gold); background:rgba(245,200,66,.08); }
+  .who-card .av { font-size:30px; line-height:1.1; }
+  .who-card .nm { font-size:13px; font-weight:800; margin-top:5px;
+                  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .who-card .pc { font-size:10.5px; color:var(--muted); font-family:'Space Grotesk',sans-serif; }
+  .who-add { border-style:dashed; color:var(--muted); }
+  .who-av-row { display:flex; flex-wrap:wrap; gap:6px; justify-content:center; margin:8px 0 12px; }
+  .who-av { font-size:21px; padding:5px 7px; border-radius:11px; cursor:pointer;
+            background:var(--card); border:1px solid var(--rim); line-height:1; }
+  .who-av.sel { border-color:var(--gold); background:rgba(245,200,66,.14); }
+
+  /* The tablet/desktop top tab bar lived here. It is gone: see the note on
+     the bottom nav below. Its styles go with it so nothing can revive a
+     second navigation by accident. */
+
+  /* One navigation on every device. The bottom bar is the only one, so it
+     cannot drift out of step with a second bar again - which is exactly how
+     the Journey went missing on tablets. On a wide screen it is capped and
+     centred rather than stretched across a metre of glass. */
   @media (min-width: 768px) {
-    .bottom-nav { display: none; }
-    .nav-tabs { display: flex; }
+    .bottom-nav {
+      max-width: 680px; margin-inline: auto; inset-inline: 0;
+      border-radius: 18px 18px 0 0;
+    }
   }
 
   /* ── MAIN ── */
@@ -689,7 +871,8 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     padding: 16px 14px;
     padding-bottom: calc(80px + var(--safe-bottom));
   }
-  @media (min-width: 768px) { main { padding-bottom: 40px; } }
+  /* The bottom nav is present at every width now, so the page must still
+     clear it here. */
 
   .section { display: none; }
   .section.active { display: block; }
@@ -4719,23 +4902,18 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
 </header>
 
 <!-- Top tabs for tablet/desktop -->
-<nav class="nav-tabs">
-  <button class="tab-btn active" onclick="showTab('home',this)">🏠 الرئيسية</button>
-  <button class="tab-btn" onclick="showTab('words',this)">📚 الكلمات</button>
-  <button class="tab-btn" onclick="showTab('quiz',this)">🎯 اختبار</button>
-  <button class="tab-btn" onclick="showTab('games',this)">🎮 ألعاب</button>
-  <button class="tab-btn" onclick="showTab('conv',this)">💬 محادثات</button>
-  <button class="tab-btn" onclick="showTab('voice',this)">🎙️ المتحدّث</button>
-  <button class="tab-btn" onclick="showTab('grammar',this)">📐 القواعد</button>
-  <button class="tab-btn" onclick="showTab('flash',this)">🃏 بطاقات</button>
-  <button class="tab-btn" onclick="showTab('podcast',this)">🎧 بودكاست</button>
-  <button class="tab-btn" onclick="showResultsTab(this)">📊 Results</button>
-</nav>
 
 <main id="mainContent">
   <!-- ══ HOME (Bento Grid) ══ -->
   <div id="tab-home" class="section active">
     <div class="home-hero home-hero-compact">
+      <!-- Only appears once a device actually has more than one learner on it,
+           so a child with their own tablet never sees it. -->
+      <button class="who-chip" id="whoChip" onclick="whoOpen()">
+        <span class="av" id="whoChipAv">🦊</span>
+        <span class="nm" id="whoChipNm">—</span>
+        <span class="sw">تبديل</span>
+      </button>
       <div class="home-hero-greeting" id="homeGreeting">أهلاً بك 👋</div>
       <div class="home-stats-row">
         <div class="home-stat-pill"><div class="v" id="homeTotalWords">0</div><div class="l">كلمة</div></div>
@@ -5627,6 +5805,38 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   </div>
 </div>
 
+<!-- ══ WHO IS USING THIS? ══ -->
+<div class="confirm-overlay" id="whoOverlay">
+  <div class="confirm-box" style="max-width:420px">
+    <div class="cb-icon">👋</div>
+
+    <div id="whoPickView">
+      <div class="cb-title">من يستخدم الجهاز الآن؟</div>
+      <div class="cb-msg" id="whoMsg">لكل طالب تقدّمه وكلماته ورحلته.</div>
+      <div class="who-grid" id="whoGrid"></div>
+      <div class="cb-row">
+        <button class="cb-btn cb-cancel" id="whoCloseBtn" onclick="whoClose()">إغلاق</button>
+        <button class="cb-btn cb-confirm" onclick="whoNewView()"
+                style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">+ طالب جديد</button>
+      </div>
+    </div>
+
+    <div id="whoNewViewBox" style="display:none">
+      <div class="cb-title">طالب جديد</div>
+      <div class="cb-msg">اسم أو لقب يعرفه الطالب نفسه.</div>
+      <input type="text" id="whoNameInp" class="inp" maxlength="20" placeholder="عبدالله"
+             style="width:100%" autocomplete="off">
+      <div class="who-av-row" id="whoAvRow"></div>
+      <div id="whoErr" style="color:#FB7185;font-size:12.5px;margin-bottom:8px"></div>
+      <div class="cb-row">
+        <button class="cb-btn cb-cancel" onclick="whoPickView()">رجوع</button>
+        <button class="cb-btn cb-confirm" onclick="whoCreate()"
+                style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">أنشئ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MY CLASS ══ -->
 <div class="confirm-overlay" id="clsOverlay">
   <div class="confirm-box">
@@ -6301,6 +6511,29 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     </div><!-- end general pane -->
 
     <div class="station-tab-pane" data-spane="send">
+
+    <!-- ══ WHO IS USING THIS DEVICE ══
+         For a charity or a classroom where one tablet passes between several
+         children. Invisible on a device with a single learner. -->
+    <div class="sp-section-label">👥 Learners on this device · طلّاب هذا الجهاز</div>
+
+    <button class="sp-row" onclick="whoOpen()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF)">👥</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">تبديل الطالب</div>
+        <div class="sp-row-sub" id="profCountLbl">—</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
+    <button class="sp-row" onclick="whoToggleShared()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#FB7185)">🔁</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title">وضع الجهاز المشترك</div>
+        <div class="sp-row-sub">يسأل «من أنت؟» عند كل فتح · <span id="sharedModeLbl">مُطفأ</span></div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
 
     <!-- ══ MY CLASS ══
          Opt-in, and silent until a code is typed: a learner who never joins
@@ -12087,6 +12320,146 @@ function curriculumProgress() {
   };
 }
 
+// ══ PROFILES — UI ══
+// The engine runs in the first script block in the document, because switching
+// has to happen before anything reads storage. This is only the surface.
+
+var WHO_AVATARS = ['🦊','🐯','🦅','🐺','🦁','🐆','🦌','🐎','🦉','🐼','🦈','🐬',
+                   '🦋','🐢','🦜','🐝','🦓','🐘','🦒','🐨','🦔','🐧','🦩','🐳'];
+var whoPickedAv = WHO_AVATARS[0];
+
+function whoRefreshChip() {
+  var chip = document.getElementById('whoChip');
+  if (!chip || !window.WSProfiles) return;
+  var list = WSProfiles.list(), cur = WSProfiles.current();
+  // Shown only when the device actually holds more than one learner, or the
+  // teacher has put it in shared mode. A child with their own tablet should
+  // never meet this feature at all.
+  var show = list.length > 1 || WSProfiles.sharedMode();
+  chip.classList.toggle('on', !!show);
+  if (cur) {
+    document.getElementById('whoChipAv').textContent = cur.avatar || '🦊';
+    document.getElementById('whoChipNm').textContent = cur.name || 'طالب';
+  }
+}
+
+function whoPct(id) {
+  // Each parked learner's progress lives behind their own prefix, so the
+  // picker can show everyone's percentage without switching to them.
+  try {
+    var cur = WSProfiles.active();
+    var read = function (k) {
+      return id === cur ? localStorage.getItem(k)
+                        : localStorage.getItem('prof:' + id + ':' + k);
+    };
+    var arr = function (k) {
+      try { var v = JSON.parse(read(k) || '[]'); return Array.isArray(v) ? v.length : 0; }
+      catch (e) { return 0; }
+    };
+    var tp = 0;
+    try {
+      var t = JSON.parse(read('trainProgress') || '{}');
+      tp = (t && Array.isArray(t.completed)) ? t.completed.length : 0;
+    } catch (e) {}
+    var done = tp + arr('grammarCompleted') + arr('readingCompleted');
+    return Math.floor(done / 112 * 100);
+  } catch (e) { return 0; }
+}
+
+function whoRenderGrid() {
+  var g = document.getElementById('whoGrid');
+  if (!g) return;
+  var cur = WSProfiles.active();
+  g.innerHTML = WSProfiles.list().map(function (p) {
+    return '<button class="who-card' + (p.id === cur ? ' cur' : '') + '" onclick="whoPick(\'' + p.id + '\')">' +
+      '<div class="av">' + (p.avatar || '🦊') + '</div>' +
+      '<div class="nm">' + String(p.name || 'طالب').replace(/[<>&]/g, '') + '</div>' +
+      '<div class="pc">' + whoPct(p.id) + '%</div></button>';
+  }).join('');
+}
+
+function whoOpen() {
+  whoPickView();
+  whoRenderGrid();
+  var ov = document.getElementById('whoOverlay');
+  if (ov) ov.classList.add('show');
+}
+function whoClose() {
+  var ov = document.getElementById('whoOverlay');
+  if (ov) ov.classList.remove('show');
+}
+function whoPickView() {
+  document.getElementById('whoPickView').style.display = '';
+  document.getElementById('whoNewViewBox').style.display = 'none';
+}
+function whoNewView() {
+  document.getElementById('whoPickView').style.display = 'none';
+  document.getElementById('whoNewViewBox').style.display = '';
+  document.getElementById('whoErr').textContent = '';
+  document.getElementById('whoNameInp').value = '';
+  whoPickedAv = WHO_AVATARS[Math.floor(Math.random() * WHO_AVATARS.length)];
+  document.getElementById('whoAvRow').innerHTML = WHO_AVATARS.map(function (a) {
+    return '<button class="who-av' + (a === whoPickedAv ? ' sel' : '') +
+           '" onclick="whoSetAv(\'' + a + '\')">' + a + '</button>';
+  }).join('');
+  setTimeout(function () { document.getElementById('whoNameInp').focus(); }, 140);
+}
+function whoSetAv(a) {
+  whoPickedAv = a;
+  document.querySelectorAll('.who-av').forEach(function (b) {
+    b.classList.toggle('sel', b.textContent === a);
+  });
+}
+function whoPick(id) {
+  if (id === WSProfiles.active()) { whoClose(); return; }
+  WSProfiles.switchTo(id);   // reloads
+}
+function whoCreate() {
+  var name = (document.getElementById('whoNameInp').value || '').trim();
+  if (name.length < 2) { document.getElementById('whoErr').textContent = 'اكتب اسمًا'; return; }
+  if (WSProfiles.list().length >= 30) {
+    document.getElementById('whoErr').textContent = 'الحدّ ٣٠ طالبًا على الجهاز';
+    return;
+  }
+  var p = WSProfiles.create(name, whoPickedAv);
+  // A new learner must start empty, so park the current one and unpack
+  // nothing - which is what switching to a profile with no stored keys does.
+  // The name they just typed is carried across so the app does not open by
+  // asking for it a second time.
+  WSProfiles.switchTo(p.id, true, { studentName: name });
+}
+
+function whoToggleShared() {
+  var on = !WSProfiles.sharedMode();
+  WSProfiles.setSharedMode(on);
+  whoRefreshChip();
+  whoRefreshSharedLabel();
+  showToast(on ? '✅ وضع الجهاز المشترك: يسأل عند كل فتح' : 'وضع الجهاز المشترك: مُطفأ', on ? '#2DD4BF' : '#94A3B8');
+}
+function whoRefreshSharedLabel() {
+  var el = document.getElementById('sharedModeLbl');
+  if (el && window.WSProfiles) el.textContent = WSProfiles.sharedMode() ? 'مُفعّل' : 'مُطفأ';
+  var c = document.getElementById('profCountLbl');
+  if (c && window.WSProfiles) c.textContent = WSProfiles.list().length + ' على هذا الجهاز';
+}
+
+// On a shared tablet the device must ask every time, or the first child to
+// open it silently becomes whoever used it last.
+(function whoBoot() {
+  function go() {
+    try {
+      whoRefreshChip();
+      whoRefreshSharedLabel();
+      if (WSProfiles.sharedMode() && WSProfiles.list().length > 1) {
+        document.getElementById('whoCloseBtn').style.display = 'none';
+        whoOpen();
+      }
+    } catch (e) {}
+  }
+  if (document.readyState === 'complete') setTimeout(go, 400);
+  else window.addEventListener('load', function () { setTimeout(go, 400); }, { once: true });
+})();
+
 // ══ MY CLASS — OPT-IN SYNC ══
 // The platform's whole design is that nothing leaves the device. This is the
 // single exception, and it is built so that it stays an exception:
@@ -12484,6 +12857,7 @@ function updateHomeStats() {
 
   renderMissionCard();
   try { renderCurriculumCard(); } catch (e) {}
+  try { whoRefreshChip(); } catch (e) {}
 }
 
 function openAchievementsModal() {
@@ -13346,6 +13720,16 @@ function saveName() {
   const n = document.getElementById('studentNameInp').value.trim();
   if (!n) { showToast('✏️ اكتب اسمك أولاً', '#FF6B8A'); return; }
   localStorage.setItem('studentName', n);
+  // Keep the profile label and the in-app name as one thing. Without this a
+  // device that existed before profiles keeps the placeholder label forever
+  // while the app greets the learner correctly - and the picker becomes a
+  // list of identical "طالب" cards.
+  try {
+    if (window.WSProfiles && WSProfiles.active()) {
+      WSProfiles.rename(WSProfiles.active(), n);
+      whoRefreshChip();
+    }
+  } catch (e) {}
   document.getElementById('nameScreen').style.display = 'none';
 
   // Nobody is asked anything. Level is measured from behaviour as the learner
@@ -18863,6 +19247,7 @@ function openSettingsPanel() {
   refreshLiteLabel();
   refreshLevelSourceLabel();
   try { clsRefreshUI(); } catch (e) {}
+  try { whoRefreshSharedLabel(); } catch (e) {}
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');

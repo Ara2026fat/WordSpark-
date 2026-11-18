@@ -357,6 +357,7 @@ async function roster(req, env) {
             COALESCE(p.reading,0)     AS reading,
             COALESCE(p.podcast,0)     AS podcast,
             COALESCE(p.conv,0)        AS conv,
+            COALESCE(l.team,'') AS team,
             COALESCE(p.streak_days,0) AS streak_days,
             (SELECT COUNT(*) FROM events e
               WHERE e.learner_id = l.id AND e.at > ?) AS done_7d,
@@ -423,6 +424,36 @@ function median(arr) {
   const s = [...arr].sort((a, b) => a - b);
   const m = Math.floor(s.length / 2);
   return s.length % 2 ? s[m] : Math.floor((s[m - 1] + s[m]) / 2);
+}
+
+/* POST /api/team  { assignments: [{alias, team}] }   header: X-Teacher-Key
+   Teams are the teacher's call, not the learner's: a child cannot put
+   themselves on the winning side, and nothing about a team travels to the
+   device. An empty team string takes someone out of team play entirely. */
+async function setTeams(req, env) {
+  const key = req.headers.get('X-Teacher-Key') || '';
+  if (!isKey(key)) return err('bad_key', 'مفتاح المعلّم غير صالح', 400, req, env);
+  const cls = await env.DB.prepare(
+    `SELECT code FROM classes WHERE teacher_key = ?`
+  ).bind(key).first();
+  if (!cls) return err('no_class', 'لا يوجد فصل بهذا المفتاح', 404, req, env);
+
+  const b = await readBody(req);
+  const list = Array.isArray(b.assignments) ? b.assignments.slice(0, 120) : null;
+  if (!list) return err('bad_body', 'لا توجد توزيعات', 400, req, env);
+
+  const stmts = [];
+  for (const a of list) {
+    if (!a || typeof a.alias !== 'string') continue;
+    const team = String(a.team == null ? '' : a.team).trim().slice(0, 14);
+    if (/[\u0000-\u001F<>]/.test(team)) continue;
+    stmts.push(env.DB.prepare(
+      `UPDATE learners SET team = ? WHERE class_code = ? AND alias = ? AND removed = 0`
+    ).bind(team, cls.code, a.alias));
+  }
+  if (!stmts.length) return err('bad_body', 'لا توجد توزيعات صالحة', 400, req, env);
+  await env.DB.batch(stmts);
+  return ok({ updated: stmts.length }, req, env);
 }
 
 /* POST /api/learner/remove  { alias }   header: X-Teacher-Key
@@ -513,6 +544,7 @@ export default {
       if (path === '/api/join' && req.method === 'POST')    return await joinClass(req, env);
       if (path === '/api/sync' && req.method === 'POST')    return await sync(req, env);
       if (path === '/api/roster' && req.method === 'GET')   return await roster(req, env);
+      if (path === '/api/team' && req.method === 'POST')     return await setTeams(req, env);
       if (path === '/api/learner/remove' && req.method === 'POST') return await removeLearner(req, env);
       if (path === '/api/learner' && req.method === 'DELETE')      return await deleteLearner(req, env);
 

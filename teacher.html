@@ -121,6 +121,11 @@
   .when.stale { color:var(--rose); }
   .x { border:none; background:none; color:var(--muted); font-size:16px; padding:4px 8px; cursor:pointer; }
   .x:hover { color:var(--rose); }
+  .tsel {
+    font-family:inherit; font-size:12px; padding:4px 6px; border-radius:8px;
+    background:var(--bg); color:var(--white); border:1px solid var(--rim); max-width:92px;
+  }
+  .tsel:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
   .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   .empty { text-align:center; color:var(--muted); padding:28px 12px; font-size:14px; }
   .hide { display:none !important; }
@@ -128,8 +133,22 @@
   footer { text-align:center; color:var(--muted); font-size:11.5px; padding:22px 0 0; }
   .track-head { font-size:11px; }
   @media (max-width:640px) {
-    .track-col { display:none; }
-    th, td { padding:11px 6px; }
+    .track-col, .wk-col, .sub-col { display:none; }
+    .tsel { max-width:62px; font-size:11.5px; padding:4px; }
+    th, td { padding:10px 4px; }
+    .bar { min-width:40px; }
+    .x { padding:4px 2px; }
+    .alias { font-size:12.5px; }
+  }
+  /* A donated or hand-me-down phone can still be 320px wide, and a charity is
+     exactly where one turns up. At that width the card's own padding is worth
+     more as table than as margin. */
+  @media (max-width:360px) {
+    body { padding:0 10px 46px; }
+    .card { padding:12px 10px; }
+    .scroll { margin-inline:-6px; }
+    .tsel { max-width:56px; }
+    th, td { padding:9px 3px; }
   }
 </style>
 </head>
@@ -199,7 +218,26 @@
       </div>
       <div class="spacer"></div>
       <button class="primary" onclick="openRace()">🏁 شاشة السباق</button>
+      <button onclick="teamsPanel()">⚖️ الفِرَق</button>
       <button onclick="loadRoster()">تحديث</button>
+    </div>
+  </div>
+
+  <div class="card hide" id="teamsBox">
+    <h2>توزيع الفِرَق</h2>
+    <p>سباق الفِرَق لا يُظهر اسم الطالب الأبطأ في ترتيب — الفريق يحمله. التوزيع
+       التلقائي يوازن الفِرَق حسب التقدّم الحالي، فلا يبدأ فريق متقدّمًا على الآخر.</p>
+    <div class="row">
+      <span class="hint">عدد الفِرَق:</span>
+      <button onclick="autoTeams(2)">فريقان</button>
+      <button onclick="autoTeams(3)">ثلاثة</button>
+      <button onclick="autoTeams(4)">أربعة</button>
+      <div class="spacer"></div>
+      <button onclick="clearTeams()">إلغاء الفِرَق</button>
+    </div>
+    <div id="teamsErr" class="err"></div>
+    <div class="hint" style="margin-top:10px">
+      ويمكنك تغيير فريق أي طالب من العمود في الجدول.
     </div>
   </div>
 
@@ -217,7 +255,8 @@
             <th class="track-head track-col">قراءة</th>
             <th class="track-head track-col">بودكاست</th>
             <th class="track-head track-col">محادثات</th>
-            <th onclick="sortBy('done_7d')">٧ أيام</th>
+            <th>الفريق</th>
+            <th class="wk-col" onclick="sortBy('done_7d')">٧ أيام</th>
             <th onclick="sortBy('last_sync_at')">آخر نشاط</th>
             <th></th>
           </tr>
@@ -229,6 +268,17 @@
       لم ينضم أحد بعد. اكتب الرمز <b class="num" id="emptyCode"></b> على السبورة.
     </div>
     <div id="dashErr" class="err"></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <h2 style="margin:0">اسم الجهة</h2>
+        <div class="hint">يظهر على شاشة السباق · <b id="orgLbl">لم تُحدَّد</b></div>
+      </div>
+      <div class="spacer"></div>
+      <button onclick="setOrg()">تغيير</button>
+    </div>
   </div>
 
   <div class="card">
@@ -259,6 +309,15 @@ var API = (function () {
 })();
 
 function api(path) { return (API || '') + path; }
+
+// Parity with the race screen: a teacher opening the dashboard on a second
+// device pastes one link. Without this the key could only ever be typed in.
+(function () {
+  try {
+    var q = new URLSearchParams(location.search).get('key');
+    if (q && /^[0-9a-f]{32}$/i.test(q)) localStorage.setItem('ws_teacher_key', q.toLowerCase());
+  } catch (e) {}
+})();
 
 var KEY = null, ROSTER = null, SORT = { by: 'last_sync_at', dir: -1 };
 
@@ -334,6 +393,82 @@ function goDash() { show('dash'); loadRoster().catch(function (e) { setErr('dash
 // the link carries nothing sensitive in the URL.
 function openRace() { location.href = 'race.html'; }
 
+// ══ TEAMS ══
+// Names a child would want on a shirt, not "Team 1".
+var TEAM_NAMES = ['النسور', 'الصقور', 'الأسود', 'الفهود'];
+
+function teamsPanel() {
+  var b = document.getElementById('teamsBox');
+  b.classList.toggle('hide');
+  setErr('teamsErr', '');
+}
+
+function teamsInUse() {
+  if (!ROSTER) return [];
+  var seen = {};
+  ROSTER.learners.forEach(function (r) { if (r.team) seen[r.team] = 1; });
+  var out = Object.keys(seen);
+  TEAM_NAMES.forEach(function (n) { if (out.indexOf(n) === -1) out.push(n); });
+  return out;
+}
+
+function teamSelect(r) {
+  var opts = ['<option value=""' + (!r.team ? ' selected' : '') + '>—</option>'];
+  teamsInUse().forEach(function (t) {
+    opts.push('<option value="' + esc(t) + '"' + (r.team === t ? ' selected' : '') + '>' + esc(t) + '</option>');
+  });
+  return '<select class="tsel" onchange="setOneTeam(\'' + esc(r.alias).replace(/'/g, '&#39;') +
+         '\', this.value)">' + opts.join('') + '</select>';
+}
+
+async function setOneTeam(alias, team) {
+  try { await req('POST', '/api/team', { assignments: [{ alias: alias, team: team }] }, KEY); await loadRoster(); }
+  catch (e) { setErr('dashErr', e.message); }
+}
+
+// A snake draft on current progress: strongest to team A, next two to B and
+// C, then back. Teams start level, so the race measures this week's effort
+// rather than who happened to be grouped with whom.
+async function autoTeams(n) {
+  setErr('teamsErr', '');
+  if (!ROSTER || !ROSTER.learners.length) { setErr('teamsErr', 'لا يوجد طلاب بعد'); return; }
+  var sorted = ROSTER.learners.slice().sort(function (a, b) { return b.done_total - a.done_total; });
+  var assignments = [], dir = 1, t = 0;
+  for (var i = 0; i < sorted.length; i++) {
+    assignments.push({ alias: sorted[i].alias, team: TEAM_NAMES[t] });
+    t += dir;
+    if (t === n) { t = n - 1; dir = -1; }
+    else if (t < 0) { t = 0; dir = 1; }
+  }
+  try { await req('POST', '/api/team', { assignments: assignments }, KEY); await loadRoster(); }
+  catch (e) { setErr('teamsErr', e.message); }
+}
+
+async function clearTeams() {
+  if (!ROSTER) return;
+  var assignments = ROSTER.learners.map(function (r) { return { alias: r.alias, team: '' }; });
+  try { await req('POST', '/api/team', { assignments: assignments }, KEY); await loadRoster(); }
+  catch (e) { setErr('teamsErr', e.message); }
+}
+
+// The association's name, shown on the race screen. Stored on this device
+// only; it never reaches the server.
+function setOrg() {
+  var cur = '';
+  try { cur = localStorage.getItem('ws_org') || ''; } catch (e) {}
+  var v = prompt('اسم الجهة كما يظهر على شاشة السباق:', cur);
+  if (v === null) return;
+  try { localStorage.setItem('ws_org', v.trim().slice(0, 40)); } catch (e) {}
+  renderOrgLbl();
+}
+function renderOrgLbl() {
+  var el = document.getElementById('orgLbl');
+  if (!el) return;
+  var v = '';
+  try { v = localStorage.getItem('ws_org') || ''; } catch (e) {}
+  el.textContent = v || 'لم تُحدَّد';
+}
+
 function signOut() {
   try { localStorage.removeItem('ws_teacher_key'); } catch (e) {}
   KEY = null; ROSTER = null;
@@ -352,6 +487,7 @@ async function loadRoster() {
   document.getElementById('emptyCode').textContent = r.code;
   renderTiles(r.summary, r.learners.length);
   renderRows();
+  renderOrgLbl();
   return r;
 }
 
@@ -413,13 +549,14 @@ function renderRows() {
         '<span class="pct">' + r.pct + '%</span>' +
         '<div class="bar" style="flex:1"><i style="width:' + r.pct + '%"></i></div>' +
       '</div>' +
-      '<div class="num">' + r.done_total + '/' + r.total_items + '</div></td>' +
+      '<div class="num sub-col">' + r.done_total + '/' + r.total_items + '</div></td>' +
       '<td class="num track-col">' + r.stations + '</td>' +
       '<td class="num track-col">' + r.grammar  + '</td>' +
       '<td class="num track-col">' + r.reading  + '</td>' +
       '<td class="num track-col">' + r.podcast  + '</td>' +
       '<td class="num track-col">' + r.conv     + '</td>' +
-      '<td class="num">' + r.done_7d  + '</td>' +
+      '<td>' + teamSelect(r) + '</td>' +
+      '<td class="num wk-col">' + r.done_7d  + '</td>' +
       '<td class="when' + (r.last_sync_at <= stale ? ' stale' : '') + '">' + ago(r.last_sync_at) + '</td>' +
       '<td><button class="x" title="إزالة من اللوحة" aria-label="إزالة ' + esc(r.alias) +
           '" onclick="removeLearner(this,\'' + esc(r.alias).replace(/'/g, '&#39;') + '\')">✕</button></td>' +

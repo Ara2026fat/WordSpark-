@@ -16,7 +16,9 @@ CREATE TABLE IF NOT EXISTS learners (
   alias        TEXT NOT NULL,
   joined_at    INTEGER NOT NULL,
   last_sync_at INTEGER NOT NULL,
-  removed      INTEGER NOT NULL DEFAULT 0
+  removed      INTEGER NOT NULL DEFAULT 0,
+  -- Set by the teacher only. Empty means this learner is not in team play.
+  team         TEXT NOT NULL DEFAULT ''
 );
 CREATE UNIQUE INDEX IF NOT EXISTS learners_alias_per_class
   ON learners(class_code, alias) WHERE removed = 0;
