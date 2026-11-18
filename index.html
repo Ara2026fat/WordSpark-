@@ -33,6 +33,15 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
    and a weekend of regressions.                                            */
 (function () {
   var P = window.WSProfiles = {};
+  // ?profiles=1 turns the shared-device features on for this device and they
+  // stay on; ?profiles=0 turns them off again. Documented in the README. No
+  // ordinary learner ever types this, which is the point: the capability is
+  // available without being clutter on a device that will never use it.
+  try {
+    var _q = location.search;
+    if (/[?&]profiles=0/.test(_q)) localStorage.removeItem('ws_profiles_on');
+    else if (/[?&]profiles=1/.test(_q)) localStorage.setItem('ws_profiles_on', '1');
+  } catch (e) {}
   // Keys that belong to the TABLET, not to a child. Everything else travels.
   var DEVICE_KEYS = {
     'ws_profiles':1, 'ws_active':1, 'ws_shared_mode':1, 'ws_switching':1,
@@ -156,21 +165,36 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   // First run on a device that has been used before: adopt whatever is already
   // in the plain keys as profile one, so nobody's existing progress is orphaned
   // by this upgrade.
+  // Whether this device has anything to do with profiles at all. False on
+  // every ordinary install, which is all of them unless a device is shared.
+  P.enabled = function () {
+    try {
+      return P.list().length > 1 || ls().getItem('ws_profiles_on') === '1';
+    } catch (e) { return false; }
+  };
+
+  // Called only when a second learner is genuinely being added. Adopts the
+  // progress already on the device as learner one, so the person who has been
+  // using it does not become a nameless record behind the newcomer.
+  P.ensureFirst = function () {
+    if (P.list().length) {
+      if (!P.active()) { try { ls().setItem('ws_active', P.list()[0].id); } catch (e) {} }
+      return;
+    }
+    var first = P.create(ls().getItem('studentName') || 'طالب', '🦊');
+    try { ls().setItem('ws_active', first.id); } catch (e) {}
+  };
+
   (function boot() {
     try {
+      // The only thing worth doing unconditionally: if a switch died midway
+      // the store is half-moved, and leaving it that way mixes two learners.
+      // One read, and on the overwhelmingly common path it writes nothing.
       var interrupted = ls().getItem('ws_switching');
-      if (interrupted) {
-        // A switch died midway - finish it rather than leaving a mixed store.
-        unpack(interrupted);
-        ls().setItem('ws_active', interrupted);
-        ls().removeItem('ws_switching');
-      }
-      if (!P.list().length) {
-        var first = P.create(ls().getItem('studentName') || 'طالب', '🦊');
-        ls().setItem('ws_active', first.id);
-      } else if (!P.active()) {
-        ls().setItem('ws_active', P.list()[0].id);
-      }
+      if (!interrupted) return;
+      unpack(interrupted);
+      ls().setItem('ws_active', interrupted);
+      ls().removeItem('ws_switching');
     } catch (e) {}
   })();
 })();
@@ -6513,11 +6537,13 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     <div class="station-tab-pane" data-spane="send">
 
     <!-- ══ WHO IS USING THIS DEVICE ══
-         For a charity or a classroom where one tablet passes between several
-         children. Invisible on a device with a single learner. -->
-    <div class="sp-section-label">👥 Learners on this device · طلّاب هذا الجهاز</div>
+         For a classroom cart or a tablet that passes between children. Hidden
+         entirely unless this device is actually shared, which is switched on
+         with ?profiles=1 - see the README. Every child at Jubail Orphans
+         Society has their own device, so none of this is shown to them. -->
+    <div class="sp-section-label prof-only" style="display:none">👥 Learners on this device · طلّاب هذا الجهاز</div>
 
-    <button class="sp-row" onclick="whoOpen()">
+    <button class="sp-row prof-only" style="display:none" onclick="whoOpen()">
       <div class="sp-row-icon" style="background:linear-gradient(135deg,#A78BFA,#2DD4BF)">👥</div>
       <div class="sp-row-body">
         <div class="sp-row-title">تبديل الطالب</div>
@@ -6526,7 +6552,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <div class="sp-row-arrow">→</div>
     </button>
 
-    <button class="sp-row" onclick="whoToggleShared()">
+    <button class="sp-row prof-only" style="display:none" onclick="whoToggleShared()">
       <div class="sp-row-icon" style="background:linear-gradient(135deg,#F5C842,#FB7185)">🔁</div>
       <div class="sp-row-body">
         <div class="sp-row-title">وضع الجهاز المشترك</div>
@@ -12332,10 +12358,9 @@ function whoRefreshChip() {
   var chip = document.getElementById('whoChip');
   if (!chip || !window.WSProfiles) return;
   var list = WSProfiles.list(), cur = WSProfiles.current();
-  // Shown only when the device actually holds more than one learner, or the
-  // teacher has put it in shared mode. A child with their own tablet should
-  // never meet this feature at all.
-  var show = list.length > 1 || WSProfiles.sharedMode();
+  // Shown only when the device actually holds more than one learner. A child
+  // with their own tablet never meets this feature at all.
+  var show = list.length > 1;
   chip.classList.toggle('on', !!show);
   if (cur) {
     document.getElementById('whoChipAv').textContent = cur.avatar || '🦊';
@@ -12379,6 +12404,9 @@ function whoRenderGrid() {
 }
 
 function whoOpen() {
+  // Nothing created a profile record at boot any more, so the device's current
+  // learner is adopted here - the moment a second one is actually on the way.
+  try { WSProfiles.ensureFirst(); } catch (e) {}
   whoPickView();
   whoRenderGrid();
   var ov = document.getElementById('whoOverlay');
@@ -12437,6 +12465,14 @@ function whoToggleShared() {
   showToast(on ? '✅ وضع الجهاز المشترك: يسأل عند كل فتح' : 'وضع الجهاز المشترك: مُطفأ', on ? '#2DD4BF' : '#94A3B8');
 }
 function whoRefreshSharedLabel() {
+  // One switch controls whether any of this is visible, so the rows cannot
+  // drift apart from the feature they configure.
+  try {
+    var on = window.WSProfiles && WSProfiles.enabled();
+    document.querySelectorAll('.prof-only').forEach(function (n) {
+      n.style.display = on ? '' : 'none';
+    });
+  } catch (e) {}
   var el = document.getElementById('sharedModeLbl');
   if (el && window.WSProfiles) el.textContent = WSProfiles.sharedMode() ? 'مُفعّل' : 'مُطفأ';
   var c = document.getElementById('profCountLbl');
@@ -12450,7 +12486,7 @@ function whoRefreshSharedLabel() {
     try {
       whoRefreshChip();
       whoRefreshSharedLabel();
-      if (WSProfiles.sharedMode() && WSProfiles.list().length > 1) {
+      if (WSProfiles.enabled() && WSProfiles.sharedMode() && WSProfiles.list().length > 1) {
         document.getElementById('whoCloseBtn').style.display = 'none';
         whoOpen();
       }
