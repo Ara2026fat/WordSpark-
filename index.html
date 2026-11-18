@@ -2397,6 +2397,34 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .continue-btn-ar { font-size: 16px; font-weight: 800; }
   .continue-btn-en { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; opacity: .72; }
 
+  /* ══ TODAY'S REVIEW ══
+     The one thing on the home screen that expires. It is styled as an action,
+     not a statistic, because it is the only card here the learner is meant to
+     press rather than read. */
+  .rev-card {
+    display:flex; align-items:center; gap:12px; width:calc(100% - 32px);
+    margin:0 16px 12px; padding:14px 16px; cursor:pointer; text-align:start;
+    font-family:inherit; color:var(--white);
+    background:linear-gradient(135deg, rgba(45,212,191,.14), rgba(245,200,66,.10));
+    border:1px solid rgba(45,212,191,.35); border-radius:18px;
+    transition:transform .15s, border-color .15s;
+  }
+  .rev-card:hover { border-color:var(--teal); }
+  .rev-card:active { transform:scale(.985); }
+  .rev-card:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
+  .rev-card.calm {
+    background:var(--card); border-color:var(--rim); cursor:default;
+  }
+  .rev-ic { font-size:24px; line-height:1; flex-shrink:0; }
+  .rev-body { flex:1; min-width:0; }
+  .rev-title { font-size:15px; font-weight:800; }
+  .rev-sub { font-size:12.5px; color:var(--soft); margin-top:2px; line-height:1.6; }
+  .rev-card.calm .rev-sub { color:var(--muted); }
+  .rev-n {
+    font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:26px;
+    color:var(--teal); flex-shrink:0; min-width:28px; text-align:center;
+  }
+
   /* ══ CURRICULUM PROGRESS ══
      One number answering one question: how much of the syllabus is done, and
      how much is left. Only the five tracks that have a last item are counted.
@@ -4975,6 +5003,17 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     <button class="continue-btn" id="continueBtn" onclick="continueLearning()">
       <span class="continue-btn-ar" id="continueBtnAr">تابع رحلتك</span>
       <span class="continue-btn-en" id="continueBtnEn">Continue Journey</span>
+    </button>
+
+    <!-- Review comes before the curriculum card: what is due today outranks
+         how far along the whole journey is. -->
+    <button class="rev-card" id="revCard" onclick="startReview()">
+      <div class="rev-ic" id="revIc">🔁</div>
+      <div class="rev-body">
+        <div class="rev-title" id="revTitle">مراجعة اليوم</div>
+        <div class="rev-sub" id="revSub">—</div>
+      </div>
+      <div class="rev-n" id="revN"></div>
     </button>
 
     <div class="cur-card" id="curCard">
@@ -7605,7 +7644,14 @@ function resetEverything() {
       const preloadedSet = new Set(preloadedWords.map(w => w.en));
       let changed = false;
       list.forEach(w => {
-        if (w.seeded === undefined && preloadedSet.has(w.en)) {
+        // `source` is what the learner's own act leaves behind: 'picked' from
+        // the word picker, 'station' from finishing a city. Without this
+        // guard the migration re-tagged those words as starter vocabulary on
+        // the very next reload - so taking a word from the starter pack
+        // looked like it worked, then silently undid itself, the counter fell
+        // back to zero, and the word could never enter the review schedule.
+        // Only words with no provenance at all are retro-tagged.
+        if (w.seeded === undefined && !w.source && preloadedSet.has(w.en)) {
           w.seeded = true;
           changed = true;
         }
@@ -10318,12 +10364,93 @@ function getMasteryScore(wordId) {
   return Math.round(ratio * confidence * 100);
 }
 
+/* ══ SPACED REPETITION ══════════════════════════════════════════════════
+   The platform already weighted its random picks by mastery, so a word
+   answered wrong came up more often. What it had no concept of was TIME: a
+   word was only ever revisited if the learner happened to open a quiz, and
+   nothing in the app ever said "these seven are due today". Without a
+   schedule, a word met once in a station is gone inside a week - which is
+   the difference between a vocabulary platform and a quiz app.
+
+   A Leitner ladder rather than SM-2, deliberately. SM-2's ease factors need
+   a four-way self-rating ("again / hard / good / easy") after every card,
+   and a thirteen-year-old answering a multiple-choice question has given us
+   exactly one bit: right or wrong. A ladder uses that bit honestly instead
+   of inventing confidence the learner never expressed.
+
+   Boxes in days. Six steps carry a word from today to a month out, which is
+   past the point where it is usually safe.                                */
+var SRS_INTERVALS = [0, 1, 2, 4, 8, 16, 32];
+var SRS_MAX_BOX = SRS_INTERVALS.length - 1;
+var SRS_SESSION_CAP = 20;   // a child must be able to finish today's review
+
+function srsDayMs() { return 86400000; }
+
+// A wrong answer sends the word back to the start, due TOMORROW rather than
+// again in a minute. Re-asking inside the same session teaches the shape of
+// the screen, not the word - and it makes today's queue impossible to
+// finish, which is how a review habit dies in the first week.
+function srsUpdate(rec, isCorrect) {
+  var now = Date.now();
+  var box = typeof rec.box === 'number' ? rec.box : 0;
+  if (isCorrect) box = Math.min(SRS_MAX_BOX, box + 1);
+  else box = 0;
+  rec.box = box;
+  rec.last = now;
+  rec.due = now + (isCorrect ? SRS_INTERVALS[box] : 1) * srsDayMs();
+  return rec;
+}
+
 function recordAnswer(wordId, isCorrect) {
   if (!wordId) return;
   const m = getMastery();
   if (!m[wordId]) m[wordId] = { correct: 0, wrong: 0, manualKnown: false };
   if (isCorrect) m[wordId].correct++; else { m[wordId].wrong++; m[wordId].manualKnown = false; }
+  srsUpdate(m[wordId], isCorrect);
   saveMastery(m);
+}
+
+// Words the learner owns that are due now. Seeded dictionary words are not
+// scheduled: they were never claimed, and burying a new learner under fifty
+// one due cards on day one would end the habit before it started.
+function srsDueWords(limit) {
+  var now = Date.now();
+  var m = getMastery();
+  var due = myWords().filter(function (w) {
+    var r = m[w.id];
+    if (!r) return true;                 // never answered: due immediately
+    if (r.manualKnown) return false;     // the learner said they know it
+    return typeof r.due !== 'number' || r.due <= now;
+  });
+  due.sort(function (a, b) {
+    var ra = m[a.id] || {}, rb = m[b.id] || {};
+    return (ra.due || 0) - (rb.due || 0);
+  });
+  return due.slice(0, limit || SRS_SESSION_CAP);
+}
+
+function srsDueCount() {
+  var now = Date.now();
+  var m = getMastery();
+  return myWords().filter(function (w) {
+    var r = m[w.id];
+    if (!r) return true;
+    if (r.manualKnown) return false;
+    return typeof r.due !== 'number' || r.due <= now;
+  }).length;
+}
+
+// When the next word comes back, for the days there is nothing to do. An
+// empty review screen that says only "nothing today" reads like the feature
+// is broken.
+function srsNextDue() {
+  var m = getMastery(), best = null;
+  myWords().forEach(function (w) {
+    var r = m[w.id];
+    if (!r || r.manualKnown || typeof r.due !== 'number') return;
+    if (best === null || r.due < best) best = r.due;
+  });
+  return best;
 }
 
 function toggleManualKnown(wordId) {
@@ -10748,6 +10875,24 @@ function resumeQuiz() {
   quizIdx = resume.idx;
   quizScore = resume.score;
   document.getElementById('quizScoreDisplay').textContent = quizScore;
+  renderQuizQ();
+}
+
+// Today's review is the quiz screen with a different list: the same
+// question types, the same keyboard handling, the same result page. A tenth
+// tile in the library is exactly the clutter this is meant to replace.
+function startReview() {
+  var due = srsDueWords(SRS_SESSION_CAP);
+  if (!due.length) { showToast('لا توجد مراجعة اليوم ✓', '#2DD4BF'); return; }
+  // A multiple-choice question needs distractors, and the due list alone may
+  // be one word. The pool for wrong answers is the whole dictionary; only the
+  // QUESTIONS come from the due list.
+  showTab('quiz', null);
+  quizScore = 0; quizIdx = 0;
+  quizList = shuffle(due);
+  var sd = document.getElementById('quizScoreDisplay');
+  if (sd) sd.textContent = '0';
+  try { clearQuizProgress(); } catch (e) {}
   renderQuizQ();
 }
 
@@ -12769,6 +12914,51 @@ async function clsLeave() {
   else window.addEventListener('load', start, { once: true });
 })();
 
+function renderReviewCard() {
+  var card = document.getElementById('revCard');
+  if (!card) return;
+  var n = 0, owned = 0;
+  try { n = srsDueCount(); owned = myWords().length; } catch (e) { return; }
+
+  var t = document.getElementById('revTitle');
+  var sub = document.getElementById('revSub');
+  var num = document.getElementById('revN');
+  var ic = document.getElementById('revIc');
+
+  if (!owned) {
+    // Nothing owned yet. Saying "no review today" here would be a tick for
+    // work never done; this points at the thing that creates the work.
+    card.classList.add('calm');
+    ic.textContent = '📖';
+    t.textContent = 'مراجعتك تبدأ بأول كلمة';
+    sub.textContent = 'أضف كلمات من المحطات أو من «كلماتي»، وسنذكّرك بها في الوقت المناسب.';
+    num.textContent = '';
+    return;
+  }
+
+  if (n > 0) {
+    card.classList.remove('calm');
+    ic.textContent = '🔁';
+    t.textContent = 'مراجعة اليوم';
+    sub.textContent = n === 1 ? 'كلمة واحدة تنتظرك — دقيقة واحدة.'
+      : 'كلماتٌ حان وقت تثبيتها قبل أن تُنسى.';
+    num.textContent = n > SRS_SESSION_CAP ? SRS_SESSION_CAP + '+' : n;
+    return;
+  }
+
+  card.classList.add('calm');
+  ic.textContent = '✅';
+  t.textContent = 'لا مراجعة اليوم';
+  var next = srsNextDue();
+  if (next) {
+    var days = Math.max(1, Math.ceil((next - Date.now()) / 86400000));
+    sub.textContent = 'أقرب كلمة تعود بعد ' + (days === 1 ? 'يوم' : days + ' أيام') + '.';
+  } else {
+    sub.textContent = 'كل كلماتك مثبّتة.';
+  }
+  num.textContent = '';
+}
+
 function renderCurriculumCard() {
   var card = document.getElementById('curCard');
   if (!card) return;
@@ -12893,6 +13083,7 @@ function updateHomeStats() {
 
   renderMissionCard();
   try { renderCurriculumCard(); } catch (e) {}
+  try { renderReviewCard(); } catch (e) {}
   try { whoRefreshChip(); } catch (e) {}
 }
 
