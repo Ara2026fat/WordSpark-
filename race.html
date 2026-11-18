@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>WordSpark · السباق</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<meta name="theme-color" content="#070B12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Tajawal:wght@500;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════════════════
+   THE RACE — one screen, no scrolling, in any direction.
+
+   This runs on a projector or a TV in a room full of children, so it is dark
+   by default, large, and it never asks anyone to scroll. When there are more
+   learners than fit, the lanes turn the page by themselves instead.
+
+   The default race is THE WEEK, not the total. A standing ranking punishes a
+   child twice - once for being behind, and once for the whole room seeing it -
+   and a child who starts behind can never catch up, so they stop trying. The
+   weekly race resets every Saturday: five steps this week wins, whatever your
+   total. Effort places, not a head start. The total race is still one key away.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg:#070B12; --panel:#111A2B; --rim:#1E2C44; --track:#162134;
+  --white:#F1F5F9; --soft:#CBD5E1; --muted:#8798AE;
+  --gold:#F5C842; --teal:#2DD4BF; --violet:#A78BFA; --rose:#FB7185; --lime:#A3E635;
+  --lane:44px;
+}
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+html, body {
+  height:100%; overflow:hidden;              /* the whole point */
+  background:var(--bg); color:var(--white);
+  font-family:'Tajawal',system-ui,sans-serif;
+  overscroll-behavior:none;
+}
+body {
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr);
+  grid-template-columns:minmax(0,1fr) clamp(220px,24vw,310px);
+  grid-template-areas:"head head" "track panel";
+  gap:10px; padding:10px;
+  padding-bottom:max(10px, env(safe-area-inset-bottom));
+}
+@media (max-width:860px), (max-aspect-ratio:1/1) {
+  body {
+    grid-template-columns:minmax(0,1fr);
+    grid-template-rows:auto minmax(0,1.6fr) minmax(0,1fr);
+    grid-template-areas:"head" "track" "panel";
+  }
+}
+
+/* ── header ─────────────────────────────────────────────────────────── */
+.head {
+  grid-area:head; display:flex; align-items:center; gap:12px; flex-wrap:nowrap;
+  background:var(--panel); border:1px solid var(--rim); border-radius:14px;
+  padding:8px 14px; min-height:0;
+}
+.brand { font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:clamp(13px,1.5vw,18px); white-space:nowrap; }
+.brand b { color:var(--gold); }
+.clsname {
+  font-weight:800; font-size:clamp(13px,1.7vw,20px); color:var(--white);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; flex:1;
+}
+.chip {
+  font-family:'Space Grotesk',sans-serif; font-size:clamp(11px,1.2vw,15px); font-weight:700;
+  background:var(--track); border:1px solid var(--rim); border-radius:9px;
+  padding:4px 9px; color:var(--gold); direction:ltr; unicode-bidi:plaintext; white-space:nowrap;
+}
+.hbtn {
+  font-family:inherit; font-size:clamp(11px,1.15vw,14px); font-weight:700; cursor:pointer;
+  background:var(--track); color:var(--soft); border:1px solid var(--rim);
+  border-radius:9px; padding:5px 11px; white-space:nowrap;
+}
+.hbtn:hover, .hbtn:focus-visible { color:var(--gold); border-color:var(--gold); outline:none; }
+.hbtn.on { background:var(--gold); color:#221A00; border-color:transparent; }
+.live { width:8px; height:8px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+.live.beat { animation:beat 1.6s ease-in-out infinite; }
+@keyframes beat { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.35;transform:scale(.82)} }
+
+/* ── the track ──────────────────────────────────────────────────────── */
+.track {
+  grid-area:track; position:relative; min-height:0; min-width:0;
+  background:var(--panel); border:1px solid var(--rim); border-radius:16px;
+  padding:10px 12px 6px; display:flex; flex-direction:column; overflow:hidden;
+}
+.track-top { display:flex; align-items:baseline; gap:8px; margin-bottom:6px; flex-shrink:0; }
+.track-title { font-size:clamp(12px,1.35vw,16px); font-weight:800; }
+.track-sub { font-size:clamp(10px,1.05vw,12.5px); color:var(--muted); }
+.pager { margin-inline-start:auto; display:flex; gap:4px; align-items:center; }
+.dot { width:7px; height:7px; border-radius:50%; background:var(--rim); transition:.3s; }
+.dot.on { background:var(--gold); width:18px; border-radius:99px; }
+
+.lanes { position:relative; flex:1; min-height:0; }
+.lane {
+  position:absolute; inset-inline:0; height:var(--lane);
+  display:flex; align-items:center; gap:7px;
+  transition:transform .85s cubic-bezier(.22,.9,.26,1), opacity .4s;
+  will-change:transform; z-index:1;
+}
+.rank {
+  flex-shrink:0; width:calc(var(--lane) * .58); text-align:center;
+  font-family:'Space Grotesk',sans-serif; font-weight:900;
+  font-size:calc(var(--lane) * .36); color:var(--muted);
+}
+.rank.top { font-size:calc(var(--lane) * .48); }
+.who {
+  flex-shrink:0; display:flex; align-items:center; gap:6px;
+  width:clamp(84px,12vw,190px); min-width:0;
+}
+.ava {
+  flex-shrink:0; width:calc(var(--lane) * .66); height:calc(var(--lane) * .66);
+  border-radius:50%; display:grid; place-items:center;
+  font-size:calc(var(--lane) * .36); background:var(--track); border:1px solid var(--rim);
+}
+.nm {
+  font-weight:800; font-size:calc(var(--lane) * .31); white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis; min-width:0;
+}
+.rail {
+  position:relative; flex:1; min-width:0; height:calc(var(--lane) * .5);
+  background:var(--track); border-radius:99px; overflow:hidden;
+}
+/* The lane IS the infographic: each colour is one part of the curriculum, so
+   a glance says both how far and through what. */
+.seg { position:absolute; inset-block:0; transition:width .85s cubic-bezier(.22,.9,.26,1), inset-inline-start .85s cubic-bezier(.22,.9,.26,1); }
+.s-stations { background:var(--gold); }
+.s-grammar  { background:var(--violet); }
+.s-reading  { background:var(--teal); }
+.s-podcast  { background:var(--lime); }
+.s-conv     { background:var(--rose); }
+.runner {
+  position:absolute; top:50%; transform:translate(50%,-50%);
+  font-size:calc(var(--lane) * .42); z-index:2; pointer-events:none;
+  transition:inset-inline-start .85s cubic-bezier(.22,.9,.26,1);
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));
+}
+.val {
+  flex-shrink:0; width:calc(var(--lane) * 1.15); text-align:start;
+  font-family:'Space Grotesk',sans-serif; font-weight:900;
+  font-size:calc(var(--lane) * .34); color:var(--gold);
+}
+.lane.me .nm { color:var(--gold); }
+.lane:hover { z-index:3; }
+.lane:hover .rail { outline:2px solid var(--gold); outline-offset:2px; }
+.lane.zero .val { color:var(--muted); }
+.lane.zero .ava { opacity:.5; }
+
+/* ── panel ──────────────────────────────────────────────────────────── */
+.panel {
+  grid-area:panel; min-height:0; min-width:0; display:flex; flex-direction:column; gap:10px;
+}
+.tiles { display:grid; grid-template-columns:1fr 1fr; gap:8px; flex-shrink:0; }
+@media (max-width:860px), (max-aspect-ratio:1/1) { .tiles { grid-template-columns:repeat(4,1fr); } }
+.tile {
+  background:var(--panel); border:1px solid var(--rim); border-radius:13px;
+  padding:7px 9px; text-align:center; min-width:0;
+}
+.tile .n {
+  font-family:'Space Grotesk',sans-serif; font-weight:900;
+  font-size:clamp(17px,2.3vw,30px); line-height:1.15; color:var(--gold);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.tile .n.teal { color:var(--teal); }
+.tile .n.violet { color:var(--violet); }
+.tile .n.sm { font-size:clamp(12px,1.5vw,18px); }
+.tile .l { font-size:clamp(9px,.95vw,11.5px); color:var(--muted); margin-top:1px;
+           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.spot {
+  background:var(--panel); border:1px solid var(--rim); border-radius:16px;
+  padding:11px 13px; flex:1; min-height:0; display:flex; flex-direction:column; overflow:hidden;
+}
+.spot-head { display:flex; align-items:center; gap:8px; flex-shrink:0; margin-bottom:8px; }
+.spot-ava {
+  width:clamp(28px,3.4vw,42px); height:clamp(28px,3.4vw,42px); border-radius:50%;
+  display:grid; place-items:center; font-size:clamp(15px,1.9vw,23px);
+  background:var(--track); border:1px solid var(--rim); flex-shrink:0;
+}
+.spot-nm { font-weight:900; font-size:clamp(12px,1.5vw,17px); min-width:0;
+           white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.spot-sub { font-size:clamp(9.5px,1vw,12px); color:var(--muted); }
+.spot-rows {
+  flex:1; min-height:0; display:flex; flex-direction:column;
+  justify-content:center; gap:clamp(4px,1.4vh,16px);
+}
+.srow { display:flex; align-items:center; gap:6px; min-width:0; }
+.sdot { width:8px; height:8px; border-radius:3px; flex-shrink:0; }
+.slbl { font-size:clamp(9.5px,1vw,12px); color:var(--soft); width:clamp(44px,5.2vw,66px); flex-shrink:0;
+        white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.sbar { flex:1; min-width:0; height:clamp(5px,.75vw,8px); background:var(--track); border-radius:99px; overflow:hidden; }
+.sbar i { display:block; height:100%; border-radius:99px; transition:width .7s cubic-bezier(.22,.9,.26,1); }
+.snum { font-family:'Space Grotesk',sans-serif; font-size:clamp(9.5px,1vw,12px);
+        color:var(--muted); width:clamp(32px,3.6vw,46px); text-align:start; flex-shrink:0; }
+
+.legend { display:flex; flex-wrap:wrap; gap:4px 10px; justify-content:center; flex-shrink:0; }
+.lg { display:flex; align-items:center; gap:4px; font-size:clamp(8.5px,.9vw,11px); color:var(--muted); }
+
+.msg {
+  position:absolute; inset:0; display:grid; place-items:center; text-align:center;
+  padding:22px; font-size:clamp(13px,1.6vw,18px); color:var(--muted); line-height:2; z-index:5;
+  background:var(--panel); border-radius:16px;
+}
+.msg b { color:var(--gold); font-family:'Space Grotesk',sans-serif; letter-spacing:3px; }
+.hide { display:none !important; }
+
+/* A win is announced to the room, then gets out of the way. */
+.cheer {
+  position:fixed; inset-inline:0; top:14%; text-align:center; z-index:60; pointer-events:none;
+  font-size:clamp(20px,4vw,46px); font-weight:900; color:var(--gold);
+  text-shadow:0 4px 22px rgba(0,0,0,.85); opacity:0; transform:scale(.8);
+}
+.cheer.go { animation:cheer 3.4s cubic-bezier(.2,.9,.3,1) forwards; }
+@keyframes cheer {
+  0%{opacity:0;transform:scale(.8)} 12%{opacity:1;transform:scale(1.04)}
+  22%{transform:scale(1)} 78%{opacity:1} 100%{opacity:0;transform:scale(1)}
+}
+@media (prefers-reduced-motion:reduce) {
+  * { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="brand">Word<b>Spark</b></div>
+  <div class="clsname" id="clsName">…</div>
+  <div class="chip" id="clsCode">······</div>
+  <button class="hbtn on" id="mWeek" onclick="setMode('week')">الأسبوع</button>
+  <button class="hbtn" id="mAll" onclick="setMode('all')">الإجمالي</button>
+  <button class="hbtn" id="fsBtn" onclick="toggleFs()" title="ملء الشاشة">⛶</button>
+  <div class="live beat" id="live" title="يُحدَّث تلقائيًّا"></div>
+</div>
+
+<div class="track">
+  <div class="track-top">
+    <div class="track-title" id="trackTitle">سباق هذا الأسبوع</div>
+    <div class="track-sub" id="trackSub">يبدأ من جديد كل سبت</div>
+    <div class="pager" id="pager"></div>
+  </div>
+  <div class="lanes" id="lanes"></div>
+  <div class="msg hide" id="msg"></div>
+</div>
+
+<div class="panel">
+  <div class="tiles">
+    <div class="tile"><div class="n teal" id="tClass">0</div><div class="l" id="tClassL">أنجزه الصفّ معًا</div></div>
+    <div class="tile"><div class="n" id="tMoving">0</div><div class="l">تحرّك هذا الأسبوع</div></div>
+    <div class="tile"><div class="n violet sm" id="tStar">—</div><div class="l">نجم الأسبوع</div></div>
+    <div class="tile"><div class="n sm" id="tMedian">0%</div><div class="l">وسيط الرحلة</div></div>
+  </div>
+
+  <div class="spot" id="spot">
+    <div class="spot-head">
+      <div class="spot-ava" id="spAva">🏁</div>
+      <div style="min-width:0">
+        <div class="spot-nm" id="spNm">—</div>
+        <div class="spot-sub" id="spSub">—</div>
+      </div>
+    </div>
+    <div class="spot-rows" id="spRows"></div>
+  </div>
+
+  <div class="legend" id="legend"></div>
+</div>
+
+<div class="cheer" id="cheer"></div>
+
+<script>
+/* ══ config ══ */
+var API = (function () {
+  try {
+    var q = new URLSearchParams(location.search).get('api');
+    if (q) localStorage.setItem('ws_api', q.replace(/\/+$/, ''));
+    return localStorage.getItem('ws_api') || '';
+  } catch (e) { return ''; }
+})();
+var KEY = (function () {
+  try {
+    var q = new URLSearchParams(location.search).get('key');
+    if (q && /^[0-9a-f]{32}$/i.test(q)) { localStorage.setItem('ws_teacher_key', q.toLowerCase()); return q.toLowerCase(); }
+    return localStorage.getItem('ws_teacher_key') || '';
+  } catch (e) { return ''; }
+})();
+
+var TRACKS = [
+  { k:'stations', ev:'station', ar:'المحطات',   cls:'s-stations', col:'var(--gold)',   max:42 },
+  { k:'grammar',  ev:'grammar', ar:'القواعد',   cls:'s-grammar',  col:'var(--violet)', max:16 },
+  { k:'reading',  ev:'reading', ar:'القراءة',   cls:'s-reading',  col:'var(--teal)',   max:25 },
+  { k:'podcast',  ev:'podcast', ar:'البودكاست', cls:'s-podcast',  col:'var(--lime)',   max:19 },
+  { k:'conv',     ev:'conv',    ar:'المحادثات', cls:'s-conv',     col:'var(--rose)',   max:10 }
+];
+var ANIMALS = ['🦊','🐯','🦅','🐺','🦁','🐆','🦌','🐎','🦉','🐼','🦈','🐬','🦋','🐢','🦜','🐝','🦓','🐘','🦒','🐨','🦔','🐧','🦩','🐳'];
+var REFRESH_MS = 45000, PAGE_MS = 9000, SPOT_MS = 6000;
+
+var MODE = 'week', DATA = null, page = 0, pages = 1, perPage = 10, spotIdx = 0;
+var tPage = null, tSpot = null, tPoll = null, lastTop = null, paused = 0;
+
+/* A name always gets the same animal, so children recognise themselves across
+   sessions without anything about them being stored. */
+function avatarFor(alias) {
+  var h = 0;
+  for (var i = 0; i < alias.length; i++) h = (h * 31 + alias.charCodeAt(i)) >>> 0;
+  return ANIMALS[h % ANIMALS.length];
+}
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
+  });
+}
+function el(id) { return document.getElementById(id); }
+
+function showMsg(html) { var m = el('msg'); m.innerHTML = html; m.classList.remove('hide'); }
+function hideMsg() { el('msg').classList.add('hide'); }
+
+/* ══ data ══ */
+async function load() {
+  if (!KEY) {
+    showMsg('أضِف مفتاح المعلّم إلى الرابط مرّة واحدة:<br><b>race.html?key=…</b>');
+    el('live').classList.remove('beat'); return;
+  }
+  try {
+    var res = await fetch((API || '') + '/api/roster', { headers: { 'X-Teacher-Key': KEY } });
+    var j = await res.json();
+    if (!res.ok || !j.ok) throw new Error(j.message || ('خطأ ' + res.status));
+    DATA = j;
+    el('live').classList.add('beat');
+    render();
+  } catch (e) {
+    el('live').classList.remove('beat');
+    // Keep the last good board on screen: a room full of children should not
+    // lose the race because the wifi blinked.
+    if (!DATA) showMsg(esc(e.message || 'تعذّر الاتصال'));
+  }
+}
+
+/* ══ the race ══ */
+function racers() {
+  if (!DATA) return [];
+  var list = DATA.learners.map(function (r) {
+    return {
+      alias: r.alias,
+      score: MODE === 'week' ? r.done_7d : r.done_total,
+      pct: r.pct, done: r.done_total, total: r.total_items,
+      week: r.done_7d, month: r.done_30d, streak: r.streak_days,
+      weekTracks: r.week_tracks || {},
+      last: r.last_sync_at, tracks: r
+    };
+  });
+  list.sort(function (a, b) {
+    if (b.score !== a.score) return b.score - a.score;
+    // A tie breaks toward whoever has been going longer, then by name, so the
+    // order never jitters between refreshes.
+    if (b.streak !== a.streak) return b.streak - a.streak;
+    return String(a.alias).localeCompare(String(b.alias), 'ar');
+  });
+  return list;
+}
+
+function layout() {
+  var box = el('lanes');
+  var h = box.clientHeight;
+  if (h < 40) return;
+  var n = racers().length;
+  if (!n) return;
+  // Lanes get as tall as they can while still fitting whole; only when even
+  // the smallest readable lane will not fit does the board start paging.
+  var MIN = 30, MAX = 76;
+  perPage = Math.max(1, Math.floor(h / MIN));
+  if (perPage >= n) perPage = n;
+  var laneH = Math.floor(h / Math.min(perPage, n));
+  if (laneH > MAX) laneH = MAX;
+  document.documentElement.style.setProperty('--lane', laneH + 'px');
+  pages = Math.ceil(n / perPage);
+  if (page >= pages) page = 0;
+}
+
+function render() {
+  if (!DATA) return;
+  el('clsName').textContent = DATA.label || 'الصفّ';
+  el('clsCode').textContent = DATA.code || '';
+
+  var all = racers();
+  if (!all.length) {
+    showMsg('لم ينضم أحد بعد.<br>اكتب الرمز <b>' + esc(DATA.code) + '</b> على السبورة.');
+    el('pager').innerHTML = ''; renderTiles(all); return;
+  }
+  hideMsg();
+  layout();
+
+  var start = page * perPage;
+  var slice = all.slice(start, start + perPage);
+  var laneH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--lane')) || 44;
+  var maxScore = Math.max.apply(null, all.map(function (r) { return r.score; }).concat([1]));
+
+  var box = el('lanes');
+  var keep = {};
+  slice.forEach(function (r, i) {
+    var id = 'lane-' + encodeURIComponent(r.alias);
+    keep[id] = 1;
+    var node = document.getElementById(id);
+    if (!node) {
+      node = document.createElement('div');
+      node.className = 'lane'; node.id = id;
+      node.innerHTML =
+        '<div class="rank"></div>' +
+        '<div class="who"><div class="ava">' + avatarFor(r.alias) + '</div>' +
+        '<div class="nm">' + esc(r.alias) + '</div></div>' +
+        '<div class="rail">' + TRACKS.map(function (t) {
+          return '<div class="seg ' + t.cls + '" data-t="' + t.k + '"></div>';
+        }).join('') + '<div class="runner"></div></div>' +
+        '<div class="val"></div>';
+      node.onclick = function () { spotlight(r.alias); };
+      box.appendChild(node);
+    }
+    var rank = start + i + 1;
+    var medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+    var rk = node.querySelector('.rank');
+    rk.textContent = medal;
+    rk.className = 'rank' + (rank <= 3 ? ' top' : '');
+    node.style.transform = 'translateY(' + (i * laneH) + 'px)';
+    node.classList.toggle('zero', r.score === 0);
+
+    // How far along the rail the runner stands. In the weekly race the leader
+    // defines the far end, so the board is always full of movement even in a
+    // week where nobody finished much.
+    var frac = MODE === 'week'
+      ? (maxScore ? r.score / maxScore : 0)
+      : (r.total ? r.done / r.total : 0);
+    frac = Math.max(0, Math.min(1, frac));
+
+    var segs = node.querySelectorAll('.seg');
+    if (MODE === 'all') {
+      var acc = 0;
+      TRACKS.forEach(function (t, k) {
+        var w = (r.tracks[t.k] || 0) / (r.total || 112) * 100;
+        segs[k].style.insetInlineStart = acc + '%';
+        segs[k].style.width = w + '%';
+        segs[k].style.display = '';
+        acc += w;
+      });
+    } else {
+      // The same stacked bar, but scaled to the leader's week rather than to
+      // the whole curriculum - so the board is full of movement even in a
+      // quiet week, and still says what the movement was made of.
+      var acc2 = 0;
+      var span = frac * 100;
+      TRACKS.forEach(function (t, k) {
+        var part = r.score ? ((r.weekTracks[t.ev] || 0) / r.score) * span : 0;
+        segs[k].style.insetInlineStart = acc2 + '%';
+        segs[k].style.width = part + '%';
+        segs[k].style.display = '';
+        acc2 += part;
+      });
+      // Events only exist for work done since joining, so a learner whose
+      // count is real but whose breakdown is missing still gets a bar rather
+      // than an empty lane that reads as "did nothing".
+      if (acc2 < span - 0.5) {
+        segs[0].style.insetInlineStart = acc2 + '%';
+        segs[0].style.width = (span - acc2) + '%';
+      }
+    }
+    node.querySelector('.runner').style.insetInlineStart = (frac * 100) + '%';
+    node.querySelector('.runner').textContent = r.score > 0 ? '🏃' : '';
+    node.querySelector('.val').textContent = MODE === 'week'
+      ? '+' + r.score : r.pct + '%';
+  });
+
+  [].slice.call(box.querySelectorAll('.lane')).forEach(function (n) {
+    if (!keep[n.id]) n.remove();
+  });
+
+  el('pager').innerHTML = pages > 1
+    ? Array.from({ length: pages }, function (_, i) {
+        return '<div class="dot' + (i === page ? ' on' : '') + '"></div>';
+      }).join('')
+    : '';
+
+  renderTiles(all);
+  if (!el('spRows').children.length || spotIdx >= all.length) spotlight(all[0].alias);
+
+  // Announce a change at the front, once, to the room.
+  var top = all[0] && all[0].score > 0 ? all[0].alias : null;
+  if (top && lastTop && top !== lastTop) cheer(avatarFor(top) + ' ' + top + ' يتصدّر!');
+  if (top) lastTop = top;
+}
+
+function renderTiles(all) {
+  var s = DATA.summary || {};
+  var weekly = MODE === 'week';
+  el('tClass').textContent = weekly ? (s.class_week || 0) : (s.class_done || 0);
+  el('tClassL').textContent = weekly ? 'أنجزه الصفّ هذا الأسبوع' : 'أنجزه الصفّ معًا';
+  el('tMoving').textContent = all.filter(function (r) { return r.week > 0; }).length +
+                              '/' + (all.length || 0);
+  var star = all.slice().sort(function (a, b) { return b.week - a.week; })[0];
+  el('tStar').textContent = star && star.week > 0 ? avatarFor(star.alias) + ' ' + star.alias : '—';
+  el('tMedian').textContent = (s.median_pct || 0) + '%';
+}
+
+function spotlight(alias) {
+  var all = racers();
+  var i = all.findIndex(function (r) { return r.alias === alias; });
+  if (i < 0) i = 0;
+  spotIdx = i;
+  var r = all[i];
+  if (!r) return;
+  el('spAva').textContent = avatarFor(r.alias);
+  el('spNm').textContent = r.alias;
+  el('spSub').textContent = r.pct + '% من الرحلة · ' + r.done + ' من ' + r.total +
+    (r.week ? ' · +' + r.week + ' هذا الأسبوع' : '');
+  el('spRows').innerHTML = TRACKS.map(function (t) {
+    var v = r.tracks[t.k] || 0;
+    var w = Math.min(100, t.max ? (v / t.max * 100) : 0);
+    return '<div class="srow">' +
+      '<div class="sdot" style="background:' + t.col + '"></div>' +
+      '<div class="slbl">' + t.ar + '</div>' +
+      '<div class="sbar"><i style="width:' + w + '%;background:' + t.col + '"></i></div>' +
+      '<div class="snum">' + v + '/' + t.max + '</div></div>';
+  }).join('');
+}
+
+function cheer(text) {
+  var c = el('cheer');
+  c.textContent = '🎉 ' + text;
+  c.classList.remove('go'); void c.offsetWidth; c.classList.add('go');
+}
+
+/* ══ modes, paging, interaction ══ */
+function setMode(m) {
+  MODE = m; page = 0; lastTop = null;
+  el('mWeek').classList.toggle('on', m === 'week');
+  el('mAll').classList.toggle('on', m === 'all');
+  el('trackTitle').textContent = m === 'week' ? 'سباق هذا الأسبوع' : 'الرحلة كاملة';
+  el('trackSub').textContent = m === 'week'
+    ? 'يبدأ من جديد كل سبت'
+    : 'كل لون جزء من المنهج';
+  el('lanes').querySelectorAll('.lane').forEach(function (n) { n.remove(); });
+  render();
+}
+
+function nextPage() { if (pages > 1 && !paused) { page = (page + 1) % pages; render(); } }
+function nextSpot() {
+  if (paused) return;
+  var all = racers();
+  if (all.length < 2) return;
+  spotIdx = (spotIdx + 1) % all.length;
+  spotlight(all[spotIdx].alias);
+}
+function pause() {
+  paused = 1;
+  clearTimeout(window.__rp);
+  // Interaction wins for a while, then the board resumes on its own - nobody
+  // has to remember to un-pause a screen on a wall.
+  window.__rp = setTimeout(function () { paused = 0; }, 25000);
+}
+
+function toggleFs() {
+  try {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  } catch (e) {}
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'f' || e.key === 'F') toggleFs();
+  else if (e.key === ' ') { e.preventDefault(); setMode(MODE === 'week' ? 'all' : 'week'); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { pause(); nextPage(); }
+  else if (e.key === 'r' || e.key === 'R') load();
+});
+['pointerdown', 'wheel', 'touchstart'].forEach(function (ev) {
+  window.addEventListener(ev, pause, { passive: true });
+});
+
+el('legend').innerHTML = TRACKS.map(function (t) {
+  return '<div class="lg"><span class="sdot" style="background:' + t.col + '"></span>' + t.ar + '</div>';
+}).join('');
+
+var rt = null;
+window.addEventListener('resize', function () {
+  clearTimeout(rt); rt = setTimeout(function () { render(); }, 160);
+});
+// A screen left on a wall for a week must not drift out of layout after the
+// browser reflows for an on-screen keyboard, a rotation or a resolution change.
+if (window.visualViewport) window.visualViewport.addEventListener('resize', function () {
+  clearTimeout(rt); rt = setTimeout(function () { render(); }, 160);
+});
+
+load();
+tPoll = setInterval(load, REFRESH_MS);
+tPage = setInterval(nextPage, PAGE_MS);
+tSpot = setInterval(nextSpot, SPOT_MS);
+</script>
+</body>
+</html>

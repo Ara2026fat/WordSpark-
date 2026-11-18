@@ -198,6 +198,7 @@
         <div class="hint">رمز الفصل: <b class="num" id="dashCode" style="color:var(--prog);font-size:15px">—</b></div>
       </div>
       <div class="spacer"></div>
+      <button class="primary" onclick="openRace()">🏁 شاشة السباق</button>
       <button onclick="loadRoster()">تحديث</button>
     </div>
   </div>
@@ -328,6 +329,10 @@ async function openWithKey() {
 }
 
 function goDash() { show('dash'); loadRoster().catch(function (e) { setErr('dashErr', e.message); }); }
+
+// The race screen reads the same saved key and API base from this origin, so
+// the link carries nothing sensitive in the URL.
+function openRace() { location.href = 'race.html'; }
 
 function signOut() {
   try { localStorage.removeItem('ws_teacher_key'); } catch (e) {}

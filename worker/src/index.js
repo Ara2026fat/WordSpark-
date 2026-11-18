@@ -348,7 +348,7 @@ async function roster(req, env) {
 
   const t = now();
   const { results } = await env.DB.prepare(
-    `SELECT l.alias, l.joined_at, l.last_sync_at,
+    `SELECT l.id AS _id, l.alias, l.joined_at, l.last_sync_at,
             COALESCE(p.pct,0)         AS pct,
             COALESCE(p.done_total,0)  AS done_total,
             COALESCE(p.total_items,?) AS total_items,
@@ -359,11 +359,35 @@ async function roster(req, env) {
             COALESCE(p.conv,0)        AS conv,
             COALESCE(p.streak_days,0) AS streak_days,
             (SELECT COUNT(*) FROM events e
-              WHERE e.learner_id = l.id AND e.at > ?) AS done_7d
+              WHERE e.learner_id = l.id AND e.at > ?) AS done_7d,
+            (SELECT COUNT(*) FROM events e
+              WHERE e.learner_id = l.id AND e.at > ?) AS done_30d
        FROM learners l LEFT JOIN progress p ON p.learner_id = l.id
       WHERE l.class_code = ? AND l.removed = 0
       ORDER BY l.last_sync_at DESC`
-  ).bind(CURRICULUM_TOTAL, t - 7 * 86400, cls.code).all();
+  ).bind(CURRICULUM_TOTAL, t - 7 * 86400, t - 30 * 86400, cls.code).all();
+
+  // What each learner covered THIS WEEK, broken down by track. The race
+  // screen defaults to the week, and a single-colour bar there would say how
+  // far someone moved while hiding what they actually did - which is most of
+  // what a teacher wants to see at a glance.
+  const { results: evRows } = await env.DB.prepare(
+    `SELECT e.learner_id AS id, e.kind AS kind, COUNT(*) AS n
+       FROM events e JOIN learners l ON l.id = e.learner_id
+      WHERE l.class_code = ? AND l.removed = 0 AND e.at > ?
+      GROUP BY e.learner_id, e.kind`
+  ).bind(cls.code, t - 7 * 86400).all();
+
+  const weekBy = {};
+  for (const row of evRows) {
+    (weekBy[row.id] = weekBy[row.id] || {})[row.kind] = row.n;
+  }
+  for (const r of results) {
+    r.week_tracks = weekBy[r._id] || {};
+    // The learner id is a credential. It is needed to join the two queries
+    // above and must not travel any further than that.
+    delete r._id;
+  }
 
   await env.DB.prepare(`UPDATE classes SET last_seen_at = ? WHERE code = ?`)
     .bind(t, cls.code).run();
@@ -378,6 +402,12 @@ async function roster(req, env) {
     learners: results,
     summary: {
       count: results.length,
+      // What the class did together. For a group of children, one number the
+      // whole room owns motivates in a way a ranking cannot, and it is the
+      // only figure on the race screen that nobody can be last at.
+      class_done: results.reduce(function (n, r) { return n + r.done_total; }, 0),
+      class_week: results.reduce(function (n, r) { return n + r.done_7d; }, 0),
+      class_month: results.reduce(function (n, r) { return n + r.done_30d; }, 0),
       // A mean hides the shape of a class; the median and the count of
       // learners who have gone quiet are what a teacher actually acts on.
       median_pct: median(pcts),
