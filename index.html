@@ -2397,6 +2397,130 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .continue-btn-ar { font-size: 16px; font-weight: 800; }
   .continue-btn-en { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; opacity: .72; }
 
+  /* ══ GAMES · SHARP EARS + SENTENCE BUILDER ══ */
+  .ears-top { display:flex; justify-content:space-between; align-items:center;
+              font-family:'Space Grotesk',sans-serif; font-size:12.5px;
+              color:var(--muted); margin-bottom:10px; }
+  .ears-top span { direction:ltr; unicode-bidi:isolate; }
+  .ears-pts { color:var(--teal); font-weight:700; }
+  .ears-card { background:var(--card); border:1px solid var(--rim); border-radius:18px; padding:18px 16px; }
+  .ears-hint { text-align:center; font-size:12.5px; color:var(--muted); margin-bottom:12px; }
+  .ears-play {
+    display:block; width:100%; padding:16px; border-radius:15px; cursor:pointer;
+    font-family:inherit; font-size:17px; font-weight:800; border:none;
+    background:linear-gradient(135deg,#A78BFA,#6D28D9); color:#fff;
+  }
+  .ears-play:active { transform:scale(.985); }
+  .ears-sub { text-align:center; font-size:11.5px; color:var(--muted); margin-top:7px; }
+  .ears-opts { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+  .ears-opt {
+    padding:15px 8px; border-radius:14px; cursor:pointer;
+    font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700;
+    background:var(--bg); color:var(--white); border:1px solid var(--rim);
+    direction:ltr; unicode-bidi:plaintext;
+  }
+  .ears-opt:hover:not(:disabled) { border-color:var(--gold); }
+  .ears-opt:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .ears-opt.right { background:rgba(45,212,191,.18); border-color:var(--teal); color:var(--teal); }
+  .ears-opt.wrong { background:rgba(251,113,133,.15); border-color:#FB7185; color:#FB7185; }
+  .ears-fb { margin-top:13px; font-size:13.5px; line-height:1.9; text-align:center; }
+  .ears-fb.ok { color:var(--teal); }
+  .ears-fb.no { color:#FB7185; }
+  .ears-fb b { font-family:'Space Grotesk',sans-serif; unicode-bidi:plaintext; }
+  .ears-again, .ears-next {
+    display:inline-block; margin:9px 5px 0; padding:8px 15px; border-radius:11px;
+    cursor:pointer; font-family:inherit; font-size:13px; font-weight:700;
+    background:transparent; color:var(--white); border:1px solid var(--rim);
+  }
+  .ears-next { background:var(--gold); color:#221A00; border-color:transparent; }
+  .ears-done { text-align:center; padding:26px 16px; background:var(--card);
+               border:1px solid var(--rim); border-radius:18px; }
+  .ears-big { font-size:46px; line-height:1.1; }
+  .ears-score { font-family:'Space Grotesk',sans-serif; font-size:30px;
+                font-weight:900; color:var(--gold); margin:6px 0 8px; }
+  .ears-msg { font-size:13.5px; color:var(--soft); line-height:1.9; margin-bottom:16px; }
+  .ears-btn {
+    padding:12px 20px; border-radius:13px; cursor:pointer; font-family:inherit;
+    font-size:14px; font-weight:800; background:transparent; color:var(--white);
+    border:1px solid var(--rim);
+  }
+  .ears-btn.primary { background:var(--gold); color:#221A00; border-color:transparent; }
+
+  .ord-line {
+    min-height:56px; padding:10px; border-radius:13px; background:var(--bg);
+    border:1px dashed var(--rim); display:flex; flex-wrap:wrap; gap:6px; align-items:center;
+  }
+  .ord-ph { font-size:12.5px; color:var(--muted); direction:rtl; }
+  .ord-bank { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+  .ord-tok {
+    padding:9px 13px; border-radius:11px; cursor:pointer;
+    font-family:'Space Grotesk',sans-serif; font-size:15px; font-weight:600;
+    background:var(--card); color:var(--white); border:1px solid var(--rim);
+  }
+  .ord-tok:hover:not(:disabled) { border-color:var(--gold); }
+  .ord-tok:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .ord-tok.picked { background:rgba(52,211,153,.16); border-color:#34D399; }
+  .ord-tok.spent { opacity:.28; cursor:default; }
+  .ord-row { display:flex; gap:9px; margin-top:14px; }
+  .ord-row .ears-btn { flex:1; }
+  .ord-answer { font-family:'Space Grotesk',sans-serif; font-size:15px;
+                margin-top:6px; color:var(--white); unicode-bidi:plaintext; }
+  .ord-note { font-size:12px; color:var(--muted); margin-top:5px; line-height:1.8; }
+
+  /* ══ WRITE ══ */
+  .wr-card { background:var(--card); border:1px solid var(--rim); border-radius:18px; padding:16px; }
+  .wr-task { font-size:12.5px; color:var(--muted); margin-bottom:6px; }
+  .wr-word {
+    font-family:'Space Grotesk',sans-serif; font-size:26px; font-weight:900;
+    color:var(--gold); direction:ltr; unicode-bidi:plaintext;
+    display:flex; align-items:center; gap:8px; justify-content:center;
+  }
+  .wr-ar { text-align:center; font-size:14px; color:var(--soft); margin:2px 0 14px; }
+  .wr-input {
+    width:100%; font-family:'Space Grotesk',sans-serif; font-size:15.5px; line-height:1.7;
+    padding:12px 14px; border-radius:13px; resize:vertical;
+    background:var(--bg); color:var(--white); border:1px solid var(--rim);
+  }
+  .wr-input:focus-visible { outline:2px solid var(--teal); outline-offset:1px; }
+  .wr-send {
+    width:100%; margin-top:10px; padding:13px; border-radius:13px; cursor:pointer;
+    font-family:inherit; font-size:15px; font-weight:800; border:none;
+    background:linear-gradient(135deg,var(--teal),#00B4D8); color:var(--ink);
+  }
+  .wr-checks { list-style:none; padding:0; margin:14px 0 0; display:grid; gap:5px; }
+  .wr-checks li { font-size:13px; line-height:1.6; }
+  .wr-checks li.ok { color:var(--teal); }
+  .wr-checks li.no { color:var(--soft); }
+  .wr-model {
+    margin-top:14px; padding:12px 14px; border-radius:13px;
+    background:rgba(245,200,66,.08); border:1px solid rgba(245,200,66,.28);
+  }
+  .wr-model-h { font-size:11.5px; color:var(--gold); font-weight:800; margin-bottom:6px; }
+  .wr-model-en {
+    font-family:'Space Grotesk',sans-serif; font-size:15px; direction:ltr;
+    unicode-bidi:plaintext; display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+  }
+  .wr-model-ar { font-size:13px; color:var(--soft); margin-top:4px; }
+  .wr-note { font-size:11.5px; color:var(--muted); margin-top:9px; line-height:1.8; }
+  .wr-warn { margin-top:12px; font-size:13px; color:#FB7185; }
+  .wr-row { display:flex; gap:9px; margin-top:12px; }
+  .wr-keep, .wr-next {
+    flex:1; padding:11px; border-radius:12px; cursor:pointer; font-family:inherit;
+    font-size:13.5px; font-weight:700; border:1px solid var(--rim);
+    background:transparent; color:var(--white);
+  }
+  .wr-next { background:var(--gold); color:#221A00; border-color:transparent; }
+  .wr-link {
+    width:100%; margin-top:12px; padding:11px; border-radius:12px; cursor:pointer;
+    font-family:inherit; font-size:13px; font-weight:700;
+    background:transparent; color:var(--soft); border:1px solid var(--rim);
+  }
+  .wr-logwrap { margin-top:12px; display:grid; gap:9px; }
+  .wr-logitem { background:var(--card); border:1px solid var(--rim); border-radius:13px; padding:11px 13px; }
+  .wr-logword { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--gold); font-weight:700; }
+  .wr-logsent { font-family:'Space Grotesk',sans-serif; font-size:14px; margin-top:3px; unicode-bidi:plaintext; }
+  .wr-logdate { font-size:10.5px; color:var(--muted); margin-top:4px; }
+
   /* ══ LISTEN <-> SPEAK PAIR ══
      The bar that turns two identical titles into one deliberate sequence. */
   .pair-bar {
@@ -5299,6 +5423,26 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <button class="prac-mode" id="pmFlash" onclick="practiceMode('flash')">
         <span class="pm-ic">🃏</span><span class="pm-ar">بطاقات</span><span class="pm-en">Cards</span>
       </button>
+      <button class="prac-mode" id="pmWrite" onclick="practiceMode('write')">
+        <span class="pm-ic">✍️</span><span class="pm-ar">كتابة</span><span class="pm-en">Write</span>
+      </button>
+    </div>
+
+    <!-- ══ WRITE ══
+         The platform never once asked a learner to produce a sentence of
+         their own: everything was choosing, ordering, repeating or turning a
+         card over. Recognition without production is how someone ends up
+         understanding English and still unable to say anything in it.
+
+         No AI is involved, and the screen does not pretend otherwise. The app
+         checks what a machine can honestly check offline - is the word there,
+         is it a sentence, does it start and end like one - then shows the
+         model sentence that already ships with every word and asks the
+         learner to compare. Comparison against a model is how writing is
+         taught without a teacher in the room; inventing a grade for meaning
+         would be a lie. -->
+    <div id="pracWriteWrap" style="display:none">
+      <div id="wrArea"></div>
     </div>
     <div id="pracFlashWrap" style="display:none">
       <div class="sec-sub" style="margin-bottom:8px">اضغط البطاقة لتقلّبها</div>
@@ -5526,6 +5670,26 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
         </div>
         <div class="game-arrow">←</div>
       </div>
+      <!-- The four games that existed were all spelling or recognition speed.
+           These two reach skills nothing else in the platform touches: hearing
+           a contrast English makes and Arabic does not, and ordering an
+           English sentence. -->
+      <div class="game-card" onclick="startGame('ears')">
+        <div class="game-icon" style="background:linear-gradient(135deg,#A78BFA,#6D28D9)">👂</div>
+        <div class="game-info">
+          <div class="game-name">أذن حادّة <span style="font-size:11px;opacity:.6;font-weight:400" class="gname-en">Sharp Ears</span></div>
+          <div class="game-desc">أصوات يخلط بينها العرب — استمع واختر الصحيح</div>
+        </div>
+        <div class="game-arrow">←</div>
+      </div>
+      <div class="game-card" onclick="startGame('order')">
+        <div class="game-icon" style="background:linear-gradient(135deg,#34D399,#059669)">🧩</div>
+        <div class="game-info">
+          <div class="game-name">رتّب الجملة <span style="font-size:11px;opacity:.6;font-weight:400" class="gname-en">Sentence Builder</span></div>
+          <div class="game-desc">رتّب الكلمات بالترتيب الإنجليزي الصحيح</div>
+        </div>
+        <div class="game-arrow">←</div>
+      </div>
       <div class="game-card" onclick="startGame('daily')">
         <div class="game-icon" style="background:linear-gradient(135deg,#2DD4BF,#0891b2)">🌟</div>
         <div class="game-info">
@@ -5599,6 +5763,16 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <button class="back-btn" onclick="backToGames()">← العودة للألعاب</button>
       <div class="game-title-bar">✍️ تحدي التهجئة</div>
       <div id="spellingArea"></div>
+    </div>
+    <div id="gameEars" style="display:none">
+      <button class="back-btn" onclick="backToGames()">← العودة للألعاب</button>
+      <div class="game-title-bar">👂 أذن حادّة</div>
+      <div id="earsArea"></div>
+    </div>
+    <div id="gameOrder" style="display:none">
+      <button class="back-btn" onclick="backToGames()">← العودة للألعاب</button>
+      <div class="game-title-bar">🧩 رتّب الجملة</div>
+      <div id="orderArea"></div>
     </div>
   </div>
 
@@ -10924,22 +11098,459 @@ function resumeQuiz() {
 // Today's review is the quiz screen with a different list: the same
 // question types, the same keyboard handling, the same result page. A tenth
 // tile in the library is exactly the clutter this is meant to replace.
+/* ══ GAME · SHARP EARS ═══════════════════════════════════════════════════
+   Every other game in the platform is spelling or recognition speed. None of
+   them trains the ear.
+
+   Arabic has no /p/, no /v/, and does not use vowel length the way English
+   does, so an Arabic speaker does not merely mispronounce "bat" and "pat" -
+   they often cannot hear that two different words were said. No amount of
+   speaking practice fixes a contrast the listener has never perceived, which
+   is why discrimination comes before production in every serious syllabus
+   and why this is a listening game, not a pronunciation one.
+
+   The pairs below are chosen for that: each one is a contrast English makes
+   and Arabic does not.                                                     */
+var EARS_PAIRS = [
+  { a:'pat',   b:'bat',   ar:'p / b — صوتان مختلفان في الإنجليزية' },
+  { a:'pair',  b:'bear',  ar:'p / b' },
+  { a:'cup',   b:'cub',   ar:'p / b في آخر الكلمة' },
+  { a:'van',   b:'fan',   ar:'v / f' },
+  { a:'very',  b:'ferry', ar:'v / f' },
+  { a:'vote',  b:'boat',  ar:'v / b' },
+  { a:'ship',  b:'sheep', ar:'i قصيرة / ee طويلة' },
+  { a:'bit',   b:'beat',  ar:'i قصيرة / ee طويلة' },
+  { a:'live',  b:'leave', ar:'i قصيرة / ee طويلة' },
+  { a:'full',  b:'fool',  ar:'u قصيرة / oo طويلة' },
+  { a:'desk',  b:'disk',  ar:'e / i' },
+  { a:'man',   b:'men',   ar:'a / e' },
+  { a:'bad',   b:'bed',   ar:'a / e' },
+  { a:'thin',  b:'sin',   ar:'th / s' },
+  { a:'think', b:'sink',  ar:'th / s' },
+  { a:'three', b:'tree',  ar:'th / t' },
+  { a:'chair', b:'share', ar:'ch / sh' },
+  { a:'watch', b:'wash',  ar:'ch / sh' },
+  { a:'joke',  b:'choke', ar:'j / ch' },
+  { a:'jeep',  b:'cheap', ar:'j / ch' },
+  { a:'word',  b:'ward',  ar:'حركة مختلفة' }
+];
+
+var earsState = null;
+var EARS_ROUNDS = 10;
+
+function initEars() {
+  earsState = { i: 0, score: 0, answered: false, order: shuffle(EARS_PAIRS.slice()).slice(0, EARS_ROUNDS) };
+  earsRender();
+}
+
+function earsRender() {
+  var area = document.getElementById('earsArea');
+  if (!area || !earsState) return;
+
+  if (earsState.i >= earsState.order.length) {
+    var pct = Math.round(earsState.score / earsState.order.length * 100);
+    area.innerHTML =
+      '<div class="ears-done">' +
+        '<div class="ears-big">' + (pct >= 80 ? '👂✨' : pct >= 50 ? '👂' : '🎧') + '</div>' +
+        '<div class="ears-score">' + earsState.score + ' / ' + earsState.order.length + '</div>' +
+        '<div class="ears-msg">' + (pct >= 80 ? 'أذنك حادّة — هذه الأصوات صارت واضحة لك.'
+          : pct >= 50 ? 'تتحسّن. أعِد الجولة؛ التمييز يأتي بالتكرار لا بالشرح.'
+          : 'لا تقلق — هذه الأصوات غير موجودة في العربية، فالأذن تحتاج وقتًا. أعِد المحاولة.') + '</div>' +
+        '<button class="ears-btn primary" onclick="initEars()">جولة أخرى</button>' +
+      '</div>';
+    try { logSectionDone('games'); addStarPoints('game'); } catch (e) {}
+    return;
+  }
+
+  var r = earsState.order[earsState.i];
+  // Which of the two is actually spoken is decided per round, so the answer
+  // cannot be guessed from the position of the buttons.
+  if (r.target === undefined) r.target = Math.random() < 0.5 ? 'a' : 'b';
+  var spoken = r[r.target];
+
+  area.innerHTML =
+    '<div class="ears-top">' +
+      '<span>' + (earsState.i + 1) + ' / ' + earsState.order.length + '</span>' +
+      '<span class="ears-pts">' + earsState.score + ' ✓</span>' +
+    '</div>' +
+    '<div class="ears-card">' +
+      '<div class="ears-hint">' + escHtml(r.ar) + '</div>' +
+      '<button class="ears-play" onclick="earsSay()">🔊 استمع</button>' +
+      '<div class="ears-sub">اضغط مرّة أخرى لإعادة السماع</div>' +
+      '<div class="ears-opts">' +
+        '<button class="ears-opt" data-k="a" onclick="earsPick(\'a\')">' + escHtml(r.a) + '</button>' +
+        '<button class="ears-opt" data-k="b" onclick="earsPick(\'b\')">' + escHtml(r.b) + '</button>' +
+      '</div>' +
+      '<div id="earsFb" class="ears-fb"></div>' +
+    '</div>';
+
+  earsState.answered = false;
+  setTimeout(earsSay, 350);
+}
+
+function earsSay() {
+  if (!earsState) return;
+  var r = earsState.order[earsState.i];
+  if (!r) return;
+  // Slowed a little: the whole point is a contrast the listener cannot yet
+  // hear, and at conversational speed they never will.
+  try { slSpeak(r[r.target], 0.75); } catch (e) { try { speakWord(r[r.target], null); } catch (e2) {} }
+}
+
+function earsPick(k) {
+  if (!earsState || earsState.answered) return;
+  earsState.answered = true;
+  var r = earsState.order[earsState.i];
+  var right = k === r.target;
+  if (right) earsState.score++;
+
+  document.querySelectorAll('.ears-opt').forEach(function (btn) {
+    btn.disabled = true;
+    if (btn.dataset.k === r.target) btn.classList.add('right');
+    else if (btn.dataset.k === k) btn.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('earsFb');
+  if (fb) {
+    fb.className = 'ears-fb ' + (right ? 'ok' : 'no');
+    fb.innerHTML = (right ? '✓ صحيح — ' : '✗ المنطوقة كانت ') +
+      '<b dir="ltr">' + escHtml(r[r.target]) + '</b>' +
+      '<button class="ears-again" onclick="earsSay()">🔊 أعد</button>' +
+      '<button class="ears-next" onclick="earsNext()">التالي ←</button>';
+  }
+}
+
+function earsNext() {
+  if (!earsState) return;
+  earsState.i++;
+  earsRender();
+}
+
+/* ══ GAME · SENTENCE BUILDER ═════════════════════════════════════════════
+   English word order is fixed where Arabic's is not, and the two disagree in
+   the places learners trip on every day: the adjective comes before the noun,
+   the subject before the verb, and the adverb of frequency sits inside the
+   verb phrase. Reading the rule does not fix it; assembling sentences does.
+
+   Sentences ship with the game rather than being generated, because a
+   scrambled sentence is only a useful exercise if exactly one order is
+   right - and that is a judgement about English, not something to leave to
+   a shuffle.                                                               */
+var ORDER_SENTENCES = [
+  { s:'I have a red car.',              n:'الصفة قبل الاسم: red car لا car red' },
+  { s:'She is a good teacher.',         n:'الصفة قبل الاسم' },
+  { s:'We always drink tea.',           n:'always بين الفاعل والفعل' },
+  { s:'He never eats breakfast.',       n:'never بين الفاعل والفعل' },
+  { s:'They go to school every day.',   n:'الزمن في آخر الجملة' },
+  { s:'My brother works in a bank.',    n:'فاعل ثم فعل ثم بقية الجملة' },
+  { s:'I do not like cold weather.',    n:'النفي: do not قبل الفعل' },
+  { s:'Where do you live?',             n:'أداة الاستفهام ثم do ثم الفاعل' },
+  { s:'What time does the bus leave?',  n:'does مع الغائب المفرد' },
+  { s:'There is a book on the table.',  n:'There is للوجود' },
+  { s:'I am going to call him later.',  n:'going to للمستقبل القريب' },
+  { s:'She has lived here for ten years.', n:'المضارع التام مع for' },
+  { s:'This is the best day ever.',     n:'the قبل صيغة التفضيل' },
+  { s:'He can speak three languages.',  n:'بعد can يأتي الفعل مجرّدًا' },
+  { s:'We were watching a film.',       n:'was/were + ing للماضي المستمر' }
+];
+
+var orderState = null;
+var ORDER_ROUNDS = 8;
+
+function initOrder() {
+  orderState = { i: 0, score: 0, picked: [], order: shuffle(ORDER_SENTENCES.slice()).slice(0, ORDER_ROUNDS) };
+  orderRender();
+}
+
+function orderRender() {
+  var area = document.getElementById('orderArea');
+  if (!area || !orderState) return;
+
+  if (orderState.i >= orderState.order.length) {
+    area.innerHTML =
+      '<div class="ears-done">' +
+        '<div class="ears-big">🧩</div>' +
+        '<div class="ears-score">' + orderState.score + ' / ' + orderState.order.length + '</div>' +
+        '<div class="ears-msg">ترتيب الجملة الإنجليزية يثبت بالتكرار. أعِد الجولة بجمل جديدة.</div>' +
+        '<button class="ears-btn primary" onclick="initOrder()">جولة أخرى</button>' +
+      '</div>';
+    try { logSectionDone('games'); addStarPoints('game'); } catch (e) {}
+    return;
+  }
+
+  var q = orderState.order[orderState.i];
+  if (!q.tokens) {
+    var toks = q.s.replace(/([.?!])$/, '').split(/\s+/);
+    // A shuffle can return the sentence already in order, which hands the
+    // learner a free point and reads like a broken round.
+    var sh = shuffle(toks.slice());
+    var guard = 0;
+    while (sh.join(' ') === toks.join(' ') && toks.length > 1 && guard++ < 20) sh = shuffle(toks.slice());
+    q.tokens = toks;
+    q.bank = sh;
+    q.end = (q.s.match(/([.?!])$/) || ['.'])[0];
+  }
+  orderState.picked = orderState.picked || [];
+
+  var used = {};
+  orderState.picked.forEach(function (idx) { used[idx] = 1; });
+
+  area.innerHTML =
+    '<div class="ears-top">' +
+      '<span>' + (orderState.i + 1) + ' / ' + orderState.order.length + '</span>' +
+      '<span class="ears-pts">' + orderState.score + ' ✓</span>' +
+    '</div>' +
+    '<div class="ears-card">' +
+      '<div class="ord-line" dir="ltr">' +
+        (orderState.picked.length
+          ? orderState.picked.map(function (idx, pos) {
+              return '<button class="ord-tok picked" onclick="orderUnpick(' + pos + ')">' +
+                     escHtml(q.bank[idx]) + '</button>'; }).join('')
+          : '<span class="ord-ph">اضغط الكلمات بالترتيب الصحيح</span>') +
+      '</div>' +
+      '<div class="ord-bank" dir="ltr">' +
+        q.bank.map(function (w, idx) {
+          return '<button class="ord-tok' + (used[idx] ? ' spent' : '') + '"' +
+                 (used[idx] ? ' disabled' : '') +
+                 ' onclick="orderPick(' + idx + ')">' + escHtml(w) + '</button>'; }).join('') +
+      '</div>' +
+      '<div id="ordFb" class="ears-fb"></div>' +
+      '<div class="ord-row">' +
+        '<button class="ears-btn" onclick="orderClear()">امسح</button>' +
+        '<button class="ears-btn primary" onclick="orderCheck()">تحقّق</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function orderPick(idx) {
+  if (!orderState) return;
+  if (orderState.picked.indexOf(idx) !== -1) return;
+  orderState.picked.push(idx);
+  orderRender();
+}
+function orderUnpick(pos) {
+  if (!orderState) return;
+  orderState.picked.splice(pos, 1);
+  orderRender();
+}
+function orderClear() {
+  if (!orderState) return;
+  orderState.picked = [];
+  orderRender();
+}
+
+function orderCheck() {
+  if (!orderState) return;
+  var q = orderState.order[orderState.i];
+  var built = orderState.picked.map(function (i) { return q.bank[i]; });
+  if (built.length !== q.tokens.length) {
+    var fb0 = document.getElementById('ordFb');
+    if (fb0) { fb0.className = 'ears-fb no'; fb0.textContent = 'استعمل كل الكلمات.'; }
+    return;
+  }
+  var right = built.join(' ') === q.tokens.join(' ');
+  if (right) orderState.score++;
+  var fb = document.getElementById('ordFb');
+  if (fb) {
+    fb.className = 'ears-fb ' + (right ? 'ok' : 'no');
+    fb.innerHTML = (right ? '✓ صحيح' : '✗ الترتيب الصحيح:') +
+      '<div class="ord-answer" dir="ltr">' + escHtml(q.s) + '</div>' +
+      '<div class="ord-note">' + escHtml(q.n) + '</div>' +
+      '<button class="ears-next" onclick="orderNext()">التالي ←</button>';
+  }
+  try { slSpeak(q.s, 0.85); } catch (e) {}
+}
+
+function orderNext() {
+  if (!orderState) return;
+  orderState.i++;
+  orderState.picked = [];
+  orderRender();
+}
+
+// ══ WRITE — the one place the learner produces language ══
+// Everything else in the platform is recognition: choose, order, repeat, turn
+// a card. This asks for a sentence that did not exist before.
+//
+// The honesty problem is grading. Meaning cannot be judged offline, and
+// pretending otherwise - a green tick on a sentence nobody read - teaches a
+// learner that wrong English is right. So the machine checks only what a
+// machine can know, and the learner compares their sentence against the model
+// that already ships with every word. Saying "I cannot judge your meaning,
+// here is a correct sentence, compare" is more use than a fabricated score.
+
+var WR_MIN_WORDS = 4;
+var wrWord = null;
+
+function wrLog() {
+  try { var v = JSON.parse(localStorage.getItem('writeLog') || '[]'); return Array.isArray(v) ? v : []; }
+  catch (e) { return []; }
+}
+function wrSaveLog(l) { try { localStorage.setItem('writeLog', JSON.stringify(l.slice(-100))); } catch (e) {} }
+
+// A word the learner owns, with an example to compare against. Due words
+// first: writing with a word is the strongest kind of retrieval there is, so
+// it should be spent on the words that are slipping.
+function wrPickWord() {
+  var owned = myWords().filter(function (w) { return w.ex && String(w.ex).trim().length > 6; });
+  if (!owned.length) return null;
+  var due = [];
+  try {
+    var dueIds = {};
+    srsDueWords(50).forEach(function (w) { dueIds[w.id] = 1; });
+    due = owned.filter(function (w) { return dueIds[w.id]; });
+  } catch (e) {}
+  var pool = due.length ? due : owned;
+  // Avoid asking for the same word twice in a row.
+  var last = wrLog().slice(-1)[0];
+  if (pool.length > 1 && last) {
+    var filtered = pool.filter(function (w) { return w.en !== last.en; });
+    if (filtered.length) pool = filtered;
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+/* What can honestly be checked without reading for meaning. Each returns a
+   plain statement, never a score. */
+function wrCheck(text, word) {
+  var t = String(text || '').trim();
+  var out = [];
+  var base = String(word.en || '').toLowerCase().trim();
+  var low = t.toLowerCase();
+
+  // Accept the ordinary inflections rather than demanding the exact form:
+  // "She studies" must count for "study", or the exercise punishes correct
+  // grammar.
+  var stem = base.replace(/(e|y)$/, '');
+  var used = low.indexOf(base) !== -1 ||
+             (stem.length > 2 && new RegExp('\\b' + stem + '(s|es|ies|ied|ed|ing|d|y)?\\b').test(low));
+  out.push({ ok: used, t: used ? 'استعملتَ الكلمة ✓' : 'الجملة لا تحتوي كلمة «' + word.en + '»' });
+
+  var n = t.split(/\s+/).filter(Boolean).length;
+  out.push({ ok: n >= WR_MIN_WORDS, t: n >= WR_MIN_WORDS ? 'جملة كاملة (' + n + ' كلمات) ✓'
+                                                          : 'قصيرة — اكتب ' + WR_MIN_WORDS + ' كلمات على الأقل' });
+
+  var hasArabic = /[\u0600-\u06FF]/.test(t);
+  out.push({ ok: !hasArabic, t: hasArabic ? 'اكتبها بالإنجليزية كاملة' : 'بالإنجليزية ✓' });
+
+  var capital = /^[A-Z]/.test(t);
+  out.push({ ok: capital, t: capital ? 'تبدأ بحرف كبير ✓' : 'ابدأ بحرف كبير' });
+
+  var ends = /[.!?]$/.test(t);
+  out.push({ ok: ends, t: ends ? 'تنتهي بعلامة ✓' : 'أنهِها بنقطة أو علامة استفهام' });
+
+  return out;
+}
+
+function wrRender() {
+  var area = document.getElementById('wrArea');
+  if (!area) return;
+  wrWord = wrPickWord();
+
+  if (!wrWord) {
+    area.innerHTML =
+      '<div class="empty-state"><div class="e-icon">✍️</div>' +
+      '<p>الكتابة تحتاج كلماتك أنت.<br>أضف كلمة أو خذ واحدة من حزمة البداية، وارجع.</p>' +
+      '<button class="btn-start-quiz" style="margin-top:14px" onclick="showTab(\'words\',null)">إلى كلماتي</button></div>';
+    return;
+  }
+
+  var n = wrLog().length;
+  area.innerHTML =
+    '<div class="wr-card">' +
+      '<div class="wr-task">اكتب جملة إنجليزية تستعمل فيها:</div>' +
+      '<div class="wr-word">' + escHtml(wrWord.en) +
+        '<button class="speak-btn" aria-label="استمع" onclick="speakWord(\'' +
+          String(wrWord.en).replace(/'/g, "\\'") + '\', this)">🔊</button></div>' +
+      '<div class="wr-ar">' + escHtml(wrWord.ar || '') + '</div>' +
+      '<textarea id="wrInput" class="wr-input" rows="3" dir="ltr" lang="en" spellcheck="true" ' +
+        'placeholder="Write your own sentence..."></textarea>' +
+      '<button class="wr-send" onclick="wrSubmit()">تحقّق من جملتي</button>' +
+      '<div id="wrResult"></div>' +
+    '</div>' +
+    (n ? '<button class="wr-link" onclick="wrShowLog()">📓 جملي السابقة (' + n + ')</button>' : '');
+
+  setTimeout(function () { var i = document.getElementById('wrInput'); if (i) i.focus(); }, 120);
+}
+
+function wrSubmit() {
+  var inp = document.getElementById('wrInput');
+  var res = document.getElementById('wrResult');
+  if (!inp || !res || !wrWord) return;
+  var text = inp.value.trim();
+  if (!text) { res.innerHTML = '<div class="wr-warn">اكتب جملتك أولًا.</div>'; return; }
+
+  var checks = wrCheck(text, wrWord);
+  var allOk = checks.every(function (c) { return c.ok; });
+
+  res.innerHTML =
+    '<ul class="wr-checks">' + checks.map(function (c) {
+      return '<li class="' + (c.ok ? 'ok' : 'no') + '">' + (c.ok ? '✓' : '•') + ' ' + c.t + '</li>';
+    }).join('') + '</ul>' +
+    '<div class="wr-model">' +
+      '<div class="wr-model-h">جملة نموذجية — قارن، لا تنسخ</div>' +
+      '<div class="wr-model-en">' + escHtml(wrWord.ex) +
+        '<button class="speak-btn" aria-label="استمع" onclick="speakWord(\'' +
+          String(wrWord.ex).replace(/'/g, "\\'") + '\', this)">🔊</button></div>' +
+      (wrWord.exar ? '<div class="wr-model-ar">' + escHtml(wrWord.exar) + '</div>' : '') +
+      // Stated plainly rather than hidden behind a tick: the learner should
+      // know exactly how far the feedback goes.
+      '<div class="wr-note">نتحقّق من الشكل فقط — المعنى تحكم عليه أنت بمقارنة جملتك بالنموذج.</div>' +
+    '</div>' +
+    '<div class="wr-row">' +
+      '<button class="wr-keep" onclick="wrKeep()">احفظ جملتي</button>' +
+      '<button class="wr-next" onclick="wrRender()">كلمة أخرى ←</button>' +
+    '</div>';
+
+  if (allOk) {
+    try { addStarPoints('addWord'); } catch (e) {}
+    try { logSectionDone('write'); } catch (e) {}
+  }
+}
+
+function wrKeep() {
+  var inp = document.getElementById('wrInput');
+  if (!inp || !wrWord) return;
+  var text = inp.value.trim();
+  if (!text) return;
+  var l = wrLog();
+  l.push({ en: wrWord.en, s: text, d: new Date().toDateString() });
+  wrSaveLog(l);
+  showToast('📓 حُفظت في دفترك', '#2DD4BF');
+  wrRender();
+}
+
+function wrShowLog() {
+  var area = document.getElementById('wrArea');
+  if (!area) return;
+  var l = wrLog().slice().reverse();
+  area.innerHTML =
+    '<button class="wr-link" onclick="wrRender()">← اكتب جملة جديدة</button>' +
+    '<div class="wr-logwrap">' + (l.length ? l.map(function (e) {
+      return '<div class="wr-logitem"><div class="wr-logword">' + escHtml(e.en) + '</div>' +
+             '<div class="wr-logsent" dir="ltr">' + escHtml(e.s) + '</div>' +
+             '<div class="wr-logdate">' + escHtml(e.d) + '</div></div>';
+    }).join('') : '<div class="empty-state"><p>لم تحفظ جملًا بعد.</p></div>') + '</div>';
+}
+
 // ══ PRACTICE MODES ══
 // Quiz and flashcards are two readings of one skill, so they share a screen.
 // The mode is remembered, because a learner who prefers cards should not have
 // to re-choose on every visit.
 function practiceMode(mode) {
-  var isFlash = mode === 'flash';
-  var q = document.getElementById('pracQuizWrap');
-  var f = document.getElementById('pracFlashWrap');
-  if (!q || !f) return;
-  q.style.display = isFlash ? 'none' : '';
-  f.style.display = isFlash ? '' : 'none';
-  var bq = document.getElementById('pmQuiz'), bf = document.getElementById('pmFlash');
-  if (bq) bq.classList.toggle('active', !isFlash);
-  if (bf) bf.classList.toggle('active', isFlash);
+  if (['quiz', 'flash', 'write'].indexOf(mode) === -1) mode = 'quiz';
+  var panes = { quiz: 'pracQuizWrap', flash: 'pracFlashWrap', write: 'pracWriteWrap' };
+  var btns  = { quiz: 'pmQuiz',       flash: 'pmFlash',       write: 'pmWrite' };
+  if (!document.getElementById(panes.quiz)) return;
+  for (var k in panes) if (Object.prototype.hasOwnProperty.call(panes, k)) {
+    var pane = document.getElementById(panes[k]);
+    var btn  = document.getElementById(btns[k]);
+    if (pane) pane.style.display = (k === mode) ? '' : 'none';
+    if (btn)  btn.classList.toggle('active', k === mode);
+  }
   try { localStorage.setItem('pracMode', mode); } catch (e) {}
-  if (isFlash) renderFlashcards();
+  if (mode === 'flash') renderFlashcards();
+  if (mode === 'write') wrRender();
 }
 
 function startReview() {
@@ -13492,23 +14103,25 @@ function showToast(msg, color='#2DD4BF') {
 function startGame(name) {
   // Gate before hiding the menu, so a blocked learner stays where they are
   // instead of landing on a blank game screen.
-  const labels = { hangman:'🎯 Hangman', race:'⚡ سباق ٦٠ ثانية', daily:'🌟 تحدي اليوم', spelling:'✍️ تحدي التهجئة' };
-  if (!requireWords(name, labels[name])) return;
-  document.getElementById('gamesMenu').style.display = 'none';
-  document.getElementById('gameHangman').style.display = 'none';
-  document.getElementById('gameRace').style.display = 'none';
-  document.getElementById('gameDaily').style.display = 'none';
-  document.getElementById('gameSpelling').style.display = 'none';
+  const labels = { hangman:'🎯 Hangman', race:'⚡ سباق ٦٠ ثانية', daily:'🌟 تحدي اليوم',
+                   spelling:'✍️ تحدي التهجئة', ears:'👂 أذن حادّة', order:'🧩 رتّب الجملة' };
+  // Sharp Ears ships its own word pairs and Sentence Builder its own
+  // sentences, so neither waits for the learner to build a dictionary first -
+  // they work on day one, which is exactly when a learner needs a reason to
+  // come back.
+  if (name !== 'ears' && name !== 'order' && !requireWords(name, labels[name])) return;
+  ['gamesMenu','gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder']
+    .forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = 'none'; });
   if (name === 'hangman')  { document.getElementById('gameHangman').style.display = '';  initHangman(); }
   if (name === 'race')     { document.getElementById('gameRace').style.display = '';     initRace(); }
   if (name === 'daily')    { document.getElementById('gameDaily').style.display = '';    initDaily(); }
   if (name === 'spelling') { document.getElementById('gameSpelling').style.display = ''; initSpelling(); }
+  if (name === 'ears')     { document.getElementById('gameEars').style.display = '';     initEars(); }
+  if (name === 'order')    { document.getElementById('gameOrder').style.display = '';    initOrder(); }
 }
 function backToGames() {
-  document.getElementById('gameHangman').style.display = 'none';
-  document.getElementById('gameRace').style.display = 'none';
-  document.getElementById('gameDaily').style.display = 'none';
-  document.getElementById('gameSpelling').style.display = 'none';
+  ['gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder']
+    .forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = 'none'; });
   document.getElementById('gamesMenu').style.display = '';
   clearInterval(raceInterval);
 }
@@ -16113,6 +16726,7 @@ const ACTIVITY_SECTIONS = {
   voice:   { icon:'🎙️', en:'Voice Coach',    ar:'المتحدّث' },
   reading: { icon:'📖', en:'Reading Lab',    ar:'مختبر القراءة' },
   sound:   { icon:'👂', en:'Sound Lab',     ar:'مختبر الصوت' },
+  write:   { icon:'✍️', en:'Writing',        ar:'الكتابة' },
   journey: { icon:'🚂', en:'Train Journey',  ar:'رحلة القطار' }
 };
 
@@ -19080,7 +19694,7 @@ function rwOpenActivityPicker() {
   rwItems = Object.keys(ACTIVITY_SECTIONS)
     // journey is a bigger separate flow; flash is a mode inside Practice
     // rather than a tab, so neither is a place the wheel can send anyone.
-    .filter(key => key !== 'journey' && key !== 'flash')
+    .filter(key => key !== 'journey' && key !== 'flash' && key !== 'write')
     .map((key, i) => {
       const info = ACTIVITY_SECTIONS[key];
       return { id: key, en: info.en, ar: info.ar, icon: info.icon, color: RW_PALETTE[i % RW_PALETTE.length] };
