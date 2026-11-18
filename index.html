@@ -5627,6 +5627,53 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   </div>
 </div>
 
+<!-- ══ MY CLASS ══ -->
+<div class="confirm-overlay" id="clsOverlay">
+  <div class="confirm-box">
+    <div class="cb-icon">🏫</div>
+
+    <!-- not joined -->
+    <div id="clsJoinView">
+      <div class="cb-title">انضمّ إلى فصل</div>
+      <div class="cb-msg">أعطاك معلّمك رمزًا من ٦ حروف. أدخله هنا ليرى تقدّمك.</div>
+      <div style="text-align:right;margin-bottom:10px">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">رمز الفصل</div>
+        <input type="text" id="clsCodeInp" class="inp en" placeholder="ABC234" maxlength="6"
+               style="width:100%;margin-bottom:12px;text-transform:uppercase;letter-spacing:4px;text-align:center;font-size:20px"
+               autocomplete="off" spellcheck="false">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">اسمك المستعار</div>
+        <input type="text" id="clsAliasInp" class="inp" placeholder="نمر٧" maxlength="16"
+               style="width:100%" autocomplete="off">
+        <div style="font-size:11.5px;color:var(--gold);margin-top:8px;line-height:1.7">
+          ⚠️ لا تكتب اسمك الحقيقي ولا رقم جوّالك ولا بريدك. اختر لقبًا يعرفه معلّمك فقط.
+        </div>
+      </div>
+      <div id="clsErr" style="color:#FB7185;font-size:12.5px;margin-bottom:8px"></div>
+      <div class="cb-row">
+        <button class="cb-btn cb-cancel" onclick="clsClose()">إلغاء</button>
+        <button class="cb-btn cb-confirm" id="clsJoinBtn" onclick="clsJoin()"
+                style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">انضمّ</button>
+      </div>
+    </div>
+
+    <!-- joined -->
+    <div id="clsStatusView" style="display:none">
+      <div class="cb-title">صفّي</div>
+      <div class="cb-msg" id="clsStatusMsg">—</div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.9;text-align:right;margin-bottom:10px">
+        يُرسَل عدد ما أنجزتَه فقط. لا تُرسَل إجاباتك ولا كلماتك ولا موقعك.
+      </div>
+      <div id="clsErr2" style="color:#FB7185;font-size:12.5px;margin-bottom:8px"></div>
+      <div class="cb-row">
+        <button class="cb-btn cb-cancel" onclick="clsLeave()">احذف بياناتي</button>
+        <button class="cb-btn cb-confirm" onclick="clsSyncNow(true)"
+                style="background:linear-gradient(135deg,var(--teal),#00B4D8);color:var(--ink)">زامِن الآن</button>
+      </div>
+      <button class="cb-btn cb-cancel" onclick="clsClose()" style="width:100%;margin-top:8px">إغلاق</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ TEACHER INVITE CONFIRM (only shown when ?teacher=CODE is in the URL) ══ -->
 <div class="confirm-overlay" id="teacherInviteOverlay">
   <div class="confirm-box">
@@ -6254,6 +6301,22 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
     </div><!-- end general pane -->
 
     <div class="station-tab-pane" data-spane="send">
+
+    <!-- ══ MY CLASS ══
+         Opt-in, and silent until a code is typed: a learner who never joins
+         a class makes no network request, and the platform stays exactly as
+         it is today - offline, local, and sending nothing anywhere. -->
+    <div class="sp-section-label">🏫 My Class · صفّي</div>
+
+    <button class="sp-row" id="clsRow" onclick="clsOpen()">
+      <div class="sp-row-icon" style="background:linear-gradient(135deg,#2DD4BF,#F5C842)">🏫</div>
+      <div class="sp-row-body">
+        <div class="sp-row-title" id="clsRowTitle">انضمّ إلى فصل</div>
+        <div class="sp-row-sub" id="clsRowSub">تقدّمك يظهر لمعلّمك — باسم مستعار</div>
+      </div>
+      <div class="sp-row-arrow">→</div>
+    </button>
+
     <!-- 1. Send Results -->
     <div class="sp-section-label">📤 Send Results · إرسال النتائج</div>
 
@@ -6446,7 +6509,14 @@ const WS_CONFIG = {
   // the same job without anyone else involved. Either way, a learner can now
   // switch it off from Settings, and the guide says it exists.
   analytics: true,
-  analyticsUrl: 'https://wordspark-platform.goatcounter.com/count'
+  analyticsUrl: 'https://wordspark-platform.goatcounter.com/count',
+
+  // عنوان خادم الصفوف
+  // Empty means same-origin /api, which is what it will be once the custom
+  // domain routes /api/* to the Worker — so this stays empty forever if the
+  // domain is set up that way. Before then, put the workers.dev URL here.
+  // Nothing contacts it unless a learner has typed a class code.
+  apiUrl: ''
 };
 
 // Silent for students. Active only with ?dev=1 in the URL.
@@ -12017,6 +12087,279 @@ function curriculumProgress() {
   };
 }
 
+// ══ MY CLASS — OPT-IN SYNC ══
+// The platform's whole design is that nothing leaves the device. This is the
+// single exception, and it is built so that it stays an exception:
+//
+//   * No class code typed, no network. Every function here returns early
+//     unless a learner has deliberately joined, so the default install makes
+//     exactly as many requests as it did before this existed: none.
+//   * What is sent is counts. Not answers, not words, not scores per item,
+//     not the device, not the location. The server could not reconstruct a
+//     lesson from it if it wanted to.
+//   * The alias is the learner's own invention, and the join screen says in
+//     plain Arabic not to use a real name. The server additionally refuses
+//     anything shaped like an email or a phone number.
+//   * Failure is silent. A learner on a dead connection sees their platform
+//     work exactly as always; the sync retries next time something is
+//     finished. Nothing here is ever allowed to throw into the app.
+
+var CLS_KEYS = { id: 'cls_learner_id', code: 'cls_code', alias: 'cls_alias',
+                 label: 'cls_label', last: 'cls_last_sync', pend: 'cls_pending' };
+var CLS_MIN_GAP = 60;          // seconds between automatic syncs
+var clsTimer = null;
+
+function clsApi(path) {
+  // Same origin by default, which is what it becomes once /api/* is routed
+  // to the Worker on the custom domain.
+  var base = (WS_CONFIG.apiUrl || '').replace(/\/+$/, '');
+  return base + path;
+}
+
+function clsGet(k) { try { return localStorage.getItem(CLS_KEYS[k]); } catch (e) { return null; } }
+function clsSet(k, v) { try { localStorage.setItem(CLS_KEYS[k], v); } catch (e) {} }
+function clsDel(k) { try { localStorage.removeItem(CLS_KEYS[k]); } catch (e) {} }
+
+function clsJoined() { return !!(clsGet('id') && clsGet('code')); }
+
+// Generated once, never derived from anything about the device or the person.
+// It is this learner's only credential, so it is long and random rather than
+// something guessable like a counter or a timestamp.
+function clsLearnerId() {
+  var id = clsGet('id');
+  if (id) return id;
+  var abc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-';
+  var out = '';
+  try {
+    var b = new Uint8Array(24);
+    crypto.getRandomValues(b);
+    for (var i = 0; i < b.length; i++) out += abc[b[i] % abc.length];
+  } catch (e) {
+    for (var j = 0; j < 24; j++) out += abc[Math.floor(Math.random() * abc.length)];
+  }
+  clsSet('id', out);
+  return out;
+}
+
+// Reuses the curriculum measure the home screen already computes, so the
+// dashboard and the learner's own card can never disagree.
+function clsSnapshot() {
+  var p = curriculumProgress();
+  var out = { total_items: p.total, done_total: p.done, streak_days: 0 };
+  var map = { 'المحطات': 'stations', 'القواعد': 'grammar', 'القراءة': 'reading',
+              'البودكاست': 'podcast', 'المحادثات': 'conv' };
+  p.rows.forEach(function (r) { var k = map[r.ar]; if (k) out[k] = r.done; });
+  try { out.streak_days = parseInt(localStorage.getItem('streak') || '0') || 0; } catch (e) {}
+  return out;
+}
+
+async function clsFetch(method, path, body, timeoutMs) {
+  var ctl = null, t = null;
+  try { ctl = new AbortController(); t = setTimeout(function () { ctl.abort(); }, timeoutMs || 8000); } catch (e) {}
+  var res = await fetch(clsApi(path), {
+    method: method,
+    headers: body !== undefined ? { 'Content-Type': 'application/json' } : {},
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+    signal: ctl ? ctl.signal : undefined
+  });
+  if (t) clearTimeout(t);
+  var j = {};
+  try { j = await res.json(); } catch (e) {}
+  if (!res.ok || !j.ok) { var err = new Error(j.message || ('خطأ ' + res.status)); err.code = j.error; throw err; }
+  return j;
+}
+
+// ── the sync itself ──────────────────────────────────────────────────────
+
+async function clsSyncNow(manual) {
+  if (!clsJoined()) return;
+  var now = Math.floor(Date.now() / 1000);
+  var last = parseInt(clsGet('last') || '0') || 0;
+  if (!manual && now - last < CLS_MIN_GAP) {
+    // Too soon. Come back when the gap has passed rather than dropping the
+    // attempt, or a lesson finished just after joining would wait for the
+    // next one before the teacher ever saw it.
+    if (clsTimer) clearTimeout(clsTimer);
+    clsTimer = setTimeout(function () { clsSyncNow(false); },
+                          (CLS_MIN_GAP - (now - last) + 1) * 1000);
+    return;
+  }
+
+  var pend = [];
+  try { pend = JSON.parse(clsGet('pend') || '[]'); } catch (e) { pend = []; }
+  if (!Array.isArray(pend)) pend = [];
+
+  try {
+    var r = await clsFetch('POST', '/api/sync', {
+      learner_id: clsLearnerId(),
+      progress: clsSnapshot(),
+      events: pend.slice(-50)
+    });
+    clsSet('last', String(r.at || now));
+    clsDel('pend');
+    if (manual) {
+      showToast('✅ تمّت المزامنة — ' + r.pct + '%', '#2DD4BF');
+      clsRefreshUI();
+    }
+  } catch (e) {
+    // A teacher who removed this device, or a class that was closed: stop
+    // pretending to be in a class rather than retrying forever.
+    if (e.code === 'removed' || e.code === 'not_joined' || e.code === 'archived') {
+      clsForget();
+      if (manual) clsShowErr('لم تعد في هذا الفصل. اطلب الرمز من معلّمك.');
+      else showToast('أُزيل جهازك من الفصل', '#FB7185');
+      clsRefreshUI();
+      return;
+    }
+    if (manual) clsShowErr(navigator.onLine === false
+      ? 'لا يوجد اتصال. سنزامن تلقائيًّا عند عودته.'
+      : e.message);
+    // Anything else is a bad connection, and the next finished lesson retries.
+  }
+}
+
+// Called from logSectionDone. Records what was finished so a learner who is
+// offline still arrives with their week intact, then schedules one debounced
+// sync instead of one request per tap.
+function clsNote(kind) {
+  if (!clsJoined()) return;
+  try {
+    var pend = JSON.parse(clsGet('pend') || '[]');
+    if (!Array.isArray(pend)) pend = [];
+    pend.push({ kind: kind, at: Math.floor(Date.now() / 1000) });
+    if (pend.length > 200) pend = pend.slice(-200);
+    clsSet('pend', JSON.stringify(pend));
+  } catch (e) {}
+  if (clsTimer) clearTimeout(clsTimer);
+  clsTimer = setTimeout(function () { clsSyncNow(false); }, 4000);
+}
+
+function clsForget() {
+  ['code', 'alias', 'label', 'last', 'pend'].forEach(clsDel);
+  // The learner id is kept: if they rejoin the same class they return as the
+  // same row instead of becoming a duplicate beside their old one.
+}
+
+// ── UI ───────────────────────────────────────────────────────────────────
+
+function clsShowErr(msg) {
+  var a = document.getElementById('clsErr'), b = document.getElementById('clsErr2');
+  if (a) a.textContent = clsJoined() ? '' : (msg || '');
+  if (b) b.textContent = clsJoined() ? (msg || '') : '';
+}
+
+function clsRefreshUI() {
+  var t = document.getElementById('clsRowTitle');
+  var sub = document.getElementById('clsRowSub');
+  if (t && sub) {
+    if (clsJoined()) {
+      t.textContent = clsGet('label') || 'صفّي';
+      var last = parseInt(clsGet('last') || '0') || 0;
+      sub.textContent = 'باسم ' + (clsGet('alias') || '—') +
+        (last ? ' · آخر مزامنة ' + clsAgo(last) : ' · لم تُزامن بعد');
+    } else {
+      t.textContent = 'انضمّ إلى فصل';
+      sub.textContent = 'تقدّمك يظهر لمعلّمك — باسم مستعار';
+    }
+  }
+  var jv = document.getElementById('clsJoinView');
+  var sv = document.getElementById('clsStatusView');
+  if (jv && sv) {
+    jv.style.display = clsJoined() ? 'none' : '';
+    sv.style.display = clsJoined() ? '' : 'none';
+    var m = document.getElementById('clsStatusMsg');
+    if (m && clsJoined()) {
+      var p = curriculumProgress();
+      m.textContent = 'أنت في «' + (clsGet('label') || 'فصلك') + '» باسم «' +
+        (clsGet('alias') || '—') + '» — ' + p.pct + '% (' + p.done + ' من ' + p.total + ').';
+    }
+  }
+}
+
+function clsAgo(ts) {
+  var d = Math.floor((Date.now() / 1000 - ts) / 86400);
+  if (d <= 0) return 'اليوم';
+  if (d === 1) return 'أمس';
+  return 'قبل ' + d + ' أيام';
+}
+
+function clsOpen() {
+  closeSettingsPanel();
+  clsShowErr('');
+  clsRefreshUI();
+  var ov = document.getElementById('clsOverlay');
+  if (ov) ov.classList.add('show');
+  if (!clsJoined()) setTimeout(function () {
+    var i = document.getElementById('clsCodeInp'); if (i) i.focus();
+  }, 160);
+}
+
+function clsClose() {
+  var ov = document.getElementById('clsOverlay');
+  if (ov) ov.classList.remove('show');
+}
+
+async function clsJoin() {
+  var codeEl = document.getElementById('clsCodeInp');
+  var aliasEl = document.getElementById('clsAliasInp');
+  var btn = document.getElementById('clsJoinBtn');
+  var code = (codeEl.value || '').trim().toUpperCase();
+  var alias = (aliasEl.value || '').trim();
+  clsShowErr('');
+
+  if (code.length !== 6) { clsShowErr('الرمز ٦ حروف'); return; }
+  if (alias.length < 2) { clsShowErr('اختر اسمًا مستعارًا'); return; }
+
+  btn.disabled = true;
+  var old = btn.textContent;
+  btn.textContent = '...';
+  try {
+    var r = await clsFetch('POST', '/api/join',
+      { code: code, alias: alias, learner_id: clsLearnerId() });
+    clsSet('code', r.code); clsSet('alias', r.alias); clsSet('label', r.label || 'صفّي');
+    clsDel('last');
+    clsRefreshUI();
+    showToast('🏫 انضممتَ إلى ' + (r.label || 'الفصل'), '#2DD4BF');
+    await clsSyncNow(false);
+    clsRefreshUI();
+  } catch (e) {
+    clsShowErr(e.message || 'تعذّر الانضمام');
+  }
+  btn.disabled = false;
+  btn.textContent = old;
+}
+
+async function clsLeave() {
+  if (!confirm('حذف بياناتك من لوحة المعلّم؟\nتقدّمك على هذا الجهاز يبقى كما هو ولا يتأثّر.')) return;
+  try { await clsFetch('DELETE', '/api/learner', { learner_id: clsLearnerId() }); } catch (e) {}
+  // Forgotten locally whether or not the server answered: a learner who asked
+  // to leave must not stay joined because the network was down.
+  clsForget();
+  clsRefreshUI();
+  clsClose();
+  showToast('حُذفت بياناتك من الفصل', '#94A3B8');
+}
+
+// A learner who worked through a weekend with no signal should not have to
+// open Settings to appear on their teacher's board. One catch-up attempt per
+// launch, deferred so it never competes with first paint.
+(function clsBootSync() {
+  function go() {
+    try {
+      if (!clsJoined()) return;
+      var last = parseInt(clsGet('last') || '0') || 0;
+      if (Math.floor(Date.now() / 1000) - last < 3600) return;
+      clsSyncNow(false);
+    } catch (e) {}
+  }
+  var start = function () {
+    if (window.requestIdleCallback) requestIdleCallback(go, { timeout: 9000 });
+    else setTimeout(go, 6000);
+  };
+  if (document.readyState === 'complete') start();
+  else window.addEventListener('load', start, { once: true });
+})();
+
 function renderCurriculumCard() {
   var card = document.getElementById('curCard');
   if (!card) return;
@@ -14842,7 +15185,10 @@ function showSQResult() {
     btn.onclick = function() {
       var p = getTrainProgress();
       var finishedChapter = getChapterForStation(sqStationId);
-      if (p.completed.indexOf(sqStationId) === -1) p.completed.push(sqStationId);
+      if (p.completed.indexOf(sqStationId) === -1) {
+        p.completed.push(sqStationId);
+        try { clsNote('station'); } catch (e) {}
+      }
       var chapterJustCompleted = finishedChapter && isChapterComplete(finishedChapter, p);
       p.current = getCurrentStationId(p);
       saveTrainProgress(p);
@@ -15109,7 +15455,17 @@ function logSectionDone(section) {
     var ck = 'dcount_' + section;
     localStorage.setItem(ck, String(parseInt(localStorage.getItem(ck) || '0') + 1));
   } catch (e) {}
+  // Does nothing at all unless this learner joined a class.
+  try { clsNote(CLS_KIND[section] || 'station'); } catch (e) {}
 }
+
+// The nine completion hooks speak in section names; the server's event log
+// speaks in curriculum tracks. Anything without a track of its own counts as
+// practice, which is what the dashboard's "last 7 days" column is for.
+var CLS_KIND = {
+  grammar: 'grammar', reading: 'reading', podcast: 'podcast',
+  conv: 'conv', station: 'station'
+};
 
 function getSectionDoneDays(section) {
   // Normalised, not just guarded — see getGrammarCompleted.
@@ -18506,6 +18862,7 @@ function openSettingsPanel() {
   refreshPulseLabel();
   refreshLiteLabel();
   refreshLevelSourceLabel();
+  try { clsRefreshUI(); } catch (e) {}
   var name   = localStorage.getItem('studentName') || 'Student';
   var words  = JSON.parse(localStorage.getItem('mywords') || '[]');
   var streak = parseInt(localStorage.getItem('streak') || '0');

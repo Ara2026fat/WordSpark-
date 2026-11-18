@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>WordSpark · لوحة المعلّم</title>
+<link rel="icon" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0D1117">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Same tokens as the platform, so the two do not look like different
+     products. Dark by default; the teacher is often on a projector. */
+  :root {
+    --bg:#0D1117; --card:#1E2D42; --rim:#243550; --track:rgba(255,255,255,.10);
+    --white:#F1F5F9; --soft:#CBD5E1; --muted:#94A3B8;
+    --gold:#F5C842; --prog:#F5C842; --teal:#2DD4BF; --rose:#FB7185;
+    --radius:16px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg:#F6F8FC; --card:#EEF2F8; --rim:#D4DCE8; --track:rgba(30,41,59,.13);
+      --white:#1A2333; --soft:#334155; --muted:#5F6B80;
+      --gold:#E0A800; --prog:#8A5F06; --teal:#0E9F8A; --rose:#B4123A;
+    }
+  }
+  * { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body {
+    margin:0; background:var(--bg); color:var(--white);
+    font-family:'Tajawal',system-ui,sans-serif; line-height:1.7;
+    padding:0 16px 56px;
+  }
+  .wrap { max-width:860px; margin:0 auto; }
+  header { padding:26px 0 18px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .mark {
+    font-family:'Space Grotesk',sans-serif; font-weight:900; font-size:20px;
+    letter-spacing:-.5px;
+  }
+  .mark b { color:var(--prog); }
+  .sub { color:var(--muted); font-size:13px; }
+  .spacer { flex:1; }
+
+  .card {
+    background:var(--card); border:1px solid var(--rim); border-radius:var(--radius);
+    padding:18px; margin-bottom:16px;
+  }
+  h1 { font-size:19px; margin:0 0 6px; font-weight:800; }
+  h2 { font-size:15px; margin:0 0 12px; font-weight:800; }
+  p  { margin:0 0 12px; color:var(--soft); font-size:14px; }
+  .hint { color:var(--muted); font-size:12.5px; line-height:1.9; }
+
+  button, .btn {
+    font-family:inherit; font-size:14.5px; font-weight:700; cursor:pointer;
+    border-radius:12px; padding:12px 18px; border:1px solid var(--rim);
+    background:transparent; color:var(--white); transition:.15s;
+  }
+  button:hover { border-color:var(--gold); }
+  button:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .primary { background:var(--gold); color:#221A00; border-color:transparent; }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) .primary { background:var(--prog); color:#fff; }
+  }
+  .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  input {
+    font-family:inherit; font-size:15px; padding:12px 14px; border-radius:12px;
+    border:1px solid var(--rim); background:var(--bg); color:var(--white);
+    width:100%; max-width:320px;
+  }
+  input:focus-visible { outline:2px solid var(--gold); outline-offset:1px; }
+  label { display:block; font-size:13px; color:var(--soft); margin-bottom:6px; font-weight:700; }
+  .field { margin-bottom:14px; }
+
+  /* The class code is read off a whiteboard, so it is sized to be read off
+     a whiteboard. */
+  .code-box {
+    text-align:center; padding:22px 16px; border-radius:14px;
+    border:1px dashed var(--prog); background:rgba(245,200,66,.06); margin-bottom:14px;
+  }
+  .code {
+    font-family:'Space Grotesk',sans-serif; font-weight:900;
+    font-size:clamp(34px,11vw,56px); letter-spacing:7px; color:var(--prog);
+    direction:ltr; unicode-bidi:plaintext; line-height:1.2;
+  }
+  .key {
+    font-family:'Space Grotesk',sans-serif; font-size:14px; direction:ltr;
+    unicode-bidi:plaintext; word-break:break-all; color:var(--white);
+    background:var(--bg); border:1px solid var(--rim); border-radius:10px;
+    padding:12px; margin:8px 0 12px;
+  }
+  .warn {
+    border:1px solid var(--rose); background:rgba(251,113,133,.08);
+    border-radius:12px; padding:14px; font-size:13.5px; color:var(--soft);
+  }
+  .warn b { color:var(--rose); }
+
+  .tiles {
+    display:grid; gap:10px; margin-bottom:16px;
+    grid-template-columns:repeat(auto-fit,minmax(96px,150px));
+    justify-content:center;
+  }
+  .tile { background:var(--card); border:1px solid var(--rim); border-radius:14px; padding:12px; text-align:center; }
+  .tile .n { font-family:'Space Grotesk',sans-serif; font-size:24px; font-weight:900; color:var(--prog); }
+  .tile .n.dim { color:var(--muted); }
+  .tile .n.bad { color:var(--rose); }
+  .tile .l { font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:11px 8px; text-align:right; font-size:13.5px; border-bottom:1px solid var(--rim); }
+  th { color:var(--muted); font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
+  th:hover { color:var(--gold); }
+  tbody tr:last-child td { border-bottom:none; }
+  .alias { font-weight:800; }
+  .bar { height:7px; border-radius:99px; background:var(--track); overflow:hidden; min-width:62px; }
+  .bar i { display:block; height:100%; background:var(--prog); border-radius:99px; }
+  .pct { font-family:'Space Grotesk',sans-serif; font-weight:700; color:var(--prog); white-space:nowrap; }
+  .num { font-family:'Space Grotesk',sans-serif; font-size:12px; color:var(--muted); direction:ltr; unicode-bidi:plaintext; }
+  .when { font-size:12px; color:var(--muted); white-space:nowrap; }
+  .when.stale { color:var(--rose); }
+  .x { border:none; background:none; color:var(--muted); font-size:16px; padding:4px 8px; cursor:pointer; }
+  .x:hover { color:var(--rose); }
+  .scroll { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .empty { text-align:center; color:var(--muted); padding:28px 12px; font-size:14px; }
+  .hide { display:none !important; }
+  .err { color:var(--rose); font-size:13.5px; margin-top:10px; }
+  footer { text-align:center; color:var(--muted); font-size:11.5px; padding:22px 0 0; }
+  .track-head { font-size:11px; }
+  @media (max-width:640px) {
+    .track-col { display:none; }
+    th, td { padding:11px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <div class="mark">Word<b>Spark</b></div>
+    <div class="sub">لوحة المعلّم</div>
+  </div>
+  <div class="spacer"></div>
+  <button id="signOut" class="hide" onclick="signOut()">خروج</button>
+</header>
+
+<!-- ── 1. first visit ─────────────────────────────────────────────── -->
+<section id="gate">
+  <div class="card">
+    <h1>تابع صفّك</h1>
+    <p>أنشئ فصلًا، أعطِ طلّابك الرمز، وشاهد تقدّمهم. لا أسماء حقيقية ولا بريد ولا أرقام — يختار كلّ طالب اسمًا مستعارًا، وأنت ترى تقدّمه فقط.</p>
+    <div class="field">
+      <label for="label">اسم الفصل (لك وحدك)</label>
+      <input id="label" maxlength="40" placeholder="ثالث ثانوي ٢" autocomplete="off">
+    </div>
+    <button class="primary" onclick="createClass()">أنشئ فصلًا جديدًا</button>
+  </div>
+
+  <div class="card">
+    <h2>عندك فصل بالفعل؟</h2>
+    <div class="field">
+      <label for="keyIn">مفتاح المعلّم</label>
+      <input id="keyIn" maxlength="32" placeholder="32 حرفًا" autocomplete="off" spellcheck="false" dir="ltr">
+    </div>
+    <button onclick="openWithKey()">افتح اللوحة</button>
+    <div id="gateErr" class="err"></div>
+  </div>
+</section>
+
+<!-- ── 2. the key, shown exactly once ─────────────────────────────── -->
+<section id="fresh" class="hide">
+  <div class="card">
+    <h1>فصلك جاهز</h1>
+    <p>اكتب هذا الرمز على السبورة. يدخله الطالب في المنصّة ← الإعدادات ← صفّي.</p>
+    <div class="code-box"><div class="code" id="freshCode">······</div></div>
+
+    <h2>مفتاح المعلّم</h2>
+    <div class="key" id="freshKey">—</div>
+    <div class="warn">
+      <b>احفظه الآن.</b> هذا المفتاح هو الطريقة الوحيدة لفتح لوحة الفصل، ولن نعرضه مرّة أخرى.
+      ولأنّنا لا نحتفظ ببريدك ولا جوّالك، لا توجد «استعادة مفتاح» — من يفقده يبدأ فصلًا جديدًا.
+      هذه هي تكلفة ألّا نخزّن بياناتك الشخصية، وقد اخترناها عن قصد.
+    </div>
+    <div class="row" style="margin-top:14px">
+      <button class="primary" onclick="copyKey()">انسخ المفتاح</button>
+      <button onclick="goDash()">حفظتُه — افتح اللوحة</button>
+    </div>
+  </div>
+</section>
+
+<!-- ── 3. the dashboard ───────────────────────────────────────────── -->
+<section id="dash" class="hide">
+  <div class="card" style="padding:14px 18px">
+    <div class="row">
+      <div>
+        <h2 style="margin:0" id="dashLabel">—</h2>
+        <div class="hint">رمز الفصل: <b class="num" id="dashCode" style="color:var(--prog);font-size:15px">—</b></div>
+      </div>
+      <div class="spacer"></div>
+      <button onclick="loadRoster()">تحديث</button>
+    </div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="card">
+    <div class="scroll">
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th onclick="sortBy('alias')">الاسم</th>
+            <th onclick="sortBy('pct')">التقدّم</th>
+            <th class="track-head track-col">محطات</th>
+            <th class="track-head track-col">قواعد</th>
+            <th class="track-head track-col">قراءة</th>
+            <th class="track-head track-col">بودكاست</th>
+            <th class="track-head track-col">محادثات</th>
+            <th onclick="sortBy('done_7d')">٧ أيام</th>
+            <th onclick="sortBy('last_sync_at')">آخر نشاط</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div id="emptyMsg" class="empty hide">
+      لم ينضم أحد بعد. اكتب الرمز <b class="num" id="emptyCode"></b> على السبورة.
+    </div>
+    <div id="dashErr" class="err"></div>
+  </div>
+
+  <div class="card">
+    <h2>ما تراه وما لا تراه</h2>
+    <div class="hint">
+      تُحفظ الأسماء المستعارة وأعداد ما أُنجز فقط. لا تُحفظ إجابات الطلاب ولا كلماتهم
+      ولا موقعهم ولا أرقامهم. والطالب يستطيع حذف بياناته من جهازه في أي وقت، ويبقى
+      تقدّمه عنده كاملًا.
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 · ARAFAT ALRAJHI</footer>
+</div>
+
+<script>
+/* ══ API base ══
+   Same origin by default: once /api/* is routed to the Worker on the custom
+   domain, this file needs no configuration at all. Before that, the teacher
+   pastes the workers.dev URL once and it is remembered. ?api=... overrides
+   both, which is how this page gets tested. */
+var API = (function () {
+  try {
+    var q = new URLSearchParams(location.search).get('api');
+    if (q) { localStorage.setItem('ws_api', q.replace(/\/+$/, '')); }
+    return localStorage.getItem('ws_api') || '';
+  } catch (e) { return ''; }
+})();
+
+function api(path) { return (API || '') + path; }
+
+var KEY = null, ROSTER = null, SORT = { by: 'last_sync_at', dir: -1 };
+
+function show(id) {
+  ['gate', 'fresh', 'dash'].forEach(function (s) {
+    document.getElementById(s).classList.toggle('hide', s !== id);
+  });
+  document.getElementById('signOut').classList.toggle('hide', id === 'gate');
+}
+
+function setErr(id, msg) { document.getElementById(id).textContent = msg || ''; }
+
+async function req(method, path, body, key) {
+  var h = {};
+  if (body !== undefined) h['Content-Type'] = 'application/json';
+  if (key) h['X-Teacher-Key'] = key;
+  var res, j;
+  try {
+    res = await fetch(api(path), {
+      method: method, headers: h,
+      body: body !== undefined ? JSON.stringify(body) : undefined
+    });
+  } catch (e) {
+    // A network failure here is almost always an unset or wrong API base, so
+    // say that rather than "failed to fetch".
+    throw new Error(API
+      ? 'لا يمكن الوصول إلى الخادم. تأكّد من عنوان الـ API.'
+      : 'عنوان الخادم غير محدَّد. أضِف ‎?api=https://…workers.dev‎ إلى الرابط مرّة واحدة.');
+  }
+  try { j = await res.json(); } catch (e) { j = {}; }
+  if (!res.ok || !j.ok) throw new Error(j.message || ('خطأ ' + res.status));
+  return j;
+}
+
+// ── create / open ────────────────────────────────────────────────────────
+
+async function createClass() {
+  setErr('gateErr', '');
+  var label = document.getElementById('label').value.trim();
+  try {
+    var r = await req('POST', '/api/class', { label: label });
+    document.getElementById('freshCode').textContent = r.code;
+    document.getElementById('freshKey').textContent = r.teacher_key;
+    KEY = r.teacher_key;
+    try { localStorage.setItem('ws_teacher_key', KEY); } catch (e) {}
+    show('fresh');
+  } catch (e) { setErr('gateErr', e.message); }
+}
+
+function copyKey() {
+  var k = document.getElementById('freshKey').textContent;
+  try {
+    navigator.clipboard.writeText(k);
+    var b = event && event.target; if (b) { b.textContent = 'نُسخ ✓'; }
+  } catch (e) {}
+}
+
+async function openWithKey() {
+  setErr('gateErr', '');
+  var k = document.getElementById('keyIn').value.trim().toLowerCase();
+  if (!/^[0-9a-f]{32}$/.test(k)) { setErr('gateErr', 'المفتاح 32 حرفًا من 0-9 و a-f'); return; }
+  KEY = k;
+  try {
+    await loadRoster();
+    try { localStorage.setItem('ws_teacher_key', k); } catch (e) {}
+    show('dash');
+  } catch (e) { setErr('gateErr', e.message); KEY = null; }
+}
+
+function goDash() { show('dash'); loadRoster().catch(function (e) { setErr('dashErr', e.message); }); }
+
+function signOut() {
+  try { localStorage.removeItem('ws_teacher_key'); } catch (e) {}
+  KEY = null; ROSTER = null;
+  document.getElementById('keyIn').value = '';
+  show('gate');
+}
+
+// ── roster ───────────────────────────────────────────────────────────────
+
+async function loadRoster() {
+  setErr('dashErr', '');
+  var r = await req('GET', '/api/roster', undefined, KEY);
+  ROSTER = r;
+  document.getElementById('dashLabel').textContent = r.label;
+  document.getElementById('dashCode').textContent = r.code;
+  document.getElementById('emptyCode').textContent = r.code;
+  renderTiles(r.summary, r.learners.length);
+  renderRows();
+  return r;
+}
+
+function renderTiles(s, n) {
+  // A mean would hide the shape of a class. The median says where the middle
+  // of the room is, and the two dim counts say who needs chasing - which is
+  // the only thing a teacher can act on today.
+  var t = [
+    { n: s.count, l: 'طالبًا', cls: '' },
+    { n: s.median_pct + '%', l: 'وسيط التقدّم', cls: '' },
+    { n: s.active_7d, l: 'نشط هذا الأسبوع', cls: s.active_7d ? '' : 'dim' },
+    { n: s.stalled_14d, l: 'متوقّف أسبوعين', cls: s.stalled_14d ? 'bad' : 'dim' },
+    { n: s.not_started, l: 'لم يبدأ', cls: s.not_started ? 'bad' : 'dim' }
+  ];
+  document.getElementById('tiles').innerHTML = t.map(function (x) {
+    return '<div class="tile"><div class="n ' + x.cls + '">' + x.n + '</div>' +
+           '<div class="l">' + x.l + '</div></div>';
+  }).join('');
+}
+
+function sortBy(field) {
+  SORT.dir = (SORT.by === field) ? -SORT.dir : -1;
+  SORT.by = field;
+  renderRows();
+}
+
+function ago(ts) {
+  var s = Math.floor(Date.now() / 1000) - ts;
+  if (s < 3600) return 'الآن';
+  if (s < 86400) return 'اليوم';
+  var d = Math.floor(s / 86400);
+  if (d === 1) return 'أمس';
+  if (d < 14) return 'قبل ' + d + ' أيام';
+  if (d < 60) return 'قبل ' + Math.floor(d / 7) + ' أسابيع';
+  return 'قبل ' + Math.floor(d / 30) + ' أشهر';
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function renderRows() {
+  if (!ROSTER) return;
+  var rows = ROSTER.learners.slice();
+  var by = SORT.by, dir = SORT.dir;
+  rows.sort(function (a, b) {
+    var x = a[by], y = b[by];
+    if (by === 'alias') return String(x).localeCompare(String(y), 'ar') * -dir;
+    return (x - y) * dir;
+  });
+
+  var stale = Math.floor(Date.now() / 1000) - 14 * 86400;
+  document.getElementById('tbody').innerHTML = rows.map(function (r) {
+    return '<tr>' +
+      '<td class="alias">' + esc(r.alias) + '</td>' +
+      '<td><div class="row" style="gap:7px;flex-wrap:nowrap">' +
+        '<span class="pct">' + r.pct + '%</span>' +
+        '<div class="bar" style="flex:1"><i style="width:' + r.pct + '%"></i></div>' +
+      '</div>' +
+      '<div class="num">' + r.done_total + '/' + r.total_items + '</div></td>' +
+      '<td class="num track-col">' + r.stations + '</td>' +
+      '<td class="num track-col">' + r.grammar  + '</td>' +
+      '<td class="num track-col">' + r.reading  + '</td>' +
+      '<td class="num track-col">' + r.podcast  + '</td>' +
+      '<td class="num track-col">' + r.conv     + '</td>' +
+      '<td class="num">' + r.done_7d  + '</td>' +
+      '<td class="when' + (r.last_sync_at <= stale ? ' stale' : '') + '">' + ago(r.last_sync_at) + '</td>' +
+      '<td><button class="x" title="إزالة من اللوحة" aria-label="إزالة ' + esc(r.alias) +
+          '" onclick="removeLearner(this,\'' + esc(r.alias).replace(/'/g, '&#39;') + '\')">✕</button></td>' +
+    '</tr>';
+  }).join('');
+
+  var empty = rows.length === 0;
+  document.getElementById('emptyMsg').classList.toggle('hide', !empty);
+  document.getElementById('tbl').classList.toggle('hide', empty);
+}
+
+async function removeLearner(btn, alias) {
+  // Worth a confirm: the teacher is about to stop seeing a learner, and the
+  // undo is the learner rejoining, not a button here.
+  if (!confirm('إزالة «' + alias + '» من اللوحة؟\nلن تتأثّر بيانات الطالب على جهازه، ويمكنه الانضمام مرّة أخرى بالرمز.')) return;
+  btn.disabled = true;
+  try { await req('POST', '/api/learner/remove', { alias: alias }, KEY); await loadRoster(); }
+  catch (e) { setErr('dashErr', e.message); btn.disabled = false; }
+}
+
+// ── boot ─────────────────────────────────────────────────────────────────
+
+(function () {
+  var saved = null;
+  try { saved = localStorage.getItem('ws_teacher_key'); } catch (e) {}
+  if (saved && /^[0-9a-f]{32}$/.test(saved)) {
+    KEY = saved;
+    show('dash');
+    loadRoster().catch(function (e) {
+      // A saved key that no longer opens anything sends the teacher back to
+      // the gate rather than leaving them on an empty dashboard.
+      setErr('gateErr', e.message); KEY = null; show('gate');
+    });
+  } else {
+    show('gate');
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+name = "wordspark-api"
+main = "src/index.js"
+# Pinned to a date the installed wrangler actually supports. Nothing here
+# needs a newer runtime, and a date in the future silently falls back, which
+# would mean testing against a different runtime than production.
+compatibility_date = "2025-10-01"
+
+# WordSpark's own database. Separate from zahim-db and ufuq-db on purpose:
+# one app, one database, one Worker — so a mistake in any of them can only
+# ever reach its own data.
+[[d1_databases]]
+binding = "DB"
+database_name = "wordspark-db"
+database_id = "8b4b3d76-565d-4970-a1d4-738f27d97a64"
+
+[vars]
+# Who may call this API from a browser. An unlisted origin gets no CORS
+# header at all, so another site cannot read a class roster out of a
+# teacher's browser. Add the custom domain here the moment it exists.
+ALLOWED_ORIGINS = "https://ara2026fat.github.io,http://localhost:8799,http://127.0.0.1:8799"
+
+# Once the domain is live, uncomment this and the API answers on the same
+# origin as the app — which removes CORS from the picture entirely rather
+# than configuring around it.
+# [[routes]]
+# pattern = "wordspark.com/api/*"
+# zone_name = "wordspark.com"
+
+[observability]
+enabled = true
