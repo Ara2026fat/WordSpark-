@@ -2397,6 +2397,38 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .continue-btn-ar { font-size: 16px; font-weight: 800; }
   .continue-btn-en { font-family: 'Space Grotesk', sans-serif; font-size: 11.5px; opacity: .72; }
 
+  /* ══ LISTEN <-> SPEAK PAIR ══
+     The bar that turns two identical titles into one deliberate sequence. */
+  .pair-bar {
+    display:flex; align-items:center; gap:9px; margin:0 0 12px;
+    padding:10px 12px; border-radius:13px;
+    background:rgba(45,212,191,.09); border:1px solid rgba(45,212,191,.28);
+  }
+  .pair-ic { font-size:17px; line-height:1; flex-shrink:0; }
+  .pair-txt { flex:1; font-size:12.5px; color:var(--soft); line-height:1.65; min-width:0; }
+  .pair-btn {
+    flex-shrink:0; font-family:inherit; font-size:12.5px; font-weight:800;
+    padding:7px 14px; border-radius:10px; cursor:pointer;
+    background:var(--teal); color:var(--ink); border:none;
+  }
+  .pair-btn:hover { filter:brightness(1.08); }
+  .pair-btn:focus-visible { outline:2px solid var(--white); outline-offset:2px; }
+
+  /* ══ PRACTICE MODES ══ */
+  .prac-modes { display:flex; gap:8px; margin:0 0 14px; }
+  .prac-mode {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:1px;
+    padding:9px 6px; border-radius:14px; cursor:pointer; font-family:inherit;
+    background:var(--card); border:1px solid var(--rim); color:var(--soft);
+    transition:.15s;
+  }
+  .prac-mode:hover { border-color:var(--gold); }
+  .prac-mode:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .prac-mode.active { border-color:var(--gold); background:rgba(245,200,66,.10); color:var(--white); }
+  .pm-ic { font-size:19px; line-height:1; }
+  .pm-ar { font-size:12.5px; font-weight:800; }
+  .pm-en { font-family:'Space Grotesk',sans-serif; font-size:9.5px; color:var(--muted); }
+
   /* ══ TODAY'S REVIEW ══
      The one thing on the home screen that expires. It is styled as an action,
      not a statistic, because it is the only card here the learner is meant to
@@ -5253,8 +5285,26 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
 
   <!-- ══ QUIZ ══ -->
   <div id="tab-quiz" class="section">
-    <h1 class="sec-title">🎯 Random Quiz <span style="font-size:10px;font-weight:400;color:var(--muted)">اختبار عشوائي</span></h1>
-    <div class="sec-sub">Random Vocabulary Quiz</div>
+    <h1 class="sec-title">🎯 Practice <span style="font-size:10px;font-weight:400;color:var(--muted)">التدريب</span></h1>
+    <div class="sec-sub">اختبر نفسك أو راجع بالبطاقات</div>
+
+    <!-- Two ways through the same words. Flashcards were a separate tile in
+         the library, which made recognition look like two different skills
+         and gave the learner one more decision to make before any learning
+         happened. -->
+    <div class="prac-modes">
+      <button class="prac-mode active" id="pmQuiz" onclick="practiceMode('quiz')">
+        <span class="pm-ic">🎯</span><span class="pm-ar">اختبار</span><span class="pm-en">Quiz</span>
+      </button>
+      <button class="prac-mode" id="pmFlash" onclick="practiceMode('flash')">
+        <span class="pm-ic">🃏</span><span class="pm-ar">بطاقات</span><span class="pm-en">Cards</span>
+      </button>
+    </div>
+    <div id="pracFlashWrap" style="display:none">
+      <div class="sec-sub" style="margin-bottom:8px">اضغط البطاقة لتقلّبها</div>
+      <div id="flashAreaInline"></div>
+    </div>
+    <div id="pracQuizWrap">
     <div class="guide-hint" onclick="openHelp('practice')">
       <span class="gh-icon">📖</span>
       <span class="gh-text">لا تعرف كيف يعمل الاختبار؟ <b>اضغط هنا</b> لشرح كامل بالعربية</span>
@@ -5267,6 +5317,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <div class="quiz-progress-text" id="quizProgressText">0 / 0</div>
     </div>
     <div id="quizArea"></div>
+    </div><!-- end pracQuizWrap -->
   </div>
 
   <!-- ══ LIBRARY (single entry point for all practice activities) ══ -->
@@ -5330,18 +5381,13 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       </button>
       <button class="lib-tile" data-act="quiz" onclick="showTab('quiz',null)">
         <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-gold)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-clip" transform="scale(.84)"/></svg></span>
-        <span class="lib-tile-ar">اختبار</span>
-        <span class="lib-tile-en">Quiz</span>
+        <span class="lib-tile-ar">تدريب</span>
+        <span class="lib-tile-en">Practice</span>
       </button>
       <button class="lib-tile" data-act="voice" onclick="showTab('voice',null)">
         <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-rose)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-mic" transform="scale(.84)"/></svg></span>
         <span class="lib-tile-ar">تحدّث</span>
         <span class="lib-tile-en">Speak</span>
-      </button>
-      <button class="lib-tile" data-act="flash" onclick="showTab('flash',null)">
-        <span class="lib-tile-ico"><svg class="wsi disc" viewBox="-24 -24 48 48" width="46" height="46" aria-hidden="true"><circle r="19" fill="url(#wsd-sky)"/><circle r="19" fill="url(#wsGloss)"/><circle r="19" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/><circle class="ring-trk" r="22.4" fill="none" stroke="var(--ring-dim)" stroke-width="2.6"/><circle class="ring-arc" r="22.4" pathLength="100" fill="none" stroke="url(#wsRing)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0 100" transform="rotate(-90)"/><use href="#wsg-cards" transform="scale(.84)"/></svg></span>
-        <span class="lib-tile-ar">البطاقات</span>
-        <span class="lib-tile-en">Flashcards</span>
       </button>
     </div>
   </div>
@@ -5604,6 +5650,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
 
       <div id="vbChatWrap" style="display:none">
         <button class="back-btn" onclick="vbBackToTopics()">← تغيير الموضوع</button>
+        <div class="pair-bar" id="vbPairBar" style="display:none"></div>
         <div class="vb-chat-log" id="vbChatLog"></div>
 
         <div class="vb-controls">
@@ -5631,12 +5678,8 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   </div>
 
   <!-- ══ FLASHCARDS ══ -->
-  <div id="tab-flash" class="section">
-    <button class="home-back-btn" onclick="showTab('home',null)">🏠 الرئيسية</button>
-    <h1 class="sec-title">🃏 Flashcards <span style="font-size:10px;font-weight:400;color:var(--muted)">بطاقات المراجعة</span></h1>
-    <div class="sec-sub">اضغط البطاقة لتقلّبها</div>
-    <div id="flashArea"></div>
-  </div>
+  <!-- The flashcards screen lived here. It is now a mode inside Practice:
+       same cards, one fewer decision before any learning happens. -->
 
   <!-- ══ PODCAST (Listening Training) ══ -->
   <div id="tab-podcast" class="section">
@@ -10881,6 +10924,24 @@ function resumeQuiz() {
 // Today's review is the quiz screen with a different list: the same
 // question types, the same keyboard handling, the same result page. A tenth
 // tile in the library is exactly the clutter this is meant to replace.
+// ══ PRACTICE MODES ══
+// Quiz and flashcards are two readings of one skill, so they share a screen.
+// The mode is remembered, because a learner who prefers cards should not have
+// to re-choose on every visit.
+function practiceMode(mode) {
+  var isFlash = mode === 'flash';
+  var q = document.getElementById('pracQuizWrap');
+  var f = document.getElementById('pracFlashWrap');
+  if (!q || !f) return;
+  q.style.display = isFlash ? 'none' : '';
+  f.style.display = isFlash ? '' : 'none';
+  var bq = document.getElementById('pmQuiz'), bf = document.getElementById('pmFlash');
+  if (bq) bq.classList.toggle('active', !isFlash);
+  if (bf) bf.classList.toggle('active', isFlash);
+  try { localStorage.setItem('pracMode', mode); } catch (e) {}
+  if (isFlash) renderFlashcards();
+}
+
 function startReview() {
   var due = srsDueWords(SRS_SESSION_CAP);
   if (!due.length) { showToast('لا توجد مراجعة اليوم ✓', '#2DD4BF'); return; }
@@ -10888,6 +10949,7 @@ function startReview() {
   // be one word. The pool for wrong answers is the whole dictionary; only the
   // QUESTIONS come from the due list.
   showTab('quiz', null);
+  try { practiceMode('quiz'); } catch (e) {}
   quizScore = 0; quizIdx = 0;
   quizList = shuffle(due);
   var sd = document.getElementById('quizScoreDisplay');
@@ -12334,7 +12396,8 @@ function openTodaysGrammarLesson() {
 
 // ══ FLASHCARDS ══
 function renderFlashcards() {
-  const area = document.getElementById('flashArea');
+  const area = document.getElementById('flashAreaInline');
+  if (!area) return;   // Practice is not on screen; nothing to draw into.
   if (!words.length) { area.innerHTML = `<div class="empty-state"><div class="e-icon">🃏</div><p>أضف كلمات لتظهر هنا!</p></div>`; return; }
   currentFlash = 0;
   area.innerHTML = `
@@ -13027,8 +13090,14 @@ function paintLibraryRings() {
 
 // ══ TABS ══
 function showTab(name, btn, navType) {
+  // 'flash' used to be a tab and may still be saved in an old link or a
+  // resume record. Falling through to null.classList here would take the
+  // whole screen down, so an unknown name lands on Practice instead.
+  var target = document.getElementById('tab-' + name);
+  if (!target) { name = 'quiz'; target = document.getElementById('tab-quiz'); }
+  if (!target) return;
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
+  target.classList.add('active');
   logSectionActivity(name);
   if (name === 'library') { try { paintLibraryRings(); } catch (e) {} }
   if (name === 'words') { try { renderWordPicker(); } catch (e) {} }
@@ -13049,8 +13118,12 @@ function showTab(name, btn, navType) {
     if (bnMap[name]) document.getElementById(bnMap[name]).classList.add('active');
   }
 
-  if (name === 'quiz')  initQuiz();
-  if (name === 'flash') renderFlashcards();
+  if (name === 'quiz') {
+    initQuiz();
+    var pm = 'quiz';
+    try { pm = localStorage.getItem('pracMode') || 'quiz'; } catch (e) {}
+    try { practiceMode(pm); } catch (e) {}
+  }
   if (name === 'home')  { updateHomeStats(); maybeShowBackupReminder(); }
   if (name === 'words') updateWordsDashboard();
   if (name === 'reading') rlRenderList();
@@ -17042,6 +17115,39 @@ const vbTopics = {
 
 let vbRecognition = null;
 let vbCurrentTopic = null;
+
+// Speak topic  ->  the podcast episode on the same situation.
+var VB_POD_PAIR = {
+  vbJobIntro:     'jobinterview1',
+  vbJobStrengths: 'jobinterview2',
+  vbJobQuestions: 'jobinterview3',
+  vbUniversity:   'university1',
+  vbScholarship:  'scholarship',
+  vbSalary:       'salarynego',
+  newjob:         'newjob',
+  weather:        'weather'
+};
+var POD_VB_PAIR = (function () {
+  var out = {};
+  for (var k in VB_POD_PAIR) if (Object.prototype.hasOwnProperty.call(VB_POD_PAIR, k)) out[VB_POD_PAIR[k]] = k;
+  return out;
+})();
+
+// Jump between the two sides of a pair. The target module's own open
+// function does the work, so nothing about either screen is duplicated here.
+function vbGoListen(key) {
+  var pk = VB_POD_PAIR[key];
+  if (!pk) return;
+  try { vbBackToTopics(); } catch (e) {}
+  showTab('podcast', null);
+  setTimeout(function () { try { openPodcast(pk); } catch (e) {} }, 60);
+}
+function podGoSpeak(key) {
+  var vk = POD_VB_PAIR[key];
+  if (!vk) return;
+  showTab('voice', null);
+  setTimeout(function () { try { vbStartTopic(vk); } catch (e) {} }, 60);
+}
 let vbPromptIdx = 0;
 let vbLastBotText = '';
 let vbIsListening = false;
@@ -17077,6 +17183,23 @@ function vbStartTopic(key) {
   document.querySelector('.vb-character').style.display = 'none';
   document.getElementById('vbChatWrap').style.display = '';
   document.getElementById('vbChatLog').innerHTML = '';
+
+  // Where a matching episode exists, say so before the first question:
+  // hearing the situation once makes producing it far less frightening,
+  // and it stops the shared title reading as an accident.
+  var pairBar = document.getElementById('vbPairBar');
+  if (pairBar) {
+    if (VB_POD_PAIR[key] && podcastEpisodes[VB_POD_PAIR[key]]) {
+      pairBar.style.display = '';
+      pairBar.innerHTML =
+        '<span class="pair-ic">🎧</span>' +
+        '<span class="pair-txt">لهذا الموقف حلقة بودكاست — استمع إليها أولًا ثم عُد وتحدّث.</span>' +
+        '<button class="pair-btn" onclick="vbGoListen(\'' + key + '\')">استمع</button>';
+    } else {
+      pairBar.style.display = 'none';
+    }
+  }
+
   vbAskCurrentPrompt(true);
 }
 
@@ -17952,6 +18075,13 @@ function openPodcast(key) {
       <div class="pod-hero-title" style="color:${ep.color}">${ep.nameEn}</div>
       <div class="pod-hero-sub">${ep.nameAr}</div>
     </div>
+
+    ${POD_VB_PAIR[key] && typeof vbTopics !== 'undefined' && vbTopics[POD_VB_PAIR[key]] ? `
+    <div class="pair-bar">
+      <span class="pair-ic">🎙️</span>
+      <span class="pair-txt">بعد الاستماع، تدرّب على قول هذا الموقف بنفسك.</span>
+      <button class="pair-btn" onclick="podGoSpeak('${key}')">تحدّث</button>
+    </div>` : ''}
 
     <div class="pod-player">
       <button aria-label="تشغيل" class="pod-play-btn" id="podPlayBtn" onclick="podTogglePlay()">▶️</button>
@@ -18948,7 +19078,9 @@ function rwOpenActivityPicker() {
   document.getElementById('rwStudentInputZone').style.display = 'none';
 
   rwItems = Object.keys(ACTIVITY_SECTIONS)
-    .filter(key => key !== 'journey') // journey is a bigger separate flow, keep this to in-app tabs
+    // journey is a bigger separate flow; flash is a mode inside Practice
+    // rather than a tab, so neither is a place the wheel can send anyone.
+    .filter(key => key !== 'journey' && key !== 'flash')
     .map((key, i) => {
       const info = ACTIVITY_SECTIONS[key];
       return { id: key, en: info.en, ar: info.ar, icon: info.icon, color: RW_PALETTE[i % RW_PALETTE.length] };
