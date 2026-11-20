@@ -2416,7 +2416,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .ears-opt {
     padding:15px 8px; border-radius:14px; cursor:pointer;
     font-family:'Space Grotesk',sans-serif; font-size:18px; font-weight:700;
-    background:var(--bg); color:var(--white); border:1px solid var(--rim);
+    background:var(--ink); color:var(--white); border:1px solid var(--rim);
     direction:ltr; unicode-bidi:plaintext;
   }
   .ears-opt:hover:not(:disabled) { border-color:var(--gold); }
@@ -2446,8 +2446,31 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   }
   .ears-btn.primary { background:var(--gold); color:#221A00; border-color:transparent; }
 
+  .mcq-label { text-align:center; font-size:12.5px; color:var(--muted); margin-bottom:10px; }
+  .mcq-prompt {
+    text-align:center; font-family:'Space Grotesk',sans-serif; font-size:20px;
+    font-weight:700; color:var(--white); line-height:1.6; margin-bottom:16px;
+    unicode-bidi:plaintext;
+  }
+  .mcq-opts { display:grid; gap:9px; }
+  .mcq-opts.grid { grid-template-columns:1fr 1fr; }
+  .mcq-opt {
+    padding:14px 10px; border-radius:13px; cursor:pointer;
+    font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:600;
+    background:var(--ink); color:var(--white); border:1px solid var(--rim);
+    unicode-bidi:plaintext;
+  }
+  .mcq-opt:hover:not(:disabled) { border-color:var(--gold); }
+  .mcq-opt:focus-visible { outline:2px solid var(--gold); outline-offset:2px; }
+  .mcq-opt.right { background:rgba(45,212,191,.18); border-color:var(--teal); color:var(--teal); }
+  .mcq-opt.wrong { background:rgba(251,113,133,.15); border-color:#FB7185; color:#FB7185; }
+  .mcq-why {
+    margin-top:7px; font-size:12.5px; color:var(--soft); line-height:1.9;
+    text-align:center;
+  }
+
   .ord-line {
-    min-height:56px; padding:10px; border-radius:13px; background:var(--bg);
+    min-height:56px; padding:10px; border-radius:13px; background:var(--ink);
     border:1px dashed var(--rim); display:flex; flex-wrap:wrap; gap:6px; align-items:center;
   }
   .ord-ph { font-size:12.5px; color:var(--muted); direction:rtl; }
@@ -2479,7 +2502,7 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
   .wr-input {
     width:100%; font-family:'Space Grotesk',sans-serif; font-size:15.5px; line-height:1.7;
     padding:12px 14px; border-radius:13px; resize:vertical;
-    background:var(--bg); color:var(--white); border:1px solid var(--rim);
+    background:var(--ink); color:var(--white); border:1px solid var(--rim);
   }
   .wr-input:focus-visible { outline:2px solid var(--teal); outline-offset:1px; }
   .wr-send {
@@ -5690,6 +5713,30 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
         </div>
         <div class="game-arrow">←</div>
       </div>
+      <div class="game-card" onclick="startGame('colloc')">
+        <div class="game-icon" style="background:linear-gradient(135deg,#F472B6,#BE185D)">🤝</div>
+        <div class="game-info">
+          <div class="game-name">تصادُم الكلمات <span style="font-size:11px;opacity:.6;font-weight:400" class="gname-en">Collocations</span></div>
+          <div class="game-desc">أي كلمة تُصاحب الأخرى؟ make أم do؟</div>
+        </div>
+        <div class="game-arrow">←</div>
+      </div>
+      <div class="game-card" onclick="startGame('odd')">
+        <div class="game-icon" style="background:linear-gradient(135deg,#38BDF8,#0369A1)">🧠</div>
+        <div class="game-info">
+          <div class="game-name">الدخيل <span style="font-size:11px;opacity:.6;font-weight:400" class="gname-en">Odd One Out</span></div>
+          <div class="game-desc">أربع كلمات، واحدة لا تنتمي — أيّها؟</div>
+        </div>
+        <div class="game-arrow">←</div>
+      </div>
+      <div class="game-card" onclick="startGame('gap')">
+        <div class="game-icon" style="background:linear-gradient(135deg,#FBBF24,#B45309)">📝</div>
+        <div class="game-info">
+          <div class="game-name">أكمل الفراغ <span style="font-size:11px;opacity:.6;font-weight:400" class="gname-en">Fill the Gap</span></div>
+          <div class="game-desc">كلمة ناقصة في جملة — اختر الصحيحة</div>
+        </div>
+        <div class="game-arrow">←</div>
+      </div>
       <div class="game-card" onclick="startGame('daily')">
         <div class="game-icon" style="background:linear-gradient(135deg,#2DD4BF,#0891b2)">🌟</div>
         <div class="game-info">
@@ -5773,6 +5820,13 @@ if(localStorage.getItem('liteMode')==='1')document.documentElement.classList.add
       <button class="back-btn" onclick="backToGames()">← العودة للألعاب</button>
       <div class="game-title-bar">🧩 رتّب الجملة</div>
       <div id="orderArea"></div>
+    </div>
+    <!-- Collocations, odd-one-out and gap-fill share this panel and one
+         engine; only the title and the dataset change. -->
+    <div id="gameMcq" style="display:none">
+      <button class="back-btn" onclick="backToGames()">← العودة للألعاب</button>
+      <div class="game-title-bar" id="mcqTitle">—</div>
+      <div id="mcqArea"></div>
     </div>
   </div>
 
@@ -11098,6 +11152,219 @@ function resumeQuiz() {
 // Today's review is the quiz screen with a different list: the same
 // question types, the same keyboard handling, the same result page. A tenth
 // tile in the library is exactly the clutter this is meant to replace.
+/* ══ ONE ENGINE, THREE GAMES ═════════════════════════════════════════════
+   Collocations, odd-one-out and gap-fill are the same interaction - read a
+   prompt, choose one of a few options, be told why - and they differ only in
+   their content and in what they teach. Writing them three times would mean
+   three places to fix the next bug in the scoring, the keyboard handling or
+   the RTL counter, so there is one engine and three datasets.
+
+   Each item carries its own `why`. An answer without a reason teaches the
+   learner which button was green, not the language.                       */
+
+var MCQ_GAMES = {
+
+  /* Collocations: the gap between someone who knows words and someone who
+     speaks English. "Do a mistake" is built from two correct words and is
+     still wrong, and no word list ever teaches that - only exposure to the
+     pairing does. Chosen for frequency, and ones that differ between British
+     and American usage are left out so there is exactly one right answer. */
+  colloc: {
+    title: '🤝 تصادُم الكلمات',
+    label: 'اختر الكلمة التي تُصاحبها',
+    rounds: 10,
+    items: [
+      { q:'___ a mistake',      a:'make', w:['do','take'],        why:'نقول make a mistake دائمًا، لا do a mistake.' },
+      { q:'___ my homework',    a:'do',   w:['make','take'],      why:'الواجبات والأعمال الروتينية مع do.' },
+      { q:'___ a decision',     a:'make', w:['do','give'],        why:'make a decision — القرار يُصنع لا يُعمل.' },
+      { q:'___ the dishes',     a:'do',   w:['make','clean'],     why:'do the dishes تعبير ثابت لغسل الصحون.' },
+      { q:'___ friends',        a:'make', w:['do','get'],         why:'make friends — تكوين الصداقات.' },
+      { q:'___ your best',      a:'do',   w:['make','give'],      why:'do your best — ابذل أقصى جهدك.' },
+      { q:'___ rain',           a:'heavy',w:['strong','big'],     why:'المطر الغزير heavy rain لا strong rain.' },
+      { q:'___ coffee',         a:'strong',w:['heavy','hard'],    why:'القهوة الثقيلة strong coffee لا heavy coffee.' },
+      { q:'___ traffic',        a:'heavy',w:['strong','thick'],   why:'الازدحام heavy traffic.' },
+      { q:'___ wind',           a:'strong',w:['heavy','tall'],    why:'الريح القوية strong wind.' },
+      { q:'___ a photo',        a:'take', w:['make','do'],        why:'take a photo — الصورة تُلتقط.' },
+      { q:'___ a break',        a:'take', w:['make','do'],        why:'take a break — خذ استراحة.' },
+      { q:'___ breakfast',      a:'have', w:['take','make'],      why:'have breakfast للوجبات.' },
+      { q:'interested ___ music', a:'in', w:['on','at'],          why:'interested in دائمًا.' },
+      { q:'good ___ maths',     a:'at',   w:['in','on'],          why:'good at للمهارة.' },
+      { q:'depend ___ you',     a:'on',   w:['in','of'],          why:'depend on — يعتمد على.' },
+      { q:'afraid ___ dogs',    a:'of',   w:['from','to'],        why:'afraid of لا afraid from.' },
+      { q:'listen ___ music',   a:'to',   w:['at','for'],         why:'listen to دائمًا بحرف to.' },
+      { q:'arrive ___ the airport', a:'at', w:['to','in'],        why:'arrive at لمكان محدّد، arrive in للمدينة.' },
+      { q:'___ a shower',       a:'take', w:['do','make'],        why:'take a shower — يأخذ دشًّا.' },
+      { q:'___ money',          a:'make', w:['do','gain'],        why:'make money — يكسب المال.' },
+      { q:'___ noise',          a:'make', w:['do','give'],        why:'make noise — يُحدث ضجيجًا.' },
+      { q:'___ care of my sister', a:'take', w:['make','do'],     why:'take care of — يعتني بـ.' },
+      { q:'___ an exam',        a:'take', w:['make','do'],        why:'take an exam — يؤدّي اختبارًا.' }
+    ],
+    build: function (it) {
+      return { prompt: it.q, correct: it.a, options: [it.a].concat(it.w), why: it.why, ltr: true };
+    }
+  },
+
+  /* Odd one out. Vocabulary learnt as isolated pairs does not become usable
+     language; it becomes usable when a word sits in a field with its
+     neighbours. Every set names the field in its reason, so the learner
+     leaves with the category and not just the answer. */
+  odd: {
+    title: '🧠 الدخيل',
+    label: 'أي كلمة لا تنتمي؟',
+    rounds: 10,
+    items: [
+      { set:['apple','banana','carrot','orange'],      a:'carrot',   why:'الباقي فواكه، والجزر خضار.' },
+      { set:['Monday','Friday','March','Sunday'],      a:'March',    why:'الباقي أيام، ومارس شهر.' },
+      { set:['teacher','doctor','engineer','hospital'],a:'hospital', why:'الباقي مِهَن، والمستشفى مكان.' },
+      { set:['run','walk','swim','read'],              a:'read',     why:'الباقي حركة بالجسم، والقراءة ليست كذلك.' },
+      { set:['big','large','huge','small'],            a:'small',    why:'الباقي بمعنى كبير، وsmall عكسها.' },
+      { set:['happy','angry','sad','table'],           a:'table',    why:'الباقي مشاعر، والطاولة شيء.' },
+      { set:['cat','dog','horse','rose'],              a:'rose',     why:'الباقي حيوانات، والوردة نبات.' },
+      { set:['bus','train','plane','road'],            a:'road',     why:'الباقي وسائل نقل، والطريق مكان.' },
+      { set:['always','never','often','quickly'],      a:'quickly',  why:'الباقي ظروف تكرار، وquickly ظرف طريقة.' },
+      { set:['father','mother','sister','teacher'],    a:'teacher',  why:'الباقي أقارب، والمعلّم ليس قريبًا.' },
+      { set:['hot','cold','warm','loud'],              a:'loud',     why:'الباقي عن الحرارة، وloud عن الصوت.' },
+      { set:['eye','ear','nose','shoe'],               a:'shoe',     why:'الباقي أعضاء، والحذاء ملبس.' },
+      { set:['red','blue','green','round'],            a:'round',    why:'الباقي ألوان، وround شكل.' },
+      { set:['breakfast','lunch','dinner','kitchen'],  a:'kitchen',  why:'الباقي وجبات، والمطبخ مكان.' },
+      { set:['swim','football','tennis','basketball'], a:'swim',     why:'الباقي أسماء رياضات، وswim فعل.' },
+      { set:['brother','uncle','aunt','cousin'],       a:'aunt',     why:'الباقي يصلح للذكر، وaunt للأنثى فقط.' },
+      { set:['write','wrote','written','writing'],     a:'writing',  why:'الباقي تصريفات أساسية، وwriting اسم فاعل/مصدر.' },
+      { set:['city','village','town','country'],       a:'country',  why:'الباقي أماكن داخل بلد، والبلد أكبر منها.' }
+    ],
+    build: function (it) {
+      return { prompt: '', correct: it.a,
+               options: it.set.filter(function (x) { return x !== it.a; }).concat([it.a]),
+               why: it.why, ltr: true, grid: true };
+    }
+  },
+
+  /* Gap-fill. A word met only as a translation stays a translation; a word
+     met inside a sentence starts to behave like language. These deliberately
+     repeat what the grammar lessons teach, because a rule explained once and
+     never required again is a rule nobody keeps. */
+  gap: {
+    title: '📝 أكمل الفراغ',
+    label: 'أكمل الجملة',
+    rounds: 10,
+    items: [
+      { q:'She ___ to school every day.',        a:'goes',    w:['go','going'],      why:'مع she نضيف s للفعل في المضارع البسيط.' },
+      { q:'I have lived here ___ 2015.',         a:'since',   w:['for','from'],      why:'since مع نقطة بداية، for مع مدّة.' },
+      { q:'We have been friends ___ ten years.', a:'for',     w:['since','from'],    why:'for مع المدّة الزمنية.' },
+      { q:'He ___ playing football now.',        a:'is',      w:['are','be'],        why:'he مع is في المضارع المستمر.' },
+      { q:'They ___ not come yesterday.',        a:'did',     w:['do','does'],       why:'النفي في الماضي مع did not.' },
+      { q:'There ___ many books on the table.',  a:'are',     w:['is','be'],         why:'are مع الجمع.' },
+      { q:'This book is ___ than that one.',     a:'better',  w:['good','best'],     why:'than تحتاج صيغة المقارنة.' },
+      { q:'She is the ___ student in the class.',a:'best',    w:['better','good'],   why:'the + صيغة التفضيل.' },
+      { q:'I ___ never been to London.',         a:'have',    w:['has','had'],       why:'I مع have في المضارع التام.' },
+      { q:'If it rains, I ___ stay home.',       a:'will',    w:['would','am'],      why:'الشرط الأول: if + مضارع، will + مصدر.' },
+      { q:'He can ___ three languages.',         a:'speak',   w:['speaks','speaking'], why:'بعد can يأتي الفعل مجرّدًا.' },
+      { q:'The film was ___ boring.',            a:'very',    w:['much','too much'], why:'very قبل الصفة.' },
+      { q:'I am looking ___ my keys.',           a:'for',     w:['at','after'],      why:'look for = يبحث عن.' },
+      { q:'Please turn ___ the light.',          a:'off',     w:['of','out'],        why:'turn off = يُطفئ.' },
+      { q:'She works ___ a hospital.',           a:'in',      w:['on','at the'],     why:'in مع الأماكن المغلقة الكبيرة.' },
+      { q:'How ___ sugar do you want?',          a:'much',    w:['many','lot'],      why:'much مع غير المعدود.' },
+      { q:'How ___ brothers do you have?',       a:'many',    w:['much','lot'],      why:'many مع المعدود.' },
+      { q:'I would like ___ water, please.',     a:'some',    w:['any','a'],         why:'some في الطلب المهذّب.' }
+    ],
+    build: function (it) {
+      return { prompt: it.q, correct: it.a, options: [it.a].concat(it.w), why: it.why, ltr: true };
+    }
+  }
+};
+
+var mcqState = null;
+
+function initMcq(gameId) {
+  var g = MCQ_GAMES[gameId];
+  if (!g) return;
+  mcqState = { id: gameId, i: 0, score: 0, answered: false,
+               order: shuffle(g.items.slice()).slice(0, g.rounds) };
+  mcqRender();
+}
+
+function mcqRender() {
+  var area = document.getElementById('mcqArea');
+  if (!area || !mcqState) return;
+  var g = MCQ_GAMES[mcqState.id];
+
+  if (mcqState.i >= mcqState.order.length) {
+    var pct = Math.round(mcqState.score / mcqState.order.length * 100);
+    area.innerHTML =
+      '<div class="ears-done">' +
+        '<div class="ears-big">' + (pct >= 80 ? '🏅' : pct >= 50 ? '👍' : '📚') + '</div>' +
+        '<div class="ears-score">' + mcqState.score + ' / ' + mcqState.order.length + '</div>' +
+        '<div class="ears-msg">' + (pct >= 80 ? 'ممتاز — هذه الأنماط صارت لك.'
+          : pct >= 50 ? 'جيّد. أعِد الجولة؛ الأسئلة تتغيّر في كل مرّة.'
+          : 'لا بأس — اقرأ سبب كل إجابة، فهو موضع التعلّم الحقيقي.') + '</div>' +
+        '<button class="ears-btn primary" onclick="initMcq(\'' + mcqState.id + '\')">جولة أخرى</button>' +
+      '</div>';
+    try { logSectionDone('games'); addStarPoints('game'); } catch (e) {}
+    return;
+  }
+
+  var it = mcqState.order[mcqState.i];
+  if (!it.q_built) it.q_built = g.build(it);
+  var q = it.q_built;
+  // Shuffled once per item and kept, so a re-render after answering does not
+  // move the buttons under the learner's finger.
+  if (!it.opts) it.opts = shuffle(q.options.slice());
+
+  area.innerHTML =
+    '<div class="ears-top">' +
+      '<span>' + (mcqState.i + 1) + ' / ' + mcqState.order.length + '</span>' +
+      '<span class="ears-pts">' + mcqState.score + ' ✓</span>' +
+    '</div>' +
+    '<div class="ears-card">' +
+      '<div class="mcq-label">' + escHtml(g.label) + '</div>' +
+      (q.prompt ? '<div class="mcq-prompt"' + (q.ltr ? ' dir="ltr"' : '') + '>' +
+                  escHtml(q.prompt) + '</div>' : '') +
+      '<div class="mcq-opts' + (q.grid ? ' grid' : '') + '">' +
+        it.opts.map(function (opt) {
+          return '<button class="mcq-opt" dir="ltr" data-v="' + escHtml(opt) + '" ' +
+                 'onclick="mcqPick(this)">' + escHtml(opt) + '</button>';
+        }).join('') +
+      '</div>' +
+      '<div id="mcqFb" class="ears-fb"></div>' +
+    '</div>';
+  mcqState.answered = false;
+}
+
+function mcqPick(btn) {
+  if (!mcqState || mcqState.answered) return;
+  mcqState.answered = true;
+  var it = mcqState.order[mcqState.i];
+  var q = it.q_built;
+  var chosen = btn.getAttribute('data-v');
+  var right = chosen === q.correct;
+  if (right) mcqState.score++;
+
+  document.querySelectorAll('.mcq-opt').forEach(function (b) {
+    b.disabled = true;
+    if (b.getAttribute('data-v') === q.correct) b.classList.add('right');
+    else if (b === btn) b.classList.add('wrong');
+  });
+
+  var fb = document.getElementById('mcqFb');
+  if (fb) {
+    fb.className = 'ears-fb ' + (right ? 'ok' : 'no');
+    // The reason is shown whether the answer was right or wrong: a learner
+    // who guessed correctly has learnt nothing until they know why.
+    fb.innerHTML = (right ? '✓ صحيح' : '✗ الصحيح: <b dir="ltr">' + escHtml(q.correct) + '</b>') +
+      '<div class="mcq-why">' + escHtml(q.why) + '</div>' +
+      '<button class="ears-next" onclick="mcqNext()">التالي ←</button>';
+  }
+  if (q.ltr && mcqState.id !== 'odd') {
+    try { slSpeak(String(q.prompt).replace('___', q.correct), 0.9); } catch (e) {}
+  }
+}
+
+function mcqNext() {
+  if (!mcqState) return;
+  mcqState.i++;
+  mcqRender();
+}
+
 /* ══ GAME · SHARP EARS ═══════════════════════════════════════════════════
    Every other game in the platform is spelling or recognition speed. None of
    them trains the ear.
@@ -14104,13 +14371,18 @@ function startGame(name) {
   // Gate before hiding the menu, so a blocked learner stays where they are
   // instead of landing on a blank game screen.
   const labels = { hangman:'🎯 Hangman', race:'⚡ سباق ٦٠ ثانية', daily:'🌟 تحدي اليوم',
-                   spelling:'✍️ تحدي التهجئة', ears:'👂 أذن حادّة', order:'🧩 رتّب الجملة' };
+                   spelling:'✍️ تحدي التهجئة', ears:'👂 أذن حادّة', order:'🧩 رتّب الجملة',
+                   colloc:'🤝 تصادُم الكلمات', odd:'🧠 الدخيل', gap:'📝 أكمل الفراغ' };
   // Sharp Ears ships its own word pairs and Sentence Builder its own
   // sentences, so neither waits for the learner to build a dictionary first -
   // they work on day one, which is exactly when a learner needs a reason to
   // come back.
-  if (name !== 'ears' && name !== 'order' && !requireWords(name, labels[name])) return;
-  ['gamesMenu','gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder']
+  // The content-bearing games ship their own material, so none of them waits
+  // for the learner to build a dictionary first: they work on day one, which
+  // is when a learner most needs a reason to come back.
+  var SELF_CONTAINED = ['ears', 'order', 'colloc', 'odd', 'gap'];
+  if (SELF_CONTAINED.indexOf(name) === -1 && !requireWords(name, labels[name])) return;
+  ['gamesMenu','gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder','gameMcq']
     .forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = 'none'; });
   if (name === 'hangman')  { document.getElementById('gameHangman').style.display = '';  initHangman(); }
   if (name === 'race')     { document.getElementById('gameRace').style.display = '';     initRace(); }
@@ -14118,9 +14390,14 @@ function startGame(name) {
   if (name === 'spelling') { document.getElementById('gameSpelling').style.display = ''; initSpelling(); }
   if (name === 'ears')     { document.getElementById('gameEars').style.display = '';     initEars(); }
   if (name === 'order')    { document.getElementById('gameOrder').style.display = '';    initOrder(); }
+  if (MCQ_GAMES[name]) {
+    document.getElementById('gameMcq').style.display = '';
+    document.getElementById('mcqTitle').textContent = MCQ_GAMES[name].title;
+    initMcq(name);
+  }
 }
 function backToGames() {
-  ['gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder']
+  ['gameHangman','gameRace','gameDaily','gameSpelling','gameEars','gameOrder','gameMcq']
     .forEach(function (id) { var e = document.getElementById(id); if (e) e.style.display = 'none'; });
   document.getElementById('gamesMenu').style.display = '';
   clearInterval(raceInterval);
